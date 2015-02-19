@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -75,6 +76,8 @@ public class MainActivity extends ActionBarActivity
 
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
+
+        System.err.println(token);
 
         if(token.equalsIgnoreCase("N.A.")){
             // Start the native auth flow.
