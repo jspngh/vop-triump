@@ -43,6 +43,13 @@ public class MyEndpoint {
 
     private SecureRandom random = new SecureRandom();
 
+    @ApiMethod(name = "sayHi")
+    public MyBean sayHi (@Named("name") String name) {
+        MyBean response = new MyBean();
+        response.setData("Hi, "+ name);
+        return response;
+    }
+
     @ApiMethod(name = "getUserInfo")
     public UserBean getUserInfo(@Named("token") String token) throws UnauthorizedException {
         long userId = _getUserIdForToken(token);

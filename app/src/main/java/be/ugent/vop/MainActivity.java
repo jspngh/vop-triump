@@ -1,46 +1,34 @@
 package be.ugent.vop;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
+import android.support.v4.util.Pair;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.foursquare.android.nativeoauth.FoursquareCancelException;
-import com.foursquare.android.nativeoauth.FoursquareDenyException;
-import com.foursquare.android.nativeoauth.FoursquareInvalidRequestException;
-import com.foursquare.android.nativeoauth.FoursquareOAuth;
-import com.foursquare.android.nativeoauth.FoursquareOAuthException;
-import com.foursquare.android.nativeoauth.FoursquareUnsupportedVersionException;
-import com.foursquare.android.nativeoauth.model.AccessTokenResponse;
-import com.foursquare.android.nativeoauth.model.AuthCodeResponse;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
-import be.ugent.vop.foursquare.TokenStore;
+import java.io.IOException;
 
+import be.ugent.vop.backend.myApi.MyApi;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
-    private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";
-    private static final int REQUEST_CODE_FSQ_CONNECT = 200;
-    private static final int REQUEST_CODE_FSQ_TOKEN_EXCHANGE = 201;
-    private static final String CLIENT_SECRET = "UQSJN0HCIR0LSBT2PEK3CR331JQJUYSINHZ12MHE0A2CWNNQ";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -65,158 +53,22 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        startFoursquareLogin();
+        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "Manfred"));
     }
-
-    /**********************************
-     Start Foursquare API
-     **********************************/
-
-    private void startFoursquareLogin(){
-
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
-
-        System.err.println(token);
-
-        if(token.equalsIgnoreCase("N.A.")){
-            // Start the native auth flow.
-            Intent intent = FoursquareOAuth.getConnectIntent(MainActivity.this, CLIENT_ID);
-
-            // If the device does not have the Foursquare app installed, we'd
-            // get an intent back that would open the Play Store for download.
-            // Otherwise we start the auth flow.
-            if (FoursquareOAuth.isPlayStoreIntent(intent)) {
-                toastMessage(MainActivity.this, "App not installed");
-                startActivity(intent);
-            } else {
-                startActivityForResult(intent, REQUEST_CODE_FSQ_CONNECT);
-            }
-        }else{
-            TokenStore.get().setToken(token);
-            toastMessage(this, "Token: " + token);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CODE_FSQ_CONNECT:
-                onCompleteConnect(resultCode, data);
-                break;
-
-            case REQUEST_CODE_FSQ_TOKEN_EXCHANGE:
-                onCompleteTokenExchange(resultCode, data);
-                break;
-
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void onCompleteConnect(int resultCode, Intent data) {
-        AuthCodeResponse codeResponse = FoursquareOAuth.getAuthCodeFromResult(resultCode, data);
-        Exception exception = codeResponse.getException();
-
-        if (exception == null) {
-            // Success.
-            String code = codeResponse.getCode();
-            performTokenExchange(code);
-
-        } else {
-            if (exception instanceof FoursquareCancelException) {
-                // Cancel.
-                toastMessage(this, "Canceled");
-
-            } else if (exception instanceof FoursquareDenyException) {
-                // Deny.
-                toastMessage(this, "Denied");
-
-            } else if (exception instanceof FoursquareOAuthException) {
-                // OAuth error.
-                String errorMessage = exception.getMessage();
-                String errorCode = ((FoursquareOAuthException) exception).getErrorCode();
-                toastMessage(this, errorMessage + " [" + errorCode + "]");
-
-            } else if (exception instanceof FoursquareUnsupportedVersionException) {
-                // Unsupported Fourquare app version on the device.
-                toastError(this, exception);
-
-            } else if (exception instanceof FoursquareInvalidRequestException) {
-                // Invalid request.
-                toastError(this, exception);
-
-            } else {
-                // Error.
-                toastError(this, exception);
-            }
-        }
-    }
-
-    private void onCompleteTokenExchange(int resultCode, Intent data) {
-        AccessTokenResponse tokenResponse = FoursquareOAuth.getTokenFromResult(resultCode, data);
-        Exception exception = tokenResponse.getException();
-
-        if (exception == null) {
-            String accessToken = tokenResponse.getAccessToken();
-            // Success.
-            toastMessage(this, "Access token: " + accessToken);
-
-            // Persist the token for later use. In this example, we save
-            // it to shared prefs.
-            TokenStore.get().setToken(accessToken);
-            SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-
-            editor.putString(getString(R.string.foursquaretoken), accessToken);
-            editor.commit();
-
-        } else {
-            if (exception instanceof FoursquareOAuthException) {
-                // OAuth error.
-                String errorMessage = ((FoursquareOAuthException) exception).getMessage();
-                String errorCode = ((FoursquareOAuthException) exception).getErrorCode();
-                toastMessage(this, errorMessage + " [" + errorCode + "]");
-
-            } else {
-                // Other exception type.
-                toastError(this, exception);
-            }
-        }
-    }
-
-    /**
-     * Exchange a code for an OAuth Token. Note that we do not recommend you
-     * do this in your app, rather do the exchange on your server. Added here
-     * for demo purposes.
-     *
-     * @param code
-     *          The auth code returned from the native auth flow.
-     */
-    private void performTokenExchange(String code) {
-        Intent intent = FoursquareOAuth.getTokenExchangeIntent(this, CLIENT_ID, CLIENT_SECRET, code);
-        startActivityForResult(intent, REQUEST_CODE_FSQ_TOKEN_EXCHANGE);
-    }
-
-    public static void toastMessage(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public static void toastError(Context context, Throwable t) {
-        Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
-    }
-
-    /**********************************
-     End Foursquare API
-     **********************************/
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+        if (position == 2) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+        else {
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                    .commit();
+        }
     }
 
     public void onSectionAttached(int number) {
@@ -309,4 +161,43 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+}
+
+class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
+    private static MyApi myApiService = null;
+    private Context context;
+
+    @Override
+    protected String doInBackground(Pair<Context, String>... params) {
+        if(myApiService == null) {  // Only do this once
+            MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
+                    new AndroidJsonFactory(), null)
+                    // options for running against local devappserver
+                    // - 10.0.2.2 is localhost's IP address in Android emulator
+                    // - turn off compression when running against local devappserver
+                    .setRootUrl("http://localhost:8080/_ah/api/")
+                    .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                        @Override
+                        public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                            abstractGoogleClientRequest.setDisableGZipContent(true);
+                        }
+                    });
+            // end options for devappserver
+            myApiService = builder.build();
+        }
+
+        context = params[0].first;
+        String name = params[0].second;
+
+        try {
+            return myApiService.sayHi(name).execute().getData();
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+    }
 }
