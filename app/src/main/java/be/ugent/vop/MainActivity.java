@@ -8,18 +8,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.foursquare.android.nativeoauth.FoursquareCancelException;
@@ -36,7 +31,6 @@ import be.ugent.vop.foursquare.TokenStore;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
     private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";
     private static final int REQUEST_CODE_FSQ_CONNECT = 200;
     private static final int REQUEST_CODE_FSQ_TOKEN_EXCHANGE = 201;
@@ -65,14 +59,13 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        startFoursquareLogin();
     }
 
     /**********************************
      Start Foursquare API
      **********************************/
 
-    private void startFoursquareLogin(){
+    public void startFoursquareLogin(){
 
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
@@ -214,9 +207,23 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+        switch (position) {
+            case 1:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, LoginFragment.newInstance(position))
+                        .commit();
+                break;
+            case 2:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, GroupFragment.newInstance(position))
+                        .commit();
+                break;
+            case 3:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(position))
+                        .commit();
+                break;
+        }
     }
 
     public void onSectionAttached(int number) {
