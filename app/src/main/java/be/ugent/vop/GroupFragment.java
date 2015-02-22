@@ -15,6 +15,7 @@ package be.ugent.vop;
         import android.support.v4.app.Fragment;
         import be.ugent.vop.backend.myApi.MyApi;
         import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
+        import android.util.Log;
 
         import java.io.IOException;
 public class GroupFragment   extends Fragment {
@@ -44,15 +45,21 @@ public class GroupFragment   extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
         SharedPreferences prefs = this.getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         Long fsUserID = prefs.getLong(getString(R.string.userid), 0);
+        AuthTokenResponse token = new AuthTokenResponse();
         String fsToken = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
-        EndpointsAsyncTask api_service = new EndpointsAsyncTask();
+        String[] open = {"Open", fsUserID.toString(),fsToken};
         try {
-            AuthTokenResponse token = new AuthTokenResponse();
-            token = api_service.myApiService.getAuthToken(fsUserID, fsToken).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+            token = (AuthTokenResponse)new EndpointsAsyncTask(this.getActivity()).execute(open).get();
+        } catch (Exception e) {
+           //
         }
+        Log.d("","fsUserID: " + fsUserID.toString());
+        Log.d("","fsToken: " + fsToken);
+        Log.d("","Auth token received: " + token.getAuthToken());
 
+        String[] close = {"Close", token.getAuthToken()};
+        new EndpointsAsyncTask(this.getActivity()).execute(close);
+        Log.d("","Auth closed");
         return rootView;
     }
 
