@@ -86,7 +86,7 @@ public class LoginActivity extends ActionBarActivity {
                 JSONObject jsonObject = new JSONObject(userInfo);
                 String userId = jsonObject.getJSONObject("response").getJSONObject("user").getString("id");
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(getString(R.string.userid), userId);
+                editor.putLong(getString(R.string.userid), Long.valueOf(userId).longValue());
                 editor.commit();
             } catch (Exception e) {
                 e.printStackTrace();

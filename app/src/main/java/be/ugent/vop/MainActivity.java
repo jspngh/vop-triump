@@ -42,7 +42,6 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "Manfred"));
     }
 
     @Override
@@ -51,7 +50,12 @@ public class MainActivity extends ActionBarActivity
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-        else {
+        else if(position == 1) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, GroupFragment.newInstance(position + 1))
+                    .commit();
+        }else{
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()

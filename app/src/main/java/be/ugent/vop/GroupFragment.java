@@ -5,12 +5,18 @@ package be.ugent.vop;
  */
 
         import android.app.Activity;
+        import android.content.Context;
+        import android.content.SharedPreferences;
         import android.os.Bundle;
+        import android.support.v4.util.Pair;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
         import android.support.v4.app.Fragment;
+        import be.ugent.vop.backend.myApi.MyApi;
+        import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 
+        import java.io.IOException;
 public class GroupFragment   extends Fragment {
     /**
      * The fragment argument representing the section number for this
@@ -36,9 +42,21 @@ public class GroupFragment   extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
+        SharedPreferences prefs = this.getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        Long fsUserID = prefs.getLong(getString(R.string.userid), 0);
+        String fsToken = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
+        EndpointsAsyncTask api_service = new EndpointsAsyncTask();
+        try {
+            AuthTokenResponse token = new AuthTokenResponse();
+            token = api_service.myApiService.getAuthToken(fsUserID, fsToken).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return rootView;
     }
 
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
