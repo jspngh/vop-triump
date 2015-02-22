@@ -45,10 +45,10 @@ import be.ugent.vop.foursquare.TokenStore;
  */
 public class LoginActivity extends ActionBarActivity {
 
-    private static final String CLIENT_ID = "PNTT2Y4XCYL35PHKIRLNV0YSO50XHALPX1SBDMAY3BIZWRBA";
+    private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";
     private static final int REQUEST_CODE_FSQ_CONNECT = 200;
     private static final int REQUEST_CODE_FSQ_TOKEN_EXCHANGE = 201;
-    private static final String CLIENT_SECRET = "P5KO0OFRI2Z13GQH0YLS5BS5SYLIYMW21Q1YBSWHP4XJJ5Q5";
+    private static final String CLIENT_SECRET = "UQSJN0HCIR0LSBT2PEK3CR331JQJUYSINHZ12MHE0A2CWNNQ";
 
     private Button btnUserId;
 
@@ -67,27 +67,8 @@ public class LoginActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.title_activity_login);
-
+        Log.d("","LoginActivity created: launching startFoursquareLogin");
         startFoursquareLogin();
-
-        btnUserId = (Button) findViewById(R.id.btnUserId);
-        btnUserId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-                String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
-                String base = "https://api.foursquare.com/v2/users/self?oauth_token=";
-                String address = base.concat(token);
-                String version = "&v=20150221";
-                address = address.concat(version);
-                String readJSON = getJSON(address);
-                try{
-                    JSONObject jsonObject = new JSONObject(readJSON);
-                    Log.i(LoginActivity.class.getName(), jsonObject.toString());
-                } catch(Exception e){e.printStackTrace();}
-
-            }
-        });
     }
 
     //region Foursquare API
@@ -97,18 +78,21 @@ public class LoginActivity extends ActionBarActivity {
 
     private void startFoursquareLogin(){
 
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        final SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
 
-        System.err.println(token);
+
 
         Button btnLogin = (Button) findViewById(R.id.btnLogin);
+        Button btnLogout = (Button) findViewById(R.id.btnLogout);
         TextView logInMessage = (TextView) findViewById(R.id.logInMessage);
 
         if(token.equalsIgnoreCase("N.A.")){
             // Start the native auth flow.
-
+            Log.d("","Not yet logged in, start native auth flow");
             btnLogin.setVisibility(View.VISIBLE);
+            logInMessage.setVisibility(View.VISIBLE);
+            btnLogout.setVisibility(View.GONE);
             btnLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -127,10 +111,22 @@ public class LoginActivity extends ActionBarActivity {
                 }
             });
         }else{
+            Log.d("","Already logged in, start native logout flow");
             btnLogin.setVisibility(View.GONE);
             logInMessage.setVisibility(View.GONE);
-            TokenStore.get().setToken(token);
-            toastMessage(this, "Token: " + token);
+            btnLogout.setVisibility(View.VISIBLE);
+            btnLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Start the native logout flow.
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.remove(getString(R.string.userid));
+                    editor.remove(getString(R.string.foursquaretoken));
+                    editor.commit();
+                    startFoursquareLogin();
+                }
+            });
+
         }
     }
 
@@ -148,6 +144,28 @@ public class LoginActivity extends ActionBarActivity {
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void getUserId(){
+        String UserId="N.A.";
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
+        String base = "https://api.foursquare.com/v2/users/self?oauth_token=";
+        String address = base.concat(token);
+        String version = "&v=20150221";
+        address = address.concat(version);
+        String readJSON = getJSON(address);
+        try{
+            JSONObject jsonObject = new JSONObject(readJSON);
+            JSONObject response = jsonObject.getJSONObject("response");
+            JSONObject user = response.getJSONObject("user");
+
+            UserId=user.getString("id");
+            Log.d("","UserId "+ UserId);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(getString(R.string.userid), UserId);
+            editor.commit();
+        } catch(Exception e){e.printStackTrace();}
     }
 
     private void onCompleteConnect(int resultCode, Intent data) {
@@ -196,7 +214,7 @@ public class LoginActivity extends ActionBarActivity {
         if (exception == null) {
             String accessToken = tokenResponse.getAccessToken();
             // Success.
-            toastMessage(this, "Access token: " + accessToken);
+            Log.d("", "Access token: " + accessToken);
 
             // Persist the token for later use. In this example, we save
             // it to shared prefs.
@@ -206,7 +224,7 @@ public class LoginActivity extends ActionBarActivity {
 
             editor.putString(getString(R.string.foursquaretoken), accessToken);
             editor.commit();
-
+            getUserId();
             startFoursquareLogin();
 
         } else {

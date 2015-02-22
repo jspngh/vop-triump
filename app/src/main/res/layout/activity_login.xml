@@ -25,10 +25,10 @@
         android:background="@drawable/connect_to_foursquare_blue" />
 
     <Button
-        android:id="@+id/btnUserId"
+        android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:text="GetUserId" />
+        android:text="Logout" />
 
 </LinearLayout>
 
