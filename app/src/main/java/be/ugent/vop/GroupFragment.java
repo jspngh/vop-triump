@@ -44,22 +44,9 @@ public class GroupFragment   extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
         SharedPreferences prefs = this.getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        Long fsUserID = prefs.getLong(getString(R.string.userid), 0);
-        AuthTokenResponse token = new AuthTokenResponse();
-        String fsToken = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
-        String[] open = {"Open", fsUserID.toString(),fsToken};
-        try {
-            token = (AuthTokenResponse)new EndpointsAsyncTask(this.getActivity()).execute(open).get();
-        } catch (Exception e) {
-           //
-        }
-        Log.d("","fsUserID: " + fsUserID.toString());
-        Log.d("","fsToken: " + fsToken);
-        Log.d("","Auth token received: " + token.getAuthToken());
+        String backendToken = prefs.getString(getString(R.string.backendtoken), "N.A.");
 
-        String[] close = {"Close", token.getAuthToken()};
-        new EndpointsAsyncTask(this.getActivity()).execute(close);
-        Log.d("","Auth closed");
+
         return rootView;
     }
 

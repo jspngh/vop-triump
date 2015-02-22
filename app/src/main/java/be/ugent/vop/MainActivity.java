@@ -3,6 +3,7 @@ package be.ugent.vop;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -42,12 +43,27 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        boolean FStoken = prefs.contains(getString(R.string.foursquaretoken));
+        boolean backendToken = prefs.contains(getString(R.string.backendtoken));
+
+        if(!FStoken){
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            loginIntent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGIN_FS);
+            startActivity(loginIntent);
+        }else if(!backendToken){
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            loginIntent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGIN_BACKEND);
+            startActivity(loginIntent);
+        }
+
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         if (position == 2) {
             Intent intent = new Intent(this, LoginActivity.class);
+            intent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGOUT);
             startActivity(intent);
         }
         else if(position == 1) {

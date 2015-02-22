@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutionException;
 
+import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.foursquare.TokenStore;
 
 public class LoginActivity extends ActionBarActivity {
@@ -45,6 +46,15 @@ public class LoginActivity extends ActionBarActivity {
     private static final int REQUEST_CODE_FSQ_CONNECT = 200;
     private static final int REQUEST_CODE_FSQ_TOKEN_EXCHANGE = 201;
     private static final String CLIENT_SECRET = "UQSJN0HCIR0LSBT2PEK3CR331JQJUYSINHZ12MHE0A2CWNNQ";
+
+    public static final String LOGIN_ACTION = "loginaction";
+    public static final int LOGIN_FS = 1;
+    public static final int LOGIN_BACKEND = 2;
+    public static final int LOGOUT = 3;
+    private Button btnLogin;
+    private Button btnLogout;
+    private TextView logInMessage;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +72,25 @@ public class LoginActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.title_activity_login);
 
-        startFoursquareLogin();
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnLogout = (Button) findViewById(R.id.btnLogout);
+        logInMessage = (TextView) findViewById(R.id.logInMessage);
+
+        prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+
+        int loginAction = getIntent().getExtras().getInt(LOGIN_ACTION);
+        switch(loginAction){
+            case LOGIN_FS:
+                startFoursquareLogin();
+                break;
+            case LOGIN_BACKEND:
+                startBackendLogin();
+                break;
+            case LOGOUT:
+                logout();
+                break;
+            default:
+        }
     }
 
     private void getUserId (){
@@ -104,55 +132,88 @@ public class LoginActivity extends ActionBarActivity {
 
     private void startFoursquareLogin(){
 
-        final SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
+        SharedPreferences.Editor editor = prefs.edit();
 
-        System.err.println(token);
+        // Close sessions that might still be open
+        if(prefs.contains(getString(R.string.backendtoken)))
+            closeBackendSession();
 
-        Button btnLogin = (Button) findViewById(R.id.btnLogin);
-        Button btnLogout = (Button) findViewById(R.id.btnLogout);
-        TextView logInMessage = (TextView) findViewById(R.id.logInMessage);
+        // Make sure to remove all tokens in SharedPreferences
+        editor.remove(getString(R.string.backendtoken));
+        editor.remove(getString(R.string.foursquaretoken));
+        editor.commit();
 
-        if(token.equalsIgnoreCase("N.A.")){
-            // Start the native auth flow.
+        btnLogin.setVisibility(View.VISIBLE);
+        logInMessage.setVisibility(View.VISIBLE);
+        btnLogout.setVisibility(View.GONE);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the native auth flow.
+                Intent intent = FoursquareOAuth.getConnectIntent(LoginActivity.this, CLIENT_ID);
 
-            btnLogin.setVisibility(View.VISIBLE);
-            logInMessage.setVisibility(View.VISIBLE);
-            btnLogout.setVisibility(View.GONE);
-            btnLogin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Start the native auth flow.
-                    Intent intent = FoursquareOAuth.getConnectIntent(LoginActivity.this, CLIENT_ID);
-
-                    // If the device does not have the Foursquare app installed, we'd
-                    // get an intent back that would open the Play Store for download.
-                    // Otherwise we start the auth flow.
-                    if (FoursquareOAuth.isPlayStoreIntent(intent)) {
-                        toastMessage(LoginActivity.this, getString(R.string.app_not_installed_message));
-                        startActivity(intent);
-                    } else {
-                        startActivityForResult(intent, REQUEST_CODE_FSQ_CONNECT);
-                    }
+                // If the device does not have the Foursquare app installed, we'd
+                // get an intent back that would open the Play Store for download.
+                // Otherwise we start the auth flow.
+                if (FoursquareOAuth.isPlayStoreIntent(intent)) {
+                    toastMessage(LoginActivity.this, getString(R.string.app_not_installed_message));
+                    startActivity(intent);
+                } else {
+                    startActivityForResult(intent, REQUEST_CODE_FSQ_CONNECT);
                 }
-            });
-        } else {
-            btnLogin.setVisibility(View.GONE);
-            logInMessage.setVisibility(View.GONE);
-            btnLogout.setVisibility(View.VISIBLE);
-            btnLogout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Start the native logout flow.
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.remove(getString(R.string.userid));
-                    editor.remove(getString(R.string.foursquaretoken));
-                    editor.commit();
-                    startFoursquareLogin();
-                }
-            });
+            }
+        });
+    }
 
+    private void startBackendLogin(){
+        // Close sessions that might still be open
+        if(prefs.contains(getString(R.string.backendtoken)))
+            closeBackendSession();
+
+        performBackendTokenExchange();
+    }
+
+    private void performBackendTokenExchange(){
+        String fsToken = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
+        long userId = prefs.getLong(getString(R.string.userid), 0);
+
+        String[] open = {"Open", Long.valueOf(userId).toString(),fsToken};
+        try {
+            String token = ((AuthTokenResponse)new EndpointsAsyncTask(this).execute(open).get()).getAuthToken();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(getString(R.string.backendtoken), token);
+            editor.commit();
+
+            Toast.makeText(getApplicationContext(), "Login on backend successfull!", Toast.LENGTH_LONG).show();
+            finish(); //Dismiss activity
+        } catch (Exception e) {
+            //
         }
+    }
+
+    private void closeBackendSession(){
+        String token = prefs.getString(getString(R.string.backendtoken), "N.A.");
+        String[] close = {"Close", token};
+        new EndpointsAsyncTask(this).execute(close);
+    }
+
+    private void logout() {
+        btnLogin.setVisibility(View.GONE);
+        logInMessage.setVisibility(View.GONE);
+        btnLogout.setVisibility(View.VISIBLE);
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeBackendSession();
+
+                // Start the native logout flow.
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove(getString(R.string.userid));
+                editor.remove(getString(R.string.foursquaretoken));
+                editor.commit();
+                startFoursquareLogin();
+            }
+        });
     }
 
     @Override
@@ -230,7 +291,7 @@ public class LoginActivity extends ActionBarActivity {
 
             getUserId();
 
-            startFoursquareLogin();
+            performBackendTokenExchange();
 
         } else {
             if (exception instanceof FoursquareOAuthException) {
