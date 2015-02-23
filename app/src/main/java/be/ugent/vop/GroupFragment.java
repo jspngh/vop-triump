@@ -4,30 +4,28 @@ package be.ugent.vop;
  * Created by Lars on 21/02/15.
  */
 
-        import android.app.Activity;
-        import android.content.Context;
-        import android.content.SharedPreferences;
-        import android.os.Bundle;
-        import android.support.v4.util.Pair;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.support.v4.app.Fragment;
-        import be.ugent.vop.backend.myApi.MyApi;
-        import be.ugent.vop.backend.myApi.model.AllGroupsBean;
-        import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
-        import be.ugent.vop.backend.myApi.model.GroupBean;
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-        import android.util.Log;
-        import android.widget.ArrayAdapter;
-        import android.widget.ListView;
-        import android.widget.Toast;
+import java.util.List;
 
-        import java.io.IOException;
-        import java.util.List;
+import be.ugent.vop.backend.myApi.model.AllGroupsBean;
+import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.loaders.AllGroupsLoader;
 
 
-public class GroupFragment   extends Fragment {
+public class GroupFragment   extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -57,6 +55,8 @@ public class GroupFragment   extends Fragment {
         String backendToken = prefs.getString(getString(R.string.backendtoken), "N.A.");
         groupslistView = (ListView) rootView.findViewById(R.id.groups_list);
 
+        getLoaderManager().initLoader(0, null, this);
+
 
         String[] getAllGroups = {"getAllGroups", backendToken};
         try {
@@ -83,5 +83,28 @@ public class GroupFragment   extends Fragment {
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
+    @Override
+    public Loader<AllGroupsBean> onCreateLoader(int i, Bundle bundle) {
+        AllGroupsLoader loader = new AllGroupsLoader(getActivity());
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<AllGroupsBean> objectLoader, AllGroupsBean allGroupsBean) {
+        List<GroupBean> Groups = allGroupsBean.getGroups();
+        Log.d("","Number of groups: " + Groups.size());
+        groupArray = new String[Groups.size()];
+        for(int i = 0; i < Groups.size(); i++){
+            groupArray[i] = Groups.get(i).getName();
+        }
+
+        arrayAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_list_item_1, groupArray);
+        groupslistView.setAdapter(arrayAdapter);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<AllGroupsBean> objectLoader) {
+
+    }
 }
 
