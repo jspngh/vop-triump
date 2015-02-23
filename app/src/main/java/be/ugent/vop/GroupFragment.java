@@ -1,12 +1,6 @@
 package be.ugent.vop;
 
-/**
- * Created by Lars on 21/02/15.
- */
-
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -25,7 +19,7 @@ import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.loaders.AllGroupsLoader;
 
 
-public class GroupFragment   extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
+public class GroupFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -66,7 +60,7 @@ public class GroupFragment   extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public Loader<AllGroupsBean> onCreateLoader(int i, Bundle bundle) {
+    public Loader<AllGroupsBean> onCreateLoader(int id, Bundle bundle) {
         AllGroupsLoader loader = new AllGroupsLoader(getActivity());
         return loader;
     }

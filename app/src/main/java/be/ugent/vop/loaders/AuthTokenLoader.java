@@ -8,20 +8,24 @@ import java.io.IOException;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.MyApi;
-import be.ugent.vop.backend.myApi.model.AllGroupsBean;
+import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
+public class AuthTokenLoader extends AsyncTaskLoader<AuthTokenResponse> {
 
-    AllGroupsBean mAllGroupsBean;
+    AuthTokenResponse mToken;
     private static MyApi myApiService = null;
     private Context context;
+    private long userId = 0;
+    private String fsToken = null;
 
-    public AllGroupsLoader(Context context) {
+    public AuthTokenLoader(Context context, long userId, String fsToken) {
         super(context);
         this.context = context.getApplicationContext();
+        this.userId = userId;
+        this.fsToken = fsToken;
     }
 
     /**
@@ -29,13 +33,14 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
      * called in a background thread and should generate a new set of
      * data to be published by the loader.
      */
-    @Override public AllGroupsBean loadInBackground() {
-        AllGroupsBean result = null;
+    @Override
+    public AuthTokenResponse loadInBackground() {
+        AuthTokenResponse result = null;
 
         try{
-            result = BackendAPI.get(context).getAllGroups();
+            result = BackendAPI.get(context).getAuthToken(userId, fsToken);
         } catch(IOException e){
-            Log.d("AllGroupsLoader", e.getMessage());
+            Log.d("OpenSessionLoader", e.getMessage());
         }
 
         // Done!
@@ -47,28 +52,28 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult(AllGroupsBean allGroupsBean) {
+    @Override public void deliverResult(AuthTokenResponse token) {
         if (isReset()) {
             // An async query came in while the loader is stopped.  We
             // don't need the result.
-            if (allGroupsBean != null) {
-                onReleaseResources(allGroupsBean);
+            if (token != null) {
+                onReleaseResources(token);
             }
         }
-        AllGroupsBean oldAllGroupsBean = allGroupsBean;
-        mAllGroupsBean = allGroupsBean;
+        AuthTokenResponse oldToken = token;
+        mToken = token;
 
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
             // deliver its results.
-            super.deliverResult(allGroupsBean);
+            super.deliverResult(token);
         }
 
         // At this point we can release the resources associated with
         // 'oldApps' if needed; now that the new result is delivered we
         // know that it is no longer in use.
-        if (oldAllGroupsBean != null) {
-            onReleaseResources(oldAllGroupsBean);
+        if (oldToken != null) {
+            onReleaseResources(oldToken);
         }
     }
 
@@ -76,13 +81,13 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
      * Handles a request to start the Loader.
      */
     @Override protected void onStartLoading() {
-        if (mAllGroupsBean != null) {
+        if (mToken != null) {
             // If we currently have a result available, deliver it
             // immediately.
-            deliverResult(mAllGroupsBean);
+            deliverResult(mToken);
         }
 
-        if (takeContentChanged() || mAllGroupsBean == null) {
+        if (takeContentChanged() || mToken == null) {
             // If the data has changed since the last time it was loaded
             // or is not currently available, start a load.
             forceLoad();
@@ -100,12 +105,12 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(AllGroupsBean allGroupsBean) {
-        super.onCanceled(allGroupsBean);
+    @Override public void onCanceled(AuthTokenResponse token) {
+        super.onCanceled(token);
 
         // At this point we can release the resources associated with 'apps'
         // if needed.
-        onReleaseResources(allGroupsBean);
+        onReleaseResources(token);
     }
 
     /**
@@ -119,9 +124,9 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
 
         // At this point we can release the resources associated with 'apps'
         // if needed.
-        if (mAllGroupsBean != null) {
-            onReleaseResources(mAllGroupsBean);
-            mAllGroupsBean = null;
+        if (mToken != null) {
+            onReleaseResources(mToken);
+            mToken = null;
         }
     }
 
@@ -129,8 +134,7 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(AllGroupsBean allGroupsBean) {
-        // For a simple List<> there is nothing to do.  For something
-        // like a Cursor, we would close it here.
+    protected void onReleaseResources(AuthTokenResponse token) {
+
     }
 }

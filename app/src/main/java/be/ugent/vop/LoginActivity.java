@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -39,13 +40,14 @@ import java.util.concurrent.ExecutionException;
 
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.foursquare.TokenStore;
+import be.ugent.vop.loaders.AuthTokenLoader;
 
-public class LoginActivity extends ActionBarActivity {
+public class LoginActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<AuthTokenResponse> {
 
-    private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";
+    private static final String CLIENT_ID = "PNTT2Y4XCYL35PHKIRLNV0YSO50XHALPX1SBDMAY3BIZWRBA";
     private static final int REQUEST_CODE_FSQ_CONNECT = 200;
     private static final int REQUEST_CODE_FSQ_TOKEN_EXCHANGE = 201;
-    private static final String CLIENT_SECRET = "UQSJN0HCIR0LSBT2PEK3CR331JQJUYSINHZ12MHE0A2CWNNQ";
+    private static final String CLIENT_SECRET = "P5KO0OFRI2Z13GQH0YLS5BS5SYLIYMW21Q1YBSWHP4XJJ5Q5";
 
     public static final String LOGIN_ACTION = "loginaction";
     public static final int LOGIN_FS = 1;
@@ -60,17 +62,7 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  */
-        // NEED TO IMPLEMENT HTTP REQUEST AS ASYNC IN DIFFERENT THREAD !!!!
-        //StrictMode.ThreadPolicy policy = new StrictMode.
-        //        ThreadPolicy.Builder().permitAll().build();
-        //StrictMode.setThreadPolicy(policy);
-        /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  */
-
         setContentView(R.layout.activity_login);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.title_activity_login);
 
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogout = (Button) findViewById(R.id.btnLogout);
@@ -177,15 +169,19 @@ public class LoginActivity extends ActionBarActivity {
         String fsToken = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
         long userId = prefs.getLong(getString(R.string.userid), 0);
 
-        String[] open = {"Open", Long.valueOf(userId).toString(),fsToken};
-        try {
-            String token = ((AuthTokenResponse)new EndpointsAsyncTask(this).execute(open).get()).getAuthToken();
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(getString(R.string.backendtoken), token);
-            editor.commit();
+        Bundle args = new Bundle(2);
+        args.putLong("userId", userId);
+        args.putString("fsToken", fsToken);
 
-            Toast.makeText(getApplicationContext(), "Login on backend successfull!", Toast.LENGTH_LONG).show();
-            finish(); //Dismiss activity
+        try {
+            getSupportLoaderManager().initLoader(0, args, this);
+            //String token = ((AuthTokenResponse)new EndpointsAsyncTask(this).execute(open).get()).getAuthToken();
+            //SharedPreferences.Editor editor = prefs.edit();
+            //editor.putString(getString(R.string.backendtoken), token);
+            //editor.commit();
+
+            //Toast.makeText(getApplicationContext(), "Login on backend successfull!", Toast.LENGTH_LONG).show();
+            //finish(); //Dismiss activity
         } catch (Exception e) {
             //
         }
@@ -332,6 +328,28 @@ public class LoginActivity extends ActionBarActivity {
      End Foursquare API
      **********************************/
 //endregion
+
+
+    @Override
+    public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(getString(R.string.backendtoken), token.toString());
+        editor.commit();
+
+        Toast.makeText(getApplicationContext(), "Login on backend successfull!", Toast.LENGTH_LONG).show();
+        finish(); //Dismiss activity
+    }
+
+    @Override
+    public Loader<AuthTokenResponse> onCreateLoader (int id, Bundle args){
+        AuthTokenLoader mSessionLoader = new AuthTokenLoader(this, args.getLong("userId"),args.getString("fsToken"));
+        return mSessionLoader;
+    }
+
+    @Override
+    public void onLoaderReset(Loader<AuthTokenResponse> loader) {
+
+    }
 }
 
 class GetJSONTask extends AsyncTask<String, Void , String> {
