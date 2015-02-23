@@ -11,6 +11,7 @@ import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,8 @@ public class MainActivity extends ActionBarActivity
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         boolean FStoken = prefs.contains(getString(R.string.foursquaretoken));
         boolean backendToken = prefs.contains(getString(R.string.backendtoken));
+        Log.d("", "test");
+        Log.d("", prefs.getString(getString(R.string.backendtoken), "N.A."));
 
         if(!FStoken){
             Intent loginIntent = new Intent(this, LoginActivity.class);

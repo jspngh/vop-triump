@@ -68,7 +68,12 @@ class EndpointsAsyncTask extends AsyncTask<String, Void, Object> {
                 } catch (IOException e) {
                     return e.getMessage();
                 }
-
+            case "getAllGroups":
+                try {
+                    return myApiService.getAllGroups(params[1]).execute();
+                } catch (IOException e) {
+                    return e.getMessage(); // HAS TO BE THROWN, NOT RETURNED
+                }
             default:
                 return "test";
         }
