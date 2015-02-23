@@ -68,7 +68,7 @@ public class MyEndpoint {
         long userId = _getUserIdForToken(token);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity group = new Entity("Group");
-        group.setProperty("groupName", groupName);
+        group.setProperty("name", groupName);
         group.setProperty("adminId", userId);
 
         Date created = new Date();
