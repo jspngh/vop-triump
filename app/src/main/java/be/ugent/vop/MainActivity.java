@@ -1,6 +1,7 @@
 package be.ugent.vop;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -73,12 +74,14 @@ public class MainActivity extends ActionBarActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, GroupFragment.newInstance(position + 1))
+                    .addToBackStack(null)
                     .commit();
         }else{
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                    .addToBackStack(null)
                     .commit();
         }
     }
@@ -131,6 +134,24 @@ public class MainActivity extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        // initialize variables
+        android.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        // check to see if stack is empty
+        if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack();
+            ft.commit();
+        }
+        else {
+            super.onBackPressed();
+        }
+        return;
     }
 
     /**
