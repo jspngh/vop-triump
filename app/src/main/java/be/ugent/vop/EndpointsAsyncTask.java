@@ -11,13 +11,10 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+
 import java.io.IOException;
 
 import be.ugent.vop.backend.myApi.MyApi;
-
-/**
- * Created by Lars on 22/02/15.
- */
 
 class EndpointsAsyncTask extends AsyncTask<String, Void, Object> {
     private static MyApi myApiService = null;
@@ -44,7 +41,6 @@ class EndpointsAsyncTask extends AsyncTask<String, Void, Object> {
                         }
                     });
             // end options for devappserver
-
             myApiService = builder.build();
         }
 
@@ -78,6 +74,7 @@ class EndpointsAsyncTask extends AsyncTask<String, Void, Object> {
                 return "test";
         }
     }
+
     @Override
     protected void onPostExecute(Object result) {
        dialog.dismiss();

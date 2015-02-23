@@ -1,12 +1,6 @@
 package be.ugent.vop;
 
-/**
- * Created by Lars on 21/02/15.
- */
-
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -25,7 +19,7 @@ import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.loaders.AllGroupsLoader;
 
 
-public class GroupFragment   extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
+public class GroupFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -51,27 +45,9 @@ public class GroupFragment   extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
-        SharedPreferences prefs = this.getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        String backendToken = prefs.getString(getString(R.string.backendtoken), "N.A.");
         groupslistView = (ListView) rootView.findViewById(R.id.groups_list);
 
         getLoaderManager().initLoader(0, null, this);
-
-
-        String[] getAllGroups = {"getAllGroups", backendToken};
-        try {
-            AllGroupsBean AllGroups = (AllGroupsBean)new EndpointsAsyncTask(this.getActivity()).execute(getAllGroups).get();
-            List<GroupBean> Groups = AllGroups.getGroups();
-            Log.d("","Number of groups: " + Groups.size());
-            groupArray = new String[Groups.size()];
-            for(int i = 0; i < Groups.size(); i++){
-                groupArray[i] = Groups.get(i).getName();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        arrayAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_list_item_1, groupArray);
-        groupslistView.setAdapter(arrayAdapter);
 
         return rootView;
     }
@@ -84,7 +60,7 @@ public class GroupFragment   extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public Loader<AllGroupsBean> onCreateLoader(int i, Bundle bundle) {
+    public Loader<AllGroupsBean> onCreateLoader(int id, Bundle bundle) {
         AllGroupsLoader loader = new AllGroupsLoader(getActivity());
         return loader;
     }

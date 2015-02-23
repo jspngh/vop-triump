@@ -15,9 +15,6 @@ import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 
-/**
- * Created by siebe on 23/02/15.
- */
 public class BackendAPI {
     public static BackendAPI instance;
 
