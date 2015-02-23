@@ -51,27 +51,9 @@ public class GroupFragment   extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
-        SharedPreferences prefs = this.getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        String backendToken = prefs.getString(getString(R.string.backendtoken), "N.A.");
         groupslistView = (ListView) rootView.findViewById(R.id.groups_list);
 
         getLoaderManager().initLoader(0, null, this);
-
-
-        String[] getAllGroups = {"getAllGroups", backendToken};
-        try {
-            AllGroupsBean AllGroups = (AllGroupsBean)new EndpointsAsyncTask(this.getActivity()).execute(getAllGroups).get();
-            List<GroupBean> Groups = AllGroups.getGroups();
-            Log.d("","Number of groups: " + Groups.size());
-            groupArray = new String[Groups.size()];
-            for(int i = 0; i < Groups.size(); i++){
-                groupArray[i] = Groups.get(i).getName();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        arrayAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_list_item_1, groupArray);
-        groupslistView.setAdapter(arrayAdapter);
 
         return rootView;
     }
