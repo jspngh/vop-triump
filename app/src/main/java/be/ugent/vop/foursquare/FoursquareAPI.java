@@ -52,44 +52,55 @@ public class FoursquareAPI {
         return instance;
     }
 
-    public ArrayList<FoursquareVenue> getNearBy(double longitude, double latitude/*toevoegen radius*/) {
-        ArrayList<FoursquareVenue> venueList = new ArrayList<FoursquareVenue>();
-
-        String URL = API_URL + "/venues/search?ll=" + longitude + "," + latitude + "&oauth_token=" + "OMUUX4BHXRTBNRLJ2QVQMC4UGRRR5TESI1XD02I4GCMV3G21" + "&v=" + VERSION + "&m=" + MODE;
+    public ArrayList<FoursquareVenue> getNearby(double longitude, double latitude/*toevoegen radius*/)  {
+        String URL =API_URL + "/venues/search?ll=" + longitude +","+ latitude+ "&oauth_token=" 		+"OMUUX4BHXRTBNRLJ2QVQMC4UGRRR5TESI1XD02I4GCMV3G21" + "&v=" + VERSION+ "&m=" + MODE;
 		/* OPGELET: token is hier hard gecodeerd, moet nog aangepast worden! */
+
+        ArrayList<FoursquareVenue> venueList = new ArrayList<>();
+
         try {
             String response = request(URL);
-            JSONObject jsonObject = new JSONObject(response);
+            JSONArray venues = new JSONObject(response).getJSONObject("response").getJSONArray("venues");
 
-            JSONArray venuesJSON = (JSONArray) jsonObject.getJSONObject("response").getJSONArray("venues");
-                    for (int j = 0; j < venuesJSON.length(); j++) {
-                        JSONObject item = (JSONObject) venuesJSON.get(j);
+            int numVenues = venues.length();
+            if (numVenues > 0) {
+                for (int i = 0; i < numVenues; i++) {
+                    JSONObject venue = venues.getJSONObject(i);
 
-                        FoursquareVenue venue = new FoursquareVenue();
+                    FoursquareVenue v = new FoursquareVenue();
+                    v.id = venue.getString("id");
+                    v.name = venue.getString("name");
 
-                        venue.id = item.getString("id");
-                        venue.name = item.getString("name");
+                    JSONObject location = venue.getJSONObject("location");
 
-                        JSONObject location = (JSONObject) item.getJSONObject("location");
+                    Location loc = new Location(LocationManager.GPS_PROVIDER);
 
-                        Location loc = new Location(LocationManager.GPS_PROVIDER);
+                    loc.setLatitude(Double.valueOf(location.getString("lat")));
+                    loc.setLongitude(Double.valueOf(location.getString("lng")));
 
-                        loc.setLatitude(Double.valueOf(location.getString("lat")));
-                        loc.setLongitude(Double.valueOf(location.getString("lng")));
+                    v.location = loc;
+                    v.address = location.getString("address");
+                    v.distance = location.getInt("distance");
 
-                        venue.location = loc;
-                        venue.address = location.getString("address");
-                        venue.distance = location.getInt("distance");
-                        venue.herenow = item.getJSONObject("hereNow").getInt("count");
-
-                        venueList.add(venue);
+                    if(venue.has("hereNow")){ // hereNow is optional in response
+                        JSONObject hereNow = venue.getJSONObject("hereNow");
+                        v.herenow = hereNow.getInt("count");
+                        JSONArray groups = hereNow.getJSONArray("groups");
+                        if(groups.length() > 0)
+                            v.type = groups.getJSONObject(0).getString("type");
                     }
-        }catch(Exception e){
-        e.printStackTrace();
-    }
-            return venueList;
-    }
 
+                    venueList.add(v);
+                }
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return venueList;
+    }
 
     private String request(String URL) throws IOException {
         String response = "";
