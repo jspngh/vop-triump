@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         boolean FStoken = prefs.contains(getString(R.string.foursquaretoken));
         boolean backendToken = prefs.contains(getString(R.string.backendtoken));
-        Log.d("", "test");
+
         Log.d("", prefs.getString(getString(R.string.backendtoken), "N.A."));
 
         if(!FStoken){
