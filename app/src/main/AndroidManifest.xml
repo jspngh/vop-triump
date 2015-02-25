@@ -34,6 +34,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="be.ugent.vop.MainActivity" />
         </activity>
+        <activity
+            android:name=".LeaderboardsActivity"
+            android:label="@string/title_activity_leaderboards"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="be.ugent.vop.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
