@@ -27,11 +27,12 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
 
 
-public class VenueFragment extends ListFragment implements
+public class VenueFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
     private static final String TAG = "VenueFragment";
     private static final boolean DEBUG = true;
 
+    private static final String ARG_SECTION_NUMBER = "section_number";
     private ListView venueListView;
     private ArrayAdapter arrayAdapter;
     private String[] venueArray;
@@ -40,13 +41,33 @@ public class VenueFragment extends ListFragment implements
     // just 1 loader so ID not important...
     private static final int LOADER_ID = 0;
 
+
+    private MainActivity mainActivity = null;
+
+    public VenueFragment()
+    {
+
+    }
+
+    public static VenueFragment newInstance(int sectionNumber) {
+        VenueFragment fragment = new VenueFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
         venueListView = (ListView) rootView.findViewById(R.id.groups_list);
 
-        getLoaderManager().initLoader(0, null, this);
+
+
+        // HIER zit de fout
+      //  getLoaderManager().initLoader(0, null, this);
 
         return rootView;
     }
@@ -69,7 +90,7 @@ public class VenueFragment extends ListFragment implements
         venueArray = new String[data.size()];
 
         for(int i=0;i<data.size();i++){
-            venueArray[i]=data.get(i).name;
+            venueArray[i]=data.get(i).getName();
         }
 
         arrayAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_list_item_1, venueArray);

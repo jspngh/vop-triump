@@ -29,6 +29,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
      */
     @Override public  ArrayList<FoursquareVenue> loadInBackground() {
         ArrayList<FoursquareVenue> venueList;
+
         // nog kunnen doorgeven van argumenten longitude en latitude!
         venueList = FoursquareAPI.get(getContext()).getNearby(50.0,4.0);
 
