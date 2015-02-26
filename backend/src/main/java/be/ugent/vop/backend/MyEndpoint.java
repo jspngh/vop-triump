@@ -32,6 +32,7 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.inject.Named;
 
@@ -130,6 +131,24 @@ public class MyEndpoint {
 
         return response;
     }
+
+    @ApiMethod(name = "checkInVenue")
+    public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException {
+     //check usertoken
+        if(!(_existingVenue(venueId))){
+        _createVenue(venueId);
+        }
+        _updateVenueRanking(venueId,groupId);
+        try {
+            return _getVenueBean(venueId);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Sorry, we screwed something up...");
+        }
+
+
+    }
+
 
     @ApiMethod(name = "getAuthToken")
     public AuthTokenResponse getAuthToken(@Named("fsUserID") long fsUserId, @Named("fsToken") String fsToken) throws UnauthorizedException, InternalServerErrorException{
@@ -320,4 +339,70 @@ public class MyEndpoint {
 
         return result;
     }
+
+    private VenueBean _getVenueBean(String venueId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key venueKey = KeyFactory.createKey("Venue", venueId);
+        Entity venue = datastore.get(venueKey);
+
+        return _getVenueBean(venue);
+    }
+
+    private VenueBean _getVenueBean(Entity venue){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        VenueBean venuebean = new VenueBean();
+        venuebean.setVenueId((String)venue.getProperty("venueId"));
+        venuebean.setRanking((HashMap<Long,Long>) venue.getProperty("ranking"));
+
+        return venuebean;
+    }
+
+    private void _createVenue(String venueId) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity venue = new Entity("Venue");
+        venue.setProperty("venueId", venueId);
+        HashMap<Long,String> ranking = new HashMap<Long,String>();
+        venue.setProperty("ranking", ranking);
+        datastore.put(venue);
+    }
+
+    private boolean _existingVenue(String venueId) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query.Filter propertyFilter =
+                new Query.FilterPredicate("venueId",
+                        Query.FilterOperator.EQUAL,
+                        venueId);
+
+        Query q = new Query("Venue").setFilter(propertyFilter);
+
+        PreparedQuery pq = datastore.prepare(q);
+
+        if(pq.countEntities()!=0){
+            return true;
+        }
+        return false;
+    }
+
+    private void _updateVenueRanking(String venueId,long groupId){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        VenueBean venue = null;
+        try {
+            venue = _getVenueBean(venueId);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
+        HashMap<Long,Long> ranking = venue.getRanking();
+        if(ranking.containsKey(groupId)){
+            ranking.replace(groupId, ranking.get(groupId)+1);
+        }else{
+            ranking.put(groupId,new Long(1));
+        }
+        venue.setRanking(ranking);
+       //waarde in datastore moet nog geupdate worden.
+       // datastore.put(venue);
+
+
+
+    }
+
 }
