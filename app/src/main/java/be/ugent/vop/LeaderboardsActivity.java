@@ -12,6 +12,7 @@ public class LeaderboardsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboards);
 
+        overridePendingTransition(0, 0);
     }
 
     @Override

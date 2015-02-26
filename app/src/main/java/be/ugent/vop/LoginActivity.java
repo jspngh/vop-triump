@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutionException;
 
+import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.foursquare.TokenStore;
 import be.ugent.vop.loaders.AuthTokenLoader;
@@ -63,6 +64,8 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
+
+        Log.d("LOGIN ACTIVITY", "starting");
 
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogout = (Button) findViewById(R.id.btnLogout);
@@ -333,8 +336,11 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(getString(R.string.backendtoken), token.toString());
+        Log.d("FUCK LOGIN", token.getAuthToken());
+        editor.putString(getString(R.string.backendtoken), token.getAuthToken());
         editor.commit();
+
+        BackendAPI.get(this).setToken(token.getAuthToken());
 
         Toast.makeText(getApplicationContext(), "Login on backend successfull!", Toast.LENGTH_LONG).show();
         finish(); //Dismiss activity

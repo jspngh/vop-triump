@@ -2,9 +2,9 @@ package be.ugent.vop;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +28,8 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
     private ListView groupslistView;
     private ArrayAdapter arrayAdapter;
     private String[] groupArray;
+
+    private MainActivity mainActivity = null;
     public GroupFragment()
     {
 

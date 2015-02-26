@@ -28,5 +28,11 @@
     <string name="navdrawer_item_logout">Sign out</string>
     <string name="title_activity_leaderboards">Leaderboards</string>
 
+    <string-array name="main_tabs">
+        <item>Overview</item>
+        <item>Checkin</item>
+        <item>Group</item>
+    </string-array>
+
 
 </resources>

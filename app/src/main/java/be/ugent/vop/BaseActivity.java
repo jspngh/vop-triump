@@ -159,6 +159,8 @@ public abstract class BaseActivity extends ActionBarActivity {
         mLUtils = LUtils.getInstance(this);
         mThemedStatusBarColor = getResources().getColor(R.color.theme_primary_dark);
         mNormalStatusBarColor = mThemedStatusBarColor;
+
+        startLoginProcess();
     }
 
 
@@ -460,8 +462,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     public void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
-
-        startLoginProcess();
     }
 
 
@@ -476,10 +476,12 @@ public abstract class BaseActivity extends ActionBarActivity {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             loginIntent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGIN_FS);
             startActivity(loginIntent);
+            finish();
         }else if(!backendToken) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             loginIntent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGIN_BACKEND);
             startActivity(loginIntent);
+            finish();
         }
     }
 
@@ -531,6 +533,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         boolean shouldShow = currentY < mActionBarAutoHideMinY ||
                 (mActionBarAutoHideSignal <= -mActionBarAutoHideSensivity);
+
+        Log.d("ACTIONBAR", shouldShow?"yes":"no");
         autoShowOrHideActionBar(shouldShow);
     }
 
@@ -650,6 +654,17 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    protected void registerHideableHeaderView(View hideableHeaderView) {
+        if (!mHideableHeaderViews.contains(hideableHeaderView)) {
+            mHideableHeaderViews.add(hideableHeaderView);
+        }
+    }
+    protected void deregisterHideableHeaderView(View hideableHeaderView) {
+        if (mHideableHeaderViews.contains(hideableHeaderView)) {
+            mHideableHeaderViews.remove(hideableHeaderView);
+        }
     }
 
     public LUtils getLUtils() {

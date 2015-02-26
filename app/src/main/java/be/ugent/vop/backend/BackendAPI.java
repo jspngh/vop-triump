@@ -2,6 +2,7 @@ package be.ugent.vop.backend;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -26,10 +27,16 @@ public class BackendAPI {
             SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
             token = prefs.getString(context.getString(R.string.backendtoken), "N.A.");
 
+            Log.d("FUCK YOU", token);
+
             instance = new BackendAPI();
         }
 
         return instance;
+    }
+
+    public void setToken(String token){
+        this.token = token;
     }
 
     private BackendAPI(){
