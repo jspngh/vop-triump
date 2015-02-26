@@ -161,7 +161,11 @@ public class MyEndpoint {
 
             long returnedUserId = user.getInt("id");
             String firstName = user.getString("firstName");
-            String lastName = user.getString("lastName");
+            String lastName = "";
+
+            if(user.has("lastName"))
+                lastName = user.getString("lastName");
+
             JSONObject contact = user.getJSONObject("contact");
             String email = contact.getString("email");
 
@@ -201,13 +205,13 @@ public class MyEndpoint {
             reader.close();
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException("Whoops, we screwed something up :(");
+            throw new InternalServerErrorException("Whoops, we screwed something up :( MalformedURLException \n" + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException("Whoops, we screwed something up :(");
+            throw new InternalServerErrorException("Whoops, we screwed something up :( IOException \n" + e.getMessage());
         } catch (JSONException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException("Whoops, we screwed something up :(");
+            throw new InternalServerErrorException("Whoops, we screwed something up :( JSONException \n" + e.getMessage());
         }
 
 
