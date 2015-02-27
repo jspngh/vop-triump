@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
+import be.ugent.vop.ui.main.MainActivity;
 
 
 public class VenueFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
