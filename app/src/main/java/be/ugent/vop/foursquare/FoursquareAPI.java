@@ -53,11 +53,12 @@ public class FoursquareAPI {
     }
 
     public ArrayList<FoursquareVenue> getNearby(double longitude, double latitude/*toevoegen radius*/)  {
-        String URL =API_URL + "/venues/search?ll=" + longitude +","+ latitude+ "&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
+        String url =API_URL + "/venues/search?ll=" + longitude +","+ latitude+ "&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
+        Log.d("FoursquareAPI", url);
         ArrayList<FoursquareVenue> venueList = new ArrayList<>();
 
         try {
-            String response = request(URL);
+            String response = request(url);
             JSONArray venues = new JSONObject(response).getJSONObject("response").getJSONArray("venues");
 
             int numVenues = venues.length();
@@ -101,52 +102,9 @@ public class FoursquareAPI {
         return venueList;
     }
 
-    public int checkin(FoursquareVenue checkinVenue)  {
-       /* String URL =API_URL + "/checkins/add?venueId="+checkinVenue.id+"&oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
-        ArrayList<FoursquareVenue> venueList = new ArrayList<>();
-
-        try {
-            String response = request(URL);
-            JSONArray venues = new JSONObject(response).getJSONObject("response").getJSONArray("venues");
-
-            int numVenues = venues.length();
-            for (int i = 0; i < numVenues; i++) {
-                JSONObject venue = venues.getJSONObject(i);
-
-                FoursquareVenue v = new FoursquareVenue();
-                v.id = venue.getString("id");
-                v.name = venue.getString("name");
-
-                JSONObject location = venue.getJSONObject("location");
-
-                Location loc = new Location(LocationManager.GPS_PROVIDER);
-
-                loc.setLatitude(Double.valueOf(location.getString("lat")));
-                loc.setLongitude(Double.valueOf(location.getString("lng")));
-
-                v.location = loc;
-                v.address = location.getString("address");
-                v.distance = location.getInt("distance");
-
-                if(venue.has("hereNow")){ // hereNow is optional in response
-                    JSONObject hereNow = venue.getJSONObject("hereNow");
-                    v.herenow = hereNow.getInt("count");
-                    JSONArray groups = hereNow.getJSONArray("groups");
-                    if(groups.length() > 0)
-                        v.type = groups.getJSONObject(0).getString("type");
-                }
-
-                venueList.add(v);
-            }
-        } catch(IOException e){
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        */
-        return 1;
+    public String getPhotoURL(FoursquareVenue venue){
+        return "";
     }
-
 
 
     private String request(String URL) throws IOException {
