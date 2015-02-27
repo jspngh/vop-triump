@@ -2,6 +2,8 @@ package be.ugent.vop.loaders;
 
 import android.content.Context;
 import android.content.AsyncTaskLoader;
+import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -37,7 +39,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
     public ArrayList<FoursquareVenue> loadInBackground() {
         ArrayList<FoursquareVenue> result = null;
         Log.d("VenueLoader", " "+i );
-        result = FoursquareAPI.get(context).getNearby(50.0,4.0+i);
+        result = FoursquareAPI.get(context).getNearbyVenues();
 
         // Done!
         return result;

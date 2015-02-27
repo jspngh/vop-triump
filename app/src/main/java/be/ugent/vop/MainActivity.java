@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
@@ -73,7 +74,7 @@ public class MainActivity extends BaseActivity {
         }
         @Override
         public Fragment getItem(int position) {
-            //LOGD(TAG, "Creating fragment #" + position);
+            Log.d("MainActivity", "Creating fragment #" + position);
             if(position==2) return new VenueFragment();
             else return new GroupFragment();
         }
