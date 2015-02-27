@@ -61,6 +61,7 @@ public class BackendAPI {
     }
 
     public AuthTokenResponse getAuthToken(long fsUserId, String fsToken) throws IOException {
+        Log.d("FUCK AUTH TOKEN", fsToken + fsUserId);
         return myApiService.getAuthToken(fsUserId,fsToken).execute();
     }
 

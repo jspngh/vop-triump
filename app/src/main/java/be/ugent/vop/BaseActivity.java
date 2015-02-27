@@ -49,6 +49,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.LUtils;
 
 import static be.ugent.vop.utils.LogUtils.makeLogTag;

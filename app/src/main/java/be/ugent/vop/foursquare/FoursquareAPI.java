@@ -35,6 +35,8 @@ public class FoursquareAPI {
     private static final String VERSION = "20150101";
     private static final String MODE = "foursquare";
 
+    private static Context context;
+
     private static FoursquareAPI instance;
 
     private boolean DEBUG = true;
@@ -47,12 +49,28 @@ public class FoursquareAPI {
             SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
             FSQToken = prefs.getString(context.getString(R.string.foursquaretoken), "N.A.");
             instance= new FoursquareAPI();
+            context = context;
             instance.FSQToken=FSQToken;
         }
         return instance;
     }
 
-    public ArrayList<FoursquareVenue> getNearby(double longitude, double latitude/*toevoegen radius*/)  {
+    public ArrayList<FoursquareVenue> getNearbyVenues()  {
+        //default coordinates (Brussels) in case GPS Provider is disabled
+        double longitude=50.8467104;
+        double latitude=4.3526391;
+
+
+        LocationManager lm = (LocationManager)
+                context.getSystemService(Context.LOCATION_SERVICE);
+        Location locationGPS = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+
+        if(locationGPS != null){
+            longitude = locationGPS.getLongitude();
+            latitude = locationGPS.getLatitude();
+        }
+
         String url =API_URL + "/venues/search?ll=" + longitude +","+ latitude+ "&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
         Log.d("FoursquareAPI", url);
         ArrayList<FoursquareVenue> venueList = new ArrayList<>();

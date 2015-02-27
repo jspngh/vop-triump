@@ -17,6 +17,7 @@ import java.util.List;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.loaders.AllGroupsLoader;
+import be.ugent.vop.ui.main.MainActivity;
 
 
 public class GroupFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {

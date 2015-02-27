@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
+import be.ugent.vop.ui.main.MainActivity;
 
 
 public class VenueFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
@@ -67,7 +68,7 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> objectLoader, ArrayList<FoursquareVenue> venueList) {
-        Log.d("","Number of groups: " + venueList.size());
+        Log.d("","Number of venues: " + venueList.size());
         venueArray = new String[venueList.size()];
         for(int i = 0; i < venueList.size(); i++){
             venueArray[i] = venueList.get(i).getName();
