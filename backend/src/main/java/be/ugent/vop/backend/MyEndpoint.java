@@ -242,11 +242,15 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "closeSession")
-    public void closeSession( @Named("token") String token){
+    public CloseSessionResponse closeSession( @Named("token") String token){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         Key userKey = KeyFactory.createKey("Session", token);
         datastore.delete(userKey);
+
+        CloseSessionResponse response = new CloseSessionResponse();
+        response.setMessage("Success");
+        return response;
     }
 
     /**
@@ -392,7 +396,7 @@ public class MyEndpoint {
         }
         HashMap<Long,Long> ranking = (HashMap<Long,Long>)venue.getProperty("ranking");
         if(ranking.containsKey(groupId)){
-            ranking.put(groupId, ranking.get(groupId)+1);
+            ranking.put(groupId, ranking.get(groupId) + 1);
         }else{
             ranking.put(groupId,new Long(1));
         }

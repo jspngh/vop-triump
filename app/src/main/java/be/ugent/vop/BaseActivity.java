@@ -218,6 +218,8 @@ public abstract class BaseActivity extends ActionBarActivity {
                     invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 }
             };
+
+
             mDrawerLayout.setDrawerListener(mDrawerToggle);
             mDrawerToggle.syncState();
         }
@@ -349,6 +351,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
