@@ -43,7 +43,7 @@ import com.google.android.gms.location.LocationServices;
 
 import be.ugent.vop.R;
 
-public class FoursquareAPI implements GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class FoursquareAPI {
 
     private String FSQToken;
     private final String API_URL = "https://api.foursquare.com/v2";
@@ -52,24 +52,15 @@ public class FoursquareAPI implements GoogleApiClient.ConnectionCallbacks,Google
 
     private Context context;
 
-    // Google Location services
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
-    private Location mLastLocation;
-    private double mLatitude;
-    private double mLongitude;
 
     private static FoursquareAPI instance;
 
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
 
     private FoursquareAPI(Context context){
         SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         this.FSQToken = prefs.getString(context.getString(R.string.foursquaretoken), "N.A.");
         this.context = context;
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
-
     }
 
 
@@ -86,9 +77,6 @@ public class FoursquareAPI implements GoogleApiClient.ConnectionCallbacks,Google
         double longitude=50.8467104;
         double latitude=4.3526391;
 
-        if(mLastLocation!=null){
-            Log.d("Foursquare API", "lastLocation not null");
-        }
 
         String url =API_URL + "/venues/search?ll=" + longitude +","+ latitude+ "&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
         Log.d("FoursquareAPI", url);
@@ -157,7 +145,6 @@ public class FoursquareAPI implements GoogleApiClient.ConnectionCallbacks,Google
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoInput(true);
             urlConnection.connect();
-            Log.d("request.fsqapi", "Response Code: " + urlConnection.getResponseCode());
             response = streamToString(urlConnection.getInputStream());
 
         } catch (Exception ex) {
@@ -192,81 +179,6 @@ public class FoursquareAPI implements GoogleApiClient.ConnectionCallbacks,Google
         return str;
     }
 
-    /**
-     *  Google API builder
-     *
-     *************************************/
-
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        createLocationRequest();
-
-    }
-
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest()
-                .setInterval(5000)
-                .setFastestInterval(5000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-    /**
-    *
-    *   Google location services override methodes
-    *
-     ***********************************/
-
-    protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient , mLocationRequest, this);
-    }
-
-    protected void stopLocationUpdates() {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-    }
-
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-       mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        Log.d("Foursquare API","Hello");
-        if (mLastLocation != null) {
-           mLatitude =  mLastLocation.getLatitude();
-           mLongitude = mLastLocation.getLongitude();
-            Log.d("Foursquare API","lat: "+mLatitude+" long:"+mLongitude);
-        }
-
-        startLocationUpdates();
-    }
-
-
-    @Override
-    public void onConnectionSuspended(int nr){
-        mLastLocation = null;
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-        // onConnectionFailed.
-        Log.i("Foursquare API", "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d("Foursquare API", "Location changed");
-        mLastLocation = location;
-        getNearbyVenues();
-    }
 }
 
 

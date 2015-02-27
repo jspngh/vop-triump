@@ -82,4 +82,9 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onLoaderReset(Loader<ArrayList<FoursquareVenue>> objectLoader) {
 
     }
+
+    // Gaan we ook werken met een Observerpatroon?
+    public void update(){
+        getLoaderManager().getLoader(0).onContentChanged();
+    }
 }
