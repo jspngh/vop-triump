@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
+
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.GroupFragment;
 import be.ugent.vop.R;
+
+import be.ugent.vop.VenueFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
 
 public class MainActivity extends BaseActivity {
@@ -78,6 +81,8 @@ public class MainActivity extends BaseActivity {
             switch(position){
                 case 0:
                     return new OverviewFragment();
+                case 2:
+                    return new VenueFragment();
             }
             GroupFragment frag = new GroupFragment();
             return frag;

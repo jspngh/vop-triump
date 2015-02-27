@@ -1,25 +1,31 @@
 package be.ugent.vop.loaders;
 
-
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+import android.content.AsyncTaskLoader;
+import android.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.backend.myApi.MyApi;
+import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
-
 /**
- * Created by vincent on 24/02/15.
+ * A custom Loader that loads all of the installed applications.
  */
-
 public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
 
+    private int i = 0;
     ArrayList<FoursquareVenue> mVenueList;
+    private static MyApi myApiService = null;
+    private Context context;
 
     public VenueLoader(Context context) {
         super(context);
+        this.context = context.getApplicationContext();
     }
 
     /**
@@ -27,12 +33,14 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
      * called in a background thread and should generate a new set of
      * data to be published by the loader.
      */
-    @Override public  ArrayList<FoursquareVenue> loadInBackground() {
-        ArrayList<FoursquareVenue> venueList;
-        // nog kunnen doorgeven van argumenten longitude en latitude!
-        venueList = FoursquareAPI.get(getContext()).getNearby(50.0,4.0);
+    @Override
+    public ArrayList<FoursquareVenue> loadInBackground() {
+        ArrayList<FoursquareVenue> result = null;
+        Log.d("VenueLoader", " "+i );
+        result = FoursquareAPI.get(context).getNearby(50.0,4.0+i);
 
-        return venueList;
+        // Done!
+        return result;
     }
 
     /**
@@ -40,28 +48,12 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult(ArrayList<FoursquareVenue> venueList) {
-        if (isReset()) {
-            // An async query came in while the loader is stopped.  We
-            // don't need the result.
-            if (venueList != null) {
-                //  onReleaseResources(venueList);
-            }
-        }
-        ArrayList<FoursquareVenue> oldVenueList = venueList;
+    @Override public void deliverResult( ArrayList<FoursquareVenue> venueList) {
         mVenueList = venueList;
-
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
             // deliver its results.
             super.deliverResult(venueList);
-        }
-
-        // At this point we can release the resources associated with
-        // 'oldApps' if needed; now that the new result is delivered we
-        // know that it is no longer in use.
-        if (oldVenueList != null) {
-            // onReleaseResources(oldVenueList);
         }
     }
 
@@ -95,7 +87,6 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
      */
     @Override public void onCanceled(ArrayList<FoursquareVenue> venueList) {
         super.onCanceled(venueList);
-
     }
 
     /**
@@ -113,7 +104,5 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
             mVenueList = null;
         }
     }
-
-
 
 }
