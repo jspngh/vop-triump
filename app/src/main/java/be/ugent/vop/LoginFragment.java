@@ -1,22 +1,23 @@
 package be.ugent.vop;
 
 import android.app.Activity;
+import android.net.Uri;
+import android.os.Bundle;
+import android.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.foursquare.android.nativeoauth.FoursquareCancelException;
 import com.foursquare.android.nativeoauth.FoursquareDenyException;
@@ -48,31 +49,8 @@ import be.ugent.vop.foursquare.TokenStore;
 import be.ugent.vop.loaders.AuthTokenLoader;
 import be.ugent.vop.loaders.EndSessionLoader;
 
-public class LoginActivity extends Activity implements LoginFragment.OnFragmentInteractionListener{
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+public class LoginFragment extends Fragment {
 
-        if (getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-            // If the screen is now in landscape mode, we can show the
-            // dialog in-line with the list so we don't need this activity.
-            finish();
-            return;
-        }
-
-        if (savedInstanceState == null) {
-            // During initial setup, plug in the details fragment.
-            LoginFragment login = new LoginFragment();
-            login.setArguments(getIntent().getExtras());
-            getFragmentManager().beginTransaction().add(android.R.id.content, login).commit();
-        }
-    }
-
-    public void onFragmentInteraction(Uri uri){
-        
-    }
-/*
     private static final String CLIENT_ID = "PNTT2Y4XCYL35PHKIRLNV0YSO50XHALPX1SBDMAY3BIZWRBA";
     private static final int REQUEST_CODE_FSQ_CONNECT = 200;
     private static final int REQUEST_CODE_FSQ_TOKEN_EXCHANGE = 201;
@@ -87,25 +65,69 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
     private TextView logInMessage;
     private SharedPreferences prefs;
 
-    private final Context context = this;
+    private Context context = null;
     private static final int AUTH_TOKEN_LOADER = 1;
     private static final int END_SESSION_LOADER = 2;
 
+    private OnFragmentInteractionListener mListener;
+
+    public static LoginFragment newInstance() {
+        LoginFragment fragment = new LoginFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public LoginFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_login);
-
         Log.d("LOGIN ACTIVITY", "starting");
+    }
 
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnLogout = (Button) findViewById(R.id.btnLogout);
-        logInMessage = (TextView) findViewById(R.id.logInMessage);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
+        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
+        logInMessage = (TextView) rootView.findViewById(R.id.logInMessage);
+        return rootView;
+    }
 
-        prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
 
-        int loginAction = getIntent().getExtras().getInt(LOGIN_ACTION);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        context = getActivity();
+        prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+
+        int loginAction = getActivity().getIntent().getExtras().getInt(LOGIN_ACTION);
         switch(loginAction){
             case LOGIN_FS:
                 startFoursquareLogin();
@@ -120,8 +142,19 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
         }
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * See http://developer.android.com/training/basics/fragments/communicating.html for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        public void onFragmentInteraction(Uri uri);
+    }
+
     private void getUserId (){
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
         String base = "https://api.foursquare.com/v2/users/self?oauth_token=";
         String version = "&v=20150221";
@@ -130,7 +163,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
             @Override
             public void handleMessage(Message msg){
                 if(msg.what == 1)
-                performBackendTokenExchange();
+                    performBackendTokenExchange();
             }
         };
         Runnable runnable = new Runnable(){
@@ -164,7 +197,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
                 try {
                     JSONObject jsonObject = new JSONObject(userInfo);
                     String userId = jsonObject.getJSONObject("response").getJSONObject("user").getString("id");
-                    SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+                    SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putLong(getString(R.string.userid), Long.valueOf(userId).longValue());
                     editor.commit();
@@ -178,11 +211,9 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
     }
 
     //region Foursquare API
-    */
-/**********************************
+    /**********************************
      Start Foursquare API
-     **********************************//*
-
+     **********************************/
 
     private void startFoursquareLogin(){
 
@@ -204,13 +235,13 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
             @Override
             public void onClick(View v) {
                 // Start the native auth flow.
-                Intent intent = FoursquareOAuth.getConnectIntent(LoginActivity.this, CLIENT_ID);
+                Intent intent = FoursquareOAuth.getConnectIntent(context, CLIENT_ID);
 
                 // If the device does not have the Foursquare app installed, we'd
                 // get an intent back that would open the Play Store for download.
                 // Otherwise we start the auth flow.
                 if (FoursquareOAuth.isPlayStoreIntent(intent)) {
-                    toastMessage(LoginActivity.this, getString(R.string.app_not_installed_message));
+                    Log.e("onClick :", getString(R.string.app_not_installed_message));
                     startActivity(intent);
                 } else {
                     startActivityForResult(intent, REQUEST_CODE_FSQ_CONNECT);
@@ -243,7 +274,6 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
     }
 
     private void closeBackendSession(){
-*/
 /*        final Context context = this;
         Runnable runnable = new Runnable () {
             @Override
@@ -258,8 +288,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
 
             }
         };
-        new Thread(runnable).start();*//*
-
+        new Thread(runnable).start();*/
         getLoaderManager().initLoader(END_SESSION_LOADER, null, mEndSessionLoaderListener);
 //        String token = prefs.getString(getString(R.string.backendtoken), "N.A.");
 //        String[] close = {"Close", token};
@@ -286,7 +315,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_FSQ_CONNECT:
                 onCompleteConnect(resultCode, data);
@@ -313,29 +342,28 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
         } else {
             if (exception instanceof FoursquareCancelException) {
                 // Cancel.
-                toastMessage(this, "Canceled");
+                Log.e("onCompleteConnect:", "Canceled");
 
             } else if (exception instanceof FoursquareDenyException) {
                 // Deny.
-                toastMessage(this, "Denied");
+                Log.e("onCompleteConnect:", "Denied");
 
             } else if (exception instanceof FoursquareOAuthException) {
                 // OAuth error.
                 String errorMessage = exception.getMessage();
                 String errorCode = ((FoursquareOAuthException) exception).getErrorCode();
-                toastMessage(this, errorMessage + " [" + errorCode + "]");
+                Log.e("onCompleteConnect:", errorMessage + " [" + errorCode + "]");
 
             } else if (exception instanceof FoursquareUnsupportedVersionException) {
                 // Unsupported Fourquare app version on the device.
-                toastError(this, exception);
+                Log.e("onCompleteConnect:", "Foursquare version unsupported");
 
             } else if (exception instanceof FoursquareInvalidRequestException) {
                 // Invalid request.
-                toastError(this, exception);
-
+                Log.e("onCompleteConnect:", "Invalid Request");
             } else {
                 // Error.
-                toastError(this, exception);
+                Log.e("onCompleteConnect:", "Error");
             }
         }
     }
@@ -352,7 +380,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
             // Persist the token for later use. In this example, we save
             // it to shared prefs.
             TokenStore.get().setToken(accessToken);
-            SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+            SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
 
             editor.putString(getString(R.string.foursquaretoken), accessToken);
@@ -367,47 +395,32 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
                 // OAuth error.
                 String errorMessage = (exception).getMessage();
                 String errorCode = ((FoursquareOAuthException) exception).getErrorCode();
-                toastMessage(this, errorMessage + " [" + errorCode + "]");
-
+                Log.e("CompleteTokenExchange:", errorMessage + " [" + errorCode + "]");
             } else {
                 // Other exception type.
-                toastError(this, exception);
             }
         }
     }
 
-    */
-/**
+    /**
      * Exchange a code for an OAuth Token. Note that we do not recommend you
      * do this in your app, rather do the exchange on your server. Added here
      * for demo purposes.
      *
      * @param code
      *          The auth code returned from the native auth flow.
-     *//*
-
+     */
     private void performTokenExchange(String code) {
-        Intent intent = FoursquareOAuth.getTokenExchangeIntent(this, CLIENT_ID, CLIENT_SECRET, code);
+        Intent intent = FoursquareOAuth.getTokenExchangeIntent(context, CLIENT_ID, CLIENT_SECRET, code);
         startActivityForResult(intent, REQUEST_CODE_FSQ_TOKEN_EXCHANGE);
     }
 
-    public static void toastMessage(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public static void toastError(Context context, Throwable t) {
-        Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
-    }
-
-    */
-/**********************************
+    /**********************************
      End Foursquare API
-     **********************************//*
-
+     **********************************/
 //endregion
 
 
-*/
 /*    @Override
     public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
         SharedPreferences.Editor editor = prefs.edit();
@@ -430,8 +443,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
     @Override
     public void onLoaderReset(Loader<AuthTokenResponse> loader) {
 
-    }*//*
-
+    }*/
 
     private LoaderManager.LoaderCallbacks<AuthTokenResponse> mAuthTokenLoaderListener
             = new LoaderManager.LoaderCallbacks<AuthTokenResponse>() {
@@ -444,7 +456,9 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
 
             BackendAPI.get(context).setToken(token.getAuthToken());
 
-            Toast.makeText(getApplicationContext(), "Login on backend successfull!", Toast.LENGTH_LONG).show();
+            Intent loginIntent = new Intent(context, MainActivity.class);
+            startActivity(loginIntent);
+            getActivity().finish();
         }
 
         @Override
@@ -477,9 +491,5 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
 
         }
     };
-*/
 
 }
-
-
-

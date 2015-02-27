@@ -1,7 +1,7 @@
 package be.ugent.vop.loaders;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+import android.content.AsyncTaskLoader;
 import android.util.Log;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class AuthTokenLoader extends AsyncTaskLoader<AuthTokenResponse> {
         try{
             result = BackendAPI.get(context).getAuthToken(userId, fsToken);
         } catch(IOException e){
-            Log.d("OpenSessionLoader", e.getMessage());
+            Log.d("AuthTokenLoader", e.getMessage());
         }
 
         // Done!
