@@ -102,6 +102,10 @@ public class MyEndpoint {
         return response;
     }
 
+    //@ApiMethod(name = "getGroupsForUser")
+
+//    @ApiMethod(name = "checkinAtLocation")
+
     @ApiMethod(name = "getAllGroups")
     public AllGroupsBean getAllGroups(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
         long userId = _getUserIdForToken(token);
@@ -388,7 +392,7 @@ public class MyEndpoint {
         }
         HashMap<Long,Long> ranking = (HashMap<Long,Long>)venue.getProperty("ranking");
         if(ranking.containsKey(groupId)){
-            ranking.replace(groupId, ranking.get(groupId)+1);
+            ranking.put(groupId, ranking.get(groupId)+1);
         }else{
             ranking.put(groupId,new Long(1));
         }
