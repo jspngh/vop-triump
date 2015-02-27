@@ -1,0 +1,34 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="be.ugent.vop.LoginFragment">
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:background="@drawable/connect_to_foursquare_blue"
+        android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="Logout"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    <TextView
+        android:id="@+id/logInMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingBottom="32dp"
+        android:text="@string/signin_with_foursquare"
+        android:textColor="#222"
+        android:textSize="22sp"
+        android:layout_gravity="center_horizontal|top" />
+
+</FrameLayout>

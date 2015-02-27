@@ -15,6 +15,7 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
+import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 
 public class BackendAPI {
     public static BackendAPI instance;
@@ -63,8 +64,8 @@ public class BackendAPI {
         return myApiService.getAuthToken(fsUserId,fsToken).execute();
     }
 
-    public void close() throws IOException {
-        myApiService.closeSession(token).execute();
+    public CloseSessionResponse close() throws IOException {
+        return myApiService.closeSession(token).execute();
     }
 
     public AllGroupsBean getAllGroups() throws IOException{

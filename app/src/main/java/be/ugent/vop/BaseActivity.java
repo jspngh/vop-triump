@@ -375,7 +375,7 @@ public abstract class BaseActivity extends ActionBarActivity {
                 break;
             case NAVDRAWER_ITEM_LOGOUT:
                 intent = new Intent(this, LoginActivity.class);
-                intent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGOUT);
+                intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
                 startActivity(intent);
                 finish();
                 break;
@@ -482,12 +482,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         if(!FStoken){
             Intent loginIntent = new Intent(this, LoginActivity.class);
-            loginIntent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGIN_FS);
+            loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_FS);
             startActivity(loginIntent);
             finish();
         }else if(!backendToken) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
-            loginIntent.putExtra(LoginActivity.LOGIN_ACTION, LoginActivity.LOGIN_BACKEND);
+            loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_BACKEND);
             startActivity(loginIntent);
             finish();
         }
