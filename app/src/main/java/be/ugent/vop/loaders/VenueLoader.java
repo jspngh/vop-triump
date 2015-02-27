@@ -18,6 +18,7 @@ import be.ugent.vop.foursquare.FoursquareVenue;
  */
 public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
 
+    private int i = 0;
     ArrayList<FoursquareVenue> mVenueList;
     private static MyApi myApiService = null;
     private Context context;
@@ -35,8 +36,8 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
     @Override
     public ArrayList<FoursquareVenue> loadInBackground() {
         ArrayList<FoursquareVenue> result = null;
-
-        result = FoursquareAPI.get(context).getNearby(40.0,5.0);
+        Log.d("VenueLoader", " "+i );
+        result = FoursquareAPI.get(context).getNearby(50.0,4.0+i);
 
         // Done!
         return result;
