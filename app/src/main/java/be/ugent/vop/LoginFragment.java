@@ -65,13 +65,13 @@ public class LoginFragment extends Fragment {
     private TextView logInMessage;
     private SharedPreferences prefs;
 
-    private final Context context = this.getActivity();
+    private Context context = null;
     private static final int AUTH_TOKEN_LOADER = 1;
     private static final int END_SESSION_LOADER = 2;
 
     private OnFragmentInteractionListener mListener;
 
-    public static LoginFragment newInstance(String param1, String param2) {
+    public static LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -86,36 +86,18 @@ public class LoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("LOGIN ACTIVITY", "starting");
-
-        btnLogin = (Button) getView().findViewById(R.id.btnLogin);
-        btnLogout = (Button) getView().findViewById(R.id.btnLogout);
-        logInMessage = (TextView) getView().findViewById(R.id.logInMessage);
-
-        prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-
-        int loginAction = getActivity().getIntent().getExtras().getInt(LOGIN_ACTION);
-        switch(loginAction){
-            case LOGIN_FS:
-                startFoursquareLogin();
-                break;
-            case LOGIN_BACKEND:
-                startBackendLogin();
-                break;
-            case LOGOUT:
-                logout();
-                break;
-            default:
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
+        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
+        logInMessage = (TextView) rootView.findViewById(R.id.logInMessage);
+        return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -139,6 +121,27 @@ public class LoginFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        context = getActivity();
+        prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+
+        int loginAction = getActivity().getIntent().getExtras().getInt(LOGIN_ACTION);
+        switch(loginAction){
+            case LOGIN_FS:
+                startFoursquareLogin();
+                break;
+            case LOGIN_BACKEND:
+                startBackendLogin();
+                break;
+            case LOGOUT:
+                logout();
+                break;
+            default:
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -147,7 +150,6 @@ public class LoginFragment extends Fragment {
      * See http://developer.android.com/training/basics/fragments/communicating.html for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 
@@ -453,6 +455,10 @@ public class LoginFragment extends Fragment {
             editor.commit();
 
             BackendAPI.get(context).setToken(token.getAuthToken());
+
+            Intent loginIntent = new Intent(context, MainActivity.class);
+            startActivity(loginIntent);
+            getActivity().finish();
         }
 
         @Override
