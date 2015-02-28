@@ -48,6 +48,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.main.MainActivity" />
         </activity>
+        <!-- Services -->
+        <service android:name=".LocationService" />
     </application>
 
 </manifest>

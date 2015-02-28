@@ -2,6 +2,7 @@ package be.ugent.vop.ui.main;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.GroupFragment;
+import be.ugent.vop.LocationService;
 import be.ugent.vop.R;
 
 import be.ugent.vop.VenueFragment;
@@ -40,6 +42,8 @@ public class MainActivity extends BaseActivity {
         mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.tab_selected_strip));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
+
+        this.startService(new Intent(this, LocationService.class));
 
         if (mSlidingTabLayout != null) {
             mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
