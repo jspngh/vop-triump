@@ -88,33 +88,37 @@ public class FoursquareAPI {
 
         try {
             String response = request(url);
-            JSONArray venues = new JSONObject(response).getJSONObject("response").getJSONArray("venues");
+            JSONObject obj = new JSONObject(response);
+            if((obj.getJSONObject("meta").getInt("code"))==200){
 
-            int numVenues = venues.length();
-                for (int i = 0; i < numVenues; i++) {
-                    JSONObject venue = venues.getJSONObject(i);
-                    String id = "no id available";
-                    String city="no city info available";
-                    String name="no name info available";
-                    String address="no address available";
-                    String country="no country info available";
-                    double lon=-1;
-                    double lat=-1;
+                JSONArray venues = obj.getJSONObject("response").getJSONArray("venues");
 
-                    if(venue.has("id")) id = venue.getString("id");
-                    if(venue.has("name")) name = venue.getString("name");
+                int numVenues = venues.length();
+                    for (int i = 0; i < numVenues; i++) {
+                        JSONObject venue = venues.getJSONObject(i);
+                        String id = "no id available";
+                        String city="no city info available";
+                        String name="no name info available";
+                        String address="no address available";
+                        String country="no country info available";
+                        double lon=-1;
+                        double lat=-1;
 
-                    JSONObject location = venue.getJSONObject("location");
+                        if(venue.has("id")) id = venue.getString("id");
+                        if(venue.has("name")) name = venue.getString("name");
 
-                    if(location.has("lng")) lon = location.getDouble("lng");
-                    if(location.has("lat")) lat = location.getDouble("lat");
+                        JSONObject location = venue.getJSONObject("location");
+
+                        if(location.has("lng")) lon = location.getDouble("lng");
+                        if(location.has("lat")) lat = location.getDouble("lat");
 
 
-                    if(location.has("address"))  address = location.getString("address");
-                    if(location.has("city"))  city = location.getString("city");
-                    if(location.has("country"))  country = location.getString("country");
+                        if(location.has("address"))  address = location.getString("address");
+                        if(location.has("city"))  city = location.getString("city");
+                        if(location.has("country"))  country = location.getString("country");
 
-                    venueList.add(new FoursquareVenue(id,name,address,city,country,lon,lat));
+                        venueList.add(new FoursquareVenue(id,name,address,city,country,lon,lat));
+                    }
                 }
         } catch(IOException e){
             e.printStackTrace();
@@ -131,8 +135,33 @@ public class FoursquareAPI {
         return venueList;
     }
 
-    public String getPhotoURL(FoursquareVenue venue){
-        return "";
+    public ArrayList<String> getPhotos(FoursquareVenue venue){
+        ArrayList<String> photos = new ArrayList<>();
+        String prefix, suffix;
+        String url =API_URL + "/venues/"+venue.getId()+"/photos?&limit=10&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
+        Log.d("FoursquareAPI getPhotos", url);
+
+
+        try {
+            String response = request(url);
+            JSONObject obj = new JSONObject(response);
+            if((obj.getJSONObject("meta").getInt("code"))==200){
+                JSONArray photoArray = obj.getJSONObject("response").getJSONObject("photos").getJSONArray("items");
+                    for(int i=0;i<photoArray.length();i++){
+                        prefix = photoArray.getJSONObject(i).getString("prefix");
+                        suffix = photoArray.getJSONObject(i).getString("suffix");
+                        photos.add(prefix+"original"+suffix);
+                    }
+
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return photos;
     }
 
 
