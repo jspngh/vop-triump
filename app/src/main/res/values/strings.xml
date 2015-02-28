@@ -29,6 +29,9 @@
     <string name="title_activity_leaderboards">Leaderboards</string>
     <string name="welcome_triump">Welcome to Triump</string>
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
+    <string name="locationLongitude">locationLongitude</string>
+    <string name="locationLatitude">locationLatitude</string>
+    <string name="locationAvailable">locationAvailable</string>
 
     <string-array name="main_tabs">
         <item>Overview</item>

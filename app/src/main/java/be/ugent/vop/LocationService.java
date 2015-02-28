@@ -3,8 +3,10 @@ package be.ugent.vop;
 /**
  * Created by vincent on 28/02/15.
  */
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -25,13 +27,9 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
-    private double mLatitude;
-    private double mLongitude;
 
     private boolean mCurrentlyProcessingLocation = false;
-
-    private boolean DEBUG = false;
-
+    private boolean mFoundFirtLocation = false;
 
 
     /*************************************
@@ -44,11 +42,19 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onCreate() {
+        super.onCreate();
+
         Log.d(TAG,"onCreate");
+
         buildGoogleApiClient();
         mGoogleApiClient.connect();
         mCurrentlyProcessingLocation = true;
-        super.onCreate();
+        mFoundFirtLocation = false;
+
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirtLocation);
+        editor.commit();
     }
 
     @Override
@@ -89,14 +95,14 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        createLocationRequest();
 
+        createLocationRequest();
     }
 
     protected void createLocationRequest() {
         Log.d(TAG, "createLocationRequest");
         mLocationRequest = new LocationRequest()
-                .setInterval(5000)
+                .setInterval(5000) //
                 .setFastestInterval(5000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -126,9 +132,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
-            mLatitude =  mLastLocation.getLatitude();
-            mLongitude = mLastLocation.getLongitude();
-            Log.d(TAG,"lat: "+mLatitude+" long:"+mLongitude);
+            foundFirstLocation(mLastLocation);
         }
 
         startLocationUpdates();
@@ -150,10 +154,33 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Location changed, lat: "+location.getLatitude()+ "| long: "+location.getLongitude());
-        mLastLocation = location;
-      //  Toast.makeText(this,"lat: "+location.getLatitude()+ "| long: "+location.getLongitude(), Toast.LENGTH_SHORT).show();
-      //  onContentChanged();
+        //Log.d(TAG, "Location changed, lat: "+location.getLatitude()+ "| long: "+location.getLongitude());
+        if(mFoundFirtLocation==true) {
+            if (mLastLocation.distanceTo(location) >= 1.0) {
+                Log.d(TAG, "Location updated");
+                mLastLocation = location;
+                SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putFloat(getString(R.string.locationLongitude), (float) location.getLongitude());
+                editor.putFloat(getString(R.string.locationLatitude), (float) location.getLatitude());
+                editor.commit();
+            }
+        }
+        else foundFirstLocation(location);
+    }
+
+    private void foundFirstLocation(Location location){
+        Log.d(TAG, "foundFirstLocation");
+        mFoundFirtLocation = true;
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirtLocation);
+
+        // attention: double to float cast, possible source for errors !
+
+        editor.putFloat(getString(R.string.locationLongitude), (float) location.getLongitude());
+        editor.putFloat(getString(R.string.locationLatitude), (float) location.getLatitude());
+        editor.commit();
     }
 
 }

@@ -74,8 +74,14 @@ public class FoursquareAPI {
 
     public ArrayList<FoursquareVenue> getNearbyVenues()  {
         //default coordinates (Brussels) in case GPS Provider is disabled
-        double longitude=50.8467104;
-        double latitude=4.3526391;
+        float longitude= (float) 50.846;
+        float latitude= (float) 4.352;
+
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        if(prefs.getBoolean(context.getString(R.string.locationAvailable),false)){
+            longitude= prefs.getFloat(context.getString(R.string.locationLongitude),(float)50.846);
+            latitude=prefs.getFloat(context.getString(R.string.locationLatitude),(float)4.352);
+        }
 
 
         String url =API_URL + "/venues/search?ll=" + longitude +","+ latitude+ "&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
