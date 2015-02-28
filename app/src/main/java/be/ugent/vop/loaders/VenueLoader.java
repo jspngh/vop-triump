@@ -27,6 +27,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import be.ugent.vop.Event;
+import be.ugent.vop.EventBroker;
+import be.ugent.vop.EventListener;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.MyApi;
@@ -37,7 +40,8 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
+public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> implements EventListener {
+    private final String TAG = "VenueLoader";
 
     private int i = 0;
     ArrayList<FoursquareVenue> mVenueList;
@@ -47,6 +51,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
     public VenueLoader(Context context) {
         super(context);
         this.context = context.getApplicationContext();
+        EventBroker.get().addListener(this);
     }
 
     /**
@@ -124,5 +129,18 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
             mVenueList = null;
         }
     }
+
+    /**************************************
+     *
+     * Override methodes interface EventListener
+     *
+     ***************************************/
+
+    @Override
+    public void handleEvent(Event e){
+        Log.d(TAG,"handleEvent");
+        onContentChanged();
+    }
+
 
 }

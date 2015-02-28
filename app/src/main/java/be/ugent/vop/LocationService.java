@@ -102,9 +102,9 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     protected void createLocationRequest() {
         Log.d(TAG, "createLocationRequest");
         mLocationRequest = new LocationRequest()
-                .setInterval(5000) //
+                .setInterval(5000)
                 .setFastestInterval(5000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
     /**********************************
      *
@@ -156,17 +156,20 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     public void onLocationChanged(Location location) {
         //Log.d(TAG, "Location changed, lat: "+location.getLatitude()+ "| long: "+location.getLongitude());
         if(mFoundFirtLocation==true) {
-            if (mLastLocation.distanceTo(location) >= 1.0) {
-                Log.d(TAG, "Location updated");
+            if (mLastLocation.distanceTo(location) >= 5.0) {
+                Log.d(TAG, "Location Changed");
                 mLastLocation = location;
                 SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putFloat(getString(R.string.locationLongitude), (float) location.getLongitude());
                 editor.putFloat(getString(R.string.locationLatitude), (float) location.getLatitude());
                 editor.commit();
+                EventBroker.get().addEvent(new Event("LocationChanged"));
             }
         }
         else foundFirstLocation(location);
+
+
     }
 
     private void foundFirstLocation(Location location){
@@ -181,6 +184,14 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         editor.putFloat(getString(R.string.locationLongitude), (float) location.getLongitude());
         editor.putFloat(getString(R.string.locationLatitude), (float) location.getLatitude());
         editor.commit();
+
+        EventBroker.get().addEvent(new Event("LocationChanged"));
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // Mogelijkheid om te werken met een LocationEvent die longitude en latitude van    /////
+        // nieuwe locatie meegeeft zodat we niet moeten werken met de sharedPref?           /////
+        /////////////////////////////////////////////////////////////////////////////////////////
+
     }
 
 }

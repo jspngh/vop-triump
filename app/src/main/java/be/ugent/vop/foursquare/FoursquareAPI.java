@@ -82,9 +82,7 @@ public class FoursquareAPI {
             longitude= prefs.getFloat(context.getString(R.string.locationLongitude),(float)50.846);
             latitude=prefs.getFloat(context.getString(R.string.locationLatitude),(float)4.352);
         }
-
-
-        String url =API_URL + "/venues/search?ll=" + longitude +","+ latitude+ "&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
+        String url =API_URL + "/venues/search?ll=" + longitude +","+ latitude+"&radius=10000&limit=50&intent=browse&oauth_token=" 		+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
         Log.d("FoursquareAPI", url);
         ArrayList<FoursquareVenue> venueList = new ArrayList<>();
 
