@@ -27,8 +27,10 @@
     <string name="drawer_close">Close Drawer</string>
     <string name="navdrawer_item_logout">Sign out</string>
     <string name="title_activity_leaderboards">Leaderboards</string>
+
     <string name="welcome_triump">Welcome to Triump</string>
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
+
     <string name="locationLongitude">locationLongitude</string>
     <string name="locationLatitude">locationLatitude</string>
     <string name="locationAvailable">locationAvailable</string>
@@ -39,5 +41,6 @@
         <item>Group</item>
     </string-array>
 
+    <string name="logOutButton">Sign out</string>
 
 </resources>

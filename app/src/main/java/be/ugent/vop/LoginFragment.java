@@ -1,6 +1,7 @@
 package be.ugent.vop;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -72,6 +73,8 @@ public class LoginFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private ProgressDialog connectionDialog;
+
     public static LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
         Bundle args = new Bundle();
@@ -99,9 +102,9 @@ public class LoginFragment extends Fragment {
         return rootView;
     }
 
-    public void onButtonPressed(Uri uri) {
+    public void onLoggedIn() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onLoginFragmentInteraction();
         }
     }
 
@@ -127,6 +130,8 @@ public class LoginFragment extends Fragment {
         super.onStart();
         context = getActivity();
         prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        connectionDialog = new ProgressDialog(context);
+        connectionDialog.setMessage("Talking to the Triump servers...");
 
         int loginAction = getActivity().getIntent().getExtras().getInt(LOGIN_ACTION);
         switch(loginAction){
@@ -151,7 +156,7 @@ public class LoginFragment extends Fragment {
      * See http://developer.android.com/training/basics/fragments/communicating.html for more information.
      */
     public interface OnFragmentInteractionListener {
-        public void onFragmentInteraction(Uri uri);
+        public void onLoginFragmentInteraction();
     }
 
     private void getUserId (){
@@ -275,25 +280,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void closeBackendSession(){
-/*        final Context context = this;
-        Runnable runnable = new Runnable () {
-            @Override
-            public void run(){
-                try{
-                    BackendAPI.get(context).close();
-                }
-                catch (IOException e){
-                    e.printStackTrace();
-                    Log.e ("Closing Session: ", e.getMessage());
-                }
-
-            }
-        };
-        new Thread(runnable).start();*/
         getLoaderManager().initLoader(END_SESSION_LOADER, null, mEndSessionLoaderListener);
-//        String token = prefs.getString(getString(R.string.backendtoken), "N.A.");
-//        String[] close = {"Close", token};
-//        new EndpointsAsyncTask(this).execute(close);
     }
 
     private void logout() {
@@ -387,9 +374,9 @@ public class LoginFragment extends Fragment {
             editor.putString(getString(R.string.foursquaretoken), accessToken);
             editor.commit();
 
-            getUserId();
+            connectionDialog.show();
 
-            //performBackendTokenExchange();
+            getUserId();
 
         } else {
             if (exception instanceof FoursquareOAuthException) {
@@ -421,31 +408,6 @@ public class LoginFragment extends Fragment {
      **********************************/
 //endregion
 
-
-/*    @Override
-    public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
-        SharedPreferences.Editor editor = prefs.edit();
-        Log.d("FUCK LOGIN", token.getAuthToken());
-        editor.putString(getString(R.string.backendtoken), token.getAuthToken());
-        editor.commit();
-
-        BackendAPI.get(this).setToken(token.getAuthToken());
-
-        Toast.makeText(getApplicationContext(), "Login on backend successfull!", Toast.LENGTH_LONG).show();
-        //finish(); //Dismiss activity
-    }
-
-    @Override
-    public Loader<AuthTokenResponse> onCreateLoader (int id, Bundle args){
-        AuthTokenLoader mSessionLoader = new AuthTokenLoader(this, args.getLong("userId"),args.getString("fsToken"));
-        return mSessionLoader;
-    }
-
-    @Override
-    public void onLoaderReset(Loader<AuthTokenResponse> loader) {
-
-    }*/
-
     private LoaderManager.LoaderCallbacks<AuthTokenResponse> mAuthTokenLoaderListener
             = new LoaderManager.LoaderCallbacks<AuthTokenResponse>() {
         @Override
@@ -456,10 +418,8 @@ public class LoginFragment extends Fragment {
             editor.commit();
 
             BackendAPI.get(context).setToken(token.getAuthToken());
-
-            Intent loginIntent = new Intent(context, MainActivity.class);
-            startActivity(loginIntent);
-            getActivity().finish();
+            connectionDialog.dismiss();
+            onLoggedIn();
         }
 
         @Override
@@ -489,8 +449,6 @@ public class LoginFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<CloseSessionResponse> loader) {
-
         }
     };
-
 }

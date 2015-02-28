@@ -1,22 +1,7 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="be.ugent.vop.LoginFragment">
-
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:background="@drawable/connect_to_foursquare_blue"
-        android:layout_gravity="center" />
-
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="Logout"
-        android:layout_gravity="center_horizontal|bottom" />
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/logInMessage"
@@ -29,6 +14,24 @@
         android:text="@string/signin_with_foursquare"
         android:textColor="#222"
         android:textSize="22sp"
-        android:layout_gravity="center_horizontal|top" />
+        android:layout_above="@+id/btnLogin"
+        android:layout_marginBottom="52dp" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:background="@drawable/connect_to_foursquare_blue"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/logOutButton"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/log_out_button"/>
+
+</RelativeLayout>
