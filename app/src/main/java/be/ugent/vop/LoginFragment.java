@@ -53,10 +53,21 @@ import be.ugent.vop.ui.main.MainActivity;
 
 public class LoginFragment extends Fragment {
 
-    private static final String CLIENT_ID = "PNTT2Y4XCYL35PHKIRLNV0YSO50XHALPX1SBDMAY3BIZWRBA";
+    // CLIENT ID JONAS
+    //private static final String CLIENT_ID = "PNTT2Y4XCYL35PHKIRLNV0YSO50XHALPX1SBDMAY3BIZWRBA";
+
+    // CLIENT ID SIEBE
+    private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";
     private static final int REQUEST_CODE_FSQ_CONNECT = 200;
     private static final int REQUEST_CODE_FSQ_TOKEN_EXCHANGE = 201;
-    private static final String CLIENT_SECRET = "P5KO0OFRI2Z13GQH0YLS5BS5SYLIYMW21Q1YBSWHP4XJJ5Q5";
+
+
+    // CLIENT SECRET JONAS
+    //private static final String CLIENT_SECRET = "P5KO0OFRI2Z13GQH0YLS5BS5SYLIYMW21Q1YBSWHP4XJJ5Q5";
+
+    // CLIENT SECRET SIEBE
+    private static final String CLIENT_SECRET = "UQSJN0HCIR0LSBT2PEK3CR331JQJUYSINHZ12MHE0A2CWNNQ";
+
 
     public static final String LOGIN_ACTION = "loginaction";
     public static final int LOGIN_FS = 1;
