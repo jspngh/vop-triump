@@ -2,6 +2,7 @@ package be.ugent.vop;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,9 +39,18 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
     }
 
     public void onLoginFragmentInteraction(){
-        GroupFragment groupFragment = new GroupFragment();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, groupFragment).commitAllowingStateLoss();
+        SharedPreferences settings = getSharedPreferences(getString(R.string.sharedprefs), 0);
+        if(settings.getBoolean(getString(R.string.first_launch), true)) {
+            FirstLaunchFragment firstLaunchFragment = new FirstLaunchFragment();
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, firstLaunchFragment).commitAllowingStateLoss();
+        } else {
+            Intent main = new Intent(this, MainActivity.class);
+            startActivity(main);
+            finish();
+        }
+
+
     }
 }
 

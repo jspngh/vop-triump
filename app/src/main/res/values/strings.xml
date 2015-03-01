@@ -14,8 +14,10 @@
     <string name="sharedprefs">VOPSharedPrefs</string>
     <string name="foursquaretoken">FoursquareToken</string>
     <string name="userid">UserId</string>
+    <string name="first_launch">Welcome to Triump</string>
 
     <string name="title_activity_login">Sign in</string>
+    <string name="logOutButton">Sign out</string>
 	<string name="signin_with_foursquare">Sign in with your Foursquare account!</string>
     <string name="app_not_installed_message">To do this, you’ll need the latest version of Foursquare installed.</string>
     <string name="backendtoken">backendToken</string>
@@ -40,7 +42,4 @@
         <item>Checkin</item>
         <item>Group</item>
     </string-array>
-
-    <string name="logOutButton">Sign out</string>
-
 </resources>
