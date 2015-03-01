@@ -33,6 +33,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Named;
 
@@ -360,7 +361,7 @@ public class MyEndpoint {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         VenueBean venuebean = new VenueBean();
         venuebean.setVenueId((String)venue.getProperty("venueId"));
-        venuebean.setRanking((HashMap<Long,Long>) venue.getProperty("ranking"));
+        venuebean.setRanking((ArrayList<RankingBean>) venue.getProperty("ranking"));
 
         return venuebean;
     }
@@ -369,7 +370,7 @@ public class MyEndpoint {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity venue = new Entity("Venue",venueId);
         venue.setProperty("venueId", venueId);
-        HashMap<Long,Long> ranking = new HashMap<Long,Long>();
+        ArrayList<RankingBean> ranking = new ArrayList<RankingBean>();
         venue.setProperty("ranking", ranking);
         datastore.put(venue);
     }
@@ -387,21 +388,35 @@ public class MyEndpoint {
 
     private void _updateVenueRanking(String venueId,long groupId){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Entity venue = null;
+        VenueBean venue = null;
         try {
-            Key venueKey = KeyFactory.createKey("Venue", venueId);
-            venue = datastore.get(venueKey);
+            venue = _getVenueBean(venueId);
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
         }
-        HashMap<Long,Long> ranking = (HashMap<Long,Long>)venue.getProperty("ranking");
-        if(ranking.containsKey(groupId)){
-            ranking.put(groupId, ranking.get(groupId) + 1);
-        }else{
-            ranking.put(groupId,new Long(1));
+        GroupBean group = null;
+        try {
+            group=_getGroupBean(groupId);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
         }
-        venue.setProperty("ranking",ranking);
-        datastore.put(venue);
+        boolean group_in_ranking = false;
+        ArrayList<RankingBean> ranking = (ArrayList<RankingBean>)venue.getRanking();
+        for(RankingBean i: ranking){
+            if(i.getGroup()==group){
+                i.setPoints(i.getPoints()+1);
+                group_in_ranking = true;
+            }
+        }
+        if(!group_in_ranking){
+            RankingBean rank = new RankingBean();
+            rank.setPoints(1);
+            rank.setGroup(group);
+            rank.setVenue(venue);
+            ranking.add(rank);
+        }
+        //venue.setProperty("ranking",ranking);
+        //datastore.put(venue);
 
     }
 
