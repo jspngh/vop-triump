@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -139,6 +140,24 @@ public class FoursquareAPI {
         return photos;
     }
 
+    public FoursquareCheckinObject checkIn(String venueId){
+        FoursquareCheckinObject result = new FoursquareCheckinObject();
+        String urlBase =API_URL + "/checkins/add";
+        String urlParams = "venueId="+venueId+"&oauth_token="+FSQToken+"&v="+VERSION+"&m="+MODE;
+        try {
+            String response = post(urlBase, urlParams);
+            JSONObject obj = new JSONObject(response);
+            if ((obj.getJSONObject("meta").getInt("code")) == 200) {
+                Log.d("Checking In", "Succes");
+                Log.d("Response", obj.toString());
+            }
+        }
+        catch (IOException | JSONException e){
+                Log.d("Checking In", "Failure");
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     /**
      * Helpfunctions
@@ -148,7 +167,7 @@ public class FoursquareAPI {
     private String request(String URL) throws IOException {
         String response = "";
         try {
-            URL url 	= new URL(URL);
+            URL url = new URL(URL);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoInput(true);
@@ -161,6 +180,36 @@ public class FoursquareAPI {
         return response;
     }
 
+    private String post(String base, String params) throws IOException {
+        StringBuffer response = new StringBuffer();
+        try {
+            URL url = new URL(base);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            //add reuqest header
+            urlConnection.setRequestMethod("POST");
+
+            String urlParameters = params;
+
+            // Send post request
+            urlConnection.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+            wr.writeBytes(urlParameters);
+            wr.flush();
+            wr.close();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(urlConnection.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+        } catch (Exception e) {
+            throw e;
+        }
+        return response.toString();
+    }
 
     private String streamToString(InputStream is) throws IOException {
         String str  = "";

@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
 import be.ugent.vop.ui.main.MainActivity;
@@ -73,6 +74,8 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
         for(int i = 0; i < venueList.size(); i++){
             venueArray[i] = venueList.get(i).getName();
         }
+
+        Log.d("Venue ID: ", venueList.get(0).getId());
 
         arrayAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_list_item_1, venueArray);
         venueListView.setAdapter(arrayAdapter);

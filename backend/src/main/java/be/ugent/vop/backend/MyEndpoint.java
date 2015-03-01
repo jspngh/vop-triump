@@ -103,7 +103,7 @@ public class MyEndpoint {
         return response;
     }
 
-    //@ApiMethod(name = "getGroupsForUser")
+//    @ApiMethod(name = "getGroupsForUser")
 
 //    @ApiMethod(name = "checkinAtLocation")
 
