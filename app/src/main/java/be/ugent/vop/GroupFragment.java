@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
@@ -27,8 +29,8 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
     private ListView groupslistView;
-    private ArrayAdapter arrayAdapter;
-    private String[] groupArray;
+    private ListAdapter arrayAdapter;
+    private ArrayList<String> groupArray;
 
     private MainActivity mainActivity = null;
     public GroupFragment()
@@ -71,12 +73,12 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onLoadFinished(Loader<AllGroupsBean> objectLoader, AllGroupsBean allGroupsBean) {
         List<GroupBean> Groups = allGroupsBean.getGroups();
         Log.d("","Number of groups: " + Groups.size());
-        groupArray = new String[Groups.size()];
+        groupArray = new ArrayList<String>();
         for(int i = 0; i < Groups.size(); i++){
-            groupArray[i] = Groups.get(i).getName();
+            groupArray.add(Groups.get(i).getName());
         }
 
-        arrayAdapter = new ArrayAdapter(this.getActivity(), android.R.layout.simple_list_item_1, groupArray);
+        arrayAdapter = new GroupsAdapter(groupArray, this.getActivity());
         groupslistView.setAdapter(arrayAdapter);
     }
 

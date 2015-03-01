@@ -103,9 +103,38 @@ public class MyEndpoint {
         return response;
     }
 
-//    @ApiMethod(name = "getGroupsForUser")
 
-//    @ApiMethod(name = "checkinAtLocation")
+    @ApiMethod(name = "getGroupsForUser")
+    public GroupsBean getGroupsForUser(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
+        long userId = _getUserIdForToken(token);
+
+        AllGroupsBean response = null;
+        UserBean user = null;
+
+        try {
+            response = _getAllGroups();
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Sorry, we screwed something up...");
+        }
+        try {
+            user = _getUserBeanForId(userId);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
+        GroupsBean groupsbean = new GroupsBean();
+        List<GroupBean> groups = response.getGroups();
+        for(GroupBean g:groups){
+            if(!g.getMembers().contains(user)){
+                groups.remove(g);
+            }
+        }
+        groupsbean.setGroups(groups);
+        groupsbean.setNumGroups(groups.size());
+        return groupsbean;
+    }
+
+
 
     @ApiMethod(name = "getAllGroups")
     public AllGroupsBean getAllGroups(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
@@ -370,7 +399,7 @@ public class MyEndpoint {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity venue = new Entity("Venue",venueId);
         venue.setProperty("venueId", venueId);
-        ArrayList<RankingBean> ranking = new ArrayList<RankingBean>();
+        List<RankingBean> ranking = new ArrayList<RankingBean>();
         venue.setProperty("ranking", ranking);
         datastore.put(venue);
     }
@@ -389,6 +418,13 @@ public class MyEndpoint {
     private void _updateVenueRanking(String venueId,long groupId){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         VenueBean venue = null;
+        Entity venue_entity = null;
+        Key venueKey = KeyFactory.createKey("Venue", venueId);
+        try {
+            venue_entity = datastore.get(venueKey);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
         try {
             venue = _getVenueBean(venueId);
         } catch (EntityNotFoundException e) {
@@ -415,8 +451,8 @@ public class MyEndpoint {
             rank.setVenue(venue);
             ranking.add(rank);
         }
-        //venue.setProperty("ranking",ranking);
-        //datastore.put(venue);
+        venue_entity.setProperty("ranking",ranking);
+        datastore.put(venue_entity);
 
     }
 
