@@ -85,8 +85,10 @@ public class MainActivity extends BaseActivity {
             switch(position){
                 case 0:
                     return new OverviewFragment();
+                case 1:
+                    return new CheckinFragment();
                 case 2:
-                    return new VenueFragment();
+                    return new GroupFragment();
             }
             GroupFragment frag = new GroupFragment();
             return frag;
