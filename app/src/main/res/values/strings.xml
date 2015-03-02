@@ -36,6 +36,7 @@
     <string name="locationLongitude">locationLongitude</string>
     <string name="locationLatitude">locationLatitude</string>
     <string name="locationAvailable">locationAvailable</string>
+    <string name="waiting_for_location">Waiting for location...</string>
 
     <string-array name="main_tabs">
         <item>Overview</item>

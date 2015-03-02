@@ -33,7 +33,7 @@ public class FirstLaunchFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FoursquareAPI.get(getActivity()).checkIn("4b7e4c44f964a520b8e82fe3");
+                //FoursquareAPI.get(getActivity()).checkIn("4b7e4c44f964a520b8e82fe3");
                 //SharedPreferences settings = getActivity().getSharedPreferences(getString(R.string.sharedprefs), 0);
                 //SharedPreferences.Editor editor = settings.edit();
                 //editor.putBoolean(getString(R.string.first_launch), false);

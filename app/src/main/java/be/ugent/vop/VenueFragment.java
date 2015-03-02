@@ -63,7 +63,7 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int id, Bundle bundle) {
-        VenueLoader loader = new VenueLoader(getActivity());
+        VenueLoader loader = new VenueLoader(getActivity(), null);
         return loader;
     }
 

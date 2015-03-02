@@ -47,10 +47,12 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> imp
     ArrayList<FoursquareVenue> mVenueList;
     private static MyApi myApiService = null;
     private Context context;
+    private Location location;
 
-    public VenueLoader(Context context) {
+    public VenueLoader(Context context, Location loc) {
         super(context);
         this.context = context.getApplicationContext();
+        this.location = loc;
         EventBroker.get().addListener(this);
     }
 
@@ -63,7 +65,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> imp
     public ArrayList<FoursquareVenue> loadInBackground() {
         ArrayList<FoursquareVenue> result = null;
         Log.d("VenueLoader", " "+i );
-        result = FoursquareAPI.get(context).getNearbyVenues();
+        result = FoursquareAPI.get(context).getNearbyVenues(location);
         // Done!
         return result;
     }

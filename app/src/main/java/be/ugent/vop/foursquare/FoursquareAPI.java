@@ -2,6 +2,7 @@ package be.ugent.vop.foursquare;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -48,16 +49,22 @@ public class FoursquareAPI {
     }
 
 
-    public ArrayList<FoursquareVenue> getNearbyVenues()  {
+    public ArrayList<FoursquareVenue> getNearbyVenues(Location loc)  {
         //default coordinates (Brussels) in case GPS Provider is disabled
-        float longitude= (float) 50.846;
-        float latitude= (float) 4.352;
+        double longitude= (double) 50.846;
+        double latitude= (double) 4.352;
 
-        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        /*SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         if(prefs.getBoolean(context.getString(R.string.locationAvailable),false)){
             longitude= prefs.getFloat(context.getString(R.string.locationLongitude),(float)50.846);
             latitude=prefs.getFloat(context.getString(R.string.locationLatitude),(float)4.352);
+        }*/
+
+        if(loc != null){
+            longitude = loc.getLongitude();
+            latitude = loc.getLatitude();
         }
+
         String url =API_URL + "/venues/search?ll=" + latitude +","+longitude +"&radius=10000&limit=50&intent=browse&oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
         Log.d("FoursquareAPI", url);
         ArrayList<FoursquareVenue> venueList = new ArrayList<>();
