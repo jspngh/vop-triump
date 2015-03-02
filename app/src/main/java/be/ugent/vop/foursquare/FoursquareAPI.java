@@ -132,7 +132,10 @@ public class FoursquareAPI {
                         if(location.has("city"))  city = location.getString("city");
                         if(location.has("country"))  country = location.getString("country");
 
-                        venueList.add(new FoursquareVenue(id,name,address,city,country,lon,lat));
+                        FoursquareVenue foursquareVenue = new FoursquareVenue(id,name,address,city,country,lon,lat);
+                        foursquareVenue.setPhotos(getPhotos(foursquareVenue));
+
+                        venueList.add(foursquareVenue);
                     }
                 }
         } catch(IOException e){

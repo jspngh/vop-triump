@@ -1,6 +1,7 @@
 package be.ugent.vop.ui.main;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,17 +31,30 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ImageView venueImage;
         public TextView venueName;
         public TextView venueInfo;
+        public IMyViewHolderClicks mListener;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v, IMyViewHolderClicks listener) {
             super(v);
             venueImage = (ImageView) v.findViewById(R.id.venue_image);
             venueName = (TextView) v.findViewById(R.id.venue_name);
             venueInfo = (TextView) v.findViewById(R.id.venue_info);
+            mListener = listener;
+
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mListener.onItemClick(view, getPosition());
+        }
+
+        public static interface IMyViewHolderClicks {
+            public void onItemClick(View caller, int position);
         }
 
     }
@@ -54,7 +68,17 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.venue_list_item, viewGroup, false);
 
-        return new ViewHolder(v);
+        ViewHolder vh = new ViewHolder(v, new ViewHolder.IMyViewHolderClicks() {
+            @Override
+            public void onItemClick(View caller, int position) {
+                String venueId = venues.get(position).getId();
+
+                // TODO: Start new activity showing details for this venue
+                Log.d("VenueListAdapter", "Showing details for venue " + venueId);
+            }
+        });
+
+        return vh;
     }
     // END_INCLUDE(recyclerViewOnCreateViewHolder)
 
@@ -67,10 +91,12 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         viewHolder.venueName.setText(venue.getName());
         viewHolder.venueInfo.setText("Restaurant - 5 groups currently here");
 
-        Ion.with(viewHolder.venueImage)
-                .placeholder(R.drawable.ic_launcher)
-                .error(R.drawable.ic_drawer_logout)
-                .load("http://www.ugentmemorie.be/sites/ugent/files/imagecache/Breedte-640px/foto/2010pm047821h7709.jpg");
+        if(venue.getPhotos().size() > 0){
+            Ion.with(viewHolder.venueImage)
+                    .placeholder(R.drawable.ic_launcher)
+                    .error(R.drawable.ic_drawer_logout)
+                    .load(venue.getPhotos().get(0));
+        }
 
 
     }
