@@ -48,7 +48,7 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
-        venueListView = (ListView) rootView.findViewById(R.id.groups_list);
+        venueListView = (ListView) rootView.findViewById(R.id.group_list_view);
 
         getLoaderManager().initLoader(0, null, this);
 

@@ -1,6 +1,7 @@
 package be.ugent.vop;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -19,6 +20,9 @@ import java.util.List;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.loaders.AllGroupsLoader;
+import be.ugent.vop.ui.list.CustomArrayAdapter;
+import be.ugent.vop.ui.list.ExpandableListItem;
+import be.ugent.vop.ui.list.ExpandingListView;
 import be.ugent.vop.ui.main.MainActivity;
 
 
@@ -28,9 +32,12 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private ListView groupslistView;
+    private static Activity activity;
     private ListAdapter arrayAdapter;
-    private ArrayList<String> groupArray;
+    private final int CELL_DEFAULT_HEIGHT = 200;
+    private int NUM_OF_CELLS = 30;
+
+    private ExpandingListView mListView;
 
     private MainActivity mainActivity = null;
     public GroupFragment()
@@ -50,8 +57,7 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
-        groupslistView = (ListView) rootView.findViewById(R.id.groups_list);
-
+        activity = getActivity();
         getLoaderManager().initLoader(0, null, this);
 
         return rootView;
@@ -71,15 +77,31 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<AllGroupsBean> objectLoader, AllGroupsBean allGroupsBean) {
-        List<GroupBean> Groups = allGroupsBean.getGroups();
-        Log.d("","Number of groups: " + Groups.size());
-        groupArray = new ArrayList<String>();
-        for(int i = 0; i < Groups.size(); i++){
-            groupArray.add(Groups.get(i).getName());
+
+
+         List<GroupBean> Groups = allGroupsBean.getGroups();
+
+        ExpandableListItem[] values = new ExpandableListItem[Groups.size()];
+         for(int i = 0; i < Groups.size(); i++){
+        values[i]=new ExpandableListItem(Groups.get(i).getName(), R.drawable.ic_launcher, CELL_DEFAULT_HEIGHT,
+                "tits");
+
         }
 
-        arrayAdapter = new GroupsAdapter(groupArray, this.getActivity());
-        groupslistView.setAdapter(arrayAdapter);
+        List<ExpandableListItem> mData = new ArrayList<ExpandableListItem>();
+
+        for (int i = 0; i < NUM_OF_CELLS; i++) {
+            ExpandableListItem obj = values[i % values.length];
+            mData.add(new ExpandableListItem(obj.getTitle(), obj.getImgResource(),
+                    obj.getCollapsedHeight(), obj.getText()));
+        }
+
+        CustomArrayAdapter adapter = new CustomArrayAdapter(activity, R.layout.list_view_item, mData);
+
+        mListView = (ExpandingListView)activity.findViewById(R.id.group_list_view);
+        mListView.setAdapter(adapter);
+        mListView.setDivider(null);
+
     }
 
     @Override
