@@ -30,7 +30,9 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
     private ArrayAdapter arrayAdapter;
     private String[] venueArray;
 
+
     private MainActivity mainActivity = null;
+
     public VenueFragment()
     {
 
@@ -44,11 +46,13 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
         return fragment;
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
-        venueListView = (ListView) rootView.findViewById(R.id.groups_list);
+        venueListView = (ListView) rootView.findViewById(R.id.group_list_view);
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -70,6 +74,7 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> objectLoader, ArrayList<FoursquareVenue> venueList) {
         Log.d("","Number of venues: " + venueList.size());
+
         venueArray = new String[venueList.size()];
         for(int i = 0; i < venueList.size(); i++){
             venueArray[i] = venueList.get(i).getName();
@@ -86,8 +91,4 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
-    // Gaan we ook werken met een Observerpatroon?
-    public void update(){
-        getLoaderManager().getLoader(0).onContentChanged();
-    }
 }

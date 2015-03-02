@@ -48,7 +48,32 @@ public class FoursquareAPI {
         return instance;
     }
 
+    public ArrayList<FoursquareVenue> getTopVenues(){
+        //default coordinates (Brussels) in case GPS Provider is disabled
+        float longitude= (float) 50.846;
+        float latitude= (float) 4.352;
 
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        if(prefs.getBoolean(context.getString(R.string.locationAvailable),false)){
+            longitude= prefs.getFloat(context.getString(R.string.locationLongitude),(float)50.846);
+            latitude=prefs.getFloat(context.getString(R.string.locationLatitude),(float)4.352);
+        }
+        ArrayList<FoursquareVenue> result = getNearbyVenues(latitude,longitude,4,100000);
+        for(final FoursquareVenue venue:result){
+            new Runnable(){
+                @Override
+                public void run() {
+                    venue.setPhotos(getPhotos(venue));
+                }
+            }.run();
+        }
+        return result;
+    }
+
+
+    //
+    // TODO: Functie uitbreiden zodat de straal groter wordt indien er te weinig locaties zijn?
+    //
     public ArrayList<FoursquareVenue> getNearbyVenues(Location loc)  {
         //default coordinates (Brussels) in case GPS Provider is disabled
         double longitude= (double) 50.846;
@@ -65,7 +90,14 @@ public class FoursquareAPI {
             latitude = loc.getLatitude();
         }
 
-        String url =API_URL + "/venues/search?ll=" + latitude +","+longitude +"&radius=10000&limit=50&intent=browse&oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
+        return getNearbyVenues(latitude,longitude,50,100000);
+    }
+
+
+
+    public ArrayList<FoursquareVenue> getNearbyVenues(double latitude, double longitude, int limit, int radius)  {
+
+        String url =API_URL + "/venues/search?ll=" + latitude +","+longitude +"&radius="+radius+"&limit="+limit+"&oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
         Log.d("FoursquareAPI", url);
         ArrayList<FoursquareVenue> venueList = new ArrayList<>();
 
