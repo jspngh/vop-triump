@@ -1,6 +1,8 @@
 package be.ugent.vop.foursquare;
 
 
+import java.util.ArrayList;
+
 /**
  * Created by Vincent on 23/02/15.
  */
@@ -12,6 +14,7 @@ public class FoursquareVenue {
     private String country;
     private double longitude;
     private double latitude;
+    private ArrayList<String> photos;
 
     public FoursquareVenue(String id, String name, String address, String city,String country, double longitude, double latitude){
         this.id= id;
@@ -50,6 +53,15 @@ public class FoursquareVenue {
     public double getLatitude(){
         return latitude;
     }
+
+    public void setPhotos(ArrayList<String> photos){
+        this.photos = photos;
+    }
+
+    public ArrayList<String> getPhotos(){
+        return this.photos;
+    }
+
 
     public String toString(){
         return "FoursquareVenue id:"+id+" name: "+name;

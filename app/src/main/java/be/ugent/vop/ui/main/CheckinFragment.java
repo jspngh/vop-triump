@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import be.ugent.vop.R;
+import be.ugent.vop.VenueFragment;
+import be.ugent.vop.foursquare.FoursquareVenue;
 
 /**
  * Created by siebe on 28/02/15.
@@ -43,6 +45,8 @@ public class CheckinFragment extends Fragment {
     private GoogleMap map;
     private MapFragment fragment;
 
+    private VenueFragment venueFragment;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,17 +58,17 @@ public class CheckinFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_checkin, container, false);
         rootView.setTag(TAG);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.venue_list);
+//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.venue_list);
 
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mLayoutManager = new LinearLayoutManager(getActivity());
+//        mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new OverviewAdapter();
+//        mAdapter = new OverviewAdapter();
         // Set CustomAdapter as the adapter for RecyclerView.
-        mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView);
 
         return rootView;
@@ -82,15 +86,24 @@ public class CheckinFragment extends Fragment {
             fragment = MapFragment.newInstance();
             fm.beginTransaction().replace(R.id.map, fragment).commit();
         }
+
+        venueFragment = (VenueFragment) fm.findFragmentById(R.id.fragment);
+        if (fragment == null) {
+            venueFragment = VenueFragment.newInstance(1);
+            fm.beginTransaction().replace(R.id.fragment, venueFragment).commit();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        Marker m;
         if (map == null) {
             map = fragment.getMap();
-            Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
-                    .title("Hamburg"));
+
+                m = map.addMarker(new MarkerOptions().position(HAMBURG)
+                        .title("Hamburg"));
 
             // Move the camera instantly to hamburg with a zoom of 15.
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
@@ -98,5 +111,10 @@ public class CheckinFragment extends Fragment {
             // Zoom in, animating the camera.
             map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
         }
+
+
+
+
+
     }
 }
