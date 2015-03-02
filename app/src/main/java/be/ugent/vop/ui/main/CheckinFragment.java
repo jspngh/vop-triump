@@ -29,10 +29,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
-import be.ugent.vop.VenueFragment;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
-
 
 /**
  * Created by siebe on 28/02/15.
@@ -55,8 +53,6 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     private MapFragment fragment;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-
-    private VenueFragment venueFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,13 +81,12 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
-//        mLayoutManager = new LinearLayoutManager(getActivity());
-//        mRecyclerView.setLayoutManager(mLayoutManager);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         mAdapter = new VenueListAdapter();
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(null);
-
         // END_INCLUDE(initializeRecyclerView);
 
 
