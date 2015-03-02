@@ -191,7 +191,11 @@ public class FoursquareAPI {
             JSONObject obj = new JSONObject(response);
             if ((obj.getJSONObject("meta").getInt("code")) == 200) {
                 Log.d("Checking In", "Succes");
-                Log.d("Response", obj.toString());
+                JSONObject checkIn = obj.getJSONObject("response").getJSONObject("checkin");
+                if(checkIn.has("id")) result.setId(checkIn.getString("id"));
+                if(checkIn.has("createdAt")) result.setCreatedAt(checkIn.getString("createdAt"));
+                if(checkIn.has("type")) result.setType(checkIn.getString("type"));
+                if(checkIn.has("timeZoneOffset")) result.setTimeZoneOffset(checkIn.getString("timeZoneOffset"));
             }
         }
         catch (IOException | JSONException e){
