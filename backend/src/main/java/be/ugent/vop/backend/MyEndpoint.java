@@ -46,9 +46,9 @@ public class MyEndpoint {
     private SecureRandom random = new SecureRandom();
 
     @ApiMethod(name = "sayHi")
-    public MyBean sayHi (@Named("name") String name) {
+    public MyBean sayHi(@Named("name") String name) {
         MyBean response = new MyBean();
-        response.setData("Hi, "+ name);
+        response.setData("Hi, " + name);
         return response;
     }
 
@@ -107,33 +107,30 @@ public class MyEndpoint {
     @ApiMethod(name = "getGroupsForUser")
     public GroupsBean getGroupsForUser(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
         long userId = _getUserIdForToken(token);
-
-        AllGroupsBean response = null;
-        UserBean user = null;
-
-        try {
-            response = _getAllGroups();
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Sorry, we screwed something up...");
-        }
-        try {
-            user = _getUserBeanForId(userId);
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-        }
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         GroupsBean groupsbean = new GroupsBean();
-        List<GroupBean> groups = response.getGroups();
-        for(GroupBean g:groups){
-            if(!g.getMembers().contains(user)){
-                groups.remove(g);
+        List<GroupBean> groups = new ArrayList<GroupBean>();
+        Query.Filter propertyFilter =
+                new Query.FilterPredicate("fsUserId",
+                        Query.FilterOperator.EQUAL,
+                        userId);
+
+        Query q = new Query("userGroup").setFilter(propertyFilter);
+        PreparedQuery pq = datastore.prepare(q);
+        for (Entity r : pq.asIterable()) {
+            long groupId = ((Long) r.getProperty("groupId")).longValue();
+            try {
+                groups.add(_getGroupBean(groupId));
+            } catch (EntityNotFoundException e) {
+                e.printStackTrace();
             }
+
         }
         groupsbean.setGroups(groups);
         groupsbean.setNumGroups(groups.size());
         return groupsbean;
-    }
 
+    }
 
 
     @ApiMethod(name = "getAllGroups")
@@ -156,10 +153,10 @@ public class MyEndpoint {
     public GroupBean registerUserInGroup(@Named("token") String token, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException {
         long userId = _getUserIdForToken(token);
         GroupBean response = null;
-        try{
+        try {
             _registerUserInGroup(userId, groupId);
             response = _getGroupBean(groupId);
-        }catch(EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new InternalServerErrorException("Requested group does not exist!");
         }
 
@@ -169,19 +166,10 @@ public class MyEndpoint {
     @ApiMethod(name = "checkInVenue")
     public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException {
         long userId = _getUserIdForToken(token);
-        if(!(_existingVenue(venueId))){
-        _createVenue(venueId);
-        }
-        _updateVenueRanking(venueId,groupId);
-        try {
-            return _getVenueBean(venueId);
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Sorry, we screwed something up...");
-        }
-
-
+        return null;
     }
+
+
 
 
     @ApiMethod(name = "getAuthToken")
@@ -378,33 +366,18 @@ public class MyEndpoint {
         return result;
     }
 
-    private VenueBean _getVenueBean(String venueId) throws EntityNotFoundException {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key venueKey = KeyFactory.createKey("Venue", venueId);
-        Entity venue = datastore.get(venueKey);
 
-        return _getVenueBean(venue);
+    private void _registerGroupInVenue(String venueId, long groupId){
+        //TODO: Check whether group exists before registering
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity groupVenue = new Entity("groupVenue");
+        groupVenue.setProperty("venueId", venueId);
+        groupVenue.setProperty("groupId", groupId);
+        groupVenue.setProperty("ranking", 0);
+        datastore.put(groupVenue);
     }
 
-    private VenueBean _getVenueBean(Entity venue){
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        VenueBean venuebean = new VenueBean();
-        venuebean.setVenueId((String)venue.getProperty("venueId"));
-        venuebean.setRanking((ArrayList<RankingBean>) venue.getProperty("ranking"));
-
-        return venuebean;
-    }
-
-    private void _createVenue(String venueId) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Entity venue = new Entity("Venue",venueId);
-        venue.setProperty("venueId", venueId);
-        List<RankingBean> ranking = new ArrayList<RankingBean>();
-        venue.setProperty("ranking", ranking);
-        datastore.put(venue);
-    }
-
-    private boolean _existingVenue(String venueId) {
+    private boolean _getgroupVenue(String venueId) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         try {
             Key venueKey = KeyFactory.createKey("Venue", venueId);
@@ -415,45 +388,6 @@ public class MyEndpoint {
         }
     }
 
-    private void _updateVenueRanking(String venueId,long groupId){
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        VenueBean venue = null;
-        Entity venue_entity = null;
-        Key venueKey = KeyFactory.createKey("Venue", venueId);
-        try {
-            venue_entity = datastore.get(venueKey);
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            venue = _getVenueBean(venueId);
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-        }
-        GroupBean group = null;
-        try {
-            group=_getGroupBean(groupId);
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-        }
-        boolean group_in_ranking = false;
-        ArrayList<RankingBean> ranking = (ArrayList<RankingBean>)venue.getRanking();
-        for(RankingBean i: ranking){
-            if(i.getGroup()==group){
-                i.setPoints(i.getPoints()+1);
-                group_in_ranking = true;
-            }
-        }
-        if(!group_in_ranking){
-            RankingBean rank = new RankingBean();
-            rank.setPoints(1);
-            rank.setGroup(group);
-            rank.setVenue(venue);
-            ranking.add(rank);
-        }
-        venue_entity.setProperty("ranking",ranking);
-        datastore.put(venue_entity);
-
+    private void _updateVenueRanking(String venueId,long groupId) {
     }
-
 }
