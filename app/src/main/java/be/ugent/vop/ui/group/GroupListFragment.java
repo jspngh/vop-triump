@@ -33,7 +33,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static Activity activity;
     private ListAdapter arrayAdapter;
-    private final int CELL_DEFAULT_HEIGHT = 200;
+    private final int CELL_DEFAULT_HEIGHT = 88;
     private int NUM_OF_CELLS = 30;
 
     private ExpandingListView mListView;
@@ -93,7 +93,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
 
         ExpandableListItem[] values = new ExpandableListItem[Groups.size()];
          for(int i = 0; i < Groups.size(); i++){
-        values[i]=new ExpandableListItem(Groups.get(i).getName(), R.drawable.ic_launcher, CELL_DEFAULT_HEIGHT,
+        values[i]=new ExpandableListItem(Groups.get(i).getName(),  "ass",R.drawable.ic_launcher, CELL_DEFAULT_HEIGHT,
                 "tits");
 
         }
@@ -102,11 +102,11 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
 
         for (int i = 0; i < NUM_OF_CELLS; i++) {
             ExpandableListItem obj = values[i % values.length];
-            mData.add(new ExpandableListItem(obj.getTitle(), obj.getImgResource(),
+            mData.add(new ExpandableListItem(obj.getTitle(),obj.getInfo(), obj.getImgResource(),
                     obj.getCollapsedHeight(), obj.getText()));
         }
 
-        CustomArrayAdapter adapter = new CustomArrayAdapter(activity, R.layout.list_view_item, mData);
+        CustomArrayAdapter adapter = new CustomArrayAdapter(activity, R.layout.group_list_item, mData);
 
         mListView = (ExpandingListView)activity.findViewById(R.id.group_list_view);
         mListView.setAdapter(adapter);

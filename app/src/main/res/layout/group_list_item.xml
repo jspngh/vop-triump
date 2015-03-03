@@ -14,9 +14,12 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#ffffffff"
+    >
 
     <LinearLayout
         android:id="@+id/item_linear_layout"
@@ -24,25 +27,30 @@
         android:layout_width="match_parent"
         android:orientation="horizontal">
 
-        <ImageView
+        <be.ugent.vop.ui.widget.CircularImageView
             android:id="@+id/image_view"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:gravity="center_vertical"
-            android:layout_weight="1"
-            android:scaleType="center"/>
-
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/ic_launcher"
+            app:border="false"/>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
         <TextView
-            android:id="@+id/title_view"
-            android:layout_height="fill_parent"
-            android:layout_width="0dp"
-            android:gravity="center"
-            android:layout_weight="2"
-            android:textStyle="bold"
-            android:textSize="22sp"
-            android:textColor="#00BCD4"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/group_title"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/group_info"/>
+
 
     </LinearLayout>
+    </LinearLayout>
+
 
     <be.ugent.vop.ui.list.ExpandingLayout
             android:id="@+id/expanding_layout"
@@ -51,16 +59,9 @@
             android:visibility="gone">
 
         <TextView
-            android:id="@+id/text_view"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:textStyle="bold"
-            android:textSize="22sp"
-            android:textColor="#ffffff"
-            android:gravity="center_horizontal"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingBottom="8dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_view"/>
 
     </be.ugent.vop.ui.list.ExpandingLayout>
 

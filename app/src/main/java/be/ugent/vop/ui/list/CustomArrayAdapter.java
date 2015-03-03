@@ -80,10 +80,12 @@ public class CustomArrayAdapter extends ArrayAdapter<ExpandableListItem> {
         linearLayout.setLayoutParams(linearLayoutParams);
 
         ImageView imgView = (ImageView)convertView.findViewById(R.id.image_view);
-        TextView titleView = (TextView)convertView.findViewById(R.id.title_view);
+        TextView titleView = (TextView)convertView.findViewById(R.id.group_title);
+        TextView infoView = (TextView)convertView.findViewById(R.id.group_info);
         TextView textView = (TextView)convertView.findViewById(R.id.text_view);
 
         titleView.setText(object.getTitle());
+        infoView.setText(object.getInfo());
         imgView.setImageBitmap(getCroppedBitmap(BitmapFactory.decodeResource(getContext()
                 .getResources(), object.getImgResource(), null)));
         textView.setText(object.getText());
