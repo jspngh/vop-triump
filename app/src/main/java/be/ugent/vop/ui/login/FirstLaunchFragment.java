@@ -1,4 +1,4 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.login;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import be.ugent.vop.R;
 import be.ugent.vop.ui.main.MainActivity;
 
 public class FirstLaunchFragment extends Fragment {

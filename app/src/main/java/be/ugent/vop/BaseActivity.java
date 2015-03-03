@@ -29,7 +29,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -50,6 +49,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import be.ugent.vop.ui.login.LoginActivity;
+import be.ugent.vop.ui.login.LoginFragment;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.LUtils;
 
