@@ -1,12 +1,11 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.login;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 
+import be.ugent.vop.R;
 import be.ugent.vop.ui.main.MainActivity;
 
 public class LoginActivity extends Activity implements LoginFragment.OnFragmentInteractionListener{

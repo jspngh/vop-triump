@@ -1,4 +1,4 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.login;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -42,13 +42,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.foursquare.TokenStore;
 import be.ugent.vop.loaders.AuthTokenLoader;
 import be.ugent.vop.loaders.EndSessionLoader;
-import be.ugent.vop.ui.main.MainActivity;
 
 public class LoginFragment extends Fragment {
     private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";

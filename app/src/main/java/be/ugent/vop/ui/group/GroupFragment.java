@@ -5,12 +5,9 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
-
-import org.w3c.dom.Text;
 
 import be.ugent.vop.R;
 
@@ -26,7 +23,6 @@ public class GroupFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         groupId = bundle.getLong("groupId", -1);
-
     }
 
     @Override
