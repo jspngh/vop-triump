@@ -1,4 +1,4 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.group;
 
 import android.os.Bundle;
 import android.app.Fragment;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import be.ugent.vop.R;
 
 public class GroupFragment extends Fragment {
 
@@ -18,7 +20,7 @@ public class GroupFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        groupId = bundle.getInt("groupId", 0);
+        groupId = bundle.getInt("groupId", -1);
     }
 
     @Override
