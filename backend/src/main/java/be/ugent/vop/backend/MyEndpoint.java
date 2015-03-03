@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
+import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import javax.inject.Named;
 
 /**
@@ -44,13 +44,6 @@ import javax.inject.Named;
 public class MyEndpoint {
 
     private SecureRandom random = new SecureRandom();
-
-    @ApiMethod(name = "sayHi")
-    public MyBean sayHi(@Named("name") String name) {
-        MyBean response = new MyBean();
-        response.setData("Hi, " + name);
-        return response;
-    }
 
     @ApiMethod(name = "getUserInfo")
     public UserBean getUserInfo(@Named("token") String token) throws UnauthorizedException {
@@ -166,11 +159,32 @@ public class MyEndpoint {
     @ApiMethod(name = "checkInVenue")
     public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException {
         long userId = _getUserIdForToken(token);
-        return null;
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query.Filter venueFilter =
+                new Query.FilterPredicate("venueId",
+                        Query.FilterOperator.EQUAL,
+                        venueId);
+        Query.Filter groupFilter =
+                new Query.FilterPredicate("groupId",
+                        Query.FilterOperator.EQUAL,
+                        groupId);
+        Query.Filter RangeFilter =
+                Query.CompositeFilterOperator.and(venueFilter, groupFilter);
+
+        Query q = new Query("groupVenue").setFilter(RangeFilter);
+        PreparedQuery pq = datastore.prepare(q);
+        if(!(pq.asList(withLimit(1)).size()==1)) {
+            _registerGroupInVenue(venueId, groupId);
+        }else{
+            for (Entity r : pq.asIterable()) {
+                long points = (long) r.getProperty("points");
+                r.setProperty("points",points+1);
+                datastore.put(r);
+            }
+        }
+        return _getVenueBean(venueId);
+
     }
-
-
-
 
     @ApiMethod(name = "getAuthToken")
     public AuthTokenResponse getAuthToken(@Named("fsUserID") long fsUserId, @Named("fsToken") String fsToken) throws UnauthorizedException, InternalServerErrorException{
@@ -373,21 +387,30 @@ public class MyEndpoint {
         Entity groupVenue = new Entity("groupVenue");
         groupVenue.setProperty("venueId", venueId);
         groupVenue.setProperty("groupId", groupId);
-        groupVenue.setProperty("ranking", 0);
+        groupVenue.setProperty("points", 1);
         datastore.put(groupVenue);
     }
 
-    private boolean _getgroupVenue(String venueId) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        try {
-            Key venueKey = KeyFactory.createKey("Venue", venueId);
-            datastore.get(venueKey);
-            return true;
-        }catch (EntityNotFoundException e){
-            return false;
-        }
-    }
 
-    private void _updateVenueRanking(String venueId,long groupId) {
+    private VenueBean _getVenueBean(String venueId) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        VenueBean venuebean = new VenueBean();
+        venuebean.setVenueId(venueId);
+        RankingBean rank = null;
+        List<RankingBean> ranking = new ArrayList<RankingBean>();
+        Query.Filter propertyFilter =
+                new Query.FilterPredicate("venueId",
+                        Query.FilterOperator.EQUAL,
+                        venueId);
+        Query q = new Query("groupVenue").setFilter(propertyFilter);
+        PreparedQuery pq = datastore.prepare(q);
+        for (Entity r : pq.asIterable()) {
+            rank = new RankingBean();
+            rank.setPoints((long) r.getProperty("points"));
+            rank.setGroupId((long)r.getProperty("groupId"));
+            ranking.add(rank);
+        }
+        venuebean.setRanking(ranking);
+        return venuebean;
     }
 }
