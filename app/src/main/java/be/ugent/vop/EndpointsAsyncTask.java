@@ -46,12 +46,6 @@ class EndpointsAsyncTask extends AsyncTask<String, Void, Object> {
 
         String function = params[0];
         switch (function) {
-            case "Hello":
-                try {
-                    return myApiService.sayHi(params[1]).execute().getData();
-                } catch (IOException e) {
-                    return e.getMessage();
-                }
             case "Open":
                 try {
                     return myApiService.getAuthToken(Long.parseLong(params[1]),params[2]).execute();

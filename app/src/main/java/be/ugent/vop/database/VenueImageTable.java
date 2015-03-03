@@ -26,7 +26,7 @@ public class VenueImageTable {
             + " text not null, " + COLUMN_WIDTH
             + " integer not null, " + COLUMN_HEIGHT
             + " integer not null, " + COLUMN_LAST_UPDATED
-            + " date not null);";
+            + " date not null); ";
 
     public static void onCreate(SQLiteDatabase database) {
         System.err.println("creating table");

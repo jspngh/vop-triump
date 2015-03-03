@@ -21,7 +21,7 @@ public class GroupActivity extends BaseActivity {
 //            start this activity as follows:
 //            Intent intent = new Intent(getActivity(), GroupActivity.class);
 //            Bundle bundle = new Bundle();
-//            bundle.putInt("groupId", 0);
+//            bundle.putLong("groupId", 0);
 //            intent.putExtras(bundle);
 //            startActivity(intent);
 //            getActivity().finish();
