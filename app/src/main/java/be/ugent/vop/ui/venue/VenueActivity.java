@@ -20,7 +20,7 @@ public class VenueActivity extends BaseActivity {
 
     fragment.setArguments(venueBundle);
 
-   this.getSupportFragmentManager()
+   this.getFragmentManager()
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit();

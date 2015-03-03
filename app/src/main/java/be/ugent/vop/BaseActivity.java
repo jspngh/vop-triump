@@ -364,8 +364,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         switch(item.getItemId()){
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                //finish();
+                //NavUtils.navigateUpFromSameTask(this);
+                finish();
                 return true;
         }
 
