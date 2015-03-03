@@ -3,8 +3,10 @@ package be.ugent.vop.ui.main;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,23 +29,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
-import be.ugent.vop.ui.venue.VenueListAdapter;
+import be.ugent.vop.ui.venue.VenueActivity;
 
 /**
  * Created by siebe on 28/02/15.
  */
 public class CheckinFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
     private static final String TAG = "CheckinFragment";
-    private static final int SPAN_COUNT = 2;
-    private static final int DATASET_COUNT = 60;
-
-    static final LatLng HAMBURG = new LatLng(53.558, 9.927);
-    static final LatLng KIEL = new LatLng(53.551, 9.993);
-
 
     protected RecyclerView mRecyclerView;
     protected VenueListAdapter mAdapter;
@@ -100,20 +97,18 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(getActivity());
 
-        FragmentManager fm = getFragmentManager();
-        fragment = (MapFragment) fm.findFragmentById(R.id.map);
-        if (fragment == null) {
-            fragment = MapFragment.newInstance();
-            //fm.beginTransaction().replace(R.id.map, fragment).commit();
-        }
-        buildGoogleApiClient();
 
-        mGoogleApiClient.connect();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (fragment == null) {
+            fragment = getMapFragment();
+        }
+        buildGoogleApiClient();
+
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -123,9 +118,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         // Indien er geen locatie gevonden is zal er nooit een loader aangemaakt worden,
         // hierdoor zullen er ook geen venues geladen worden wanneer er later wel een locatie gevonden wordt.
 
-            getLoaderManager().initLoader(0, null, this);
-
-
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -153,8 +146,25 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         }
     }
 
+    private MapFragment getMapFragment() {
+        FragmentManager fm = null;
+
+        Log.d(TAG, "sdk: " + Build.VERSION.SDK_INT);
+        Log.d(TAG, "release: " + Build.VERSION.RELEASE);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Log.d(TAG, "using getFragmentManager");
+            fm = getFragmentManager();
+        } else {
+            Log.d(TAG, "using getChildFragmentManager");
+            fm = getChildFragmentManager();
+        }
+
+        return (MapFragment) fm.findFragmentById(R.id.map);
+    }
+
     @Override
-    public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, ArrayList<FoursquareVenue> venues) {
+    public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, final ArrayList<FoursquareVenue> venues) {
         Log.d(TAG, "onLoadFinished");
         mAdapter.setVenues(venues);
         mAdapter.setContext(getActivity());
@@ -163,25 +173,55 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         mLoadingMessage.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
 
-        FragmentManager fm = getFragmentManager();
         if (fragment == null) {
-            fragment = MapFragment.newInstance();
-            fm.beginTransaction().replace(R.id.map, fragment).commit();
+            fragment = getMapFragment();
         }
 
         if (map == null) {
             fragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
+                    final HashMap<Marker, String> markerVenue = new HashMap<Marker, String>();
+
                     map = googleMap;
-                    Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
-                            .title("Hamburg"));
+
+                    for(FoursquareVenue v : venues){
+                        Marker m = map.addMarker(new MarkerOptions().position(new LatLng(v.getLatitude(), v.getLongitude()))
+                                        .title(v.getName()));
+
+                        markerVenue.put(m, v.getId());
+                    }
+
+                    map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+                            String venueId = markerVenue.get(marker);
+
+                            FoursquareVenue v = null;
+
+                            for(FoursquareVenue fsv : venues){
+                                if(fsv.getId().equals(venueId)){
+                                    v = fsv;
+                                    break;
+                                }
+                            }
+
+                            if(v != null){
+                                Intent intent = new Intent(getActivity(), VenueActivity.class);
+                                intent.putExtra("venue",v);
+
+                                getActivity().startActivity(intent);
+                            }
+
+                        }
+                    });
 
                     // Move the camera instantly to hamburg with a zoom of 15.
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(venues.get(0).getLatitude(),
+                                                                                venues.get(0).getLongitude()), 15));
 
                     // Zoom in, animating the camera.
-                    map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+                    map.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
                 }
             });
         }

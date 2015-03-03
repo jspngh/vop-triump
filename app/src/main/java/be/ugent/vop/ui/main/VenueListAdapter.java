@@ -1,4 +1,4 @@
-package be.ugent.vop.ui.venue;
+package be.ugent.vop.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
+import be.ugent.vop.ui.venue.VenueActivity;
 
 /**
  * Created by siebe on 02/03/15.
