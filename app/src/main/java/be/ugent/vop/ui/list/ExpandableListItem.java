@@ -25,14 +25,16 @@ package be.ugent.vop.ui.list;
 public class ExpandableListItem implements OnSizeChangedListener {
 
     private String mTitle;
+    private String mInfo;
     private String mText;
     private boolean mIsExpanded;
     private int mImgResource;
     private int mCollapsedHeight;
     private int mExpandedHeight;
 
-    public ExpandableListItem(String title, int imgResource, int collapsedHeight, String text) {
+    public ExpandableListItem(String title,String info, int imgResource, int collapsedHeight, String text) {
         mTitle = title;
+        mInfo = info;
         mImgResource = imgResource;
         mCollapsedHeight = collapsedHeight;
         mIsExpanded = false;
@@ -70,6 +72,14 @@ public class ExpandableListItem implements OnSizeChangedListener {
 
     public void setText(String text) {
         mText = text;
+    }
+
+    public String getInfo() {
+        return mInfo;
+    }
+
+    public void setInfo(String info) {
+        mInfo = info;
     }
 
     public int getExpandedHeight() {
