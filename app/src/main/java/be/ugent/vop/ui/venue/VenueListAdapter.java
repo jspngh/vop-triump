@@ -1,9 +1,7 @@
-package be.ugent.vop.ui.main;
+package be.ugent.vop.ui.venue;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
-import be.ugent.vop.VenueFragment;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
 

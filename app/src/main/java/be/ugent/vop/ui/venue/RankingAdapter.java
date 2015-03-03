@@ -1,4 +1,4 @@
-package be.ugent.vop.ui.main;
+package be.ugent.vop.ui.venue;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import be.ugent.vop.Group;
+import be.ugent.vop.ui.group.Group;
 import be.ugent.vop.R;
 
 /**

@@ -1,13 +1,10 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.venue;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -15,13 +12,13 @@ import android.widget.TextView;
 
 import android.support.v4.app.Fragment;
 
-import com.google.android.gms.plus.model.people.Person;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 
+import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.ui.main.RankingAdapter;
+import be.ugent.vop.ui.group.Group;
 
 
 public class VenueFragment extends Fragment {

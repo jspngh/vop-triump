@@ -1,4 +1,4 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.group;
 
 /**
  * Created by vincent on 03/03/15.
