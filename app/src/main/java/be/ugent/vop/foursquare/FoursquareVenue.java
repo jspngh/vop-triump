@@ -1,12 +1,15 @@
 package be.ugent.vop.foursquare;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * Created by Vincent on 23/02/15.
  */
-public class FoursquareVenue {
+public class FoursquareVenue implements Parcelable {
     private String id;
     private String name;
     private String address;
@@ -24,6 +27,7 @@ public class FoursquareVenue {
         this.country =country;
         this.longitude = longitude;
         this.latitude = latitude;
+        photos = new ArrayList<>();
     }
 
     public String getId(){
@@ -68,6 +72,54 @@ public class FoursquareVenue {
     }
 
 
+    protected FoursquareVenue(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        address = in.readString();
+        city = in.readString();
+        country = in.readString();
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+        if (in.readByte() == 0x01) {
+            photos = new ArrayList<Photo>();
+            in.readList(photos, Photo.class.getClassLoader());
+        } else {
+            photos = null;
+        }
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(address);
+        dest.writeString(city);
+        dest.writeString(country);
+        dest.writeDouble(longitude);
+        dest.writeDouble(latitude);
+        if (photos == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(photos);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<FoursquareVenue> CREATOR = new Parcelable.Creator<FoursquareVenue>() {
+        @Override
+        public FoursquareVenue createFromParcel(Parcel in) {
+            return new FoursquareVenue(in);
+        }
+
+        @Override
+        public FoursquareVenue[] newArray(int size) {
+            return new FoursquareVenue[size];
+        }
+    };
 }

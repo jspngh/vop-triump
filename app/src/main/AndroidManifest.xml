@@ -59,6 +59,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.main.MainActivity" />
         </activity>
+
+        <activity
+            android:name=".ui.main.VenueActivity"
+            android:label="@string/app_name" >
+        </activity>
         <!-- Services -->
         <service android:name=".LocationService" />
 

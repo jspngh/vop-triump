@@ -165,7 +165,7 @@ public class FoursquareAPI {
         /*
         Try to get images from local database
          */
-        Uri venueUri = Uri.parse(VenueImageContentProvider.CONTENT_URI + "/#" + venue.getId());
+        Uri venueUri = Uri.parse(VenueImageContentProvider.CONTENT_URI + "/" + venue.getId());
         String[] projection = {VenueImageTable.COLUMN_PREFIX, VenueImageTable.COLUMN_SUFFIX, VenueImageTable.COLUMN_HEIGHT, VenueImageTable.COLUMN_WIDTH};
         Cursor images = context.getContentResolver().query(venueUri, projection, null, null, null);
 
@@ -176,6 +176,9 @@ public class FoursquareAPI {
                 String suffix = images.getString(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_SUFFIX));
                 int width = images.getInt(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_WIDTH));
                 int height = images.getInt(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_HEIGHT));
+
+                if(width == 0)
+                    break; // The width of the photo is 0, indicating this venue has no associated photos. So break and return empty List.
 
                 photos.add(new Photo(prefix, suffix, width, height));
             }
@@ -194,16 +197,30 @@ public class FoursquareAPI {
         ContentValues[] values = new ContentValues[photos.size()];
         Date lastUpdated = new Date();
         int i = 0;
-        for(Photo p : photos){
+
+        if(photos.size() == 0){
+            // Foursquare doesn't have any photos for this venue, but we still have to save a record so we know there aren't any
             ContentValues v = new ContentValues();
             v.put(VenueImageTable.COLUMN_VENUE_ID, venueId);
-            v.put(VenueImageTable.COLUMN_PREFIX, p.getPrefix());
-            v.put(VenueImageTable.COLUMN_SUFFIX, p.getSuffix());
-            v.put(VenueImageTable.COLUMN_WIDTH, p.getWidth());
-            v.put(VenueImageTable.COLUMN_HEIGHT, p.getHeight());
+            v.put(VenueImageTable.COLUMN_PREFIX, "a");
+            v.put(VenueImageTable.COLUMN_SUFFIX, "a");
+            v.put(VenueImageTable.COLUMN_WIDTH, 0); // a width of 0 indicates this is not a photo
+            v.put(VenueImageTable.COLUMN_HEIGHT, 0);
             v.put(VenueImageTable.COLUMN_LAST_UPDATED, lastUpdated.getTime());
 
-            values[i++] = v;
+            context.getContentResolver().insert(VenueImageContentProvider.CONTENT_URI, v);
+        }else{
+            for(Photo p : photos){
+                ContentValues v = new ContentValues();
+                v.put(VenueImageTable.COLUMN_VENUE_ID, venueId);
+                v.put(VenueImageTable.COLUMN_PREFIX, p.getPrefix());
+                v.put(VenueImageTable.COLUMN_SUFFIX, p.getSuffix());
+                v.put(VenueImageTable.COLUMN_WIDTH, p.getWidth());
+                v.put(VenueImageTable.COLUMN_HEIGHT, p.getHeight());
+                v.put(VenueImageTable.COLUMN_LAST_UPDATED, lastUpdated.getTime());
+
+                values[i++] = v;
+            }
         }
 
         int numSaved = context.getContentResolver().bulkInsert(VenueImageContentProvider.CONTENT_URI, values);

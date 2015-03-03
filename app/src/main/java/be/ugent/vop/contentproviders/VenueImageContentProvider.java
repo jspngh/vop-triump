@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,6 +22,8 @@ import be.ugent.vop.database.VenueImageTable;
 public class VenueImageContentProvider extends ContentProvider {
     // database
     private MySQLiteHelper database;
+
+    private static final String TAG = "VenueImageCP";
 
     // used for the UriMacher
     private static final int VENUES = 10;
@@ -40,7 +43,7 @@ public class VenueImageContentProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH, VENUES);
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", VENUE_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/*", VENUE_ID);
     }
 
     @Override
@@ -68,8 +71,8 @@ public class VenueImageContentProvider extends ContentProvider {
                 break;
             case VENUE_ID:
                 // adding the ID to the original query
-                queryBuilder.appendWhere(VenueImageTable.COLUMN_VENUE_ID + "="
-                        + uri.getLastPathSegment());
+                queryBuilder.appendWhere(VenueImageTable.COLUMN_VENUE_ID + "='"
+                        + uri.getLastPathSegment()+"'");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -156,8 +159,8 @@ public class VenueImageContentProvider extends ContentProvider {
                             null);
                 } else {
                     rowsDeleted = sqlDB.delete(VenueImageTable.TABLE_VENUE_IMAGE,
-                            VenueImageTable.COLUMN_VENUE_ID + "=" + id
-                                    + " and " + selection,
+                            VenueImageTable.COLUMN_VENUE_ID + "='" + id
+                                    + "' and " + selection,
                             selectionArgs);
                 }
                 break;
@@ -187,13 +190,13 @@ public class VenueImageContentProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = sqlDB.update(VenueImageTable.TABLE_VENUE_IMAGE,
                             values,
-                            VenueImageTable.COLUMN_VENUE_ID + "=" + id,
+                            VenueImageTable.COLUMN_VENUE_ID + "='" + id +"'",
                             null);
                 } else {
                     rowsUpdated = sqlDB.update(VenueImageTable.TABLE_VENUE_IMAGE,
                             values,
-                            VenueImageTable.COLUMN_VENUE_ID + "=" + id
-                                    + " and "
+                            VenueImageTable.COLUMN_VENUE_ID + "='" + id
+                                    + "' and "
                                     + selection,
                             selectionArgs);
                 }
