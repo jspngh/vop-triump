@@ -26,4 +26,9 @@ public class VenueActivity extends BaseActivity {
             .replace(R.id.main_content, fragment)
             .commit();
     }
+
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return NAVDRAWER_ITEM_OTHER;
+    }
 }

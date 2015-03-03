@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -201,7 +202,7 @@ public abstract class BaseActivity extends ActionBarActivity {
             return;
         }
 
-        if (mActionBarToolbar != null) {
+        if (mActionBarToolbar != null && getSelfNavDrawerItem() != NAVDRAWER_ITEM_OTHER) {
             // ActionBarDrawerToggle ties together the the proper interactions
             // between the sliding drawer and the action bar app icon
             mDrawerToggle = new ActionBarDrawerToggle(
@@ -224,6 +225,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
             mDrawerLayout.setDrawerListener(mDrawerToggle);
             mDrawerToggle.syncState();
+        }else{
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
@@ -355,8 +358,15 @@ public abstract class BaseActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
+        }
+
+        switch(item.getItemId()){
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                //finish();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
