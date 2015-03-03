@@ -14,7 +14,7 @@ public class FoursquareVenue {
     private String country;
     private double longitude;
     private double latitude;
-    private ArrayList<String> photos;
+    private ArrayList<Photo> photos;
 
     public FoursquareVenue(String id, String name, String address, String city,String country, double longitude, double latitude){
         this.id= id;
@@ -54,11 +54,11 @@ public class FoursquareVenue {
         return latitude;
     }
 
-    public void setPhotos(ArrayList<String> photos){
+    public void setPhotos(ArrayList<Photo> photos){
         this.photos = photos;
     }
 
-    public ArrayList<String> getPhotos(){
+    public ArrayList<Photo> getPhotos(){
         return this.photos;
     }
 
