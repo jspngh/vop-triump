@@ -10,11 +10,10 @@ import android.support.v4.view.ViewPager;
 
 
 import be.ugent.vop.BaseActivity;
-import be.ugent.vop.GroupFragment;
+import be.ugent.vop.GroupListFragment;
 import be.ugent.vop.LocationService;
 import be.ugent.vop.R;
 
-import be.ugent.vop.VenueFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
 
 public class MainActivity extends BaseActivity {
@@ -76,9 +75,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private class OurViewPagerAdapter extends FragmentPagerAdapter {
-        public OurViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+            public OurViewPagerAdapter(FragmentManager fm) {
+                super(fm);
+            }
         @Override
         public Fragment getItem(int position) {
             //LOGD(TAG, "Creating fragment #" + position);
@@ -88,9 +87,9 @@ public class MainActivity extends BaseActivity {
                 case 1:
                     return new CheckinFragment();
                 case 2:
-                    return new GroupFragment();
+                    return new GroupListFragment();
             }
-            GroupFragment frag = new GroupFragment();
+            GroupListFragment frag = new GroupListFragment();
             return frag;
         }
         @Override
