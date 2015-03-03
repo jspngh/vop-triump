@@ -118,11 +118,12 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Google API onConnected");
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
+
+        // Indien er geen locatie gevonden is zal er nooit een loader aangemaakt worden,
+        // hierdoor zullen er ook geen venues geladen worden wanneer er later wel een locatie gevonden wordt.
+
             getLoaderManager().initLoader(0, null, this);
-        }
+
 
     }
 
@@ -138,14 +139,24 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
 
     @Override
     public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
-        Loader loader = new VenueLoader(getActivity(), mLastLocation);
-        return loader;
+        Log.d(TAG, "onCreateLoader");
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            return new VenueLoader(getActivity(), mLastLocation);
+        } else {
+            Location defaultLocation = new Location("");
+            defaultLocation.setLatitude(50);
+            defaultLocation.setLongitude(4);
+            return new VenueLoader(getActivity(),defaultLocation );
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, ArrayList<FoursquareVenue> venues) {
         Log.d(TAG, "onLoadFinished");
         mAdapter.setVenues(venues);
+        mAdapter.setContext(getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         mLoadingMessage.setVisibility(View.GONE);

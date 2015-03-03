@@ -1,9 +1,12 @@
 package be.ugent.vop.foursquare;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by siebe on 03/03/15.
  */
-public class Photo {
+public class Photo implements Parcelable {
     private String prefix;
     private String suffix;
     private int width;
@@ -47,4 +50,37 @@ public class Photo {
     public void setHeight(int height) {
         this.height = height;
     }
+
+    protected Photo(Parcel in) {
+        prefix = in.readString();
+        suffix = in.readString();
+        width = in.readInt();
+        height = in.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(prefix);
+        dest.writeString(suffix);
+        dest.writeInt(width);
+        dest.writeInt(height);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Photo> CREATOR = new Parcelable.Creator<Photo>() {
+        @Override
+        public Photo createFromParcel(Parcel in) {
+            return new Photo(in);
+        }
+
+        @Override
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
 }

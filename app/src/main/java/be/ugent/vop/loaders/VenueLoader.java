@@ -63,10 +63,14 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> imp
      */
     @Override
     public ArrayList<FoursquareVenue> loadInBackground() {
+        Log.d(TAG,"loadInBackground");
         ArrayList<FoursquareVenue> result = null;
         Log.d("VenueLoader", " "+i );
         result = FoursquareAPI.get(context).getNearbyVenues(location);
+        Log.d("VenueLoader", "size of venues found: "+ result.size() );
         // Done!
+       //  result = new ArrayList<>();
+       // result.add(new FoursquareVenue("666","Naam","","","",30,30));
         return result;
     }
 
