@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.foursquare.Photo;
 
 /**
  * Created by siebe on 02/03/15.
@@ -92,10 +93,12 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         viewHolder.venueInfo.setText("Restaurant - 5 groups currently here");
 
         if(venue.getPhotos().size() > 0){
+            Photo p = venue.getPhotos().get(0);
+            String url = p.getPrefix() + "original" + p.getSuffix();
             Ion.with(viewHolder.venueImage)
                     .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_drawer_logout)
-                    .load(venue.getPhotos().get(0));
+                    .load(url);
         }
 
 
