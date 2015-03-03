@@ -1,16 +1,19 @@
 package be.ugent.vop.ui.venue;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 
 import com.koushikdutta.ion.Ion;
 
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.group.Group;
+import be.ugent.vop.ui.group.GroupActivity;
 
 
 public class VenueFragment extends Fragment {
@@ -26,7 +30,6 @@ public class VenueFragment extends Fragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private String venueId;
     private FoursquareVenue venue;
     private TextView titleTextView;
     private ImageView venueImageView;
@@ -57,9 +60,9 @@ public class VenueFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         topGroups = new ArrayList<>();
-        topGroups.add(new Group("VTK - Gent",181));
-        topGroups.add(new Group("VLAK",160));
-        topGroups.add(new Group("Moeder Barry",13));
+        topGroups.add(new Group(12020,"VTK - Gent",181));
+        topGroups.add(new Group(12345,"VLAK",160));
+        topGroups.add(new Group(3422,"Moeder Barry",13));
 
         titleTextView.setText(venue.getName());
 
@@ -78,6 +81,19 @@ public class VenueFragment extends Fragment {
 
         rankingListView.setAdapter(adapter);
 
+        rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.d("Hello!", "sqdqsd");
+           Intent intent = new Intent(getActivity(), GroupActivity.class);
+           Bundle bundle = new Bundle();
+           bundle.putLong("groupId", topGroups.get(position).getId());
+           intent.putExtras(bundle);
+           startActivity(intent);
+
+            }
+        });
 
     }
 

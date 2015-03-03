@@ -35,15 +35,11 @@ public class RankingAdapter extends ArrayAdapter<Group> {
         View v = convertView;
 
         if (v == null) {
-            Log.d("Adapter","Here");
-
-            v = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
-
-
+             v = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
         }
 
         Group p = getItem(position);
-        Log.d("Adapter", p.getName());
+
 
         if (p != null) {
 
@@ -63,8 +59,6 @@ public class RankingAdapter extends ArrayAdapter<Group> {
                 pointsTextView.setText(""+p.getPoints());
             }
         }
-
         return v;
-
     }
 }

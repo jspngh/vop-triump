@@ -10,12 +10,14 @@ package be.ugent.vop.ui.group;
  *
  */
 public class Group {
+    private long id;
     private String name;
     private int points;
 
-    public Group(String name, int points){
+    public Group(long id, String name, int points){
         this.name = name;
         this.points = points;
+        this.id = id;
     }
 
     public String getName(){
@@ -25,4 +27,6 @@ public class Group {
     public int getPoints(){
         return points;
     }
+
+    public long getId() { return id; }
 }
