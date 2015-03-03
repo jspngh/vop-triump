@@ -18,6 +18,7 @@ package be.ugent.vop.ui.list;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -26,11 +27,13 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -39,6 +42,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import be.ugent.vop.R;
+import be.ugent.vop.ui.group.GroupActivity;
 
 /**
  * This is a custom array adapter used to populate the listview whose items will
@@ -48,12 +52,16 @@ public class CustomArrayAdapter extends ArrayAdapter<ExpandableListItem> {
 
     private List<ExpandableListItem> mData;
     private int mLayoutViewResourceId;
+    private Long[] mGroupId;
+    private Context context;
 
     public CustomArrayAdapter(Context context, int layoutViewResourceId,
-                              List<ExpandableListItem> data) {
+                              List<ExpandableListItem> data, Long[] groupId) {
         super(context, layoutViewResourceId, data);
         mData = data;
         mLayoutViewResourceId = layoutViewResourceId;
+        mGroupId = groupId;
+        this.context = context;
     }
 
     /**
@@ -83,6 +91,19 @@ public class CustomArrayAdapter extends ArrayAdapter<ExpandableListItem> {
         TextView titleView = (TextView)convertView.findViewById(R.id.group_title);
         TextView infoView = (TextView)convertView.findViewById(R.id.group_info);
         TextView textView = (TextView)convertView.findViewById(R.id.text_view);
+        Button btn = (Button) convertView.findViewById(R.id.groupbtn);
+        final int tmp = position;
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, GroupActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putLong("groupId", mGroupId[tmp]);
+                intent.putExtras(bundle);
+                context.startActivity(intent);
+            }
+        });
+
 
         titleView.setText(object.getTitle());
         infoView.setText(object.getInfo());

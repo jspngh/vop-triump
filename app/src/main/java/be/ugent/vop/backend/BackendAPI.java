@@ -16,6 +16,7 @@ import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
+import be.ugent.vop.backend.myApi.model.GroupBean;
 
 public class BackendAPI {
     public static BackendAPI instance;
@@ -73,5 +74,8 @@ public class BackendAPI {
         return myApiService.getAllGroups(token).execute();
     }
 
+    public GroupBean getGroupInfo(long groupId) throws IOException{
+        return myApiService.getGroupInfo(token, groupId).execute();
+    }
 
 }

@@ -58,18 +58,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         View rootView = inflater.inflate(R.layout.fragment_group_list, container, false);
         activity = getActivity();
         getLoaderManager().initLoader(0, null, this);
-        Button btn =(Button) rootView.findViewById(R.id.groupbtn);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GroupActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("groupId", 0);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
         return rootView;
     }
 
@@ -89,13 +77,14 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     public void onLoadFinished(Loader<AllGroupsBean> objectLoader, AllGroupsBean allGroupsBean) {
 
 
-         List<GroupBean> Groups = allGroupsBean.getGroups();
+        List<GroupBean> Groups = allGroupsBean.getGroups();
+        Long[] allgroupids = new Long[Groups.size()];
 
         ExpandableListItem[] values = new ExpandableListItem[Groups.size()];
          for(int i = 0; i < Groups.size(); i++){
-        values[i]=new ExpandableListItem(Groups.get(i).getName(),  "ass",R.drawable.ic_launcher, CELL_DEFAULT_HEIGHT,
+            values[i] = new ExpandableListItem(Groups.get(i).getName(), "ass", R.drawable.ic_launcher, CELL_DEFAULT_HEIGHT,
                 "tits");
-
+            allgroupids[i] = Groups.get(i).getGroupId();
         }
 
         List<ExpandableListItem> mData = new ArrayList<ExpandableListItem>();
@@ -106,7 +95,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
                     obj.getCollapsedHeight(), obj.getText()));
         }
 
-        CustomArrayAdapter adapter = new CustomArrayAdapter(activity, R.layout.group_list_item, mData);
+        CustomArrayAdapter adapter = new CustomArrayAdapter(activity, R.layout.group_list_item, mData, allgroupids);
 
         mListView = (ExpandingListView)activity.findViewById(R.id.group_list_view);
         mListView.setAdapter(adapter);

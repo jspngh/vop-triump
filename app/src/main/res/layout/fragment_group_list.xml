@@ -6,12 +6,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity$GroupFragment">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="go to GroupActivity"
-        android:id="@+id/groupbtn"/>
-
     <be.ugent.vop.ui.list.ExpandingListView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
