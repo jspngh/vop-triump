@@ -6,12 +6,12 @@ package be.ugent.vop.backend;
  */
 public class RankingBean {
 
-    private GroupBean group;
+    private long groupId;
     private VenueBean venue;
     private long points;
 
-    public void setGroup(GroupBean group) {
-        this.group = group;
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
     }
 
     public void setVenue(VenueBean venue) {
@@ -22,8 +22,8 @@ public class RankingBean {
         this.points = points;
     }
 
-    public GroupBean getGroup() {
-        return group;
+    public long getGroupId() {
+        return groupId;
     }
 
     public VenueBean getVenue() {

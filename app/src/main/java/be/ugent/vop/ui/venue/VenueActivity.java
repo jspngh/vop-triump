@@ -1,11 +1,10 @@
-package be.ugent.vop.ui.main;
+package be.ugent.vop.ui.venue;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
-import be.ugent.vop.VenueFragment;
+import be.ugent.vop.ui.venue.VenueFragment;
 
 /**
  * Created by vincent on 03/03/15.
@@ -23,7 +22,7 @@ public class VenueActivity extends BaseActivity {
 
    this.getSupportFragmentManager()
             .beginTransaction()
-            .replace(R.id.main_content, fragment)
+            .replace(R.id.fragment_container, fragment)
             .commit();
     }
 

@@ -1,4 +1,4 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.group;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.ListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.loaders.AllGroupsLoader;

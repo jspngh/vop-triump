@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
+import be.ugent.vop.ui.venue.VenueListAdapter;
 
 /**
  * Created by siebe on 28/02/15.
