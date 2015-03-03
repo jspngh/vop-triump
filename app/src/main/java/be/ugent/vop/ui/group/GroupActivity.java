@@ -1,8 +1,11 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.group;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import be.ugent.vop.BaseActivity;
+import be.ugent.vop.R;
 
 public class GroupActivity extends BaseActivity {
 

@@ -10,7 +10,7 @@ import android.support.v4.view.ViewPager;
 
 
 import be.ugent.vop.BaseActivity;
-import be.ugent.vop.GroupListFragment;
+import be.ugent.vop.ui.group.GroupListFragment;
 import be.ugent.vop.LocationService;
 import be.ugent.vop.R;
 
