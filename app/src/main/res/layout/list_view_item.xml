@@ -58,9 +58,9 @@
             android:textSize="22sp"
             android:textColor="#ffffff"
             android:gravity="center_horizontal"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="20dp"/>
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"/>
 
     </be.ugent.vop.ui.list.ExpandingLayout>
 
