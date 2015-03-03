@@ -165,7 +165,7 @@ public class FoursquareAPI {
         /*
         Try to get images from local database
          */
-        Uri venueUri = Uri.parse(VenueImageContentProvider.CONTENT_URI + "/#" + venue.getId());
+        Uri venueUri = Uri.parse(VenueImageContentProvider.CONTENT_URI + "/" + venue.getId());
         String[] projection = {VenueImageTable.COLUMN_PREFIX, VenueImageTable.COLUMN_SUFFIX, VenueImageTable.COLUMN_HEIGHT, VenueImageTable.COLUMN_WIDTH};
         Cursor images = context.getContentResolver().query(venueUri, projection, null, null, null);
 
