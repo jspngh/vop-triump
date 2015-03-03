@@ -7,27 +7,44 @@
     android:padding="16dp"
     android:background="#ffffffff">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1"
-        android:id="@+id/textViewNr" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Name"
-        android:id="@+id/textViewName" />
+    <be.ugent.vop.ui.widget.CircularImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imageViewRanking"
+        android:src="@drawable/ranking"
+        android:layout_marginRight="16dp"
+        app:border="false"
+        />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="314"
-        android:id="@+id/textViewPoints"
-        android:layout_gravity="top" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Name"
+            android:id="@+id/textViewName"
+            android:fontFamily="@string/font_fontFamily_medium"
+            android:textSize="16dp"
+            android:singleLine="false" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="314"
+            android:id="@+id/textViewPoints"
+            android:layout_alignParentRight="true"
+            />
+
+
+
+
+
+        </RelativeLayout>
 
 
 </LinearLayout>
