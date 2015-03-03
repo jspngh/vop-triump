@@ -64,6 +64,12 @@
         <!-- Services -->
         <service android:name=".LocationService" />
 
+        <provider
+            android:name=".contentproviders.VenueImageContentProvider"
+            android:authorities="be.ugent.vop.contentproviders.venueimagecontentprovider"
+            android:exported="false" >
+        </provider>
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAZz5UTuyPf6mV9vEyCymjPkqouw0WCo1M" />

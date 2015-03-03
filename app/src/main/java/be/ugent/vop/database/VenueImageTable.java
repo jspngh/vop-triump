@@ -13,8 +13,9 @@ public class VenueImageTable {
     public static final String COLUMN_SUFFIX = "suffix";
     public static final String COLUMN_WIDTH = "width";
     public static final String COLUMN_HEIGHT = "height";
+    public static final String COLUMN_LAST_UPDATED = "last_updated";
 
-    public final static String COLUMNS[] = {COLUMN_ID, COLUMN_VENUE_ID, COLUMN_PREFIX, COLUMN_SUFFIX, COLUMN_WIDTH, COLUMN_HEIGHT};
+    public final static String COLUMNS[] = {COLUMN_ID, COLUMN_VENUE_ID, COLUMN_PREFIX, COLUMN_SUFFIX, COLUMN_WIDTH, COLUMN_HEIGHT, COLUMN_LAST_UPDATED};
 
     // Database creation sql statement
     private static final String CREATE_TABLE_CATEGORY = "create table if not exists "
@@ -23,8 +24,9 @@ public class VenueImageTable {
             + " text not null, " + COLUMN_PREFIX
             + " text not null, " + COLUMN_SUFFIX
             + " text not null, " + COLUMN_WIDTH
-            + " integer, " + COLUMN_HEIGHT
-            + " integer);";
+            + " integer not null, " + COLUMN_HEIGHT
+            + " integer not null, " + COLUMN_LAST_UPDATED
+            + " date not null);";
 
     public static void onCreate(SQLiteDatabase database) {
         System.err.println("creating table");
