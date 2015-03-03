@@ -1,5 +1,9 @@
 package be.ugent.vop.ui.main;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +17,7 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
+import be.ugent.vop.VenueFragment;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
 
@@ -21,11 +26,14 @@ import be.ugent.vop.foursquare.Photo;
  */
 public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.ViewHolder> {
     private static final String TAG = "VenueListAdapter";
-
     private ArrayList<FoursquareVenue> venues;
+    private Context context;
 
     public void setVenues(ArrayList<FoursquareVenue> venues) {
         this.venues = venues;
+    }
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
@@ -72,9 +80,13 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         ViewHolder vh = new ViewHolder(v, new ViewHolder.IMyViewHolderClicks() {
             @Override
             public void onItemClick(View caller, int position) {
-                String venueId = venues.get(position).getId();
+                String venueId =  venues.get(position).getId();
+                Intent intent = new Intent(context, VenueActivity.class);
+                intent.putExtra("venue", venues.get(position));
 
-                // TODO: Start new activity showing details for this venue
+                context.startActivity(intent);
+
+                // TODO: Start new fragment showing details for this venue
                 Log.d("VenueListAdapter", "Showing details for venue " + venueId);
             }
         });
