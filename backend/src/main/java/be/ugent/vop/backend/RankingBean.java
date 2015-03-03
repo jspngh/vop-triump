@@ -1,16 +1,17 @@
 package be.ugent.vop.backend;
 
 
+import java.security.acl.Group;
+
 /**
  * Created by Lars on 01/03/15.
  */
 public class RankingBean {
-
-    private long groupId;
+    private GroupBean groupbean;
     private long points;
 
-    public void setGroupId(long groupId) {
-        this.groupId = groupId;
+    public void setGroupBean(GroupBean groupbean) {
+        this.groupbean = groupbean;
     }
 
 
@@ -18,8 +19,8 @@ public class RankingBean {
         this.points = points;
     }
 
-    public long getGroupId() {
-        return groupId;
+    public GroupBean getGroupBean() {
+        return this.groupbean;
     }
 
 

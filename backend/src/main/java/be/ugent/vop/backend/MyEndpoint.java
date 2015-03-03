@@ -96,6 +96,16 @@ public class MyEndpoint {
         return response;
     }
 
+    @ApiMethod(name = "getVenueInfo")
+    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException {
+        long userId = _getUserIdForToken(token);
+        VenueBean response = null;
+        response = _getVenueBean(venueId);
+
+        return response;
+    }
+
+
 
     @ApiMethod(name = "getGroupsForUser")
     public GroupsBean getGroupsForUser(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
@@ -407,7 +417,11 @@ public class MyEndpoint {
         for (Entity r : pq.asIterable()) {
             rank = new RankingBean();
             rank.setPoints((long) r.getProperty("points"));
-            rank.setGroupId((long)r.getProperty("groupId"));
+            try {
+                rank.setGroupBean(_getGroupBean((long) r.getProperty("groupId")));
+            } catch (EntityNotFoundException e) {
+                e.printStackTrace();
+            }
             ranking.add(rank);
         }
         venuebean.setRanking(ranking);
