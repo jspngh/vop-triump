@@ -14,11 +14,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.loaders.VenueLoader;
 import be.ugent.vop.ui.main.MainActivity;
-
 
 public class VenueFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
     /**
@@ -51,7 +49,7 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_group, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_group_list, container, false);
         venueListView = (ListView) rootView.findViewById(R.id.group_list_view);
 
         getLoaderManager().initLoader(0, null, this);

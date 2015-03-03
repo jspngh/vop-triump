@@ -93,8 +93,6 @@ public class FoursquareAPI {
         return getNearbyVenues(latitude,longitude,50,100000);
     }
 
-
-
     public ArrayList<FoursquareVenue> getNearbyVenues(double latitude, double longitude, int limit, int radius)  {
 
         String url =API_URL + "/venues/search?ll=" + latitude +","+longitude +"&radius="+radius+"&limit="+limit+"&oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
