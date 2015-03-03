@@ -23,7 +23,12 @@ public class VenueActivity extends BaseActivity {
 
    this.getSupportFragmentManager()
             .beginTransaction()
-            .replace(R.id.main_content, fragment)
+            .replace(R.id.fragment_container, fragment)
             .commit();
+    }
+
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return NAVDRAWER_ITEM_OTHER;
     }
 }
