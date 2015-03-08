@@ -66,7 +66,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="go to group"
+            android:text="@string/go_to_group"
             android:id="@+id/groupbtn"
             android:layout_below="@id/text_view"/>
     </be.ugent.vop.ui.list.ExpandingLayout>

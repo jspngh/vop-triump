@@ -269,6 +269,7 @@ public class LoginFragment extends Fragment {
         Bundle args = new Bundle(2);
         args.putLong("userId", userId);
         args.putString("fsToken", fsToken);
+        Log.d("fsToken and userId", fsToken + userId);
 
         try {
             getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, mAuthTokenLoaderListener);

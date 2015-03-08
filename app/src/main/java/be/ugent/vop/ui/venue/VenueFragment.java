@@ -162,7 +162,7 @@ public class VenueFragment extends Fragment implements LoaderManager.LoaderCallb
         }
 
 
-        adapter = new RankingAdapter(this.getActivity(),R.layout.ranking_list_item,topGroups);
+        adapter = new RankingAdapter(this.getActivity(),R.layout.ranking_list_item, topGroups);
 
         rankingListView.setAdapter(adapter);
 

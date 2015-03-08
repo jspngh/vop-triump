@@ -32,7 +32,7 @@ public class ExpandableListItem implements OnSizeChangedListener {
     private int mCollapsedHeight;
     private int mExpandedHeight;
 
-    public ExpandableListItem(String title,String info, int imgResource, int collapsedHeight, String text) {
+    public ExpandableListItem(String title, String info, int imgResource, int collapsedHeight, String text) {
         mTitle = title;
         mInfo = info;
         mImgResource = imgResource;

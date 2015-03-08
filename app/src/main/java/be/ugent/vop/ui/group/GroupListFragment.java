@@ -1,15 +1,13 @@
 package be.ugent.vop.ui.group;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListAdapter;
 
 import java.util.ArrayList;
@@ -69,8 +67,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<AllGroupsBean> onCreateLoader(int id, Bundle bundle) {
-        AllGroupsLoader loader = new AllGroupsLoader(getActivity());
-        return loader;
+        return new AllGroupsLoader(getActivity());
     }
 
     @Override
