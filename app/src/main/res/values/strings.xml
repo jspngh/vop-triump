@@ -39,7 +39,7 @@
     <string name="waiting_for_location">Waiting for location...</string>
 
     <string name="group_banner_description">banner of your group</string>
-
+    <string name="group_id">id of group</string>
     <string-array name="main_tabs">
         <item>Overview</item>
         <item>Checkin</item>

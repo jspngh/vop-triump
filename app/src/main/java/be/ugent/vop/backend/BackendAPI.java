@@ -80,6 +80,10 @@ public class BackendAPI {
         return myApiService.getVenueInfo(token,venueId).execute();
     }
 
+    public GroupBean registerUserInGroup( String token, long groupId) throws IOException{
+         return myApiService.registerUserInGroup(token, groupId).execute();
+    }
+
     public GroupBean getGroupInfo(long groupId) throws IOException{
         return myApiService.getGroupInfo(token, groupId).execute();
     }

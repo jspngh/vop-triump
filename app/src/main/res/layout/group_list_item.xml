@@ -69,7 +69,6 @@
             android:text="go to group"
             android:id="@+id/groupbtn"
             android:layout_below="@id/text_view"/>
-
     </be.ugent.vop.ui.list.ExpandingLayout>
 
 </LinearLayout>
