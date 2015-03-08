@@ -33,7 +33,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static Activity activity;
     private ListAdapter arrayAdapter;
-    private final int CELL_DEFAULT_HEIGHT = 88;
+    private final int CELL_DEFAULT_HEIGHT = 150;
     private int NUM_OF_CELLS = 30;
 
     private ExpandingListView mListView;
@@ -78,16 +78,24 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
 
 
         List<GroupBean> Groups = allGroupsBean.getGroups();
-        Long[] allgroupids = new Long[Groups.size()];
+        NUM_OF_CELLS = Groups.size();
+        Long[] allgroupids = new Long[NUM_OF_CELLS];
 
-        ExpandableListItem[] values = new ExpandableListItem[Groups.size()];
-         for(int i = 0; i < Groups.size(); i++){
+        String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae enim dapibus, tincidunt mi ut, dignissim dolor. " +
+                "Donec tristique eget lorem sagittis lacinia. Fusce iaculis lobortis tellus, dictum sodales nisl dapibus eu. " +
+                "Aenean vitae convallis ipsum, non sodales tellus. Pellentesque ex nunc, suscipit quis vestibulum in, cursus ac risus. " +
+                "Mauris vel massa luctus, porta odio sed, facilisis mi. Nunc tincidunt posuere imperdiet. Sed nec massa sit amet quam sollicitudin semper a at ligula. " +
+                "Integer eleifend sed ipsum luctus commodo. Quisque vel ante sit amet tellus venenatis fermentum vel sed ante. Nam tempus purus vitae urna ultrices consequat. " +
+                "Suspendisse accumsan felis quis pretium mollis.";
+
+        ExpandableListItem[] values = new ExpandableListItem[NUM_OF_CELLS];
+         for(int i = 0; i < NUM_OF_CELLS; i++){
             values[i] = new ExpandableListItem(Groups.get(i).getName(), "ass", R.drawable.ic_launcher, CELL_DEFAULT_HEIGHT,
-                "tits");
+                text);
             allgroupids[i] = Groups.get(i).getGroupId();
         }
 
-        List<ExpandableListItem> mData = new ArrayList<ExpandableListItem>();
+        List<ExpandableListItem> mData = new ArrayList<>();
 
         for (int i = 0; i < NUM_OF_CELLS; i++) {
             ExpandableListItem obj = values[i % values.length];

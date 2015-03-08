@@ -92,6 +92,7 @@ public class CustomArrayAdapter extends ArrayAdapter<ExpandableListItem> {
         TextView infoView = (TextView)convertView.findViewById(R.id.group_info);
         TextView textView = (TextView)convertView.findViewById(R.id.text_view);
         Button btn = (Button) convertView.findViewById(R.id.groupbtn);
+        btn.setFocusable(false);
         final int tmp = position;
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +104,6 @@ public class CustomArrayAdapter extends ArrayAdapter<ExpandableListItem> {
                 context.startActivity(intent);
             }
         });
-
 
         titleView.setText(object.getTitle());
         infoView.setText(object.getInfo());
