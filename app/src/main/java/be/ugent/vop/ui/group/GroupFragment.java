@@ -7,6 +7,7 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,12 +105,18 @@ public class GroupFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null){
+                SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putLong(getString(R.string.group_id), response.getGroupId());
+                editor.apply();
+                btn.setVisibility(View.GONE);
+
                 name.setText(response.getName());
                 admin.setText(response.getAdminId().toString());
                 created.setText(response.getCreated().toString());
-                ArrayList<String> members = new ArrayList<>();
-                for (UserBean user : response.getMembers()){
-                    members.add(user.getFirstName() + " " + user.getLastName());
+                ArrayList<Pair<String, Long>> members = new ArrayList<>();
+                for (UserBean user : response.getMembers()) {
+                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getFsUserId()));
                     Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
                 }
                 MemberAdapter adapter = new MemberAdapter(context, members);
@@ -143,9 +150,9 @@ public class GroupFragment extends Fragment {
                 name.setText(response.getName());
                 admin.setText(response.getAdminId().toString());
                 created.setText(response.getCreated().toString());
-                ArrayList<String> members = new ArrayList<>();
+                ArrayList<Pair<String, Long>> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
-                    members.add(user.getFirstName() + " " + user.getLastName());
+                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getFsUserId()));
                     Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
                 }
                 MemberAdapter adapter = new MemberAdapter(context, members);
