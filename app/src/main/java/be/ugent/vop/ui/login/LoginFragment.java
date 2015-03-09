@@ -236,23 +236,23 @@ public class LoginFragment extends Fragment {
         logInMessage.setVisibility(View.VISIBLE);
         btnLogout.setVisibility(View.GONE);
         btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start the native auth flow.
-                Intent intent = FoursquareOAuth.getConnectIntent(context, CLIENT_ID);
+        @Override
+        public void onClick(View v) {
+            // Start the native auth flow.
+            Intent intent = FoursquareOAuth.getConnectIntent(context, CLIENT_ID);
 
-                // If the device does not have the Foursquare app installed, we'd
-                // get an intent back that would open the Play Store for download.
-                // Otherwise we start the auth flow.
-                if (FoursquareOAuth.isPlayStoreIntent(intent)) {
-                    Log.e("onClick :", getString(R.string.app_not_installed_message));
-                    startActivity(intent);
-                } else {
-                    startActivityForResult(intent, REQUEST_CODE_FSQ_CONNECT);
-                }
+            // If the device does not have the Foursquare app installed, we'd
+            // get an intent back that would open the Play Store for download.
+            // Otherwise we start the auth flow.
+            if (FoursquareOAuth.isPlayStoreIntent(intent)) {
+                Log.e("onClick :", getString(R.string.app_not_installed_message));
+                startActivity(intent);
+            } else {
+                startActivityForResult(intent, REQUEST_CODE_FSQ_CONNECT);
             }
-        });
-    }
+        }
+    });
+}
 
     private void startBackendLogin(){
         // Close sessions that might still be open

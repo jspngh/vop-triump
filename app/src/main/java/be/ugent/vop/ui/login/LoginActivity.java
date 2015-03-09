@@ -25,15 +25,22 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
                 return;
             }
 
-            // Create a new Fragment to be placed in the activity layout
-            LoginFragment loginFragment = new LoginFragment();
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            loginFragment.setArguments(getIntent().getExtras());
+            Bundle mBundle = getIntent().getExtras();
+            if (!mBundle.getString(getString(R.string.profile), "").equals(ProfileFragment.PROFILE_ACTIVITY)){
+                // Create a new Fragment to be placed in the activity layout
+                LoginFragment loginFragment = new LoginFragment();
 
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, loginFragment).commit();
+                // Add the fragment to the 'fragment_container' FrameLayout
+                getFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, loginFragment).commit();
+            }
+            else if(mBundle.getLong(ProfileFragment.USER_ID, 0) != 0){
+                ProfileFragment profileFragment = new ProfileFragment();
+                profileFragment.setArguments(mBundle);
+                getFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, profileFragment).commit();
+
+            }
         }
     }
 

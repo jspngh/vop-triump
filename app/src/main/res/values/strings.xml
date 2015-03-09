@@ -15,6 +15,7 @@
     <string name="foursquaretoken">FoursquareToken</string>
     <string name="userid">UserId</string>
     <string name="first_launch">Welcome to Triump</string>
+    <string name="profile">Profile</string>
 
     <string name="title_activity_login">Sign in</string>
     <string name="logOutButton">Sign out</string>
@@ -52,7 +53,4 @@
     </string-array>
     <string name="title_activity_group">GroupActivity</string>
     <string name="hello_world">Hello world!</string>
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
