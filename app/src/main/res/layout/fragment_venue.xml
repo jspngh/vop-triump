@@ -24,13 +24,22 @@
         android:id="@+id/textViewTitle"
         android:layout_gravity="center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/loading_data"
+        android:id="@+id/textViewNoRanking"
+        android:visibility="visible" />
+
     <ListView
         android:layout_height="0dp"
         android:layout_weight="0.66"
         android:layout_width="match_parent"
         android:id="@+id/listViewRanking"
         android:layout_margin="0dp"
-        android:elevation="8dp" />
+        android:elevation="8dp"
+        android:visibility="invisible" />
 
     <Button
         android:layout_width="wrap_content"

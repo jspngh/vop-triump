@@ -6,6 +6,9 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import be.ugent.vop.Event;
+import be.ugent.vop.EventBroker;
+import be.ugent.vop.EventListener;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 
@@ -16,7 +19,7 @@ import be.ugent.vop.backend.myApi.model.VenueBean;
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class RankingLoader extends AsyncTaskLoader<VenueBean> {
+public class RankingLoader extends AsyncTaskLoader<VenueBean> implements EventListener {
     private final String TAG = "RankingLoader";
 
     private VenueBean venue;
@@ -28,6 +31,8 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> {
         super(context);
         this.context = context.getApplicationContext();
         this.venueId = venueId;
+
+        EventBroker.get().addListener(this);
     }
 
     /**
@@ -77,6 +82,7 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> {
         if (takeContentChanged() || venue == null) {
             // If the data has changed since the last time it was loaded
             // or is not currently available, start a load.
+            Log.d("RankingLoader", "testing forceLoad");
             forceLoad();
         }
     }
@@ -111,4 +117,15 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> {
             venue = null;
         }
     }
+
+    /**
+     *  Event listener
+     */
+    @Override
+    public void handleEvent(Event e){
+        Log.d("RankingLoader", "onContent changed");
+        if(e.getType().equals("checkin") || e.getType().equals("refresh")) { Log.d("RankingLoader", "testing onConten changed"); onContentChanged();}
+    }
+
+
 }

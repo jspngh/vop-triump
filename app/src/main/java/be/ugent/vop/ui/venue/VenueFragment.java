@@ -23,6 +23,8 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.ugent.vop.Event;
+import be.ugent.vop.EventBroker;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
@@ -40,11 +42,12 @@ public class VenueFragment extends Fragment {
      * fragment.
      */
     private FoursquareVenue venue;
+    private TextView noRankingTextView;
     private TextView titleTextView;
     private ImageView venueImageView;
     private Button checkinButton;
     private RankingAdapter adapter;
-    private ArrayList<Group> topGroups;
+    private ArrayList<RankingBean> ranking;
     private ListView rankingListView;
     private Context context;
 
@@ -56,6 +59,7 @@ public class VenueFragment extends Fragment {
         context = getActivity();
 
         titleTextView = (TextView)rootView.findViewById(R.id.textViewTitle);
+        noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
@@ -68,8 +72,11 @@ public class VenueFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
+                EventBroker.get().addEvent(new Event("checkin"));
+
             }
         });
+
         return rootView;
     }
 
@@ -82,7 +89,7 @@ public class VenueFragment extends Fragment {
         if(venue.getPhotos().size()>0){
             photoUrl = venue.getPhotos().get(0).getPrefix()+"500x500"+venue.getPhotos().get(0).getSuffix();
         }else {
-            photoUrl = "http://www.beeldarchief.ugent.be/fotocollectie/gebouwen/images/prevs/prev64.jpg";
+            photoUrl = "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
          }
         Ion.with(venueImageView)
                 .placeholder(R.drawable.ic_launcher)
@@ -105,37 +112,14 @@ public class VenueFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<VenueBean> loader, VenueBean venue) {
             Log.d("VenueFragment", "onLoadFinished");
-            topGroups = new ArrayList<>();
-            List<RankingBean> ranking = venue.getRanking();
-            if(ranking!=null) {
-                for(RankingBean rank: ranking){
-                    topGroups.add(new Group(
-                            rank.getGroupBean().getGroupId(),
-                            rank.getGroupBean().getName(),
-                            rank.getPoints()
-                    ));
-                }
+         
+            if(venue.getRanking()!=null){
+            noRankingTextView.setVisibility(View.GONE);
+            rankingListView.setVisibility(View.VISIBLE);
+            ranking = new ArrayList<>();
+            for(RankingBean r:venue.getRanking()) ranking.add(r);
 
-            }else {
-                topGroups.add(new Group(
-                        1234567890,
-                        "VTK - GENT" ,
-                        380
-                ));
-                topGroups.add(new Group(
-                        67890,
-                        "VLAK" ,
-                        210
-                ));
-                topGroups.add(new Group(
-                        1230,
-                        "Moeder Barry" ,
-                        40
-                ));
-            }
-
-
-            adapter = new RankingAdapter(context, R.layout.ranking_list_item, topGroups);
+            adapter = new RankingAdapter(context, ranking);
 
             rankingListView.setAdapter(adapter);
 
@@ -143,14 +127,16 @@ public class VenueFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-
                     Intent intent = new Intent(getActivity(), GroupActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putLong("groupId", topGroups.get(position).getId());
+                    bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
             });
+        }else{
+                noRankingTextView.setText(R.string.no_ranking);
+            }
         }
 
         @Override
@@ -164,6 +150,8 @@ public class VenueFragment extends Fragment {
         public void onLoaderReset(Loader<VenueBean> loader) {
             rankingListView.setAdapter(null);
         }
+
+
     };
 
     private LoaderManager.LoaderCallbacks<VenueBean> mCheckInLoaderListener
@@ -172,52 +160,7 @@ public class VenueFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<VenueBean> loader, VenueBean venue) {
             Log.d("VenueFragment", "onLoadFinished");
-            topGroups = new ArrayList<>();
-            List<RankingBean> ranking = venue.getRanking();
-            if(ranking!=null) {
-                for(RankingBean rank: ranking){
-                    topGroups.add(new Group(
-                            rank.getGroupBean().getGroupId(),
-                            rank.getGroupBean().getName(),
-                            rank.getPoints()
-                    ));
-                }
 
-            }else {
-                topGroups.add(new Group(
-                        1234567890,
-                        "VTK - GENT" ,
-                        380
-                ));
-                topGroups.add(new Group(
-                        67890,
-                        "VLAK" ,
-                        210
-                ));
-                topGroups.add(new Group(
-                        1230,
-                        "Moeder Barry" ,
-                        40
-                ));
-            }
-
-
-            adapter = new RankingAdapter(context, R.layout.ranking_list_item, topGroups);
-
-            rankingListView.setAdapter(adapter);
-
-            rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-
-                    Intent intent = new Intent(getActivity(), GroupActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putLong("groupId", topGroups.get(position).getId());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
         }
 
         @Override
@@ -235,7 +178,7 @@ public class VenueFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<VenueBean> loader) {
-            rankingListView.setAdapter(null);
+            //rankingListView.setAdapter(null);
         }
     };
 

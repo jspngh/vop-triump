@@ -16,24 +16,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import be.ugent.vop.ui.group.Group;
+
+import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.R;
 
 /**
  * Created by vincent on 03/03/15.
  */
 
-public class RankingAdapter extends ArrayAdapter<Group> {
+public class RankingAdapter extends ArrayAdapter<RankingBean> {
     private int resourceId;
 
     public RankingAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
-    public RankingAdapter(Context context, int resource, ArrayList<Group> items) {
-        super(context, resource, items);
-        this.resourceId = resource;
+    public RankingAdapter(Context context, ArrayList<RankingBean> items) {
+        super(context, R.layout.ranking_list_item, items);
+        this.resourceId = R.layout.ranking_list_item;
+
     }
 
     @Override
@@ -45,16 +48,16 @@ public class RankingAdapter extends ArrayAdapter<Group> {
              v = LayoutInflater.from(getContext()).inflate(R.layout.ranking_list_item, parent, false);
         }
 
-        Group p = getItem(position);
+        RankingBean r = getItem(position);
 
 
-        if (p != null) {
+        if (r != null) {
             ImageView nrImageView = (ImageView) v.findViewById(R.id.imageViewRanking);
             TextView nameTextView = (TextView) v.findViewById(R.id.textViewName);
             TextView pointsTextView = (TextView) v.findViewById(R.id.textViewPoints);
 
             if (nameTextView != null) {
-                nameTextView.setText(p.getName());
+                nameTextView.setText(r.getGroupBean().getName());
             }
             if(nrImageView!=null){
                 nrImageView.setImageDrawable(
@@ -63,11 +66,12 @@ public class RankingAdapter extends ArrayAdapter<Group> {
 
             if (pointsTextView != null) {
 
-                pointsTextView.setText(""+p.getPoints());
+                pointsTextView.setText("" + r.getPoints());
             }
         }
         return v;
     }
+
 
     public BitmapDrawable writeOnDrawable(int drawableId, String text){
 
