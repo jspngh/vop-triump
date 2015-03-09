@@ -31,6 +31,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +104,7 @@ public class MyEndpoint {
         VenueBean response = null;
         response = _getVenueBean(venueId);
 
-        return response;
+        return _orderVenueBean(response);
     }
 
 
@@ -192,7 +194,7 @@ public class MyEndpoint {
                 datastore.put(r);
             }
         }
-        return _getVenueBean(venueId);
+        return _orderVenueBean(_getVenueBean(venueId));
 
     }
 
@@ -427,4 +429,20 @@ public class MyEndpoint {
         venuebean.setRanking(ranking);
         return venuebean;
     }
+
+    private VenueBean _orderVenueBean(VenueBean venue) {
+        List<RankingBean> ranking = venue.getRanking();
+        Collections.sort(ranking, comparator);
+        venue.setRanking(ranking);
+        return venue;
+    }
+
+    private static Comparator<RankingBean> comparator = new Comparator<RankingBean>() {
+
+        public int compare(RankingBean bean1, RankingBean bean2) {
+            return Long.valueOf(bean1.getPoints())
+                    .compareTo(Long.valueOf(bean2.getPoints()));
+        }
+
+    };
 }
