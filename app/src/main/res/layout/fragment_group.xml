@@ -34,18 +34,21 @@
         android:layout_below="@id/admin"
         android:id="@+id/created"
         android:gravity="center"/>
-    <ListView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/membersView"
-        android:layout_below="@id/created"
-        android:layout_margin="0dp"
-        android:elevation="8dp"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Join group"
-        android:id="@+id/joinbtn"/>
+        android:id="@+id/joinbtn"
+        android:layout_below="@+id/created"
+        android:layout_centerHorizontal="true" />
+    <ListView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/membersView"
+        android:layout_below="@id/joinbtn"
+        android:layout_margin="0dp"
+        android:elevation="8dp"/>
+
 
 
 </RelativeLayout>

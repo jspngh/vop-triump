@@ -1,12 +1,11 @@
 package be.ugent.vop.ui.group;
 
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
@@ -24,9 +24,8 @@ import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
 import be.ugent.vop.loaders.GroupBeanLoader;
 import be.ugent.vop.loaders.JoinGroupLoader;
-import be.ugent.vop.ui.login.FirstLaunchFragment;
 
-public class GroupFragment extends Fragment implements LoaderManager.LoaderCallbacks<GroupBean> {
+public class GroupFragment extends Fragment {
     private ImageView groupImageView;
     private TextView id;
     private TextView name;
@@ -72,7 +71,7 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
         SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
 
         btn = (Button) rootView.findViewById(R.id.joinbtn);
-         token = settings.getString(getString(R.string.foursquaretoken), "N.A.");
+         token = settings.getString(getString(R.string.backendtoken), "N.A.");
         if(settings.getLong(getString(R.string.group_id), 0)!=0) {
             btn.setVisibility(View.GONE);
         }else{
@@ -84,7 +83,7 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //getLoaderManager().restartLoader(1, null, null );
+                getLoaderManager().initLoader(1, null, mJoinGroupLoaderListener);
             }
         });
         return rootView;
@@ -93,44 +92,76 @@ public class GroupFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onStart() {
         super.onStart();
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, mGroupBeanLoaderListener);
     }
 
-    @Override
-    public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
-        if (response != null){
-            name.setText(response.getName());
-            admin.setText(response.getAdminId().toString());
-            created.setText(response.getCreated().toString());
-            ArrayList<String> members = new ArrayList<>();
-            for (UserBean user : response.getMembers()){
-                members.add(user.getFirstName() + " " + user.getLastName());
-                Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
+    /***********
+       Loaders
+     ***********/
+
+    private LoaderManager.LoaderCallbacks<GroupBean> mGroupBeanLoaderListener
+            = new LoaderManager.LoaderCallbacks<GroupBean>() {
+        @Override
+        public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
+            if (response != null){
+                name.setText(response.getName());
+                admin.setText(response.getAdminId().toString());
+                created.setText(response.getCreated().toString());
+                ArrayList<String> members = new ArrayList<>();
+                for (UserBean user : response.getMembers()){
+                    members.add(user.getFirstName() + " " + user.getLastName());
+                    Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
+                }
+                MemberAdapter adapter = new MemberAdapter(context, members);
+
+                membersView.setAdapter(adapter);
             }
-            MemberAdapter adapter = new MemberAdapter(this.getActivity(), members);
-
-            membersView.setAdapter(adapter);
         }
-    }
 
-    @Override
-    public Loader<GroupBean> onCreateLoader (int id, Bundle args){
-
-        /***********************************************************************
-            Check out LoginFragment on how to implement 2 loaders in 1 fragment!
-         ***********************************************************************/
-/*        if(id==0) {
+        @Override
+        public Loader<GroupBean> onCreateLoader (int id, Bundle args){
             return new GroupBeanLoader(context, groupId);
-        }else if(id==1){
-            return new JoinGroupLoader(context, groupId,token);
         }
-        return null;*/
 
-        return new GroupBeanLoader(context, groupId);
-    }
+        @Override
+        public void onLoaderReset(Loader<GroupBean> loader) {
+            membersView.setAdapter(null);
+        }
+    };
 
-    @Override
-    public void onLoaderReset(Loader<GroupBean> loader) {
-        membersView.setAdapter(null);
-    }
+    private LoaderManager.LoaderCallbacks<GroupBean> mJoinGroupLoaderListener
+            = new LoaderManager.LoaderCallbacks<GroupBean>() {
+        @Override
+        public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
+            if (response != null) {
+                SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putLong(getString(R.string.group_id), response.getGroupId());
+                editor.apply();
+                btn.setVisibility(View.GONE);
+
+                name.setText(response.getName());
+                admin.setText(response.getAdminId().toString());
+                created.setText(response.getCreated().toString());
+                ArrayList<String> members = new ArrayList<>();
+                for (UserBean user : response.getMembers()) {
+                    members.add(user.getFirstName() + " " + user.getLastName());
+                    Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
+                }
+                MemberAdapter adapter = new MemberAdapter(context, members);
+
+                membersView.setAdapter(adapter);
+            }
+        }
+
+        @Override
+        public Loader<GroupBean> onCreateLoader(int id, Bundle args) {
+            return new JoinGroupLoader(context, groupId, token);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<GroupBean> loader) {
+            membersView.setAdapter(null);
+        }
+    };
 }

@@ -87,4 +87,8 @@ public class BackendAPI {
     public GroupBean getGroupInfo(long groupId) throws IOException{
         return myApiService.getGroupInfo(token, groupId).execute();
     }
+
+    public VenueBean checkIn(String venueId, long groupId) throws IOException{
+        return myApiService.checkInVenue(token, venueId, groupId).execute();
+    }
 }

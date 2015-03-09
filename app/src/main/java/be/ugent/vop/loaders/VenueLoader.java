@@ -1,39 +1,16 @@
 package be.ugent.vop.loaders;
 
-import android.app.LoaderManager;
-import android.content.Context;
 import android.content.AsyncTaskLoader;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import be.ugent.vop.Event;
 import be.ugent.vop.EventBroker;
 import be.ugent.vop.EventListener;
-import be.ugent.vop.R;
-import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.MyApi;
-import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
@@ -147,6 +124,4 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> imp
         Log.d(TAG,"handleEvent");
         onContentChanged();
     }
-
-
 }
