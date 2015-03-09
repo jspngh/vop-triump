@@ -1,76 +1,39 @@
-package be.ugent.vop.loaders;
+package be.ugent.vop.backend.loaders;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.AsyncTaskLoader;
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 
-import be.ugent.vop.Event;
-import be.ugent.vop.EventBroker;
-import be.ugent.vop.EventListener;
-import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareAPI;
-import be.ugent.vop.foursquare.FoursquareVenue;
-
-/**
- * Created by vincent on 03/03/15.
- */
 
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class RankingLoader extends AsyncTaskLoader<VenueBean> {
-    private final String TAG = "RankingLoader";
+public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
 
-    private VenueBean venue;
+    AllGroupsBean mAllGroupsBean;
+    private static MyApi myApiService = null;
     private Context context;
-    private String venueId;
 
-
-    public RankingLoader(Context context, String venueId) {
+    public AllGroupsLoader(Context context) {
         super(context);
         this.context = context.getApplicationContext();
-        this.venueId = venueId;
     }
 
     /**
      * This is where the bulk of our work is done.  This function is
-     * called in a background"éé thread and should generate a new set of
+     * called in a background thread and should generate a new set of
      * data to be published by the loader.
      */
-    @Override
-    public VenueBean loadInBackground() {
-        Log.d(TAG,"loadInBackground");
-        VenueBean result = null;
+    @Override public AllGroupsBean loadInBackground() {
+        AllGroupsBean result = null;
 
         try{
-            result = BackendAPI.get(context).getVenueInfo(venueId);
+            result = BackendAPI.get(context).getAllGroups();
         } catch(IOException e){
             Log.d("AllGroupsLoader", e.getMessage());
         }
@@ -84,12 +47,28 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> {
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult(VenueBean venue) {
-        this.venue = venue;
+    @Override public void deliverResult(AllGroupsBean allGroupsBean) {
+        if (isReset()) {
+            // An async query came in while the loader is stopped.  We
+            // don't need the result.
+            if (allGroupsBean != null) {
+                onReleaseResources(allGroupsBean);
+            }
+        }
+        AllGroupsBean oldAllGroupsBean = allGroupsBean;
+        mAllGroupsBean = allGroupsBean;
+
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
             // deliver its results.
-            super.deliverResult(venue);
+            super.deliverResult(allGroupsBean);
+        }
+
+        // At this point we can release the resources associated with
+        // 'oldApps' if needed; now that the new result is delivered we
+        // know that it is no longer in use.
+        if (oldAllGroupsBean != null) {
+            onReleaseResources(oldAllGroupsBean);
         }
     }
 
@@ -97,13 +76,13 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> {
      * Handles a request to start the Loader.
      */
     @Override protected void onStartLoading() {
-        if (venue != null) {
+        if (mAllGroupsBean != null) {
             // If we currently have a result available, deliver it
             // immediately.
-            deliverResult(venue);
+            deliverResult(mAllGroupsBean);
         }
 
-        if (takeContentChanged() || venue == null) {
+        if (takeContentChanged() || mAllGroupsBean == null) {
             // If the data has changed since the last time it was loaded
             // or is not currently available, start a load.
             forceLoad();
@@ -121,8 +100,12 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(VenueBean venue) {
-        super.onCanceled(venue);
+    @Override public void onCanceled(AllGroupsBean allGroupsBean) {
+        super.onCanceled(allGroupsBean);
+
+        // At this point we can release the resources associated with 'apps'
+        // if needed.
+        onReleaseResources(allGroupsBean);
     }
 
     /**
@@ -136,8 +119,18 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> {
 
         // At this point we can release the resources associated with 'apps'
         // if needed.
-        if (venue != null) {
-            venue = null;
+        if (mAllGroupsBean != null) {
+            onReleaseResources(mAllGroupsBean);
+            mAllGroupsBean = null;
         }
+    }
+
+    /**
+     * Helper function to take care of releasing resources associated
+     * with an actively loaded data set.
+     */
+    protected void onReleaseResources(AllGroupsBean allGroupsBean) {
+        // For a simple List<> there is nothing to do.  For something
+        // like a Cursor, we would close it here.
     }
 }

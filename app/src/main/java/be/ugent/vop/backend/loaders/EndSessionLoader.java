@@ -1,28 +1,23 @@
-package be.ugent.vop.loaders;
+package be.ugent.vop.backend.loaders;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.content.AsyncTaskLoader;
 import android.util.Log;
 
 import java.io.IOException;
 
 import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.GroupBean;
-
+import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 /**
- * Created by jonas on 3/3/15.
+ * Created by jonas on 27-2-2015.
  */
-public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
+public class EndSessionLoader extends  AsyncTaskLoader<CloseSessionResponse> {
 
     private Context context;
-    private long groupId;
-    private String token;
 
-    public JoinGroupLoader(Context context, long groupId, String token) {
+    public EndSessionLoader(Context context) {
         super(context);
         this.context = context.getApplicationContext();
-        this.groupId = groupId;
-        this.token = token;
     }
 
     /**
@@ -31,13 +26,14 @@ public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
      * data to be published by the loader.
      */
     @Override
-    public GroupBean loadInBackground() {
-        GroupBean result = null;
-        Log.d("JoinGroupLoader", ""+groupId);
+    public CloseSessionResponse loadInBackground() {
+        CloseSessionResponse result = null;
+
         try{
-            result = BackendAPI.get(context).registerUserInGroup(token,groupId);
+            result = BackendAPI.get(context).close();
+            Log.d("Endsessionloader", "Connection closed");
         } catch(IOException e){
-            Log.d("JoinGroupLoader", e.getMessage());
+            Log.d("Endsessionloader", e.getMessage());
         }
         // Done!
         return result;
@@ -49,9 +45,9 @@ public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
      * here just adds a little more logic.
      */
     @Override
-    public void deliverResult(GroupBean response) {
+    public void deliverResult(CloseSessionResponse response) {
         if (isReset()) {
-            onReleaseResources(response);
+                onReleaseResources(response);
         }
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
@@ -64,7 +60,7 @@ public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
      * Handles a request to start the Loader.
      */
     @Override protected void onStartLoading() {
-        forceLoad();
+            forceLoad();
     }
 
     /**
@@ -78,7 +74,7 @@ public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(GroupBean response) {
+    @Override public void onCanceled(CloseSessionResponse response) {
         super.onCanceled(response);
 
         // At this point we can release the resources associated with 'apps'
@@ -100,6 +96,6 @@ public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(GroupBean response) {}
+    protected void onReleaseResources(CloseSessionResponse response) {}
 
 }

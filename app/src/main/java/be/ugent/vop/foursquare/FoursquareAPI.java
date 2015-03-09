@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import be.ugent.vop.R;
-import be.ugent.vop.contentproviders.VenueImageContentProvider;
+import be.ugent.vop.database.contentproviders.VenueImageContentProvider;
 import be.ugent.vop.database.VenueImageTable;
 
 public class FoursquareAPI {

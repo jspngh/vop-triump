@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
-import be.ugent.vop.loaders.GroupBeanLoader;
-import be.ugent.vop.loaders.JoinGroupLoader;
+import be.ugent.vop.backend.loaders.GroupBeanLoader;
+import be.ugent.vop.backend.loaders.JoinGroupLoader;
 
 public class GroupFragment extends Fragment {
     private ImageView groupImageView;

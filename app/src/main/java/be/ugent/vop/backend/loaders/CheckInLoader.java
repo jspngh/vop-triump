@@ -1,23 +1,28 @@
-package be.ugent.vop.loaders;
+package be.ugent.vop.backend.loaders;
 
-import android.content.Context;
 import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
 
 import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
+import be.ugent.vop.backend.myApi.model.VenueBean;
+
 /**
- * Created by jonas on 27-2-2015.
+ * Created by jonas on 3/9/15.
  */
-public class EndSessionLoader extends  AsyncTaskLoader<CloseSessionResponse> {
+public class CheckInLoader extends AsyncTaskLoader<VenueBean> {
 
     private Context context;
+    private long groupId;
+    private String venueId;
 
-    public EndSessionLoader(Context context) {
+    public CheckInLoader(Context context, String venueId, long groupId) {
         super(context);
         this.context = context.getApplicationContext();
+        this.groupId = groupId;
+        this.venueId = venueId;
     }
 
     /**
@@ -26,28 +31,23 @@ public class EndSessionLoader extends  AsyncTaskLoader<CloseSessionResponse> {
      * data to be published by the loader.
      */
     @Override
-    public CloseSessionResponse loadInBackground() {
-        CloseSessionResponse result = null;
-
+    public VenueBean loadInBackground() {
+        VenueBean result = null;
+        Log.d("Checking In", venueId + " for " + groupId);
         try{
-            result = BackendAPI.get(context).close();
-            Log.d("Endsessionloader", "Connection closed");
+            result = BackendAPI.get(context).checkIn(venueId, groupId);
+            Log.d("Checked In", "Succes");
         } catch(IOException e){
-            Log.d("Endsessionloader", e.getMessage());
+            Log.d("Checking In", e.getMessage());
         }
         // Done!
         return result;
     }
 
-    /**
-     * Called when there is new data to deliver to the client.  The
-     * super class will take care of delivering it; the implementation
-     * here just adds a little more logic.
-     */
     @Override
-    public void deliverResult(CloseSessionResponse response) {
+    public void deliverResult(VenueBean response) {
         if (isReset()) {
-                onReleaseResources(response);
+            onReleaseResources(response);
         }
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
@@ -60,7 +60,7 @@ public class EndSessionLoader extends  AsyncTaskLoader<CloseSessionResponse> {
      * Handles a request to start the Loader.
      */
     @Override protected void onStartLoading() {
-            forceLoad();
+        forceLoad();
     }
 
     /**
@@ -74,7 +74,7 @@ public class EndSessionLoader extends  AsyncTaskLoader<CloseSessionResponse> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(CloseSessionResponse response) {
+    @Override public void onCanceled(VenueBean response) {
         super.onCanceled(response);
 
         // At this point we can release the resources associated with 'apps'
@@ -96,6 +96,5 @@ public class EndSessionLoader extends  AsyncTaskLoader<CloseSessionResponse> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(CloseSessionResponse response) {}
-
+    protected void onReleaseResources(VenueBean response) {}
 }

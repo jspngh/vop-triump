@@ -1,4 +1,4 @@
-package be.ugent.vop.loaders;
+package be.ugent.vop.backend.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
@@ -7,22 +7,22 @@ import android.util.Log;
 import java.io.IOException;
 
 import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.backend.myApi.model.GroupBean;
 
 /**
- * Created by jonas on 3/9/15.
+ * Created by jonas on 3/3/15.
  */
-public class CheckInLoader extends AsyncTaskLoader<VenueBean> {
+public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
 
     private Context context;
     private long groupId;
-    private String venueId;
+    private String token;
 
-    public CheckInLoader(Context context, String venueId, long groupId) {
+    public JoinGroupLoader(Context context, long groupId, String token) {
         super(context);
         this.context = context.getApplicationContext();
         this.groupId = groupId;
-        this.venueId = venueId;
+        this.token = token;
     }
 
     /**
@@ -31,21 +31,25 @@ public class CheckInLoader extends AsyncTaskLoader<VenueBean> {
      * data to be published by the loader.
      */
     @Override
-    public VenueBean loadInBackground() {
-        VenueBean result = null;
-        Log.d("Checking In", venueId + " for " + groupId);
+    public GroupBean loadInBackground() {
+        GroupBean result = null;
+        Log.d("JoinGroupLoader", ""+groupId);
         try{
-            result = BackendAPI.get(context).checkIn(venueId, groupId);
-            Log.d("Checked In", "Succes");
+            result = BackendAPI.get(context).registerUserInGroup(token,groupId);
         } catch(IOException e){
-            Log.d("Checking In", e.getMessage());
+            Log.d("JoinGroupLoader", e.getMessage());
         }
         // Done!
         return result;
     }
 
+    /**
+     * Called when there is new data to deliver to the client.  The
+     * super class will take care of delivering it; the implementation
+     * here just adds a little more logic.
+     */
     @Override
-    public void deliverResult(VenueBean response) {
+    public void deliverResult(GroupBean response) {
         if (isReset()) {
             onReleaseResources(response);
         }
@@ -74,7 +78,7 @@ public class CheckInLoader extends AsyncTaskLoader<VenueBean> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(VenueBean response) {
+    @Override public void onCanceled(GroupBean response) {
         super.onCanceled(response);
 
         // At this point we can release the resources associated with 'apps'
@@ -96,5 +100,6 @@ public class CheckInLoader extends AsyncTaskLoader<VenueBean> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(VenueBean response) {}
+    protected void onReleaseResources(GroupBean response) {}
+
 }

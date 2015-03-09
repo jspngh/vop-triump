@@ -27,8 +27,8 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.loaders.CheckInLoader;
-import be.ugent.vop.loaders.RankingLoader;
+import be.ugent.vop.backend.loaders.CheckInLoader;
+import be.ugent.vop.backend.loaders.RankingLoader;
 import be.ugent.vop.ui.group.Group;
 import be.ugent.vop.ui.group.GroupActivity;
 

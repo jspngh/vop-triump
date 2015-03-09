@@ -33,7 +33,7 @@ import java.util.HashMap;
 
 import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.loaders.VenueLoader;
+import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.ui.venue.VenueActivity;
 
 /**

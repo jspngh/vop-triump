@@ -23,7 +23,6 @@ public class RankingBean {
         return this.groupbean;
     }
 
-
     public long getPoints() {
         return points;
     }

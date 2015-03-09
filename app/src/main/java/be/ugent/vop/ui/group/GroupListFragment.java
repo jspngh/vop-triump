@@ -16,7 +16,7 @@ import java.util.List;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
-import be.ugent.vop.loaders.AllGroupsLoader;
+import be.ugent.vop.backend.loaders.AllGroupsLoader;
 import be.ugent.vop.ui.list.CustomArrayAdapter;
 import be.ugent.vop.ui.list.ExpandableListItem;
 import be.ugent.vop.ui.list.ExpandingListView;

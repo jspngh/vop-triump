@@ -47,8 +47,8 @@ import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.foursquare.TokenStore;
-import be.ugent.vop.loaders.AuthTokenLoader;
-import be.ugent.vop.loaders.EndSessionLoader;
+import be.ugent.vop.backend.loaders.AuthTokenLoader;
+import be.ugent.vop.backend.loaders.EndSessionLoader;
 
 public class LoginFragment extends Fragment {
     private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";

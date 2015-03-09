@@ -73,8 +73,8 @@
         <service android:name=".LocationService" />
 
         <provider
-            android:name=".contentproviders.VenueImageContentProvider"
-            android:authorities="be.ugent.vop.contentproviders.venueimagecontentprovider"
+            android:name=".database.contentproviders.VenueImageContentProvider"
+            android:authorities="be.ugent.vop.database.contentproviders.venueimagecontentprovider"
             android:exported="false" >
         </provider>
 

@@ -1,4 +1,4 @@
-package be.ugent.vop.contentproviders;
+package be.ugent.vop.database.contentproviders;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,7 +28,7 @@ public class VenueImageContentProvider extends ContentProvider {
     private static final int VENUES = 10;
     private static final int VENUE_ID = 20;
 
-    private static final String AUTHORITY = "be.ugent.vop.contentproviders.venueimagecontentprovider";
+    private static final String AUTHORITY = "be.ugent.vop.database.contentproviders.venueimagecontentprovider";
 
     private static final String BASE_PATH = "venueimage";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
