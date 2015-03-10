@@ -8,7 +8,7 @@ import android.os.Bundle;
 import be.ugent.vop.R;
 import be.ugent.vop.ui.main.MainActivity;
 
-public class LoginActivity extends Activity implements LoginFragment.OnFragmentInteractionListener{
+public class LoginActivity extends Activity implements LoginFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +29,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
             if (!mBundle.getString(getString(R.string.profile), "").equals(ProfileFragment.PROFILE_ACTIVITY)){
                 // Create a new Fragment to be placed in the activity layout
                 LoginFragment loginFragment = new LoginFragment();
-
+                loginFragment.setArguments(mBundle);
                 // Add the fragment to the 'fragment_container' FrameLayout
                 getFragmentManager().beginTransaction()
                         .add(R.id.fragment_container, loginFragment).commit();
@@ -55,8 +55,14 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
             startActivity(main);
             finish();
         }
-
-
+    }
+    public void onProfileFragmentInteraction(){
+        Bundle mBundle = new Bundle();
+        mBundle.putInt(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT_NOW);
+        LoginFragment loginFragment= new LoginFragment();
+        loginFragment.setArguments(mBundle);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, loginFragment).commit();
     }
 }
 

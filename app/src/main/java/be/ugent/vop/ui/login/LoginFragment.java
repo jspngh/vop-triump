@@ -60,6 +60,7 @@ public class LoginFragment extends Fragment {
     public static final int LOGIN_FS = 1;
     public static final int LOGIN_BACKEND = 2;
     public static final int LOGOUT = 3;
+    public static final int LOGOUT_NOW = 4;
     private Button btnLogin;
     private Button btnLogout;
     private TextView logInMessage;
@@ -131,7 +132,7 @@ public class LoginFragment extends Fragment {
         connectionDialog = new ProgressDialog(context);
         connectionDialog.setMessage("Talking to the Triump servers...");
 
-        int loginAction = getActivity().getIntent().getExtras().getInt(LOGIN_ACTION);
+        int loginAction = this.getArguments().getInt(LOGIN_ACTION);
         switch(loginAction){
             case LOGIN_FS:
                 startFoursquareLogin();
@@ -141,6 +142,9 @@ public class LoginFragment extends Fragment {
                 break;
             case LOGOUT:
                 logout();
+                break;
+            case LOGOUT_NOW:
+                logOutNow();
                 break;
             default:
         }
@@ -299,6 +303,17 @@ public class LoginFragment extends Fragment {
                 startFoursquareLogin();
             }
         });
+    }
+
+    public void logOutNow(){
+        closeBackendSession();
+
+        // Start the native logout flow.
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(getString(R.string.userid));
+        editor.remove(getString(R.string.foursquaretoken));
+        editor.commit();
+        startFoursquareLogin();
     }
 
     @Override

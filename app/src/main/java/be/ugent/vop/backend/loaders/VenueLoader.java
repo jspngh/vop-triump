@@ -35,7 +35,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> imp
 
     /**
      * This is where the bulk of our work is done.  This function is
-     * called in a background"éé thread and should generate a new set of
+     * called in a background thread and should generate a new set of
      * data to be published by the loader.
      */
     @Override

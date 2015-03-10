@@ -16,6 +16,7 @@
     <string name="userid">UserId</string>
     <string name="first_launch">Welcome to Triump</string>
     <string name="profile">Profile</string>
+    <string name="profile_picture">Profile Picture</string>
 
     <string name="title_activity_login">Sign in</string>
     <string name="logOutButton">Sign out</string>
