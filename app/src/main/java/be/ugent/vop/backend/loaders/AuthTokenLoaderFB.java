@@ -1,14 +1,13 @@
 package be.ugent.vop.backend.loaders;
 
-import android.content.Context;
 import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.MyApi;
-import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponseFB;
 
 /**
@@ -19,10 +18,10 @@ public class AuthTokenLoaderFB extends AsyncTaskLoader<AuthTokenResponseFB> {
     AuthTokenResponseFB mToken;
     private static MyApi myApiService = null;
     private Context context;
-    private long userId = 0;
+    private String userId = null;
     private String fbToken = null;
 
-    public AuthTokenLoaderFB(Context context, long userId, String fbToken) {
+    public AuthTokenLoaderFB(Context context, String userId, String fbToken) {
         super(context);
         this.context = context.getApplicationContext();
         this.userId = userId;

@@ -168,6 +168,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     protected void onSessionStateChange(Session session, SessionState state, Exception exception){
         if(state.isOpened()){
+
+            // This request is simply for debug purposes, should be removed in final version
             Bundle params = new Bundle();
             params.putString("input_token", session.getAccessToken());
             new Request(session,
@@ -550,19 +552,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     private void startLoginProcess() {
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        boolean FStoken = prefs.contains(getString(R.string.foursquaretoken));
         boolean backendToken = prefs.contains(getString(R.string.backendtoken));
         Log.d("", "test");
         Log.d("", prefs.getString(getString(R.string.backendtoken), "N.A."));
 
-        if(!FStoken){
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_FS);
-            startActivity(loginIntent);
-            finish();
-        }else if(!backendToken) {
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_BACKEND);
+        if(!backendToken) {
+            Intent loginIntent = new Intent(this, LoginActivity2.class);
             startActivity(loginIntent);
             finish();
         }

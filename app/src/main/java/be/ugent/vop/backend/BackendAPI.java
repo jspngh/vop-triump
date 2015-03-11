@@ -68,7 +68,7 @@ public class BackendAPI {
         return myApiService.getAuthToken(fsUserId,fsToken).execute();
     }
 
-    public AuthTokenResponseFB getAuthTokenFB(long fbUserId, String fbToken) throws IOException {
+    public AuthTokenResponseFB getAuthTokenFB(String fbUserId, String fbToken) throws IOException {
         Log.d("FUCK AUTH TOKEN", fbToken + fbUserId);
         return myApiService.getAuthTokenFB(fbUserId,fbToken).execute();
     }
