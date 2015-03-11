@@ -7,7 +7,11 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
+
+import com.facebook.Session;
+import com.facebook.SessionState;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.ui.group.GroupListFragment;
@@ -23,6 +27,11 @@ public class MainActivity extends BaseActivity {
     OurViewPagerAdapter mViewPagerAdapter = null;
     SlidingTabLayout mSlidingTabLayout = null;
 
+
+    @Override
+    protected void onSessionStateChange(Session session, SessionState state, Exception exception) {
+        Log.d("Session state", state.toString());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -33,4 +33,5 @@ dependencies {
     compile 'com.koushikdutta.ion:ion:2.+'
    // compile 'com.pkmmte.view:circularimageview:1.1'
     compile project(path: ':backend', configuration: 'android-endpoints')
+    compile project(':facebook')
 }

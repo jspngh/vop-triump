@@ -18,7 +18,6 @@ import android.content.Loader;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.foursquare.android.nativeoauth.FoursquareCancelException;
 import com.foursquare.android.nativeoauth.FoursquareDenyException;
 import com.foursquare.android.nativeoauth.FoursquareInvalidRequestException;
@@ -98,6 +97,7 @@ public class LoginFragment extends Fragment {
         btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
         btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
         logInMessage = (TextView) rootView.findViewById(R.id.logInMessage);
+
         return rootView;
     }
 

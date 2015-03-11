@@ -54,4 +54,6 @@
     </string-array>
     <string name="title_activity_group">GroupActivity</string>
     <string name="hello_world">Hello world!</string>
+
+    <string name="app_id">462840373863146</string>
 </resources>
