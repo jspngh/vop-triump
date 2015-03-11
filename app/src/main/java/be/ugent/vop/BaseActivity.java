@@ -47,6 +47,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -164,8 +167,26 @@ public abstract class BaseActivity extends ActionBarActivity {
     };
 
     protected void onSessionStateChange(Session session, SessionState state, Exception exception){
-        if(!state.isOpened() && !state.isClosed()){
+        if(state.isOpened()){
+            Bundle params = new Bundle();
+            params.putString("input_token", session.getAccessToken());
+            new Request(session,
+                    "/debug_token",
+                    params,
+                    HttpMethod.GET,
+                    new Request.Callback(){
 
+                        @Override
+                        public void onCompleted(Response response) {
+                            if(response.getError() != null){
+                                Log.d("BaseActivity", response.getError().getErrorMessage());
+                            }else{
+                                Log.d("BaseActivity", response.getRawResponse());
+                            }
+
+
+                        }
+                    }).executeAsync();
         }
     }
 

@@ -285,6 +285,93 @@ public class MyEndpoint {
         return response;
     }
 
+    @ApiMethod(name = "getAuthTokenFB")
+    public AuthTokenResponseFB getAuthTokenFB(@Named("fbUserID") long fbUserId, @Named("fbToken") String fbToken) throws UnauthorizedException, InternalServerErrorException{
+        AuthTokenResponseFB response = new AuthTokenResponseFB();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        response.setAuthToken("Siebe");
+
+        try {
+            URL url = new URL("https://graph.facebook.com/v2.2/me?access_token=" + fbToken);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuilder jsonResponseBuilder = new StringBuilder();
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                jsonResponseBuilder.append(line);
+            }
+
+            String jsonResponse = jsonResponseBuilder.toString();
+            JSONObject fbResponse = new JSONObject(jsonResponse);
+
+            if(fbResponse.has("error")){
+                JSONObject error = fbResponse.getJSONObject("error");
+                int code = error.getInt("code");
+                if(code == 190)
+                    throw new UnauthorizedException("Invalid Facebook login");
+            }
+
+            String firstName;
+            String lastName = "";
+
+            String id = fbResponse.getString("id");
+            firstName = fbResponse.getString("first_name");
+
+            if(fbResponse.has("last_name"))
+                lastName = fbResponse.getString("last_name");
+
+            long returnedUserId = Long.parseLong(id);
+
+            response.setUserId(returnedUserId);
+
+            if(returnedUserId == fbUserId){
+                // User is who he claims to be
+                // Check if we already saved his info
+                try{
+                    UserBean userBean = _getUserBeanForId(returnedUserId);
+                }catch (EntityNotFoundException e){
+                    // User not in our database
+                    Entity userEntity = new Entity("User", returnedUserId);
+                    userEntity.setProperty("fsUserId", returnedUserId);
+                    userEntity.setProperty("firstName", firstName);
+                    userEntity.setProperty("lastName", lastName);
+                    //userEntity.setProperty("email", email); // TODO: get user email from FB
+                    datastore.put(userEntity);
+                }
+
+                // Create session for user and send back auth token
+
+                // Create random token
+                String sessionToken = new BigInteger(256, random).toString(32);
+
+                // Store session information in datastore
+
+                Entity session = new Entity("Session", sessionToken);
+                session.setProperty("userId", returnedUserId);
+                session.setProperty("sessionToken", sessionToken);
+                datastore.put(session);
+
+                // set token in response
+                response.setAuthToken(sessionToken);
+            }
+
+            reader.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Whoops, we screwed something up :( MalformedURLException \n" + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Whoops, we screwed something up :( IOException \n" + e.getMessage());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Whoops, we screwed something up :( JSONException \n" + e.getMessage());
+        }
+
+
+        return response;
+    }
+
     @ApiMethod(name = "closeSession")
     public CloseSessionResponse closeSession( @Named("token") String token){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

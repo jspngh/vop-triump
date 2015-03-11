@@ -30,6 +30,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onSessionStateChange(Session session, SessionState state, Exception exception) {
+        super.onSessionStateChange(session, state, exception);
         Log.d("Session state", state.toString());
     }
 
