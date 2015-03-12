@@ -93,9 +93,7 @@ public class VenueBean {
     public List<RankingBean> getRanking() {
         return ranking;
     }
-
     public void setRanking(List<RankingBean> ranking) {
         this.ranking= ranking;
     }
-
 }

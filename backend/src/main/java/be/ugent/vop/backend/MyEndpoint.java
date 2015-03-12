@@ -132,7 +132,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getVenueInfo")
-    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") long venueId) throws UnauthorizedException {
+    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") long venueId) throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         VenueBean response = null;
         response = _getVenueBean(venueId);
@@ -185,7 +185,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") long venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException {
+    public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") long venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         _checkInVenue(userId, groupId, venueId);
         return _orderVenueBean(_getVenueBean(venueId));
@@ -559,7 +559,7 @@ public class MyEndpoint {
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         RankingBean rank = null;
-        ArrayList<RankingBean> ranking = new ArrayList<RankingBean>();
+        List<RankingBean> ranking = new ArrayList<RankingBean>();
         Query.Filter filter2;
         Query.Filter filter3;
         Query.Filter filter1 =
@@ -579,12 +579,11 @@ public class MyEndpoint {
                 filter2 = new Query.FilterPredicate("groupId",
                                 Query.FilterOperator.EQUAL,
                                   checkin.getGroupId());
-                filter3 =
-                        Query.CompositeFilterOperator.and(filter1, filter2);
-                Query q2 = new Query("Checkin").setFilter(filter1);
-                PreparedQuery pq2 = datastore.prepare(q);
+                filter3 = Query.CompositeFilterOperator.and(filter1, filter2);
+                Query q2 = new Query("Checkin").setFilter(filter3);
+                PreparedQuery pq2 = datastore.prepare(q2);
                 int points=0;
-                for (Entity r2 : pq.asIterable()) {
+                for (Entity r2 : pq2.asIterable()) {
                     points += _getCheckinBean(r2).getPoints();
                 }
                 rank = new RankingBean();
@@ -598,8 +597,7 @@ public class MyEndpoint {
             }
         }
 
-
-        venue.setRanking(ranking);
+        venue2.setRanking(ranking);
 
         return venue2;
     }
