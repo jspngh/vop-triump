@@ -24,10 +24,10 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> implements EventLi
 
     private VenueBean venue;
     private Context context;
-    private String venueId;
+    private long venueId;
 
 
-    public RankingLoader(Context context, String venueId) {
+    public RankingLoader(Context context, long venueId) {
         super(context);
         this.context = context.getApplicationContext();
         this.venueId = venueId;

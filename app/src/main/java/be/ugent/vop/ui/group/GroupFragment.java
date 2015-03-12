@@ -114,9 +114,9 @@ public class GroupFragment extends Fragment {
                 name.setText(response.getName());
                 admin.setText(response.getAdminId().toString());
                 created.setText(response.getCreated().toString());
-                ArrayList<Pair<String, Long>> members = new ArrayList<>();
+                ArrayList<Pair<String, String>> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
-                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getFsUserId()));
+                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));
                     Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
                 }
                 MemberAdapter adapter = new MemberAdapter(context, members);
@@ -150,9 +150,9 @@ public class GroupFragment extends Fragment {
                 name.setText(response.getName());
                 admin.setText(response.getAdminId().toString());
                 created.setText(response.getCreated().toString());
-                ArrayList<Pair<String, Long>> members = new ArrayList<>();
+                ArrayList<Pair<String, String>> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
-                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getFsUserId()));
+                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));
                     Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
                 }
                 MemberAdapter adapter = new MemberAdapter(context, members);

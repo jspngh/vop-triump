@@ -2,6 +2,7 @@ package be.ugent.vop.backend;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.util.Log;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -14,11 +15,11 @@ import java.io.IOException;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
-import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponseFB;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.backend.myApi.model.VenuesBean;
 
 public class BackendAPI {
     public static BackendAPI instance;
@@ -63,11 +64,6 @@ public class BackendAPI {
         }
     }
 
-    public AuthTokenResponse getAuthToken(long fsUserId, String fsToken) throws IOException {
-        Log.d("FUCK AUTH TOKEN", fsToken + fsUserId);
-        return myApiService.getAuthToken(fsUserId,fsToken).execute();
-    }
-
     public AuthTokenResponseFB getAuthTokenFB(String fbUserId, String fbToken) throws IOException {
         Log.d("FUCK AUTH TOKEN", fbToken + fbUserId);
         return myApiService.getAuthTokenFB(fbUserId,fbToken).execute();
@@ -82,7 +78,7 @@ public class BackendAPI {
     }
 
 
-    public VenueBean getVenueInfo(String venueId) throws IOException {
+    public VenueBean getVenueInfo(long venueId) throws IOException {
         return myApiService.getVenueInfo(token,venueId).execute();
     }
 
@@ -94,7 +90,11 @@ public class BackendAPI {
         return myApiService.getGroupInfo(token, groupId).execute();
     }
 
-    public VenueBean checkIn(String venueId, long groupId) throws IOException{
+    public VenueBean checkIn(long venueId, long groupId) throws IOException{
         return myApiService.checkInVenue(token, venueId, groupId).execute();
+    }
+
+    public VenuesBean getNearbyVenues(Location loc) throws IOException{
+        return myApiService.getNearbyVenues(loc.getLatitude(), loc.getLatitude()).execute();
     }
 }

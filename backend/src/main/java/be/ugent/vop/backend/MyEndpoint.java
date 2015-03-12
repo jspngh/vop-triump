@@ -294,7 +294,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getNearbyVenues")
-    public VenuesBean getNearbyVenues( @Named("latitude") float latitude, @Named("longitude") float longitude){
+    public VenuesBean getNearbyVenues( @Named("latitude") double latitude, @Named("longitude") double longitude){
         VenuesBean result = new VenuesBean();
         ArrayList<VenueBean> venues = new ArrayList<>();
 
@@ -593,7 +593,7 @@ public class MyEndpoint {
     // Calculates distance between 2 coordinates
     // param latitude and logitude in degrees
     // output distance in meters
-    private double distance(float lat1, float lon1, float lat2, float lon2) {
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
 
         final int R = 6371; // Radius of the earth
 

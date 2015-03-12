@@ -14,6 +14,8 @@ import be.ugent.vop.ui.venue.VenueFragment;
  */
 public class VenueActivity extends BaseActivity {
 
+    public static final String VENUE_ID = "venueID";
+
     @Override
     protected void onSessionStateChange(Session session, SessionState state, Exception exception) {
 

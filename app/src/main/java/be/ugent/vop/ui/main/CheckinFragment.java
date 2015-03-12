@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.ui.venue.VenueActivity;
@@ -39,7 +40,7 @@ import be.ugent.vop.ui.venue.VenueActivity;
 /**
  * Created by siebe on 28/02/15.
  */
-public class CheckinFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
+public class CheckinFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoaderManager.LoaderCallbacks<ArrayList<VenueBean>> {
     private static final String TAG = "CheckinFragment";
 
     protected RecyclerView mRecyclerView;
@@ -87,6 +88,24 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         mRecyclerView.setAdapter(null);
         // END_INCLUDE(initializeRecyclerView);
 
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            int state;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                state = newState;
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                //if(state == RecyclerView.SCROLL_STATE_DRAGGING){
+                Log.d(TAG, "Vertical scroll: " + dy);
+                    mRecyclerView.animate().translationY(dy);
+                //}
+            }
+        });
+
 
         return rootView;
     }
@@ -132,7 +151,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<ArrayList<VenueBean>> onCreateLoader(int i, Bundle bundle) {
         Log.d(TAG, "onCreateLoader");
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -164,7 +183,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, final ArrayList<FoursquareVenue> venues) {
+    public void onLoadFinished(Loader<ArrayList<VenueBean>> arrayListLoader, final ArrayList<VenueBean> venues) {
         Log.d(TAG, "onLoadFinished");
         mAdapter.setVenues(venues);
         mAdapter.setContext(getActivity());
@@ -181,34 +200,34 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
             fragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
-                    final HashMap<Marker, String> markerVenue = new HashMap<Marker, String>();
+                    final HashMap<Marker, Long> markerVenue = new HashMap<Marker, Long>();
 
                     map = googleMap;
 
-                    for(FoursquareVenue v : venues){
+                    for(VenueBean v : venues){
                         Marker m = map.addMarker(new MarkerOptions().position(new LatLng(v.getLatitude(), v.getLongitude()))
-                                        .title(v.getName()));
+                                        .title(v.getDescription()));
 
-                        markerVenue.put(m, v.getId());
+                        markerVenue.put(m, v.getVenueId());
                     }
 
                     map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                         @Override
                         public void onInfoWindowClick(Marker marker) {
-                            String venueId = markerVenue.get(marker);
+                            long venueId = markerVenue.get(marker);
 
-                            FoursquareVenue v = null;
+                            VenueBean v = null;
 
-                            for(FoursquareVenue fsv : venues){
-                                if(fsv.getId().equals(venueId)){
-                                    v = fsv;
+                            for(VenueBean vb : venues){
+                                if(vb.getVenueId() == venueId){
+                                    v = vb;
                                     break;
                                 }
                             }
 
                             if(v != null){
                                 Intent intent = new Intent(getActivity(), VenueActivity.class);
-                                intent.putExtra("venue",v);
+                                intent.putExtra(VenueActivity.VENUE_ID, v.getVenueId());
 
                                 getActivity().startActivity(intent);
                             }
@@ -228,7 +247,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<FoursquareVenue>> arrayListLoader) {
+    public void onLoaderReset(Loader<ArrayList<VenueBean>> arrayListLoader) {
         mRecyclerView.setAdapter(null);
     }
 }

@@ -51,6 +51,8 @@ public class VenueFragment extends Fragment {
     private ListView rankingListView;
     private Context context;
 
+    private long venueId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,7 +66,8 @@ public class VenueFragment extends Fragment {
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
 
-        venue = (FoursquareVenue) getArguments().getParcelable("venue");
+        if(getArguments().containsKey(VenueActivity.VENUE_ID))
+            venueId = getArguments().getLong(VenueActivity.VENUE_ID);
 
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
 
@@ -142,7 +145,7 @@ public class VenueFragment extends Fragment {
         @Override
         public Loader<VenueBean> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            RankingLoader loader = new RankingLoader(context, venue.getId());
+            RankingLoader loader = new RankingLoader(context, venueId);
             return loader;
         }
 
@@ -169,7 +172,7 @@ public class VenueFragment extends Fragment {
             SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
             long groupId = settings.getLong(getString(R.string.group_id), 0);
             if(groupId != 0) {
-                CheckInLoader loader = new CheckInLoader(context, venue.getId(), groupId);
+                CheckInLoader loader = new CheckInLoader(context, venueId, groupId);
                 return loader;
             }
             Log.d("Invalid LogIn", "Fail !");

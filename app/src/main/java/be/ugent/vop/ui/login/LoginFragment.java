@@ -43,10 +43,8 @@ import java.io.InputStreamReader;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.foursquare.TokenStore;
-import be.ugent.vop.backend.loaders.AuthTokenLoader;
 import be.ugent.vop.backend.loaders.EndSessionLoader;
 
 public class LoginFragment extends Fragment {
@@ -276,7 +274,8 @@ public class LoginFragment extends Fragment {
         Log.d("fsToken and userId", fsToken + userId);
 
         try {
-            getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, mAuthTokenLoaderListener);
+            //getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, mAuthTokenLoaderListener);
+            getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, null);
         } catch (Exception e) {
             //
         }
@@ -422,7 +421,7 @@ public class LoginFragment extends Fragment {
      **********************************/
 //endregion
 
-    private LoaderManager.LoaderCallbacks<AuthTokenResponse> mAuthTokenLoaderListener
+   /* private LoaderManager.LoaderCallbacks<AuthTokenResponse> mAuthTokenLoaderListener
             = new LoaderManager.LoaderCallbacks<AuthTokenResponse>() {
         @Override
         public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
@@ -446,7 +445,7 @@ public class LoginFragment extends Fragment {
         public void onLoaderReset(Loader<AuthTokenResponse> loader) {
 
         }
-    };
+    };*/
 
     private LoaderManager.LoaderCallbacks<CloseSessionResponse> mEndSessionLoaderListener
             = new LoaderManager.LoaderCallbacks<CloseSessionResponse>() {

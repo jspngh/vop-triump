@@ -19,11 +19,11 @@ import be.ugent.vop.ui.login.ProfileFragment;
 /**
  * Created by jonas on 8-3-2015.
  */
-public class MemberAdapter extends ArrayAdapter<Pair<String, Long>> {
+public class MemberAdapter extends ArrayAdapter<Pair<String, String>> {
     private final Context context;
-    private final ArrayList<Pair<String, Long>> members;
+    private final ArrayList<Pair<String, String>> members;
 
-    public MemberAdapter(Context context, ArrayList<Pair<String, Long>> members) {
+    public MemberAdapter(Context context, ArrayList<Pair<String, String>> members) {
         super(context, R.layout.member_list_item, members);
         this.context = context;
         this.members = members;
@@ -33,7 +33,7 @@ public class MemberAdapter extends ArrayAdapter<Pair<String, Long>> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final Long userId = members.get(position).second;
+        final String userId = members.get(position).second;
         View rowView = inflater.inflate(R.layout.member_list_item, parent, false);
         rowView.setClickable(true);
         rowView.setOnClickListener(new View.OnClickListener() {

@@ -15,6 +15,7 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
 import be.ugent.vop.ui.venue.VenueActivity;
@@ -24,10 +25,10 @@ import be.ugent.vop.ui.venue.VenueActivity;
  */
 public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.ViewHolder> {
     private static final String TAG = "VenueListAdapter";
-    private ArrayList<FoursquareVenue> venues;
+    private ArrayList<VenueBean> venues;
     private Context context;
 
-    public void setVenues(ArrayList<FoursquareVenue> venues) {
+    public void setVenues(ArrayList<VenueBean> venues) {
         this.venues = venues;
     }
     public void setContext(Context context) {
@@ -78,9 +79,9 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         ViewHolder vh = new ViewHolder(v, new ViewHolder.IMyViewHolderClicks() {
             @Override
             public void onItemClick(View caller, int position) {
-                String venueId =  venues.get(position).getId();
+                long venueId = venues.get(position).getVenueId();
                 Intent intent = new Intent(context, VenueActivity.class);
-                intent.putExtra("venue", venues.get(position));
+                intent.putExtra(VenueActivity.VENUE_ID, venueId);
 
                 context.startActivity(intent);
 
@@ -97,11 +98,13 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        FoursquareVenue venue = venues.get(position);
+        VenueBean venue = venues.get(position);
 
-        viewHolder.venueName.setText(venue.getName());
+        viewHolder.venueName.setText(venue.getDescription());
         viewHolder.venueInfo.setText("Restaurant - 5 groups currently here");
 
+        // No photos yet...
+        /*
         if(venue.getPhotos().size() > 0){
             Photo p = venue.getPhotos().get(0);
             String url = p.getPrefix() + "original" + p.getSuffix();
@@ -109,7 +112,7 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
                     .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_drawer_logout)
                     .load(url);
-        }
+        }*/
 
 
     }
