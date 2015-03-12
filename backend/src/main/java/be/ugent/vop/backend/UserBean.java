@@ -1,20 +1,33 @@
 package be.ugent.vop.backend;
 
+import com.google.appengine.repackaged.org.joda.time.LocalDateTime;
+
+import java.util.Date;
+
 /**
  * Created by siebe on 19/02/15.
  */
 public class UserBean {
-    private long fsUserId;
+    private String userId;
     private String firstName;
     private String lastName;
     private String email;
+    private Date joined;
 
-    public long getFsUserId() {
-        return fsUserId;
+    public void setJoind(Date joined){
+        this.joined= joined;
     }
 
-    public void setFsUserId(long fsUserId) {
-        this.fsUserId = fsUserId;
+    public Date getJoined(){
+        return this.joined;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {

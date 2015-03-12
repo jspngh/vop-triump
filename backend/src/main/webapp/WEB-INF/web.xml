@@ -5,7 +5,7 @@
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
-            <param-value>be.ugent.vop.backend.MyEndpoint</param-value>
+            <param-value>be.ugent.vop.backend.MyEndpoint, be.ugent.vop.backend.VenueBeanEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

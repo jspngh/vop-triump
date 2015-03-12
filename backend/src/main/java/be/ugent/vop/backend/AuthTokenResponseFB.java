@@ -5,7 +5,7 @@ package be.ugent.vop.backend;
  */
 public class AuthTokenResponseFB {
     private String authToken;
-    private long userId;
+    private String userId;
 
     public String getAuthToken() {
         return authToken;
@@ -15,11 +15,11 @@ public class AuthTokenResponseFB {
         this.authToken = authToken;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 }

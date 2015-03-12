@@ -112,7 +112,7 @@ public class VenueFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<VenueBean> loader, VenueBean venue) {
             Log.d("VenueFragment", "onLoadFinished");
-         
+
             if(venue.getRanking()!=null){
             noRankingTextView.setVisibility(View.GONE);
             rankingListView.setVisibility(View.VISIBLE);
