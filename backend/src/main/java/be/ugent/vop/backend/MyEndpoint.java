@@ -95,7 +95,7 @@ public class MyEndpoint {
 
     @ApiMethod(name = "createVenue")
     public VenueBean createVenue( @Named("token") String token, @Named("city") String city, @Named("street") String street,
-                                  @Named("housenr") String housenr,@Named("latitude") float latitude,@Named("longitude") float longitude,
+                                  @Named("housenr") String housenr,@Named("latitude") double latitude,@Named("longitude") double longitude,
                                   @Named("description") String description, @Named("type") int type ) throws UnauthorizedException{
 
         String adminId = _getUserIdForToken(token);
@@ -301,30 +301,43 @@ public class MyEndpoint {
         Query q = new Query("Venue");
         PreparedQuery pq = DatastoreServiceFactory.getDatastoreService().prepare(q);
 
-        float longitude2;
-        float latitude2;
+        double longitude2;
+        double latitude2;
 
         double maxDistance = 1000.0;
         //search for venues within a radius of maxDistance
         //multiple augmentations are possible like looking for special types only etc...
         for (Entity r : pq.asIterable()){
-            longitude2= (float) r.getProperty("longitude");
-            latitude2 = (float) r.getProperty("latitude");
+            longitude2= (double) r.getProperty("longitude");
+            latitude2 = (double) r.getProperty("latitude");
             if(distance(latitude,longitude,latitude2,longitude2)<maxDistance){
                 venues.add(_getVenueBean(r));
             }
         }
+        VenueArrayList venueArrayList =  new VenueArrayList(venues);
 
-        result.setVenues(venues);
+        venueArrayList.sort(new MyComparator<VenueBean>() {
+            public boolean compare(VenueBean venue1, VenueBean venue2) {
+                int pointsVenue1 = 0;
+                int pointsVenue2 = 0;
+                for (RankingBean r : venue1.getRanking()) pointsVenue1 += r.getPoints();
+                for (RankingBean r : venue1.getRanking()) pointsVenue2 += r.getPoints();
+                return pointsVenue1 > pointsVenue2;
+            }
+        });
+
+        result.setVenues(venueArrayList.getVenues());
+
         return result;
     }
 
 
 
 
-    /**
+    /************************
      * Private helper methods
-     */
+     **************************/
+
     private String _getUserIdForToken(String token) throws UnauthorizedException {
         String userId;
         try {
@@ -352,7 +365,7 @@ public class MyEndpoint {
             e.printStackTrace();
             throw e;
         }
-        //checking 1
+        //check 1
         for(GroupBean g:groups.getGroups()){
             if(g.getType()==group.getType()){
                 // User is already member of group with same type
@@ -403,8 +416,6 @@ public class MyEndpoint {
         checkinEnt.setProperty("groupId", groupId);
 
         DatastoreServiceFactory.getDatastoreService().put(checkinEnt);
-
-
 
         return _getCheckinBean(checkinEnt);
     }
@@ -474,23 +485,6 @@ public class MyEndpoint {
         return groupBean;
     }
 
-    private VenueBean _getVenueBean(Entity venue) {
-
-        VenueBean venue2 = new VenueBean();
-        venue2.setVenueId(venue.getKey().getId());
-        venue2.setCreated((Date) venue.getProperty("created"));
-        venue2.setAdminId((String) venue.getProperty("adminId"));
-        venue2.setCity((String) venue.getProperty("city"));
-        venue2.setStreet((String) venue.getProperty("street"));
-        venue2.setHouseNr((String) venue.getProperty("housenr"));
-        venue2.setDescription((String) venue.getProperty("description"));
-        venue2.setLatitude((float) venue.getProperty("latitude"));
-        venue2.setLongitude((float) venue.getProperty("longitude"));
-        venue2.setType((int) venue.getProperty("type"));
-
-        return venue2;
-    }
-
     private CheckinBean _getCheckinBean(Entity checkin) {
 
         CheckinBean checkin2 = new CheckinBean();
@@ -536,42 +530,78 @@ public class MyEndpoint {
         return result;
     }
 
-
-    private void _registerGroupInVenue(long venueId, long groupId){
-        //TODO: Check whether group exists before registering
+    // returns VenueBean
+    // Note: Ranking in VenueBean is not ordened.
+    private VenueBean _getVenueBean(long venueId) throws EntityNotFoundException{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Entity groupVenue = new Entity("groupVenue");
-        groupVenue.setProperty("venueId", venueId);
-        groupVenue.setProperty("groupId", groupId);
-        groupVenue.setProperty("points", 1);
-        datastore.put(groupVenue);
+
+        Key keyVenue = KeyFactory.createKey("Venue",venueId);
+        Entity venueEnt = datastore.get(keyVenue);
+        VenueBean venue = _getVenueBean(venueEnt);
+
+        return venue;
     }
 
+    private VenueBean _getVenueBean(Entity venue) {
+        VenueBean venue2 = new VenueBean();
+        long venueId  = venue.getKey().getId();
 
-    private VenueBean _getVenueBean(long venueId) {
+        venue2.setVenueId(venue.getKey().getId());
+        venue2.setCreated((Date) venue.getProperty("created"));
+        venue2.setAdminId((String) venue.getProperty("adminId"));
+        venue2.setCity((String) venue.getProperty("city"));
+        venue2.setStreet((String) venue.getProperty("street"));
+        venue2.setHouseNr((String) venue.getProperty("housenr"));
+        venue2.setDescription((String) venue.getProperty("description"));
+        venue2.setLatitude((double) venue.getProperty("latitude"));
+        venue2.setLongitude((double) venue.getProperty("longitude"));
+        venue2.setType((int) venue.getProperty("type"));
+
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        VenueBean venuebean = new VenueBean();
-        venuebean.setVenueId(venueId);
         RankingBean rank = null;
-        List<RankingBean> ranking = new ArrayList<RankingBean>();
-        Query.Filter propertyFilter =
+        ArrayList<RankingBean> ranking = new ArrayList<RankingBean>();
+        Query.Filter filter2;
+        Query.Filter filter3;
+        Query.Filter filter1 =
                 new Query.FilterPredicate("venueId",
                         Query.FilterOperator.EQUAL,
                         venueId);
-        Query q = new Query("groupVenue").setFilter(propertyFilter);
+
+        CheckinBean checkin;
+        ArrayList<Long> evaluatedGroups = new ArrayList<>();
+
+        Query q = new Query("Checkin").setFilter(filter1);
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()) {
-            rank = new RankingBean();
-            rank.setPoints((long) r.getProperty("points"));
-            try {
-                rank.setGroupBean(_getGroupBean((long) r.getProperty("groupId")));
-            } catch (EntityNotFoundException e) {
-                e.printStackTrace();
+            checkin = _getCheckinBean(r);
+            if(!(evaluatedGroups.contains(checkin.getGroupId()))){
+                evaluatedGroups.add(checkin.getGroupId());
+                filter2 = new Query.FilterPredicate("groupId",
+                                Query.FilterOperator.EQUAL,
+                                  checkin.getGroupId());
+                filter3 =
+                        Query.CompositeFilterOperator.and(filter1, filter2);
+                Query q2 = new Query("Checkin").setFilter(filter1);
+                PreparedQuery pq2 = datastore.prepare(q);
+                int points=0;
+                for (Entity r2 : pq.asIterable()) {
+                    points += _getCheckinBean(r2).getPoints();
+                }
+                rank = new RankingBean();
+                try {
+                    rank.setGroupBean(_getGroupBean(checkin.getGroupId()));
+                } catch (EntityNotFoundException e) {
+                    e.printStackTrace();
+                }
+                rank.setPoints(points);
+                ranking.add(rank);
             }
-            ranking.add(rank);
         }
-        venuebean.setRanking(ranking);
-        return venuebean;
+
+
+        venue.setRanking(ranking);
+
+        return venue2;
     }
 
     private VenueBean _orderVenueBean(VenueBean venue) {

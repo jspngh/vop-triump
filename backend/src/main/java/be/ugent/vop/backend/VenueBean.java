@@ -17,8 +17,8 @@ public class VenueBean {
     private String city;
     private String street;
     private String houseNr;
-    private float longitude;
-    private float latitude;
+    private double longitude;
+    private double latitude;
     private int type;
     private String description;
     private Date created;
@@ -48,9 +48,9 @@ public class VenueBean {
 
     public void setType(int type){this.type = type;}
 
-    public void setLongitude(float longitude){ this.longitude = longitude;}
+    public void setLongitude(double longitude){ this.longitude = longitude;}
 
-    public void setLatitude(float latitude){ this.latitude = latitude;}
+    public void setLatitude(double latitude){ this.latitude = latitude;}
 
     public String getCity(){
         return city;
@@ -68,11 +68,11 @@ public class VenueBean {
         return description;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
