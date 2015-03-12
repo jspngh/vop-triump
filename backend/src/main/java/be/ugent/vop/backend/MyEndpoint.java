@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -296,13 +297,25 @@ public class MyEndpoint {
     public VenuesBean getNearbyVenues( @Named("latitude") float latitude, @Named("longitude") float longitude){
         VenuesBean result = new VenuesBean();
         ArrayList<VenueBean> venues = new ArrayList<>();
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query("Venue");
-        PreparedQuery pq = datastore.prepare(q);
-        for (Entity r : pq.asIterable()){
 
+        Query q = new Query("Venue");
+        PreparedQuery pq = DatastoreServiceFactory.getDatastoreService().prepare(q);
+
+        float longitude2;
+        float latitude2;
+
+        double maxDistance = 1000.0;
+        //search for venues within a radius of maxDistance
+        //multiple augmentations are possible like looking for special types only etc...
+        for (Entity r : pq.asIterable()){
+            longitude2= (float) r.getProperty("longitude");
+            latitude2 = (float) r.getProperty("latitude");
+            if(distance(latitude,longitude,latitude2,longitude2)<maxDistance){
+                venues.add(_getVenueBean(r));
+            }
         }
 
+        result.setVenues(venues);
         return result;
     }
 
@@ -377,11 +390,13 @@ public class MyEndpoint {
         // - niet te snel na elkaar?
         // - user wel in de omgeving van de venue?
 
+
         //TODO: calc points
+        // - look for certain combo that result in extra points
         int points = 1;
 
         Entity checkinEnt = new Entity("Checkin");
-        checkinEnt.setProperty("time", new Date());
+        checkinEnt.setProperty("date", new Date());
         checkinEnt.setProperty("points", points);
         checkinEnt.setProperty("userId", userId);
         checkinEnt.setProperty("venueId", venueId);
@@ -476,15 +491,17 @@ public class MyEndpoint {
         return venue2;
     }
 
-
     private CheckinBean _getCheckinBean(Entity checkin) {
 
         CheckinBean checkin2 = new CheckinBean();
-
+        checkin2.setVenueId((long)checkin.getProperty("venueId"));
+        checkin2.setGroupId((long) checkin.getProperty("groupId"));
+        checkin2.setUserId((String) checkin.getProperty("userId"));
+        checkin2.setPoints((int) checkin.getProperty("points"));
+        checkin2.setDate((Date) checkin.getProperty("date"));
 
         return checkin2;
     }
-
 
     private UserBean _getUserBeanForId(String userId) throws EntityNotFoundException {
         UserBean bean = new UserBean();
@@ -572,4 +589,85 @@ public class MyEndpoint {
         }
 
     };
+
+    // Calculates distance between 2 coordinates
+    // param latitude and logitude in degrees
+    // output distance in meters
+    private double distance(float lat1, float lon1, float lat2, float lon2) {
+
+        final int R = 6371; // Radius of the earth
+
+        Double latDistance = deg2rad(lat2 - lat1);
+        Double lonDistance = deg2rad(lon2 - lon1);
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return (R * c * 1000.0);
+
+
+    }
+
+    /*
+        Sorting en selecting in the venues ArrayList in a generic way.
+        This will allow us to adjust and improve the searchresults on the go.
+     */
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private class VenueArrayList extends ArrayList<VenueBean>{
+        ArrayList<VenueBean> venues;
+
+        public VenueArrayList(ArrayList<VenueBean> venues){
+            this.venues = venues;
+        }
+
+        public ArrayList<VenueBean> getVenues(){
+            return venues;
+        }
+
+        public void setVenues(ArrayList<VenueBean> venues){
+            this.venues = venues;
+        }
+
+        // simple bubblesort
+        public synchronized void sort(MyComparator f){
+                VenueBean temp;
+                int length = venues.size();
+                if (length>1) // check if the number of orders is larger than 1
+                {
+                    for (int x=0; x<length; x++) // bubble sort outer loop
+                    {
+                        for (int i=0; i < length-x-1; i++) {
+                            if (!f.compare(venues.get(i),venues.get(i+1)))
+                            {
+                                temp = venues.get(i);
+                                venues.set(i,venues.get(i+1) );
+                                venues.set(i+1, temp);
+                            }
+                        }
+                    }
+                }
+        }
+
+        // simple bubblesort
+        public synchronized void select(MySelector f){
+            ArrayList<VenueBean> newVenues = new ArrayList<>();
+            for(VenueBean v:venues){
+                if(f.select(v)) newVenues.add(v);
+            }
+            venues = newVenues;
+        }
+    }
+
+    private interface MyComparator<T>{
+        // returns true if t1 > t2
+        public boolean compare(T t1, T t2);
+    }
+
+    private interface MySelector<T>{
+        public boolean select(T t);
+    }
 }
