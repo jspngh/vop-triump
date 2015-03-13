@@ -11,6 +11,7 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -192,7 +193,6 @@ public class MyEndpoint {
 
     }
 
-
     @ApiMethod(name = "getAuthTokenFB")
     public AuthTokenResponseFB getAuthTokenFB(@Named("fbUserID") String fbUserId, @Named("fbToken") String fbToken) throws UnauthorizedException, InternalServerErrorException{
         AuthTokenResponseFB response = new AuthTokenResponseFB();
@@ -303,15 +303,20 @@ public class MyEndpoint {
 
         double longitude2;
         double latitude2;
+        VenueBean venue;
+        double dist;
 
-        double maxDistance = 1000.0;
+        double maxDistance = 500.0;
         //search for venues within a radius of maxDistance
         //multiple augmentations are possible like looking for special types only etc...
         for (Entity r : pq.asIterable()){
             longitude2= (double) r.getProperty("longitude");
             latitude2 = (double) r.getProperty("latitude");
-            if(distance(latitude,longitude,latitude2,longitude2)<maxDistance){
-                venues.add(_getVenueBean(r));
+            dist = distance(latitude,longitude,latitude2,longitude2);
+            if(dist<maxDistance){
+                venue = _getVenueBean(r);
+                venue.setCurrentDistance(dist);
+                venues.add(venue);
             }
         }
         VenueArrayList venueArrayList =  new VenueArrayList(venues);
@@ -322,7 +327,17 @@ public class MyEndpoint {
                 int pointsVenue2 = 0;
                 for (RankingBean r : venue1.getRanking()) pointsVenue1 += r.getPoints();
                 for (RankingBean r : venue1.getRanking()) pointsVenue2 += r.getPoints();
-                return pointsVenue1 > pointsVenue2;
+                double venue1_pointsRatio = (double) pointsVenue1 / (double)(pointsVenue1+pointsVenue2);
+                double venue2_pointsRatio = (double) pointsVenue2 / (double)(pointsVenue1+pointsVenue2);
+
+                //flipping of venue1 and venue2 is not an error
+                //Larger distance is bad
+                double venue1_distRatio = (double) venue2.getCurrentDistance() /
+                                (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
+                double venue2_distRatio = (double) venue1.getCurrentDistance() /
+                                (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
+
+                return venue1_pointsRatio+venue1_distRatio*3.0 > venue2_pointsRatio+venue2_distRatio*3.0;
             }
         });
 
@@ -330,8 +345,6 @@ public class MyEndpoint {
 
         return result;
     }
-
-
 
 
     /************************
@@ -354,7 +367,6 @@ public class MyEndpoint {
     }
 
     private void _registerUserInGroup(String userId, long groupId) throws EntityNotFoundException{
-        //TODO: Check whether group exists before registering
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         GroupsBean groups = _getGroupsForUser(userId);
@@ -374,21 +386,22 @@ public class MyEndpoint {
             }
         }
         //checking if amount of members of group doesn't exceed the limit
-        Query.Filter filter1 =
-                new Query.FilterPredicate("userGroup",
-                        Query.FilterOperator.EQUAL,
-                        groupId);
-        Query q = new Query("userGroup").setFilter(filter1);
-        PreparedQuery pq = datastore.prepare(q);
-        int amount = pq.countEntities(FetchOptions.Builder.withDefaults());
+        if(group.getType()==GroupBean.SMALL || group.getType()==GroupBean.MEDIUM) {
+            Query.Filter filter1 =
+                    new Query.FilterPredicate("userGroup",
+                            Query.FilterOperator.EQUAL,
+                            groupId);
+            Query q = new Query("userGroup").setFilter(filter1);
+            PreparedQuery pq = datastore.prepare(q);
+            int amount = pq.countEntities(FetchOptions.Builder.withDefaults());
 
-        if((group.getType()==GroupBean.SMALL && amount+1>GroupBean.AMOUNT_SMALL)
-            ||(group.getType()==GroupBean.MEDIUM && amount+1>GroupBean.AMOUNT_MEDIUM)){
-            // groups to small to add extra member
-            // TODO: handle exception!
-            return;
+            if ((group.getType() == GroupBean.SMALL && amount + 1 > GroupBean.AMOUNT_SMALL)
+                    || (group.getType() == GroupBean.MEDIUM && amount + 1 > GroupBean.AMOUNT_MEDIUM)) {
+                // groups to small to add extra member
+                // TODO: handle exception!
+                return;
+            }
         }
-
 
         Entity userGroup = new Entity("userGroup");
         userGroup.setProperty("userId", userId);
@@ -421,7 +434,6 @@ public class MyEndpoint {
     }
 
     private GroupsBean _getGroupsForUser(String userId){
-
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         GroupsBean groupsbean = new GroupsBean();
         List<GroupBean> groups = new ArrayList<GroupBean>();
@@ -531,7 +543,7 @@ public class MyEndpoint {
     }
 
     // returns VenueBean
-    // Note: Ranking in VenueBean is not ordened.
+    // Note: Ranking in VenueBean is not sorted.
     private VenueBean _getVenueBean(long venueId) throws EntityNotFoundException{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

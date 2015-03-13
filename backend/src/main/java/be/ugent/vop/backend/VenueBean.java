@@ -23,6 +23,15 @@ public class VenueBean {
     private String description;
     private Date created;
     private List<RankingBean> ranking;
+    private double currentDistance;
+
+    public void setCurrentDistance(double currentDistance){
+           this.currentDistance = currentDistance;
+    }
+
+    public double getCurrentDistance(){
+        return this.currentDistance;
+    }
 
     public void setAdminId(String adminId) {
         this.adminId= adminId;
