@@ -11,6 +11,10 @@ import java.util.List;
  * Created by Lars on 19/02/15.
  */
 public class VenueBean {
+    public static String TYPE_RESTO = "Restaurant";
+    public static String TYPE_CAFE = "Cafe";
+    public static String TYPE_OTHER = "Other";
+
     private long venueId;
     private String adminId;
     //picture
@@ -19,11 +23,20 @@ public class VenueBean {
     private String houseNr;
     private double longitude;
     private double latitude;
-    private int type;
+    private String type;
+    private String name;
     private String description;
     private Date created;
     private List<RankingBean> ranking;
     private double currentDistance;
+
+    public void setName(String name){
+        this.name= name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
 
     public void setCurrentDistance(double currentDistance){
            this.currentDistance = currentDistance;
@@ -55,11 +68,13 @@ public class VenueBean {
 
     public void setCreated(Date createdDate){ this.created = createdDate; }
 
-    public void setType(int type){this.type = type;}
+    public void setType(String type){this.type = type;}
 
     public void setLongitude(double longitude){ this.longitude = longitude;}
 
     public void setLatitude(double latitude){ this.latitude = latitude;}
+
+    public String getType() { return this.type;}
 
     public String getCity(){
         return city;

@@ -65,7 +65,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "createGroup")
-    public GroupBean createGroup(@Named("token") String token, @Named("groupName") String groupName, @Named("description") String description, @Named("type") int type) throws UnauthorizedException {
+    public GroupBean createGroup(@Named("token") String token, @Named("groupName") String groupName, @Named("description") String description, @Named("type") String type) throws UnauthorizedException {
         String userId = _getUserIdForToken(token);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity group = new Entity("Group");
@@ -95,14 +95,15 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "createVenue")
-    public VenueBean createVenue( @Named("token") String token, @Named("city") String city, @Named("street") String street,
+    public VenueBean createVenue( @Named("token") String token,@Named("name") String name, @Named("city") String city, @Named("street") String street,
                                   @Named("housenr") String housenr,@Named("latitude") double latitude,@Named("longitude") double longitude,
-                                  @Named("description") String description, @Named("type") int type ) throws UnauthorizedException{
+                                  @Named("description") String description, @Named("type") String type ) throws UnauthorizedException{
 
         String adminId = _getUserIdForToken(token);
         Entity venue = new Entity("Venue");
         venue.setProperty("created", new Date());
         venue.setProperty("adminId", adminId);
+        venue.setProperty("name", name);
         venue.setProperty("city", city);
         venue.setProperty("street", street);
         venue.setProperty("housenr", housenr);
@@ -137,7 +138,6 @@ public class MyEndpoint {
         String userId = _getUserIdForToken(token);
         VenueBean response = null;
         response = _getVenueBean(venueId);
-
         return _orderVenueBean(response);
     }
 
@@ -189,7 +189,8 @@ public class MyEndpoint {
     public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") long venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         _checkInVenue(userId, groupId, venueId);
-        return _orderVenueBean(_getVenueBean(venueId));
+        return _getVenueBean(venueId);
+        //return _orderVenueBean(_getVenueBean(venueId));
 
     }
 
@@ -306,12 +307,12 @@ public class MyEndpoint {
         VenueBean venue;
         double dist;
 
-        double maxDistance = 500.0;
+        double maxDistance = 500.0; //meters
         //search for venues within a radius of maxDistance
         //multiple augmentations are possible like looking for special types only etc...
         for (Entity r : pq.asIterable()){
-            longitude2= (double) r.getProperty("longitude");
-            latitude2 = (double) r.getProperty("latitude");
+            longitude2= (Double) r.getProperty("longitude");
+            latitude2 = (Double) r.getProperty("latitude");
             dist = distance(latitude,longitude,latitude2,longitude2);
             if(dist<maxDistance){
                 venue = _getVenueBean(r);
@@ -386,7 +387,7 @@ public class MyEndpoint {
             }
         }
         //checking if amount of members of group doesn't exceed the limit
-        if(group.getType()==GroupBean.SMALL || group.getType()==GroupBean.MEDIUM) {
+        if(group.getType().equals(GroupBean.TYPE_SMALL) || group.getType().equals(GroupBean.TYPE_MEDIUM)) {
             Query.Filter filter1 =
                     new Query.FilterPredicate("userGroup",
                             Query.FilterOperator.EQUAL,
@@ -395,8 +396,8 @@ public class MyEndpoint {
             PreparedQuery pq = datastore.prepare(q);
             int amount = pq.countEntities(FetchOptions.Builder.withDefaults());
 
-            if ((group.getType() == GroupBean.SMALL && amount + 1 > GroupBean.AMOUNT_SMALL)
-                    || (group.getType() == GroupBean.MEDIUM && amount + 1 > GroupBean.AMOUNT_MEDIUM)) {
+            if ((group.getType().equals(GroupBean.TYPE_SMALL) && amount + 1 > GroupBean.AMOUNT_SMALL)
+                    || (group.getType().equals(GroupBean.TYPE_MEDIUM) && amount + 1 > GroupBean.AMOUNT_MEDIUM)) {
                 // groups to small to add extra member
                 // TODO: handle exception!
                 return;
@@ -419,7 +420,7 @@ public class MyEndpoint {
 
         //TODO: calc points
         // - look for certain combo that result in extra points
-        int points = 1;
+        Integer points = 1;
 
         Entity checkinEnt = new Entity("Checkin");
         checkinEnt.setProperty("date", new Date());
@@ -475,7 +476,7 @@ public class MyEndpoint {
         groupBean.setDescription((String) group.getProperty("description"));
         groupBean.setAdminId(((String) group.getProperty("adminId")));
         groupBean.setCreated((Date) group.getProperty("created"));
-        groupBean.setType((Integer) group.getProperty("type"));
+        groupBean.setType((String) group.getProperty("type"));
 
         ArrayList<UserBean> members = new ArrayList<>();
 
@@ -500,21 +501,37 @@ public class MyEndpoint {
     private CheckinBean _getCheckinBean(Entity checkin) {
 
         CheckinBean checkin2 = new CheckinBean();
-        checkin2.setVenueId((long)checkin.getProperty("venueId"));
-        checkin2.setGroupId((long) checkin.getProperty("groupId"));
+        checkin2.setVenueId(((Long)checkin.getProperty("venueId")).longValue());
+        checkin2.setGroupId(((Long) checkin.getProperty("groupId")).longValue());
         checkin2.setUserId((String) checkin.getProperty("userId"));
-        checkin2.setPoints((int) checkin.getProperty("points"));
+      //  checkin2.setPoints(((Integer) checkin.getProperty("points")).intValue());
+        checkin2.setPoints(1);
         checkin2.setDate((Date) checkin.getProperty("date"));
 
         return checkin2;
     }
 
-    private UserBean _getUserBeanForId(String userId) throws EntityNotFoundException {
+    private UserBean _getUserBeanForId(String userId) throws EntityNotFoundException{
         UserBean bean = new UserBean();
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity user = null;
         Key userKey = KeyFactory.createKey("User", userId);
-        Entity user = datastore.get(userKey);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        try {
+            user = datastore.get(userKey);
+        } catch(EntityNotFoundException e){
+            Query.Filter filter =
+                    new Query.FilterPredicate("userId",
+                            Query.FilterOperator.EQUAL,
+                            userId);
+            Query q = new Query("User").setFilter(filter);
+            PreparedQuery pq = datastore.prepare(q);
+            for(Entity r: pq.asIterable()){
+                user = r;
+            }
+            if(user==null){
+                throw new EntityNotFoundException(userKey);
+            }
+        }
         bean.setUserId(userId);
         bean.setEmail((String) user.getProperty("email"));
         bean.setFirstName((String) user.getProperty("firstName"));
@@ -552,6 +569,7 @@ public class MyEndpoint {
         VenueBean venue = _getVenueBean(venueEnt);
 
         return venue;
+
     }
 
     private VenueBean _getVenueBean(Entity venue) {
@@ -560,14 +578,15 @@ public class MyEndpoint {
 
         venue2.setVenueId(venue.getKey().getId());
         venue2.setCreated((Date) venue.getProperty("created"));
+        venue2.setName((String) venue.getProperty("name"));
         venue2.setAdminId((String) venue.getProperty("adminId"));
         venue2.setCity((String) venue.getProperty("city"));
         venue2.setStreet((String) venue.getProperty("street"));
         venue2.setHouseNr((String) venue.getProperty("housenr"));
         venue2.setDescription((String) venue.getProperty("description"));
-        venue2.setLatitude((double) venue.getProperty("latitude"));
-        venue2.setLongitude((double) venue.getProperty("longitude"));
-        venue2.setType((int) venue.getProperty("type"));
+        venue2.setLatitude((Double) venue.getProperty("latitude"));
+        venue2.setLongitude((Double) venue.getProperty("longitude"));
+        venue2.setType((String) venue.getProperty("type"));
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         RankingBean rank = null;
@@ -624,8 +643,9 @@ public class MyEndpoint {
     private static Comparator<RankingBean> comparator = new Comparator<RankingBean>() {
 
         public int compare(RankingBean bean1, RankingBean bean2) {
-            return Long.valueOf(bean1.getPoints())
-                    .compareTo(Long.valueOf(bean2.getPoints()));
+            if(bean1.getPoints() < bean2.getPoints()) return -1;
+            else if(bean1.getPoints() == bean2.getPoints()) return 0;
+            else return 1;
         }
 
     };

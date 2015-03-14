@@ -14,9 +14,9 @@ public class GroupBean {
     public static int AMOUNT_MEDIUM = 50;
     public static int AMOUNT_BIG = 100;
 
-    public static int SMALL = 0;
-    public static int MEDIUM = 1;
-    public static int BIG = 2;
+    public static String TYPE_SMALL = "small";
+    public static String TYPE_MEDIUM = "medium";
+    public static String TYPE_BIG = "large";
 
     private long groupId;
     private String name;
@@ -24,7 +24,7 @@ public class GroupBean {
     private Date created;
     private String description;
     private List<UserBean> members;
-    private int type;
+    private String type;
 
 
     public String getDescription(){
@@ -35,11 +35,11 @@ public class GroupBean {
         this.description = description;
     }
 
-    public void setType(int type){
+    public void setType(String type){
         this.type = type;
     }
 
-    public int getType(){
+    public String getType(){
         return type;
     }
 
