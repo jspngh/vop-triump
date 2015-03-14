@@ -43,6 +43,8 @@ import java.util.List;
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import javax.inject.Named;
 
+//TODO: Pictures for group, users and venues
+
 /**
  * An endpoint class we are exposing
  */
@@ -74,7 +76,7 @@ public class MyEndpoint {
         group.setProperty("description", description);
         group.setProperty("adminId", userId);
 
-        Date created = new Date( );
+        Date created = new Date();
         group.setProperty("created", created);
         datastore.put(group);
 
@@ -500,15 +502,15 @@ public class MyEndpoint {
 
     private CheckinBean _getCheckinBean(Entity checkin) {
 
-        CheckinBean checkin2 = new CheckinBean();
-        checkin2.setVenueId(((Long)checkin.getProperty("venueId")).longValue());
-        checkin2.setGroupId(((Long) checkin.getProperty("groupId")).longValue());
-        checkin2.setUserId((String) checkin.getProperty("userId"));
-      //  checkin2.setPoints(((Integer) checkin.getProperty("points")).intValue());
-        checkin2.setPoints(1);
-        checkin2.setDate((Date) checkin.getProperty("date"));
+        CheckinBean checkinbean = new CheckinBean();
+        checkinbean.setVenueId(((Long)checkin.getProperty("venueId")).longValue());
+        checkinbean.setGroupId(((Long) checkin.getProperty("groupId")).longValue());
+        checkinbean.setUserId((String) checkin.getProperty("userId"));
+      //  checkinbean.setPoints(((Integer) checkin.getProperty("points")).intValue());
+        checkinbean.setPoints(1);
+        checkinbean.setDate((Date) checkin.getProperty("date"));
 
-        return checkin2;
+        return checkinbean;
     }
 
     private UserBean _getUserBeanForId(String userId) throws EntityNotFoundException{
@@ -536,7 +538,7 @@ public class MyEndpoint {
         bean.setEmail((String) user.getProperty("email"));
         bean.setFirstName((String) user.getProperty("firstName"));
         bean.setLastName((String) user.getProperty("lastName"));
-        bean.setJoind((Date) user.getProperty("joined"));
+        bean.setJoined((Date) user.getProperty("joined"));
 
         return bean;
     }

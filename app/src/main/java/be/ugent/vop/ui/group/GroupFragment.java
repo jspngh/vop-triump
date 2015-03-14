@@ -28,9 +28,9 @@ import be.ugent.vop.backend.loaders.JoinGroupLoader;
 
 public class GroupFragment extends Fragment {
     private ImageView groupImageView;
-    private TextView id;
+    private TextView description;
     private TextView name;
-    private TextView admin;
+    private TextView type;
     private TextView created;
     private ListView membersView;
     private Button btn;
@@ -57,12 +57,11 @@ public class GroupFragment extends Fragment {
         context = getActivity();
 
         groupImageView = (ImageView) rootView.findViewById(R.id.imageView);
-        id = (TextView) rootView.findViewById(R.id.groupId);
+        description = (TextView) rootView.findViewById(R.id.description);
         name = (TextView) rootView.findViewById(R.id.name);
-        admin = (TextView) rootView.findViewById(R.id.admin);
+        type = (TextView) rootView.findViewById(R.id.type);
         created = (TextView) rootView.findViewById(R.id.created);
         membersView = (ListView) rootView.findViewById(R.id.membersView);
-        id.setText(""+groupId);
 
         String photoUrl = "http://www.beeldarchief.ugent.be/fotocollectie/gebouwen/images/prevs/prev64.jpg";
         Ion.with(groupImageView)
@@ -111,9 +110,10 @@ public class GroupFragment extends Fragment {
                 editor.apply();
                 btn.setVisibility(View.GONE);
 
-                name.setText(response.getName());
-                admin.setText(response.getAdminId().toString());
-                created.setText(response.getCreated().toString());
+                name.setText("Name: " + response.getName());
+                description.setText(response.getDescription().toString());
+                created.setText("Created on: " + response.getCreated().toString());
+                type.setText(response.getType().toString() + " group");
                 ArrayList<Pair<String, String>> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
                     members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));
@@ -147,9 +147,10 @@ public class GroupFragment extends Fragment {
                 editor.apply();
                 btn.setVisibility(View.GONE);
 
-                name.setText(response.getName());
-                admin.setText(response.getAdminId().toString());
-                created.setText(response.getCreated().toString());
+                name.setText("Name: " + response.getName());
+                description.setText(response.getDescription().toString());
+                created.setText("Created on: " + response.getCreated().toString());
+                type.setText(response.getType().toString() + " group");
                 ArrayList<Pair<String, String>> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
                     members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));

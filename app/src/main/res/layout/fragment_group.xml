@@ -14,24 +14,26 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_below="@id/imageView"
-        android:id="@+id/groupId"
-        android:gravity="center"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/groupId"
         android:id="@+id/name"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_below="@id/name"
-        android:id="@+id/admin"
+        android:id="@+id/type"
         android:gravity="center"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_below="@id/admin"
+        android:layout_below="@id/type"
+        android:id="@+id/description"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/description"
         android:id="@+id/created"
         android:gravity="center"/>
     <Button
@@ -41,14 +43,20 @@
         android:id="@+id/joinbtn"
         android:layout_below="@+id/created"
         android:layout_centerHorizontal="true" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/joinbtn"
+        android:id="@+id/members"
+        android:text="Members:"
+        android:gravity="center"/>
     <ListView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/membersView"
-        android:layout_below="@id/joinbtn"
+        android:layout_below="@id/members"
         android:layout_margin="0dp"
         android:elevation="8dp"/>
-
 
 
 </RelativeLayout>

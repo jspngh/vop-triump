@@ -63,7 +63,6 @@ public class ProfileFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
     @Override
     public void onStart(){
         super.onStart();

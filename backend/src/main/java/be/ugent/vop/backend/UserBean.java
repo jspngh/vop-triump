@@ -14,7 +14,7 @@ public class UserBean {
     private String email;
     private Date joined;
 
-    public void setJoind(Date joined){
+    public void setJoined(Date joined){
         this.joined= joined;
     }
 
