@@ -16,7 +16,7 @@ Format : Priority | Task | Claimed by
 - [ ] Medium | Add pictures(backend + fragments) | 
 - [ ] Medium | Caching of data + pictures | 
 - [ ] Medium | Development of web application | 
-- [ ] Low | Look into JDO conversion of backend| 
+- [ ] Low | Look into JDO conversion of backend + Add REST interface for API | 
 - [ ] Low | Look into iOS development | 
 - [ ] Low | Look into notifications | 
 - [ ] Low | Google App Engine addresses the issue of keeping the instance alive via Warmup requests |
