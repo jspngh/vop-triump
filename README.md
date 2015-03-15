@@ -3,10 +3,11 @@ VOP
 # To do:
 Format : Priority | Task | Claimed by
 - [ ] ULTRAHigh | Fix Facebook login | 
+- [ ] High | Error handling (no network) | 
 - [ ] High | Setting up a uniform format for commenting and logging | 
 - [ ] High | Remove Foursquare code | 
 - [ ] High | Remove obsolete code |
-- [ ] High | Restructure code (src + res) with MVC in mind |
+- [ ] High | Restructure code (src + res)  |
 - [ ] High | Review code (excessive use of loaders, multiple loaders in fragment) |
 - [ ] High | Review code (excessive use of classes for same purpose) |
 - [ ] High | Review code (excessive use of controllers with same purpose: ListAdapters) |
