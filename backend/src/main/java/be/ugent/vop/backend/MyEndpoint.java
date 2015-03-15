@@ -359,7 +359,7 @@ public class MyEndpoint {
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()){
             RankingBean rank = new RankingBean();
-            long groupId = (long)r.getProperty("groupId");
+            long groupId = (long)r.getKey().getId();
             long points = 0;
             GroupBean group = _getGroupBean(groupId);
             rank.setGroupBean(group);

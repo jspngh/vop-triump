@@ -11,6 +11,7 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import java.io.IOException;
+import java.util.List;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.MyApi;
@@ -18,6 +19,8 @@ import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponseFB;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.RankingBean;
+import be.ugent.vop.backend.myApi.model.RankingBeanCollection;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.backend.myApi.model.VenuesBean;
 
@@ -79,7 +82,7 @@ public class BackendAPI {
 
 
     public VenueBean getVenueInfo(long venueId) throws IOException {
-        return myApiService.getVenueInfo(token,venueId).execute();
+        return myApiService.getVenueInfo(token, venueId).execute();
     }
 
     public GroupBean registerUserInGroup( String token, long groupId) throws IOException{
@@ -96,5 +99,9 @@ public class BackendAPI {
 
     public VenuesBean getNearbyVenues(Location loc) throws IOException{
         return myApiService.getNearbyVenues(token, loc.getLatitude(), loc.getLatitude()).execute();
+    }
+
+    public RankingBeanCollection getLeaderboard() throws IOException{
+        return myApiService.getLeaderboard(token).execute();
     }
 }
