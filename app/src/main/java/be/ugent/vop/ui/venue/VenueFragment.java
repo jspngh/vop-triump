@@ -18,10 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
-
 import java.util.ArrayList;
-import java.util.List;
 
 import be.ugent.vop.Event;
 import be.ugent.vop.EventBroker;
@@ -36,10 +33,6 @@ import be.ugent.vop.ui.group.GroupActivity;
 
 public class VenueFragment extends Fragment {
 
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
     private FoursquareVenue venue;
     private TextView noRankingTextView;
     private TextView titleTextView;
@@ -93,10 +86,10 @@ public class VenueFragment extends Fragment {
         }else {
             photoUrl = "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
          }
-        Ion.with(venueImageView)
+/*        Ion.with(venueImageView)
                 .placeholder(R.drawable.ic_launcher)
                 .error(R.drawable.ic_drawer_logout)
-                .load(photoUrl);
+                .load(photoUrl);*/
 
     }
 

@@ -55,7 +55,8 @@
     <string name="title_activity_group">GroupActivity</string>
     <string name="hello_world">Hello world!</string>
 
-    <string name="app_id">462840373863146</string>
+    <!-- <string name="app_id">462840373863146</string> -->
+    <string name="app_id">1388764728108146</string>
     <string name="ready">ready</string>
     <string name="set">set</string>
     <string name="triump">triump</string>
