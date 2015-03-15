@@ -1,4 +1,4 @@
-package be.ugent.vop.ui.main;
+package be.ugent.vop.ui.venue;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -33,9 +33,9 @@ import java.util.HashMap;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.ui.venue.VenueActivity;
+import be.ugent.vop.ui.venue.VenueListAdapter;
 
 /**
  * Created by siebe on 28/02/15.

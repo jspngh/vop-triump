@@ -14,7 +14,6 @@ public class RankingBean {
         this.groupbean = groupbean;
     }
 
-
     public void setPoints(long points) {
         this.points = points;
     }

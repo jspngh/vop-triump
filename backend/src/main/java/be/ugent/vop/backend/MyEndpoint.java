@@ -297,7 +297,8 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getNearbyVenues")
-    public VenuesBean getNearbyVenues( @Named("latitude") double latitude, @Named("longitude") double longitude){
+    public VenuesBean getNearbyVenues( @Named("token") String token, @Named("latitude") double latitude, @Named("longitude") double longitude) throws UnauthorizedException {
+        String userId = _getUserIdForToken(token);
         VenuesBean result = new VenuesBean();
         ArrayList<VenueBean> venues = new ArrayList<>();
 
@@ -349,6 +350,37 @@ public class MyEndpoint {
         return result;
     }
 
+    @ApiMethod(name = "getLeaderboard")
+    public List<RankingBean> getLeaderboard(@Named("token") String token) throws UnauthorizedException, EntityNotFoundException {
+        String userId = _getUserIdForToken(token);
+        List<RankingBean> leaderboard = new ArrayList<RankingBean>();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query q = new Query("Group");
+        PreparedQuery pq = datastore.prepare(q);
+        for (Entity r : pq.asIterable()){
+            RankingBean rank = new RankingBean();
+            long groupId = (long)r.getProperty("groupId");
+            long points = 0;
+            GroupBean group = _getGroupBean(groupId);
+            rank.setGroupBean(group);
+            Query.Filter propertyFilter =
+                    new Query.FilterPredicate("groupId",
+                            Query.FilterOperator.EQUAL,
+                            groupId);
+            q  = new Query("Checkin").setFilter(propertyFilter);
+            pq = datastore.prepare(q);
+            for (Entity s : pq.asIterable()) {
+                points += (long)s.getProperty("points");
+
+            }
+            rank.setPoints(points);
+            leaderboard.add(rank);
+        }
+
+
+        return leaderboard;
+    }
+
 
     /************************
      * Private helper methods
@@ -358,10 +390,9 @@ public class MyEndpoint {
         String userId;
         try {
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
             Key userKey = KeyFactory.createKey("Session", token);
             Entity user = datastore.get(userKey);
-            userId = ((String) user.getProperty("userId"));
+            userId = (String) user.getProperty("userId");
         } catch (EntityNotFoundException e) {
             throw new UnauthorizedException("Not authorized for this request.");
         }

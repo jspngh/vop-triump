@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.facebook.Session;
 import com.facebook.SessionState;
 
+import be.ugent.vop.ui.venue.VenueFragment;
+
 /**
  * Created by siebe on 25/02/15.
  */
@@ -20,7 +22,15 @@ public class LeaderboardsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboards);
 
-        overridePendingTransition(0, 0);
+        LeaderboardsFragment fragment = new LeaderboardsFragment();
+        Bundle venueBundle = getIntent().getExtras();
+
+        fragment.setArguments(venueBundle);
+
+        this.getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
     @Override

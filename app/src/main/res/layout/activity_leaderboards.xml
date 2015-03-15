@@ -19,8 +19,10 @@
             <include layout="@layout/toolbar_actionbar" />
         </LinearLayout>
         <!-- Sessions fragments showing each day of the conference -->
-
-        <!-- put main content here -->
+        <FrameLayout
+            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:id="@+id/fragment_container"/>
 
     </LinearLayout>
     <!-- Nav drawer -->

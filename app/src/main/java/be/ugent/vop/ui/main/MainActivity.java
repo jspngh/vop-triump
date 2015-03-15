@@ -18,6 +18,7 @@ import be.ugent.vop.ui.group.GroupListFragment;
 import be.ugent.vop.LocationService;
 import be.ugent.vop.R;
 
+import be.ugent.vop.ui.venue.CheckinFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
 
 public class MainActivity extends BaseActivity {

@@ -1,4 +1,4 @@
-package be.ugent.vop.ui.main;
+package be.ugent.vop.ui.venue;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,15 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
-
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.foursquare.Photo;
-import be.ugent.vop.ui.venue.VenueActivity;
 
 /**
  * Created by siebe on 02/03/15.
