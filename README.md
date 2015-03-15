@@ -3,6 +3,7 @@ VOP
 # To do:
 Format : Priority | Task | Claimed by
 - [ ] ULTRAHigh | Fix Facebook login | 
+- [ ] High | Setting up a uniform format for commenting and logging | 
 - [ ] High | Remove Foursquare code | 
 - [ ] High | Remove obsolete code |
 - [ ] High | Restructure code (src + res) with MVC in mind |
