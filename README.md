@@ -19,7 +19,7 @@ Format : Priority | Task | Claimed by
 - [ ] Low | Look into JDO conversion of backend| 
 - [ ] Low | Look into iOS development | 
 - [ ] Low | Look into notifications | 
-- 
+- [ ] Low | Google App Engine addresses the issue of keeping the instance alive via Warmup requests |
 
 # Last edited on : 15/03/2015
 Viewed by: 
