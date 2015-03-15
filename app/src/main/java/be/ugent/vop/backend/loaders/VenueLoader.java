@@ -51,7 +51,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("VenueLoader", "size of venues found: "+ result.size() );
+        //Log.d("VenueLoader", "size of venues found: "+ result.size() );
         // Done!
        //  result = new ArrayList<>();
        // result.add(new FoursquareVenue("666","Naam","","","",30,30));

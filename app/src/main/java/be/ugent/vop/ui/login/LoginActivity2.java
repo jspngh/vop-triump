@@ -25,6 +25,7 @@ import be.ugent.vop.backend.loaders.AuthTokenLoaderFB;
 import be.ugent.vop.backend.loaders.EndSessionLoader;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponseFB;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
+import be.ugent.vop.ui.main.MainActivity;
 
 public class LoginActivity2 extends Activity{
     private SharedPreferences prefs;
@@ -96,6 +97,9 @@ public class LoginActivity2 extends Activity{
     }
 
     private void onLoggedIn() {
+        Intent main = new Intent(this, MainActivity.class);
+        startActivity(main);
+        finish();
 
     }
 

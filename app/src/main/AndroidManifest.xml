@@ -82,7 +82,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:label="@string/app_name" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"   android:value="@string/app_id"/>
+        <meta-data android:name="com.facebook.sdk.ApplicationId"   android:value="@string/facebook_app_id"/>
 
         <!-- Services -->
         <service android:name=".LocationService" />

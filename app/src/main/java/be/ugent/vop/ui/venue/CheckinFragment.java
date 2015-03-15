@@ -185,6 +185,10 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onLoadFinished(Loader<ArrayList<VenueBean>> arrayListLoader, final ArrayList<VenueBean> venues) {
         Log.d(TAG, "onLoadFinished");
+        /**************************************
+                 Resultaat kan null zijn
+                 Rekening mee houden!
+         **************************************/
         mAdapter.setVenues(venues);
         mAdapter.setContext(getActivity());
         mRecyclerView.setAdapter(mAdapter);
