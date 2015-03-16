@@ -32,7 +32,7 @@ public class RankingLoader extends AsyncTaskLoader<VenueBean> implements EventLi
         this.context = context.getApplicationContext();
         this.venueId = venueId;
 
-        EventBroker.get().addListener(this);
+        //EventBroker.get().addListener(this);
     }
 
     /**

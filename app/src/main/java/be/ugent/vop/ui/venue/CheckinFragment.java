@@ -159,8 +159,8 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
             return new VenueLoader(getActivity(), mLastLocation);
         } else {
             Location defaultLocation = new Location("");
-            defaultLocation.setLatitude(50);
-            defaultLocation.setLongitude(4);
+            defaultLocation.setLatitude(51.046127);
+            defaultLocation.setLongitude(3.727251);
             return new VenueLoader(getActivity(),defaultLocation );
         }
     }

@@ -33,7 +33,7 @@ import be.ugent.vop.ui.group.GroupActivity;
 
 public class VenueFragment extends Fragment {
 
-    private FoursquareVenue venue;
+    private VenueBean venue;
     private TextView noRankingTextView;
     private TextView titleTextView;
     private ImageView venueImageView;
@@ -60,14 +60,15 @@ public class VenueFragment extends Fragment {
 
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
             venueId = getArguments().getLong(VenueActivity.VENUE_ID);
-
+        //test
+        Log.d("VenueFragment", "venueId :" + venueId);
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
 
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
-                EventBroker.get().addEvent(new Event("checkin"));
+                //EventBroker.get().addEvent(new Event("checkin"));
 
             }
         });
@@ -78,18 +79,17 @@ public class VenueFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        titleTextView.setText(venue.getName());
-
-        String photoUrl;
-        if(venue.getPhotos().size()>0){
-            photoUrl = venue.getPhotos().get(0).getPrefix()+"500x500"+venue.getPhotos().get(0).getSuffix();
-        }else {
-            photoUrl = "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
-         }
-/*        Ion.with(venueImageView)
-                .placeholder(R.drawable.ic_launcher)
-                .error(R.drawable.ic_drawer_logout)
-                .load(photoUrl);*/
+        //titleTextView.setText(venue.getName());
+//        String photoUrl;
+//        if(venue.getPhotos().size()>0){
+//            photoUrl = venue.getPhotos().get(0).getPrefix()+"500x500"+venue.getPhotos().get(0).getSuffix();
+//        }else {
+//            photoUrl = "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
+//         }
+///*        Ion.with(venueImageView)
+//                .placeholder(R.drawable.ic_launcher)
+//                .error(R.drawable.ic_drawer_logout)
+//                .load(photoUrl);*/
 
     }
 
@@ -105,12 +105,13 @@ public class VenueFragment extends Fragment {
     private LoaderManager.LoaderCallbacks<VenueBean> mRankingLoaderListener
             = new LoaderManager.LoaderCallbacks<VenueBean>() {
         @Override
-        public void onLoadFinished(Loader<VenueBean> loader, VenueBean venue) {
+        public void onLoadFinished(Loader<VenueBean> loader, VenueBean ven) {
             Log.d("VenueFragment", "onLoadFinished");
-
+            venue= ven;
             if(venue.getRanking()!=null){
             noRankingTextView.setVisibility(View.GONE);
             rankingListView.setVisibility(View.VISIBLE);
+            titleTextView.setText(venue.getName());
             ranking = new ArrayList<>();
             for(RankingBean r:venue.getRanking()) ranking.add(r);
 

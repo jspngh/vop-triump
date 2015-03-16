@@ -32,7 +32,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
         super(context);
         this.context = context.getApplicationContext();
         this.location = loc;
-        EventBroker.get().addListener(this);
+        //EventBroker.get().addListener(this);
     }
 
     /**

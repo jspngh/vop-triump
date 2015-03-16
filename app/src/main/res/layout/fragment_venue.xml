@@ -30,7 +30,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/loading_data"
         android:id="@+id/textViewNoRanking"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:layout_gravity="center_horizontal" />
+        />
 
     <ListView
         android:layout_height="0dp"
