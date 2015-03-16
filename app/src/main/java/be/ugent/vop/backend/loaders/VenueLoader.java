@@ -23,7 +23,6 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implements EventListener {
     private final String TAG = "VenueLoader";
 
-    private int i = 0;
     ArrayList<VenueBean> mVenueList;
     private static MyApi myApiService = null;
     private Context context;
@@ -45,7 +44,6 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
     public ArrayList<VenueBean> loadInBackground() {
         Log.d(TAG,"loadInBackground");
         ArrayList<VenueBean> result = new ArrayList<VenueBean>();
-        Log.d("VenueLoader", " "+i );
         try {
 
             result = (ArrayList<VenueBean>) BackendAPI.get(context).getNearbyVenues(location).getVenues(); // TODO: is cast here OK?

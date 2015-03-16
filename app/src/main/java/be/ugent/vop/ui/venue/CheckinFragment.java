@@ -239,6 +239,14 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
                         }
                     });
 
+                    if(venues.size()!=0) {
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(venues.get(0).getLatitude(),
+                                venues.get(0).getLongitude()), 15));
+                    }else{
+                        //Move to centrum of UGhent
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.046127,
+                                3.727251), 15));
+                    }
                     // Zoom in, animating the camera.
                     map.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
                 }

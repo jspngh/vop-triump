@@ -94,7 +94,9 @@ public class LeaderboardsFragment extends Fragment implements LoaderManager.Load
         if(data.size()!=0){
             noRankingTextView.setVisibility(View.GONE);
             rankingListView.setVisibility(View.VISIBLE);
-            for(RankingBean r:data) ranking.add(r);
+            Log.d("LeaderboardsFragment","size of data " + data.size());
+            ranking = new ArrayList<RankingBean>();
+            for(RankingBean r : data) ranking.add(r);
             adapter = new RankingAdapter(context, ranking);
             rankingListView.setAdapter(adapter);
 

@@ -98,7 +98,7 @@ public class BackendAPI {
     }
 
     public VenuesBean getNearbyVenues(Location loc) throws IOException{
-        return myApiService.getNearbyVenues(token, loc.getLatitude(), loc.getLatitude()).execute();
+        return myApiService.getNearbyVenues(token, loc.getLatitude(), loc.getLongitude()).execute();
     }
 
     public RankingBeanCollection getLeaderboard() throws IOException{
