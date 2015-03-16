@@ -51,7 +51,7 @@ public class LoginActivity2 extends Activity{
             @Override
             public void call(Session session, SessionState state, Exception exception) {
                 Log.d("LoginActivity2", state.toString());
-
+//TODO: make sure to check version of facebookapp: nasty errors
                 if(state.isOpened())
                     startBackendLogin();
                 else if(state.isClosed())
@@ -100,7 +100,6 @@ public class LoginActivity2 extends Activity{
         Intent main = new Intent(this, MainActivity.class);
         startActivity(main);
         finish();
-
     }
 
     @Override
@@ -109,6 +108,7 @@ public class LoginActivity2 extends Activity{
         Session.getActiveSession().onActivityResult(this, requestCode,
                 resultCode, data);
     }
+
 
     private LoaderManager.LoaderCallbacks<AuthTokenResponseFB> mAuthTokenLoaderListener
             = new LoaderManager.LoaderCallbacks<AuthTokenResponseFB>() {

@@ -239,10 +239,6 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
                         }
                     });
 
-                    // Move the camera instantly to hamburg with a zoom of 15.
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(venues.get(0).getLatitude(),
-                                                                                venues.get(0).getLongitude()), 15));
-
                     // Zoom in, animating the camera.
                     map.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
                 }

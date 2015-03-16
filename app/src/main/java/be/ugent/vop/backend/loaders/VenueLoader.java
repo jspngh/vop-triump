@@ -44,17 +44,15 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
     @Override
     public ArrayList<VenueBean> loadInBackground() {
         Log.d(TAG,"loadInBackground");
-        ArrayList<VenueBean> result = null;
+        ArrayList<VenueBean> result = new ArrayList<VenueBean>();
         Log.d("VenueLoader", " "+i );
         try {
+
             result = (ArrayList<VenueBean>) BackendAPI.get(context).getNearbyVenues(location).getVenues(); // TODO: is cast here OK?
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Log.d("VenueLoader", "size of venues found: "+ result.size() );
-        // Done!
-       //  result = new ArrayList<>();
-       // result.add(new FoursquareVenue("666","Naam","","","",30,30));
+        if(result==null) return new ArrayList<VenueBean>();
         return result;
     }
 
