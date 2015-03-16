@@ -30,9 +30,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/loading_data"
         android:id="@+id/textViewNoRanking"
-        android:visibility="visible"
-        android:layout_gravity="center_horizontal" />
-        />
+        android:layout_gravity="center_horizontal"
+        android:visibility="visible" />
 
     <ListView
         android:layout_height="0dp"
@@ -41,6 +40,7 @@
         android:id="@+id/listViewRanking"
         android:layout_margin="0dp"
         android:elevation="8dp"
+
         android:visibility="invisible" />
 
     <Button

@@ -15,7 +15,7 @@ import be.ugent.vop.R;
 public class ProfileFragment extends Fragment {
     public final static String USER_ID = "userId";
     public final static String PROFILE_ACTIVITY = "Go to profile";
-    private long userId;
+    private String userId;
     private ImageView profilePic;
     private Button btnLogout;
 
@@ -29,7 +29,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        userId = bundle.getLong(USER_ID, 0);
+        userId = bundle.getString(USER_ID);
     }
 
     @Override

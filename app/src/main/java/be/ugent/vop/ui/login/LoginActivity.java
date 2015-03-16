@@ -34,7 +34,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
                 getFragmentManager().beginTransaction()
                         .add(R.id.fragment_container, loginFragment).commit();
             }
-            else if(mBundle.getLong(ProfileFragment.USER_ID, 0) != 0){
+            else if(mBundle.getString(ProfileFragment.USER_ID) != null){
                 ProfileFragment profileFragment = new ProfileFragment();
                 profileFragment.setArguments(mBundle);
                 getFragmentManager().beginTransaction()

@@ -109,9 +109,9 @@ public class VenueFragment extends Fragment {
             Log.d("VenueFragment", "onLoadFinished");
             venue= ven;
             if(venue.getRanking()!=null){
-            noRankingTextView.setVisibility(View.GONE);
             rankingListView.setVisibility(View.VISIBLE);
-            titleTextView.setText(venue.getName());
+                titleTextView.setText(ven.getDescription());
+                noRankingTextView.setText(ven.getType());
             ranking = new ArrayList<>();
             for(RankingBean r:venue.getRanking()) ranking.add(r);
 
@@ -154,8 +154,34 @@ public class VenueFragment extends Fragment {
             = new LoaderManager.LoaderCallbacks<VenueBean>() {
 
         @Override
-        public void onLoadFinished(Loader<VenueBean> loader, VenueBean venue) {
+        public void onLoadFinished(Loader<VenueBean> loader, VenueBean ven) {
             Log.d("VenueFragment", "onLoadFinished");
+            venue=ven;
+            if(venue.getRanking()!=null){
+                rankingListView.setVisibility(View.VISIBLE);
+                titleTextView.setText(ven.getDescription());
+                noRankingTextView.setText(ven.getType());
+                ranking = new ArrayList<>();
+                for(RankingBean r:venue.getRanking()) ranking.add(r);
+
+                adapter = new RankingAdapter(context, ranking);
+
+                rankingListView.setAdapter(adapter);
+
+                rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        Intent intent = new Intent(getActivity(), GroupActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+                });
+            }else{
+                noRankingTextView.setText(R.string.no_ranking);
+            }
 
         }
 
