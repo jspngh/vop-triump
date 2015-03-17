@@ -19,15 +19,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import be.ugent.vop.Event;
-import be.ugent.vop.EventBroker;
 import be.ugent.vop.R;
-import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
+import be.ugent.vop.backend.myApi.model.RankingBean;
+import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.ui.group.GroupActivity;
 
 
@@ -43,7 +41,7 @@ public class VenueFragment extends Fragment {
     private ListView rankingListView;
     private Context context;
 
-    private long venueId;
+    private String venueId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +57,7 @@ public class VenueFragment extends Fragment {
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
 
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
-            venueId = getArguments().getLong(VenueActivity.VENUE_ID);
+            venueId = getArguments().getString(VenueActivity.VENUE_ID);
         //test
         Log.d("VenueFragment", "venueId :" + venueId);
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
@@ -102,48 +100,48 @@ public class VenueFragment extends Fragment {
      Loaders
      ***********/
 
-    private LoaderManager.LoaderCallbacks<VenueBean> mRankingLoaderListener
-            = new LoaderManager.LoaderCallbacks<VenueBean>() {
+    private LoaderManager.LoaderCallbacks<List<RankingBean>> mRankingLoaderListener
+            = new LoaderManager.LoaderCallbacks<List<RankingBean>>() {
         @Override
-        public void onLoadFinished(Loader<VenueBean> loader, VenueBean ven) {
+        public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
             Log.d("VenueFragment", "onLoadFinished");
-            venue= ven;
-            if(venue.getRanking()!=null){
-            rankingListView.setVisibility(View.VISIBLE);
-                titleTextView.setText(ven.getDescription());
-                noRankingTextView.setText(ven.getType());
-            ranking = new ArrayList<>();
-            for(RankingBean r:venue.getRanking()) ranking.add(r);
+            //venue = ven;
+            if(rankings!=null){
+                rankingListView.setVisibility(View.VISIBLE);
+                //titleTextView.setText(ven.getDescription());
+                //noRankingTextView.setText(ven.getType());
+                //ranking = new ArrayList<>();
+                //for(RankingBean r:venue.getRanking()) ranking.add(r);
 
-            adapter = new RankingAdapter(context, ranking);
+                adapter = new RankingAdapter(context, rankings);
 
-            rankingListView.setAdapter(adapter);
+                rankingListView.setAdapter(adapter);
 
-            rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    Intent intent = new Intent(getActivity(), GroupActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-        }else{
+                rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        Intent intent = new Intent(getActivity(), GroupActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+                });
+            }else{
                 noRankingTextView.setText(R.string.no_ranking);
             }
         }
 
         @Override
-        public Loader<VenueBean> onCreateLoader(int id, Bundle args) {
+        public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
             RankingLoader loader = new RankingLoader(context, venueId);
             return loader;
         }
 
         @Override
-        public void onLoaderReset(Loader<VenueBean> loader) {
+        public void onLoaderReset(Loader<List<RankingBean>> loader) {
             rankingListView.setAdapter(null);
         }
 

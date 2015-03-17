@@ -4,18 +4,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.facebook.Session;
-import com.facebook.SessionState;
-
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 
 public class GroupActivity extends BaseActivity {
-
-    @Override
-    protected void onSessionStateChange(Session session, SessionState state, Exception exception) {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

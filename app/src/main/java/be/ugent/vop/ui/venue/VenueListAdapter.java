@@ -14,16 +14,17 @@ import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.foursquare.FoursquareVenue;
 
 /**
  * Created by siebe on 02/03/15.
  */
 public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.ViewHolder> {
     private static final String TAG = "VenueListAdapter";
-    private ArrayList<VenueBean> venues;
+    private ArrayList<FoursquareVenue> venues;
     private Context context;
 
-    public void setVenues(ArrayList<VenueBean> venues) {
+    public void setVenues(ArrayList<FoursquareVenue> venues) {
         this.venues = venues;
     }
     public void setContext(Context context) {
@@ -74,7 +75,7 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         ViewHolder vh = new ViewHolder(v, new ViewHolder.IMyViewHolderClicks() {
             @Override
             public void onItemClick(View caller, int position) {
-                long venueId = venues.get(position).getVenueId();
+                String venueId = venues.get(position).getId();
                 Intent intent = new Intent(context, VenueActivity.class);
                 intent.putExtra(VenueActivity.VENUE_ID, venueId);
 
@@ -93,9 +94,9 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        VenueBean venue = venues.get(position);
+        FoursquareVenue venue = venues.get(position);
 
-        viewHolder.venueName.setText(venue.getDescription());
+        viewHolder.venueName.setText(venue.getName());
         viewHolder.venueInfo.setText("Restaurant - 5 groups currently here");
 
         // No photos yet...

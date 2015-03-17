@@ -34,13 +34,14 @@ import java.util.HashMap;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.backend.loaders.VenueLoader;
+import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.venue.VenueActivity;
 import be.ugent.vop.ui.venue.VenueListAdapter;
 
 /**
  * Created by siebe on 28/02/15.
  */
-public class CheckinFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoaderManager.LoaderCallbacks<ArrayList<VenueBean>> {
+public class CheckinFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
     private static final String TAG = "CheckinFragment";
 
     protected RecyclerView mRecyclerView;
@@ -115,8 +116,6 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         super.onActivityCreated(savedInstanceState);
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(getActivity());
-
-
     }
 
     @Override
@@ -151,7 +150,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public Loader<ArrayList<VenueBean>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
         Log.d(TAG, "onCreateLoader");
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -183,7 +182,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<VenueBean>> arrayListLoader, final ArrayList<VenueBean> venues) {
+    public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, final ArrayList<FoursquareVenue> venues) {
         Log.d(TAG, "onLoadFinished");
         /**************************************
                  Resultaat kan null zijn
@@ -204,26 +203,26 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
             fragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
-                    final HashMap<Marker, Long> markerVenue = new HashMap<Marker, Long>();
+                    final HashMap<Marker, String> markerVenue = new HashMap<>();
 
                     map = googleMap;
 
-                    for(VenueBean v : venues){
+                    for(FoursquareVenue v : venues){
                         Marker m = map.addMarker(new MarkerOptions().position(new LatLng(v.getLatitude(), v.getLongitude()))
-                                        .title(v.getDescription()));
+                                        .title(v.getName()));
 
-                        markerVenue.put(m, v.getVenueId());
+                        markerVenue.put(m, v.getId());
                     }
 
                     map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                         @Override
                         public void onInfoWindowClick(Marker marker) {
-                            long venueId = markerVenue.get(marker);
+                            String venueId = markerVenue.get(marker);
 
-                            VenueBean v = null;
+                            FoursquareVenue v = null;
 
-                            for(VenueBean vb : venues){
-                                if(vb.getVenueId() == venueId){
+                            for(FoursquareVenue vb : venues){
+                                if(vb.getId().equals(venueId)){
                                     v = vb;
                                     break;
                                 }
@@ -231,7 +230,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
 
                             if(v != null){
                                 Intent intent = new Intent(getActivity(), VenueActivity.class);
-                                intent.putExtra(VenueActivity.VENUE_ID, v.getVenueId());
+                                intent.putExtra(VenueActivity.VENUE_ID, v.getId());
 
                                 getActivity().startActivity(intent);
                             }
@@ -255,7 +254,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<VenueBean>> arrayListLoader) {
+    public void onLoaderReset(Loader<ArrayList<FoursquareVenue>> arrayListLoader) {
         mRecyclerView.setAdapter(null);
     }
 }

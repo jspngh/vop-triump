@@ -43,6 +43,8 @@ import java.io.InputStreamReader;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.backend.loaders.AuthTokenLoader;
+import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.foursquare.TokenStore;
 import be.ugent.vop.backend.loaders.EndSessionLoader;
@@ -205,7 +207,7 @@ public class LoginFragment extends Fragment {
                     String userId = jsonObject.getJSONObject("response").getJSONObject("user").getString("id");
                     SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
-                    editor.putLong(getString(R.string.userid), Long.valueOf(userId).longValue());
+                    editor.putString(getString(R.string.userid), userId);
                     editor.commit();
                     h.sendEmptyMessage(1);
                 } catch (Exception e) {
@@ -266,16 +268,16 @@ public class LoginFragment extends Fragment {
 
     private void performBackendTokenExchange(){
         String fsToken = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
-        long userId = prefs.getLong(getString(R.string.userid), 0);
+        String userId = prefs.getString(getString(R.string.userid), "N.A.");
 
         Bundle args = new Bundle(2);
-        args.putLong("userId", userId);
+        args.putString("userId", userId);
         args.putString("fsToken", fsToken);
         Log.d("fsToken and userId", fsToken + userId);
 
         try {
-            //getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, mAuthTokenLoaderListener);
-            getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, null);
+            getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, mAuthTokenLoaderListener);
+            //getLoaderManager().initLoader(AUTH_TOKEN_LOADER, args, null);
         } catch (Exception e) {
             //
         }
@@ -421,7 +423,7 @@ public class LoginFragment extends Fragment {
      **********************************/
 //endregion
 
-   /* private LoaderManager.LoaderCallbacks<AuthTokenResponse> mAuthTokenLoaderListener
+    private LoaderManager.LoaderCallbacks<AuthTokenResponse> mAuthTokenLoaderListener
             = new LoaderManager.LoaderCallbacks<AuthTokenResponse>() {
         @Override
         public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
@@ -437,7 +439,7 @@ public class LoginFragment extends Fragment {
 
         @Override
         public Loader<AuthTokenResponse> onCreateLoader (int id, Bundle args){
-            AuthTokenLoader mLoader = new AuthTokenLoader(context, args.getLong("userId"),args.getString("fsToken"));
+            AuthTokenLoader mLoader = new AuthTokenLoader(context, args.getString("userId"),args.getString("fsToken"));
             return mLoader;
         }
 
@@ -445,7 +447,7 @@ public class LoginFragment extends Fragment {
         public void onLoaderReset(Loader<AuthTokenResponse> loader) {
 
         }
-    };*/
+    };
 
     private LoaderManager.LoaderCallbacks<CloseSessionResponse> mEndSessionLoaderListener
             = new LoaderManager.LoaderCallbacks<CloseSessionResponse>() {

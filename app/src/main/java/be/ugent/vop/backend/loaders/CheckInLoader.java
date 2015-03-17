@@ -16,9 +16,9 @@ public class CheckInLoader extends AsyncTaskLoader<VenueBean> {
 
     private Context context;
     private long groupId;
-    private long venueId;
+    private String venueId;
 
-    public CheckInLoader(Context context, long venueId, long groupId) {
+    public CheckInLoader(Context context, String venueId, long groupId) {
         super(context);
         this.context = context.getApplicationContext();
         this.groupId = groupId;

@@ -5,25 +5,23 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import be.ugent.vop.Event;
 import be.ugent.vop.EventBroker;
 import be.ugent.vop.EventListener;
-import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.MyApi;
-import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implements EventListener {
+public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> implements EventListener {
     private final String TAG = "VenueLoader";
 
-    ArrayList<VenueBean> mVenueList;
+    private int i = 0;
+    ArrayList<FoursquareVenue> mVenueList;
     private static MyApi myApiService = null;
     private Context context;
     private Location location;
@@ -32,7 +30,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
         super(context);
         this.context = context.getApplicationContext();
         this.location = loc;
-        //EventBroker.get().addListener(this);
+        EventBroker.get().addListener(this);
     }
 
     /**
@@ -41,16 +39,15 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
      * data to be published by the loader.
      */
     @Override
-    public ArrayList<VenueBean> loadInBackground() {
+    public ArrayList<FoursquareVenue> loadInBackground() {
         Log.d(TAG,"loadInBackground");
-        ArrayList<VenueBean> result = new ArrayList<VenueBean>();
-        try {
-
-            result = (ArrayList<VenueBean>) BackendAPI.get(context).getNearbyVenues(location).getVenues(); // TODO: is cast here OK?
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(result==null) return new ArrayList<VenueBean>();
+        ArrayList<FoursquareVenue> result = null;
+        Log.d("VenueLoader", " "+i );
+        result = FoursquareAPI.get(context).getNearbyVenues(location);
+        Log.d("VenueLoader", "size of venues found: "+ result.size() );
+        // Done!
+        //  result = new ArrayList<>();
+        // result.add(new FoursquareVenue("666","Naam","","","",30,30));
         return result;
     }
 
@@ -59,7 +56,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult( ArrayList<VenueBean> venueList) {
+    @Override public void deliverResult( ArrayList<FoursquareVenue> venueList) {
         mVenueList = venueList;
         if (isStarted()) {
             // If the Loader is currently started, we can immediately
@@ -96,7 +93,7 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<VenueBean>> implement
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(ArrayList<VenueBean> venueList) {
+    @Override public void onCanceled(ArrayList<FoursquareVenue> venueList) {
         super.onCanceled(venueList);
     }
 

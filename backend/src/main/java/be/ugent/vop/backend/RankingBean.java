@@ -8,13 +8,13 @@ package be.ugent.vop.backend;
  */
 public class RankingBean {
     private GroupBean groupbean;
-    private long points;
+    private int points;
 
     public void setGroupBean(GroupBean groupbean) {
         this.groupbean = groupbean;
     }
 
-    public void setPoints(long points) {
+    public void setPoints(int points) {
         this.points = points;
     }
 
@@ -22,7 +22,7 @@ public class RankingBean {
         return this.groupbean;
     }
 
-    public long getPoints() {
+    public int getPoints() {
         return points;
     }
 

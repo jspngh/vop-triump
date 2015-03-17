@@ -6,6 +6,7 @@
 
 package be.ugent.vop.backend;
 
+
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -136,7 +137,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getVenueInfo")
-    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") long venueId) throws UnauthorizedException, EntityNotFoundException {
+    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         VenueBean response = null;
         response = _getVenueBean(venueId);
@@ -188,12 +189,80 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") long venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         _checkInVenue(userId, groupId, venueId);
         return _getVenueBean(venueId);
         //return _orderVenueBean(_getVenueBean(venueId));
 
+    }
+
+    @ApiMethod(name = "getAuthToken")
+    public AuthTokenResponse getAuthToken(@Named("fsUserID") String fsUserId, @Named("fsToken") String fsToken) throws UnauthorizedException, InternalServerErrorException{
+        AuthTokenResponse response = new AuthTokenResponse();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        response.setAuthToken("Siebe");
+        try {
+            URL url = new URL("https://api.foursquare.com/v2/users/self?oauth_token=" + fsToken + "&v=20140806&m=foursquare");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuilder jsonResponseBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonResponseBuilder.append(line);
+            }
+            String jsonResponse = jsonResponseBuilder.toString();
+            JSONObject fsResponse = new JSONObject(jsonResponse);
+            JSONObject meta = fsResponse.getJSONObject("meta");
+            int code = meta.getInt("code");
+            if(code == 401)
+                throw new UnauthorizedException("Invalid Foursquare login");
+            JSONObject r = fsResponse.getJSONObject("response");
+            JSONObject user = r.getJSONObject("user");
+            String returnedUserId = user.getString("id");
+            String firstName = user.getString("firstName");
+            String lastName = "";
+            if(user.has("lastName"))
+                lastName = user.getString("lastName");
+            JSONObject contact = user.getJSONObject("contact");
+            String email = contact.getString("email");
+            response.setUserId(returnedUserId);
+            if(returnedUserId.equals(fsUserId)){
+// User is who he claims to be
+// Check if we already saved his info
+                try{
+                    UserBean userBean = _getUserBeanForId(returnedUserId);
+                }catch (EntityNotFoundException e){
+// User not in our database
+                    Entity userEntity = new Entity("User", returnedUserId);
+                    userEntity.setProperty("fsUserId", returnedUserId);
+                    userEntity.setProperty("firstName", firstName);
+                    userEntity.setProperty("lastName", lastName);
+                    userEntity.setProperty("email", email);
+                    datastore.put(userEntity);
+                }
+// Create session for user and send back auth token
+// Create random token
+                String sessionToken = new BigInteger(256, random).toString(32);
+// Store session information in datastore
+                Entity session = new Entity("Session", sessionToken);
+                session.setProperty("userId", returnedUserId);
+                session.setProperty("sessionToken", sessionToken);
+                datastore.put(session);
+// set token in response
+                response.setAuthToken(sessionToken);
+            }
+            reader.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Whoops, we screwed something up :( MalformedURLException \n" + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Whoops, we screwed something up :( IOException \n" + e.getMessage());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Whoops, we screwed something up :( JSONException \n" + e.getMessage());
+        }
+        return response;
     }
 
     @ApiMethod(name = "getAuthTokenFB")
@@ -337,9 +406,9 @@ public class MyEndpoint {
                 //flipping of venue1 and venue2 is not an error
                 //Larger distance is bad
                 double venue1_distRatio = (double) venue2.getCurrentDistance() /
-                                (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
+                        (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
                 double venue2_distRatio = (double) venue1.getCurrentDistance() /
-                                (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
+                        (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
 
                 return venue1_pointsRatio+venue1_distRatio*3.0 > venue2_pointsRatio+venue2_distRatio*3.0;
             }
@@ -360,7 +429,7 @@ public class MyEndpoint {
         for (Entity r : pq.asIterable()){
             RankingBean rank = new RankingBean();
             long groupId = (long)r.getKey().getId();
-            long points = 0;
+            int points = 0;
             GroupBean group = _getGroupBean(groupId);
             rank.setGroupBean(group);
             Query.Filter propertyFilter =
@@ -370,7 +439,7 @@ public class MyEndpoint {
             q  = new Query("Checkin").setFilter(propertyFilter);
             pq = datastore.prepare(q);
             for (Entity s : pq.asIterable()) {
-                points += (long)s.getProperty("points");
+                points += (int)s.getProperty("points");
 
             }
             rank.setPoints(points);
@@ -381,6 +450,11 @@ public class MyEndpoint {
         return leaderboard;
     }
 
+    @ApiMethod(name = "getRankings", path = "getRankings")
+    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
+        String userId = _getUserIdForToken(token);
+        return _getRankings(venueId);
+    }
 
     /************************
      * Private helper methods
@@ -444,7 +518,7 @@ public class MyEndpoint {
         datastore.put(userGroup);
     }
 
-    private CheckinBean _checkInVenue(String userId, long groupId, long venueId){
+    private CheckinBean _checkInVenue(String userId, long groupId, String venueId){
 
         //TODO: check if checkin is valid?
         // - niet te snel na elkaar?
@@ -534,10 +608,10 @@ public class MyEndpoint {
     private CheckinBean _getCheckinBean(Entity checkin) {
 
         CheckinBean checkinbean = new CheckinBean();
-        checkinbean.setVenueId(((Long)checkin.getProperty("venueId")).longValue());
-        checkinbean.setGroupId(((Long) checkin.getProperty("groupId")).longValue());
+        checkinbean.setVenueId((String)checkin.getProperty("venueId"));
+        checkinbean.setGroupId((Long) checkin.getProperty("groupId"));
         checkinbean.setUserId((String) checkin.getProperty("userId"));
-      //  checkinbean.setPoints(((Integer) checkin.getProperty("points")).intValue());
+        //  checkinbean.setPoints(((Integer) checkin.getProperty("points")).intValue());
         checkinbean.setPoints(1);
         checkinbean.setDate((Date) checkin.getProperty("date"));
 
@@ -594,7 +668,7 @@ public class MyEndpoint {
 
     // returns VenueBean
     // Note: Ranking in VenueBean is not sorted.
-    private VenueBean _getVenueBean(long venueId) throws EntityNotFoundException{
+    private VenueBean _getVenueBean(String venueId) throws EntityNotFoundException{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         Key keyVenue = KeyFactory.createKey("Venue",venueId);
@@ -603,6 +677,49 @@ public class MyEndpoint {
 
         return venue;
 
+    }
+
+    private List<RankingBean> _getRankings(String venueId){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<RankingBean> ranking = new ArrayList<RankingBean>();
+
+        HashMap<Long, Integer> groupPoints = new HashMap<>();
+        Query.Filter filter1 =
+                new Query.FilterPredicate("venueId",
+                        Query.FilterOperator.EQUAL,
+                        venueId);
+
+        CheckinBean checkin;
+
+        Query q = new Query("Checkin").setFilter(filter1);
+        PreparedQuery pq = datastore.prepare(q);
+
+        for (Entity r : pq.asIterable()) {
+            checkin = _getCheckinBean(r);
+            if (!(groupPoints.containsKey(checkin.getGroupId()))) {
+                groupPoints.put(checkin.getGroupId(), checkin.getPoints());
+            } else {
+                int currentPoints = groupPoints.get(checkin.getGroupId());
+                int newPoints = currentPoints + checkin.getPoints();
+
+                groupPoints.put(checkin.getGroupId(), newPoints);
+            }
+        }
+
+        for (long groupId : groupPoints.keySet()) {
+            RankingBean groupRanking = new RankingBean();
+            try {
+                groupRanking.setGroupBean(_getGroupBean(groupId));
+            } catch (EntityNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            groupRanking.setPoints(groupPoints.get(groupId));
+
+            ranking.add(groupRanking);
+        }
+
+        return ranking;
     }
 
     private VenueBean _getVenueBean(Entity venue) {
@@ -641,8 +758,8 @@ public class MyEndpoint {
             if(!(evaluatedGroups.contains(checkin.getGroupId()))){
                 evaluatedGroups.add(checkin.getGroupId());
                 filter2 = new Query.FilterPredicate("groupId",
-                                Query.FilterOperator.EQUAL,
-                                  checkin.getGroupId());
+                        Query.FilterOperator.EQUAL,
+                        checkin.getGroupId());
                 filter3 = Query.CompositeFilterOperator.and(filter1, filter2);
                 Query q2 = new Query("Checkin").setFilter(filter3);
                 PreparedQuery pq2 = datastore.prepare(q2);
@@ -727,22 +844,22 @@ public class MyEndpoint {
 
         // simple bubblesort
         public synchronized void sort(MyComparator f){
-                VenueBean temp;
-                int length = venues.size();
-                if (length>1) // check if the number of orders is larger than 1
+            VenueBean temp;
+            int length = venues.size();
+            if (length>1) // check if the number of orders is larger than 1
+            {
+                for (int x=0; x<length; x++) // bubble sort outer loop
                 {
-                    for (int x=0; x<length; x++) // bubble sort outer loop
-                    {
-                        for (int i=0; i < length-x-1; i++) {
-                            if (!f.compare(venues.get(i),venues.get(i+1)))
-                            {
-                                temp = venues.get(i);
-                                venues.set(i,venues.get(i+1) );
-                                venues.set(i+1, temp);
-                            }
+                    for (int i=0; i < length-x-1; i++) {
+                        if (!f.compare(venues.get(i),venues.get(i+1)))
+                        {
+                            temp = venues.get(i);
+                            venues.set(i,venues.get(i+1) );
+                            venues.set(i+1, temp);
                         }
                     }
                 }
+            }
         }
 
         // simple bubblesort

@@ -33,7 +33,7 @@ public class RankingAdapter extends ArrayAdapter<RankingBean> {
         super(context, textViewResourceId);
     }
 
-    public RankingAdapter(Context context, ArrayList<RankingBean> items) {
+    public RankingAdapter(Context context, List<RankingBean> items) {
         super(context, R.layout.ranking_list_item, items);
         this.resourceId = R.layout.ranking_list_item;
 

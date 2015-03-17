@@ -2,12 +2,8 @@ package be.ugent.vop.ui.venue;
 
 import android.os.Bundle;
 
-import com.facebook.Session;
-import com.facebook.SessionState;
-
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
-import be.ugent.vop.ui.venue.VenueFragment;
 
 /**
  * Created by vincent on 03/03/15.
@@ -15,11 +11,6 @@ import be.ugent.vop.ui.venue.VenueFragment;
 public class VenueActivity extends BaseActivity {
 
     public static final String VENUE_ID = "venueID";
-
-    @Override
-    protected void onSessionStateChange(Session session, SessionState state, Exception exception) {
-
-    }
 
     public void onCreate(Bundle savedInstanceState){
     super.onCreate(savedInstanceState);

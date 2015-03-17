@@ -47,17 +47,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-
 import java.util.ArrayList;
 
 import be.ugent.vop.ui.login.LoginActivity;
-import be.ugent.vop.ui.login.LoginActivity2;
 import be.ugent.vop.ui.login.LoginFragment;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.LUtils;
@@ -157,41 +149,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private Handler mHandler;
 
-    private UiLifecycleHelper uiHelper;
-
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            onSessionStateChange(session, state, exception);
-        }
-    };
-
-    protected void onSessionStateChange(Session session, SessionState state, Exception exception){
-        if(state.isOpened()){
-
-            // This request is simply for debug purposes, should be removed in final version
-            Bundle params = new Bundle();
-            params.putString("input_token", session.getAccessToken());
-            new Request(session,
-                    "/debug_token",
-                    params,
-                    HttpMethod.GET,
-                    new Request.Callback(){
-
-                        @Override
-                        public void onCompleted(Response response) {
-                            if(response.getError() != null){
-                                Log.d("BaseActivity", response.getError().getErrorMessage());
-                            }else{
-                                Log.d("BaseActivity", response.getRawResponse());
-                            }
-
-
-                        }
-                    }).executeAsync();
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,13 +164,8 @@ public abstract class BaseActivity extends ActionBarActivity {
         mThemedStatusBarColor = getResources().getColor(R.color.theme_primary_dark);
         mNormalStatusBarColor = mThemedStatusBarColor;
 
-        uiHelper = new UiLifecycleHelper(this, callback);
-        uiHelper.onCreate(savedInstanceState);
 
         startLoginProcess();
-
-        Log.d(TAG, getCacheDir().toString());
-
     }
 
 
@@ -436,7 +388,7 @@ public abstract class BaseActivity extends ActionBarActivity {
                 finish();
                 break;
             case NAVDRAWER_ITEM_LOGOUT:
-                intent = new Intent(this, LoginActivity2.class);
+                intent = new Intent(this, LoginActivity.class);
                 intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
                 startActivity(intent);
                 finish();
@@ -476,25 +428,11 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        Session session = Session.getActiveSession();
-        if (session != null &&
-                (session.isOpened() || session.isClosed()) ) {
-            onSessionStateChange(session, session.getState(), null);
-        }else if(session != null && (!session.isOpened() || !session.isClosed())){
-            Intent loginIntent = new Intent(this, LoginActivity2.class);
-            loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_FS);
-            startActivity(loginIntent);
-            finish();
-        }
-        uiHelper.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        uiHelper.onPause();
 
         if (mSyncObserverHandle != null) {
             ContentResolver.removeStatusChangeListener(mSyncObserverHandle);
@@ -552,21 +490,21 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     private void startLoginProcess() {
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+        boolean FStoken = prefs.contains(getString(R.string.foursquaretoken));
         boolean backendToken = prefs.contains(getString(R.string.backendtoken));
         Log.d("", "test");
         Log.d("", prefs.getString(getString(R.string.backendtoken), "N.A."));
-
-        if(!backendToken) {
-            Intent loginIntent = new Intent(this, LoginActivity2.class);
+        if(!FStoken){
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_FS);
+            startActivity(loginIntent);
+            finish();
+        }else if(!backendToken) {
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_BACKEND);
             startActivity(loginIntent);
             finish();
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        uiHelper.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -578,7 +516,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        uiHelper.onSaveInstanceState(outState);
     }
 
 
@@ -739,7 +676,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        uiHelper.onDestroy();
     }
 
     protected void registerHideableHeaderView(View hideableHeaderView) {
