@@ -16,51 +16,181 @@
 
 package be.ugent.vop.ui.main;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.io.IOException;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.VenueBean;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
-public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.ViewHolder> {
+public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "CustomAdapter";
+    private static final int GROUP_CARD = 0;
+    private static final int VENUE_CARD = 1;
+    private static final int EVENT_CARD = 2;
+
+    private Context context;
+
+    public OverviewAdapter(Context context){
+        super();
+        this.context=context;
+    }
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-
-
-        public ViewHolder(View v) {
+    public static class VenueViewHolder extends RecyclerView.ViewHolder {
+        protected TextView info;
+        public VenueViewHolder(View v) {
             super(v);
-
+            info = (TextView) v.findViewById(R.id.venue_info);
         }
-
+    }
+    public static class GroupViewHolder extends RecyclerView.ViewHolder {
+        protected TextView info;
+        public GroupViewHolder(View v) {
+            super(v);
+            info = (TextView) v.findViewById(R.id.group_info);
+        }
+    }
+    public static class EventViewHolder extends RecyclerView.ViewHolder {
+        protected TextView info;
+        public EventViewHolder(View v) {
+            super(v);
+            info = (TextView) v.findViewById(R.id.event_info);
+        }
+    }
+    public static class WelcomeViewHolder extends RecyclerView.ViewHolder {
+        public WelcomeViewHolder(View v) {
+            super(v);
+        }
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)
 
     // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
     // Create new views (invoked by the layout manager)
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view.
-        View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.layout_card_welcome, viewGroup, false);
+    public int getItemViewType(int position) {
 
-        return new ViewHolder(v);
+        return position;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        // Create a new view.
+        View v;
+        switch(viewType){
+            case GROUP_CARD:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.layout_card_group, viewGroup, false);
+                GroupViewHolder mGroupViewHolder = new GroupViewHolder(v);
+                new AsyncTask<GroupViewHolder, Void, GroupBean>() {
+                    private GroupViewHolder v;
+
+                    @Override
+                    protected GroupBean doInBackground(GroupViewHolder... params) {
+                        v = params[0];
+                        GroupBean result = null;
+                        try {
+                            result = BackendAPI.get(context).getGroupInfo(0);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return result;
+                    }
+
+                    @Override
+                    protected void onPostExecute(GroupBean result) {
+                        super.onPostExecute(result);
+                        if(v.info != null)
+                        v.info.setText("Fuck bitches, get money");
+                    }
+                }.execute(mGroupViewHolder);
+                return mGroupViewHolder;
+
+            case VENUE_CARD:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.layout_card_venue, viewGroup, false);
+
+                VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
+                new AsyncTask<VenueViewHolder, Void, VenueBean>() {
+                    private VenueViewHolder v;
+
+                    @Override
+                    protected VenueBean doInBackground(VenueViewHolder... params) {
+                        v = params[0];
+                        VenueBean result = null;
+                        try {
+                            result = BackendAPI.get(context).getVenueInfo(0);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return result;
+                    }
+
+                    @Override
+                    protected void onPostExecute(VenueBean result) {
+                        super.onPostExecute(result);
+                        if(v.info != null)
+                            v.info.setText("Fuck bitches, get more money");
+                    }
+                }.execute(mVenueViewHolder);
+                return mVenueViewHolder;
+
+            case EVENT_CARD:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.layout_card_event, viewGroup, false);
+
+                EventViewHolder mEventViewHolder =  new EventViewHolder(v);
+                new AsyncTask<EventViewHolder, Void, VenueBean>() {
+                    private EventViewHolder v;
+
+                    @Override
+                    protected VenueBean doInBackground(EventViewHolder... params) {
+                        v = params[0];
+                        VenueBean result = null;
+                        try {
+                            result = BackendAPI.get(context).getVenueInfo(0);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return result;
+                    }
+
+                    @Override
+                    protected void onPostExecute(VenueBean result) {
+                        super.onPostExecute(result);
+                        if(v.info != null)
+                            v.info.setText("This event is gonna be great");
+                    }
+                }.execute(mEventViewHolder);
+                return mEventViewHolder;
+
+            default:
+                v = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.layout_card_welcome, viewGroup, false);
+                return new WelcomeViewHolder(v);
+        }
     }
     // END_INCLUDE(recyclerViewOnCreateViewHolder)
 
     // BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
 
 
@@ -70,6 +200,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<OverviewAdapter.ViewHo
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return 2;
+        return 4;
     }
 }

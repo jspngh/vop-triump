@@ -35,13 +35,16 @@
     <string name="welcome_triump">Welcome to Triump</string>
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
     <string name="no_ranking">Currently there aren\'t any groups competing for this venue. Click check-in to be the first to conquer it!</string>
-    <string name="loading_data">Crunching the latest data for you...</string>
+    <string name="loading_data">Crunching the latest data for you…</string>
+    <string name="group_info">Loading group description</string>
+    <string name="venue_info">Loading venue description</string>
+    <string name="event_info">Loading event description</string>
 
 
     <string name="locationLongitude">locationLongitude</string>
     <string name="locationLatitude">locationLatitude</string>
     <string name="locationAvailable">locationAvailable</string>
-    <string name="waiting_for_location">Waiting for location...</string>
+    <string name="waiting_for_location">Waiting for location…</string>
 
     <string name="group_banner_description">banner of your group</string>
     <string name="go_to_group">View this group</string>
