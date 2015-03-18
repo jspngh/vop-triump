@@ -189,10 +189,10 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public VenueBean checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         _checkInVenue(userId, groupId, venueId);
-        return _getVenueBean(venueId);
+        return _getRankings(venueId);
         //return _orderVenueBean(_getVenueBean(venueId));
 
     }

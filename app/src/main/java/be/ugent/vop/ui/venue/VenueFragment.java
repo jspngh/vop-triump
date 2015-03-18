@@ -148,21 +148,21 @@ public class VenueFragment extends Fragment {
 
     };
 
-    private LoaderManager.LoaderCallbacks<VenueBean> mCheckInLoaderListener
-            = new LoaderManager.LoaderCallbacks<VenueBean>() {
+    private LoaderManager.LoaderCallbacks<List<RankingBean>> mCheckInLoaderListener
+            = new LoaderManager.LoaderCallbacks<List<RankingBean>>() {
 
         @Override
-        public void onLoadFinished(Loader<VenueBean> loader, VenueBean ven) {
+        public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
             Log.d("VenueFragment", "onLoadFinished");
-            venue=ven;
-            if(venue.getRanking()!=null){
+            //venue=ven;
+            if(rankings!=null){
                 rankingListView.setVisibility(View.VISIBLE);
-                titleTextView.setText(ven.getDescription());
-                noRankingTextView.setText(ven.getType());
-                ranking = new ArrayList<>();
-                for(RankingBean r:venue.getRanking()) ranking.add(r);
+                //titleTextView.setText(ven.getDescription());
+                //noRankingTextView.setText(ven.getType());
+                //ranking = new ArrayList<>();
+                //for(RankingBean r:venue.getRanking()) ranking.add(r);
 
-                adapter = new RankingAdapter(context, ranking);
+                adapter = new RankingAdapter(context, rankings);
 
                 rankingListView.setAdapter(adapter);
 
@@ -177,6 +177,8 @@ public class VenueFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
+
+                adapter.notifyDataSetChanged();
             }else{
                 noRankingTextView.setText(R.string.no_ranking);
             }
@@ -184,7 +186,7 @@ public class VenueFragment extends Fragment {
         }
 
         @Override
-        public Loader<VenueBean> onCreateLoader(int id, Bundle args) {
+        public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
             SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
             long groupId = settings.getLong(getString(R.string.group_id), 0);
@@ -197,7 +199,7 @@ public class VenueFragment extends Fragment {
         }
 
         @Override
-        public void onLoaderReset(Loader<VenueBean> loader) {
+        public void onLoaderReset(Loader<List<RankingBean>> loader) {
             //rankingListView.setAdapter(null);
         }
     };

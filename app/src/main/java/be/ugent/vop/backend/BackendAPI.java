@@ -99,8 +99,8 @@ public class BackendAPI {
         return myApiService.getGroupInfo(token, groupId).execute();
     }
 
-    public VenueBean checkIn(String venueId, long groupId) throws IOException{
-        return myApiService.checkInVenue(token, venueId, groupId).execute();
+    public List<RankingBean> checkIn(String venueId, long groupId) throws IOException{
+        return myApiService.checkInVenue(token, venueId, groupId).execute().getItems();
     }
 
     public VenuesBean getNearbyVenues(Location loc) throws IOException{
