@@ -134,7 +134,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         v = params[0];
                         VenueBean result = null;
                         try {
-                            result = BackendAPI.get(context).getVenueInfo(0);
+                            result = BackendAPI.get(context).getVenueInfo("a");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -163,7 +163,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         v = params[0];
                         VenueBean result = null;
                         try {
-                            result = BackendAPI.get(context).getVenueInfo(0);
+                            result = BackendAPI.get(context).getVenueInfo("a");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
