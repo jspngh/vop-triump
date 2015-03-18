@@ -96,7 +96,7 @@ public class LoginFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
         btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
-        logInMessage = (TextView) rootView.findViewById(R.id.logInMessage);
+        //logInMessage = (TextView) rootView.findViewById(R.id.logInMessage);
 
         return rootView;
     }
@@ -237,7 +237,7 @@ public class LoginFragment extends Fragment {
         editor.commit();
 
         btnLogin.setVisibility(View.VISIBLE);
-        logInMessage.setVisibility(View.VISIBLE);
+        //logInMessage.setVisibility(View.VISIBLE);
         btnLogout.setVisibility(View.GONE);
         btnLogin.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -289,7 +289,7 @@ public class LoginFragment extends Fragment {
 
     private void logout() {
         btnLogin.setVisibility(View.GONE);
-        logInMessage.setVisibility(View.GONE);
+        //logInMessage.setVisibility(View.GONE);
         btnLogout.setVisibility(View.VISIBLE);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
