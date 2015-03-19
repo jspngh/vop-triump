@@ -39,6 +39,7 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.group.GroupListAdapter;
 import be.ugent.vop.ui.venue.VenueActivity;
 import be.ugent.vop.ui.venue.VenueListAdapter;
+import be.ugent.vop.ui.widget.CustomSwipeRefreshLayout;
 
 /**
  * Created by siebe on 28/02/15.
@@ -47,7 +48,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     private static final String TAG = "CheckinFragment";
 
     protected CheckinFragment mFragment;
-    protected SwipeRefreshLayout mSwipeRefreshLayout;
+    protected CustomSwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView mRecyclerView;
     protected VenueListAdapter mAdapter;
     private TextView mLoadingMessage;
@@ -80,7 +81,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.venue_list);
         mLoadingMessage = (TextView) rootView.findViewById(R.id.waiting_message);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_checkin_swipe_refresh);
+        mSwipeRefreshLayout = (CustomSwipeRefreshLayout) rootView.findViewById(R.id.fragment_checkin_swipe_refresh);
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
