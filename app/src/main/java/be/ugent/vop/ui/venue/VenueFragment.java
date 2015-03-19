@@ -13,9 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -48,6 +50,8 @@ public class VenueFragment extends Fragment {
     private ArrayList<RankingBean> ranking;
     private ListView rankingListView;
     private Context context;
+    private Spinner groupTypeSpinner;
+    private Spinner groupSizeSpinner;
 
     private String venueId;
 
@@ -63,6 +67,31 @@ public class VenueFragment extends Fragment {
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
+
+        /**
+         * Populate the spinners
+         * groupType
+         */
+        groupTypeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupType);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(context,
+                R.array.groupType_spinner_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        groupTypeSpinner.setAdapter(adapterType);
+
+        /**
+         * groupSize
+         */
+        groupSizeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupSize);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterSize = ArrayAdapter.createFromResource(context,
+                R.array.groupSize_spinner_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        groupSizeSpinner.setAdapter(adapterSize);
 
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
             venueId = getArguments().getString(VenueActivity.VENUE_ID);
@@ -82,7 +111,7 @@ public class VenueFragment extends Fragment {
             }
         });
 
-        Log.d("TEST CONNECTIONCONTROLLER", "connectie? "+ NetworkController.get().isNetworkOnline());
+
 
         return rootView;
     }
