@@ -2,7 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_group_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/group_list"
@@ -12,5 +15,5 @@
         android:layout_margin="0dp"
         android:elevation="8dp"
         android:visibility="gone"/>
-
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
