@@ -18,8 +18,11 @@ public class FoursquareVenue implements Parcelable {
     private double longitude;
     private double latitude;
     private ArrayList<Photo> photos;
+    private boolean verified =false;
 
-    public FoursquareVenue(String id, String name, String address, String city,String country, double longitude, double latitude){
+    public FoursquareVenue(String id, String name, String address,
+                           String city, String country, double longitude,
+                           double latitude, boolean verified){
         this.id= id;
         this.name = name;
         this.address = address;
@@ -27,7 +30,16 @@ public class FoursquareVenue implements Parcelable {
         this.country =country;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.verified = verified;
         photos = new ArrayList<>();
+    }
+
+    public void setVerified(boolean flag){
+        this.verified = flag;
+    }
+
+    public boolean isVerified(){
+        return this.verified;
     }
 
     public String getId(){

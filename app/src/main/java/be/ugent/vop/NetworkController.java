@@ -25,6 +25,10 @@ public class NetworkController extends BroadcastReceiver {
         connection = (networkInfo != null && networkInfo.isConnected());
     }
 
+    public void unregister(Context context){
+        context.unregisterReceiver(this);
+    }
+
     public static void make(Context context){
         if(instance==null){
             instance = new NetworkController((context));

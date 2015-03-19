@@ -27,12 +27,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
+        VenueTable.onCreate(database);
         VenueImageTable.onCreate(database);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         VenueImageTable.onUpgrade(db, oldVersion, newVersion);
+        VenueTable.onUpgrade(db, oldVersion, newVersion);
     }
 
 }

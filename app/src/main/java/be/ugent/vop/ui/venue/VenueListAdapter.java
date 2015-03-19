@@ -75,6 +75,7 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         ViewHolder vh = new ViewHolder(v, new ViewHolder.IMyViewHolderClicks() {
             @Override
             public void onItemClick(View caller, int position) {
+
                 String venueId = venues.get(position).getId();
                 Intent intent = new Intent(context, VenueActivity.class);
                 intent.putExtra(VenueActivity.VENUE_ID, venueId);

@@ -104,4 +104,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        NetworkController.get().unregister(this);
+
+    }
+
 }

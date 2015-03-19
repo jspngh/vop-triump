@@ -19,6 +19,10 @@ public class Photo implements Parcelable {
         this.height = height;
     }
 
+    public String makeUrl(){
+        return prefix+"original"+suffix;
+    }
+
     public String getPrefix() {
         return prefix;
     }

@@ -18,20 +18,28 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import be.ugent.vop.Event;
+import be.ugent.vop.EventBroker;
+import be.ugent.vop.NetworkController;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
+import be.ugent.vop.backend.loaders.VenueInfoLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.group.GroupActivity;
 
 
 public class VenueFragment extends Fragment {
 
-    private VenueBean venue;
+    private VenueBean venueBean;
+    private FoursquareVenue fsVenue;
     private TextView noRankingTextView;
     private TextView titleTextView;
     private ImageView venueImageView;
@@ -50,7 +58,7 @@ public class VenueFragment extends Fragment {
 
         context = getActivity();
 
-        titleTextView = (TextView)rootView.findViewById(R.id.textViewTitle);
+        titleTextView = (TextView)rootView.findViewById(R.id.textViewVenueName);
         noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
@@ -58,18 +66,23 @@ public class VenueFragment extends Fragment {
 
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
             venueId = getArguments().getString(VenueActivity.VENUE_ID);
-        //test
+
         Log.d("VenueFragment", "venueId :" + venueId);
+        //loader for venueInfo (to foursquare)
+        getLoaderManager().initLoader(2, null, mVenueInfoLoaderListener);
+        //loader for ranking (to backend)
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
 
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
-                //EventBroker.get().addEvent(new Event("checkin"));
+                EventBroker.get().addEvent(new Event("checkin"));
 
             }
         });
+
+        Log.d("TEST CONNECTIONCONTROLLER", "connectie? "+ NetworkController.get().isNetworkOnline());
 
         return rootView;
     }
@@ -77,17 +90,6 @@ public class VenueFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        titleTextView.setText(venue.getName());
-//        String photoUrl;
-//        if(venue.getPhotos().size()>0){
-//            photoUrl = venue.getPhotos().get(0).getPrefix()+"500x500"+venue.getPhotos().get(0).getSuffix();
-//        }else {
-//            photoUrl = "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
-//         }
-///*        Ion.with(venueImageView)
-//                .placeholder(R.drawable.ic_launcher)
-//                .error(R.drawable.ic_drawer_logout)
-//                .load(photoUrl);*/
 
     }
 
@@ -100,19 +102,22 @@ public class VenueFragment extends Fragment {
      Loaders
      ***********/
 
+    /**
+     *
+     * Loader 1: Ranking
+     *
+     */
+
     private LoaderManager.LoaderCallbacks<List<RankingBean>> mRankingLoaderListener
             = new LoaderManager.LoaderCallbacks<List<RankingBean>>() {
         @Override
         public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
-            Log.d("VenueFragment", "onLoadFinished");
-            //venue = ven;
+            Log.d("VenueFragment", "onLoadFinished rankingloader");
+
             if(rankings!=null){
                 rankingListView.setVisibility(View.VISIBLE);
-                //titleTextView.setText(ven.getDescription());
-                //noRankingTextView.setText(ven.getType());
-                //ranking = new ArrayList<>();
-                //for(RankingBean r:venue.getRanking()) ranking.add(r);
 
+                noRankingTextView.setVisibility(View.INVISIBLE);
                 adapter = new RankingAdapter(context, rankings);
 
                 rankingListView.setAdapter(adapter);
@@ -148,22 +153,22 @@ public class VenueFragment extends Fragment {
 
     };
 
+
+    /**
+     *
+     * Loader 2: Refresh ranking after checkin
+     *
+     */
+
     private LoaderManager.LoaderCallbacks<List<RankingBean>> mCheckInLoaderListener
             = new LoaderManager.LoaderCallbacks<List<RankingBean>>() {
 
         @Override
         public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
-            Log.d("VenueFragment", "onLoadFinished");
-            //venue=ven;
+            Log.d("VenueFragment", "onLoadFinished after checkin loader");
+
             if(rankings!=null){
-                rankingListView.setVisibility(View.VISIBLE);
-                //titleTextView.setText(ven.getDescription());
-                //noRankingTextView.setText(ven.getType());
-                //ranking = new ArrayList<>();
-                //for(RankingBean r:venue.getRanking()) ranking.add(r);
-
                 adapter = new RankingAdapter(context, rankings);
-
                 rankingListView.setAdapter(adapter);
 
                 rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -202,7 +207,49 @@ public class VenueFragment extends Fragment {
         public void onLoaderReset(Loader<List<RankingBean>> loader) {
             //rankingListView.setAdapter(null);
         }
+
+
     };
+
+    /**
+     *
+     * Loader 3: VenueInfo
+     *
+     */
+
+    private LoaderManager.LoaderCallbacks<FoursquareVenue> mVenueInfoLoaderListener
+            = new LoaderManager.LoaderCallbacks<FoursquareVenue>() {
+        @Override
+        public void onLoadFinished(Loader<FoursquareVenue> loader, FoursquareVenue venue) {
+            Log.d("VenueFragment", "onLoadFinished of venueInfoLoader");
+            if(venue!=null) {
+                titleTextView.setText(venue.getName());
+                //placeholder image
+                String photoUrl;
+                if(venue.getPhotos().size()>0) {
+                    photoUrl = venue.getPhotos().get(0).getPrefix() + "500x500" + venue.getPhotos().get(0).getSuffix();
+                }
+                else photoUrl =
+                        "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
+                Ion.with(venueImageView)
+                        .placeholder(R.drawable.ic_launcher)
+                        .error(R.drawable.ic_drawer_logout)
+                        .load(photoUrl);
+            }
+        }
+
+        @Override
+        public Loader<FoursquareVenue> onCreateLoader(int id, Bundle args) {
+            Log.d("venueFragment", "onCreateLoader");
+            VenueInfoLoader loader = new VenueInfoLoader(context, venueId);
+            return loader;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<FoursquareVenue> loader) {}
+
+    };
+
 
 
 }

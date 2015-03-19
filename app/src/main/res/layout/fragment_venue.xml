@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/textViewTitle"
+        android:id="@+id/textViewVenueName"
         android:layout_gravity="center_horizontal" />
 
     <TextView
@@ -40,7 +40,6 @@
         android:id="@+id/listViewRanking"
         android:layout_margin="0dp"
         android:elevation="8dp"
-
         android:visibility="invisible" />
 
     <Button

@@ -30,6 +30,7 @@ public class VenueImageTable {
 
     public static void onCreate(SQLiteDatabase database) {
         System.err.println("creating table");
+        Log.d("VenueImageTable", "onCreate");
         database.execSQL(CREATE_TABLE_CATEGORY);
     }
 
