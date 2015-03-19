@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,6 +36,7 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.ui.group.GroupListAdapter;
 import be.ugent.vop.ui.venue.VenueActivity;
 import be.ugent.vop.ui.venue.VenueListAdapter;
 
@@ -44,6 +46,8 @@ import be.ugent.vop.ui.venue.VenueListAdapter;
 public class CheckinFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
     private static final String TAG = "CheckinFragment";
 
+    protected CheckinFragment mFragment;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView mRecyclerView;
     protected VenueListAdapter mAdapter;
     private TextView mLoadingMessage;
@@ -76,7 +80,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.venue_list);
         mLoadingMessage = (TextView) rootView.findViewById(R.id.waiting_message);
-
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_checkin_swipe_refresh);
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
@@ -87,7 +91,14 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(null);
         // END_INCLUDE(initializeRecyclerView);
-
+        mFragment=this;
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLoaderManager().restartLoader(1,null,mFragment);
+            }
+        });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             int state;
 
@@ -193,7 +204,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
 
         mLoadingMessage.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
-
+        mSwipeRefreshLayout.setRefreshing(false);
         if (fragment == null) {
             fragment = getMapFragment();
         }

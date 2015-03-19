@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,8 +28,10 @@ import be.ugent.vop.backend.loaders.AllGroupsLoader;
 public class GroupListFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
     private static final String TAG = "CheckinFragment";
 
+    protected GroupListFragment mFragment;
     protected RecyclerView mRecyclerView;
     protected GroupListAdapter mAdapter;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView.LayoutManager mLayoutManager;
 
     @Override
@@ -62,6 +65,8 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         setHasOptionsMenu(true);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_list);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
+
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
@@ -73,8 +78,17 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         mRecyclerView.setAdapter(null);
         // END_INCLUDE(initializeRecyclerView);
         getLoaderManager().initLoader(1, null, this);
+        mFragment=this;
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLoaderManager().restartLoader(1,null,mFragment);
+            }
+            });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             int state;
+
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -89,11 +103,13 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
                 mRecyclerView.animate().translationY(dy);
                 //}
             }
+
         });
 
 
         return rootView;
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -125,7 +141,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.setVisibility(View.VISIBLE);
-
+        mSwipeRefreshLayout.setRefreshing(false);
 
 
     }

@@ -2,14 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         class="com.google.android.gms.maps.MapFragment"/>
-
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_checkin_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/venue_list"
         android:layout_width="match_parent"
@@ -18,12 +20,11 @@
         android:layout_margin="0dp"
         android:elevation="8dp"
         android:visibility="gone"/>
-
+</android.support.v4.widget.SwipeRefreshLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/waiting_message"
         android:visibility="visible"
         android:text="@string/waiting_for_location"/>
-
 </LinearLayout>
