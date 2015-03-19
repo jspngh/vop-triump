@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="groupType_spinner_options">
+        <item>Studentgroup</item>
+        <item>Friends</item>
+        <item>Club</item>
+    </string-array>
+
+    <string-array name="groupSize_spinner_options">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Big</item>
+    </string-array>
+
+</resources>
