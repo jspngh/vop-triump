@@ -42,8 +42,7 @@ public class MainActivity extends BaseActivity {
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
 
-        Log.d("test", "test");
-        NetworkController.get(this);
+        NetworkController.make(this);
 
         this.startService(new Intent(this, LocationService.class));
 

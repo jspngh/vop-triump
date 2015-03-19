@@ -25,11 +25,10 @@ public class NetworkController extends BroadcastReceiver {
         connection = (networkInfo != null && networkInfo.isConnected());
     }
 
-    public static NetworkController get(Context context){
+    public static void make(Context context){
         if(instance==null){
             instance = new NetworkController((context));
         }
-        return instance;
     }
 
     public static NetworkController get(){
