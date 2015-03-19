@@ -77,7 +77,7 @@ public class VenueFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //titleTextView.setText(venue.getName());
+        titleTextView.setText(venue.getName());
 //        String photoUrl;
 //        if(venue.getPhotos().size()>0){
 //            photoUrl = venue.getPhotos().get(0).getPrefix()+"500x500"+venue.getPhotos().get(0).getSuffix();

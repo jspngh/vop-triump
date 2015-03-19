@@ -7,9 +7,11 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.LocationService;
+import be.ugent.vop.NetworkController;
 import be.ugent.vop.R;
 import be.ugent.vop.ui.group.GroupListFragment;
 import be.ugent.vop.ui.venue.CheckinFragment;
@@ -39,6 +41,9 @@ public class MainActivity extends BaseActivity {
         mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.tab_selected_strip));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
+
+        Log.d("test", "test");
+        NetworkController.get(this);
 
         this.startService(new Intent(this, LocationService.class));
 

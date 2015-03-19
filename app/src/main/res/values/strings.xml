@@ -40,6 +40,9 @@
     <string name="venue_info">Loading venue description</string>
     <string name="event_info">Loading event description</string>
 
+    <string name="lost_connection">The device lost his connection</string>
+    <string name="connection">The device is connected</string>
+
 
     <string name="locationLongitude">locationLongitude</string>
     <string name="locationLatitude">locationLatitude</string>
