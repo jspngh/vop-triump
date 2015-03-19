@@ -95,7 +95,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getLoaderManager().restartLoader(1,null,mFragment);
+                getLoaderManager().restartLoader(0,null,mFragment);
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
