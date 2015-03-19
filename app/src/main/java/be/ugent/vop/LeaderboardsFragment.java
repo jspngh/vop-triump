@@ -36,9 +36,7 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.group.GroupActivity;
-import be.ugent.vop.ui.list.CustomArrayAdapter;
-import be.ugent.vop.ui.list.ExpandableListItem;
-import be.ugent.vop.ui.list.ExpandingListView;
+
 import be.ugent.vop.ui.venue.RankingAdapter;
 import be.ugent.vop.ui.venue.VenueActivity;
 

@@ -48,7 +48,6 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     protected VenueListAdapter mAdapter;
     private TextView mLoadingMessage;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected String[] mDataset;
     private GoogleMap map;
     private MapFragment fragment;
     private GoogleApiClient mGoogleApiClient;

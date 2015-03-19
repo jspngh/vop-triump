@@ -119,9 +119,9 @@ public class GroupFragment extends Fragment {
                     members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));
                     Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
                 }
-                MemberAdapter adapter = new MemberAdapter(context, members);
+                //GroupListAdapter adapter = new GroupListAdapter(context, members);
 
-                membersView.setAdapter(adapter);
+                //membersView.setAdapter(adapter);
             }
         }
 
@@ -156,9 +156,9 @@ public class GroupFragment extends Fragment {
                     members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));
                     Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
                 }
-                MemberAdapter adapter = new MemberAdapter(context, members);
+                //GroupListAdapter adapter = new GroupListAdapter(context, members);
 
-                membersView.setAdapter(adapter);
+                //membersView.setAdapter(adapter);
             }
         }
 

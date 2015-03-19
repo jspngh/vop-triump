@@ -63,4 +63,7 @@
     <string name="ready">ready</string>
     <string name="set">set</string>
     <string name="triump">triump</string>
+    <string name="action_search">Search</string>
+    <string name="search_hint">Enter group</string>
+    <string name="action_add">Add group</string>
 </resources>

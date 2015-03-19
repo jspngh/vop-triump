@@ -5,107 +5,134 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.loaders.AllGroupsLoader;
-import be.ugent.vop.ui.list.CustomArrayAdapter;
-import be.ugent.vop.ui.list.ExpandableListItem;
-import be.ugent.vop.ui.list.ExpandingListView;
-import be.ugent.vop.ui.main.MainActivity;
+
 
 
 public class GroupListFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    private static Activity activity;
-    private ListAdapter arrayAdapter;
-    private final int CELL_DEFAULT_HEIGHT = 150;
-    private int NUM_OF_CELLS = 30;
+    private static final String TAG = "CheckinFragment";
 
-    private ExpandingListView mListView;
+    protected RecyclerView mRecyclerView;
+    protected GroupListAdapter mAdapter;
+    protected RecyclerView.LayoutManager mLayoutManager;
 
-    private MainActivity mainActivity = null;
-    public GroupListFragment()
-    {
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.groups_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public static GroupListFragment newInstance(int sectionNumber) {
-        GroupListFragment fragment = new GroupListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                return true;
+            case R.id.action_add:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group_list, container, false);
-        activity = getActivity();
-        getLoaderManager().initLoader(0, null, this);
+        rootView.setTag(TAG);
+        setHasOptionsMenu(true);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_list);
+
+        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
+        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
+        // elements are laid out.
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new GroupListAdapter();
+        // Set CustomAdapter as the adapter for RecyclerView.
+        mRecyclerView.setAdapter(null);
+        // END_INCLUDE(initializeRecyclerView);
+        getLoaderManager().initLoader(1, null, this);
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            int state;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                state = newState;
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                //if(state == RecyclerView.SCROLL_STATE_DRAGGING){
+                Log.d(TAG, "Vertical scroll: " + dy);
+                mRecyclerView.animate().translationY(dy);
+                //}
+            }
+        });
+
+
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-       // ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override
     public Loader<AllGroupsBean> onCreateLoader(int id, Bundle bundle) {
+        Log.d(TAG, "onCreateLoader");
         return new AllGroupsLoader(getActivity());
+
     }
 
     @Override
     public void onLoadFinished(Loader<AllGroupsBean> objectLoader, AllGroupsBean allGroupsBean) {
+        Log.d(TAG, "onLoadFinished");
+        /**************************************
+         Resultaat kan null zijn
+         Rekening mee houden!
+         **************************************/
+        mAdapter.setGroups((ArrayList<GroupBean>)allGroupsBean.getGroups());
+        Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
+        mAdapter.setContext(getActivity());
+        mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.setVisibility(View.VISIBLE);
 
 
-        List<GroupBean> Groups = allGroupsBean.getGroups();
-        NUM_OF_CELLS = Groups.size();
-        Long[] allgroupids = new Long[NUM_OF_CELLS];
-
-        //TODO: Toevoegen van group_photo 
-        ExpandableListItem[] values = new ExpandableListItem[NUM_OF_CELLS];
-         for(int i = 0; i < NUM_OF_CELLS; i++){
-            values[i] = new ExpandableListItem(Groups.get(i).getName(), Groups.get(i).getMembers().size() + " leden", R.drawable.ic_launcher, CELL_DEFAULT_HEIGHT,
-                Groups.get(i).getDescription());
-            allgroupids[i] = Groups.get(i).getGroupId();
-        }
-
-        List<ExpandableListItem> mData = new ArrayList<>();
-
-        for (int i = 0; i < NUM_OF_CELLS; i++) {
-            ExpandableListItem obj = values[i % values.length];
-            mData.add(new ExpandableListItem(obj.getTitle(),obj.getInfo(), obj.getImgResource(),
-                    obj.getCollapsedHeight(), obj.getText()));
-        }
-
-        CustomArrayAdapter adapter = new CustomArrayAdapter(activity, R.layout.group_list_item, mData, allgroupids);
-
-        mListView = (ExpandingListView)activity.findViewById(R.id.group_list_view);
-        mListView.setAdapter(adapter);
-        mListView.setDivider(null);
 
     }
 
     @Override
     public void onLoaderReset(Loader<AllGroupsBean> objectLoader) {
-
+        mRecyclerView.setAdapter(null);
     }
 }
 
