@@ -3,11 +3,15 @@ package be.ugent.vop.ui.group;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,7 +41,10 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.groups_menu, menu);
+        // Associate searchable configuration with the SearchView
+
         super.onCreateOptionsMenu(menu, inflater);
+
     }
 
     @Override
@@ -47,6 +54,10 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
             case R.id.action_search:
                 return true;
             case R.id.action_add:
+                Intent intent = new Intent(this.getActivity(), GroupActivity.class);
+                this.getActivity().startActivity(intent);
+                //this.getActivity().finish();
+                Log.d("GroupListAdapter", "Adding a new group ");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

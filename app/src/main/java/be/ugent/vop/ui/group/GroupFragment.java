@@ -5,14 +5,17 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -68,16 +71,8 @@ public class GroupFragment extends Fragment {
             .placeholder(R.drawable.ic_launcher)
             .error(R.drawable.ic_drawer_logout)
             .load(photoUrl);
-        SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
-
         btn = (Button) rootView.findViewById(R.id.joinbtn);
-         token = settings.getString(getString(R.string.backendtoken), "N.A.");
-        if(settings.getLong(getString(R.string.group_id), 0)!=0) {
-            btn.setVisibility(View.GONE);
-        }else{
             btn.setVisibility(View.VISIBLE);
-        }
-
         btn.setFocusable(false);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -104,24 +99,17 @@ public class GroupFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null){
-                SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putLong(getString(R.string.group_id), response.getGroupId());
-                editor.apply();
-                btn.setVisibility(View.GONE);
 
                 name.setText("Name: " + response.getName());
                 description.setText(response.getDescription().toString());
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType().toString() + " group");
-                ArrayList<Pair<String, String>> members = new ArrayList<>();
+                ArrayList<String> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
-                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));
-                    Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
+                    members.add(user.getFirstName() + " " + user.getLastName());
                 }
-                //GroupListAdapter adapter = new GroupListAdapter(context, members);
-
-                //membersView.setAdapter(adapter);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, members );
+                membersView.setAdapter(adapter);
             }
         }
 
@@ -141,24 +129,18 @@ public class GroupFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null) {
-                SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putLong(getString(R.string.group_id), response.getGroupId());
-                editor.apply();
                 btn.setVisibility(View.GONE);
 
                 name.setText("Name: " + response.getName());
                 description.setText(response.getDescription().toString());
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType().toString() + " group");
-                ArrayList<Pair<String, String>> members = new ArrayList<>();
+                ArrayList<String> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
-                    members.add(new Pair<>(user.getFirstName() + " " + user.getLastName(), user.getUserId()));
-                    Log.d("Showing members", user.getFirstName() + " " + user.getLastName());
+                    members.add(user.getFirstName() + " " + user.getLastName());
                 }
-                //GroupListAdapter adapter = new GroupListAdapter(context, members);
-
-                //membersView.setAdapter(adapter);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, members );
+                membersView.setAdapter(adapter);
             }
         }
 

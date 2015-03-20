@@ -10,17 +10,21 @@ import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 
 /**
- * Created by jonas on 3/3/15.
+ * Created by Lars on 3/3/15.
  */
-public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
+public class CreateGroupLoader extends AsyncTaskLoader<GroupBean> {
 
     private Context context;
-    private long groupId;
+    String name;
+    String description;
+    String type;
 
-    public JoinGroupLoader(Context context, long groupId, String token) {
+    public CreateGroupLoader(Context context, String name, String description ,String type) {
         super(context);
         this.context = context.getApplicationContext();
-        this.groupId = groupId;
+        this.name = name;
+        this.description = description;
+        this.type = type;
     }
 
     /**
@@ -31,11 +35,11 @@ public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
     @Override
     public GroupBean loadInBackground() {
         GroupBean result = null;
-        Log.d("JoinGroupLoader", ""+groupId);
+        Log.d("CreateGroupLoader", ""+name);
         try{
-            result = BackendAPI.get(context).registerUserInGroup(groupId);
+            result = BackendAPI.get(context).createGroup( name,  description, type);
         } catch(IOException e){
-            Log.d("JoinGroupLoader", e.getMessage());
+            Log.d("CreateGroupLoader", e.getMessage());
         }
         // Done!
         return result;

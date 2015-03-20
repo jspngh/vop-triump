@@ -91,7 +91,7 @@ public class BackendAPI {
         return myApiService.getVenueInfo(token, venueId).execute();
     }
 
-    public GroupBean registerUserInGroup( String token, long groupId) throws IOException{
+    public GroupBean registerUserInGroup(long groupId) throws IOException{
          return myApiService.registerUserInGroup(token, groupId).execute();
     }
 
@@ -114,4 +114,9 @@ public class BackendAPI {
     public List<RankingBean> getRankings(String venueId) throws IOException{
         return myApiService.getRankings(token, venueId).execute().getItems();
     }
+
+    public GroupBean createGroup(String name, String description, String type) throws IOException{
+        return myApiService.createGroup(token,  name, description, type).execute();
+    }
+
 }

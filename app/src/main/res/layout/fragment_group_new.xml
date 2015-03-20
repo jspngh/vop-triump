@@ -24,49 +24,57 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/textView"
+            android:text="Group name"
+            android:id="@+id/group_name"
             android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/group_name_edit"
             android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/textView2"
+            android:text="Group description"
+            android:id="@+id/group_description"
             android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText2"
+            android:id="@+id/group_description_edit"
             android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/textView3"
+            android:text="Group type"
+            android:id="@+id/group_type"
             android:layout_gravity="center_horizontal" />
 
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/spinner"
+            android:id="@+id/group_type_spinner"
             android:layout_gravity="center_horizontal" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button"
+            android:text="Add group"
+            android:id="@+id/add_button"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Succes"
+            android:id="@+id/result"
             android:layout_gravity="center_horizontal" />
 
 
