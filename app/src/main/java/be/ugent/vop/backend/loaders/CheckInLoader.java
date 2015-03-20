@@ -9,7 +9,6 @@ import java.util.List;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
 
 /**
  * Created by jonas on 3/9/15.
@@ -18,9 +17,9 @@ public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
 
     private Context context;
     private long groupId;
-    private String venueId;
+    private long venueId;
 
-    public CheckInLoader(Context context, String venueId, long groupId) {
+    public CheckInLoader(Context context, long venueId, long groupId) {
         super(context);
         this.context = context.getApplicationContext();
         this.groupId = groupId;

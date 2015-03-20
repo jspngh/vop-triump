@@ -16,8 +16,6 @@
 
 package be.ugent.vop.ui.main;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,12 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.IOException;
-
 import be.ugent.vop.R;
-import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.GroupBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.backend.myApi.model.OverviewBean;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
@@ -40,12 +34,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int GROUP_CARD = 0;
     private static final int VENUE_CARD = 1;
     private static final int EVENT_CARD = 2;
+    private OverviewBean overview;
 
-    private Context context;
-
-    public OverviewAdapter(Context context){
+    public OverviewAdapter(OverviewBean overview){
         super();
-        this.context=context;
+        this.overview = overview;
     }
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
@@ -97,28 +90,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 v = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.layout_card_group, viewGroup, false);
                 GroupViewHolder mGroupViewHolder = new GroupViewHolder(v);
-                new AsyncTask<GroupViewHolder, Void, GroupBean>() {
-                    private GroupViewHolder v;
+                if(overview != null && overview.getGroup() != null) {
+                    mGroupViewHolder.info.setText(overview.getGroup().getName());
+                }
 
-                    @Override
-                    protected GroupBean doInBackground(GroupViewHolder... params) {
-                        v = params[0];
-                        GroupBean result = null;
-                        try {
-                            result = BackendAPI.get(context).getGroupInfo(0);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return result;
-                    }
-
-                    @Override
-                    protected void onPostExecute(GroupBean result) {
-                        super.onPostExecute(result);
-                        if(v.info != null)
-                        v.info.setText("Fuck bitches, get money");
-                    }
-                }.execute(mGroupViewHolder);
                 return mGroupViewHolder;
 
             case VENUE_CARD:
@@ -126,28 +101,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .inflate(R.layout.layout_card_venue, viewGroup, false);
 
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
-                new AsyncTask<VenueViewHolder, Void, VenueBean>() {
-                    private VenueViewHolder v;
+                if(overview.getVenues() == null) Log.d("Overview", "venues == null");
+                if(overview != null && overview.getVenues() != null && overview.getVenues().get(0) != null) {
+                    mVenueViewHolder.info.setText(overview.getVenues().get(0).getName());
+                }
 
-                    @Override
-                    protected VenueBean doInBackground(VenueViewHolder... params) {
-                        v = params[0];
-                        VenueBean result = null;
-                        try {
-                            result = BackendAPI.get(context).getVenueInfo("a");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return result;
-                    }
-
-                    @Override
-                    protected void onPostExecute(VenueBean result) {
-                        super.onPostExecute(result);
-                        if(v.info != null)
-                            v.info.setText("Fuck bitches, get more money");
-                    }
-                }.execute(mVenueViewHolder);
                 return mVenueViewHolder;
 
             case EVENT_CARD:
@@ -155,28 +113,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .inflate(R.layout.layout_card_event, viewGroup, false);
 
                 EventViewHolder mEventViewHolder =  new EventViewHolder(v);
-                new AsyncTask<EventViewHolder, Void, VenueBean>() {
-                    private EventViewHolder v;
 
-                    @Override
-                    protected VenueBean doInBackground(EventViewHolder... params) {
-                        v = params[0];
-                        VenueBean result = null;
-                        try {
-                            result = BackendAPI.get(context).getVenueInfo("a");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return result;
-                    }
-
-                    @Override
-                    protected void onPostExecute(VenueBean result) {
-                        super.onPostExecute(result);
-                        if(v.info != null)
-                            v.info.setText("This event is gonna be great");
-                    }
-                }.execute(mEventViewHolder);
                 return mEventViewHolder;
 
             default:
@@ -192,8 +129,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-
-
     }
     // END_INCLUDE(recyclerViewOnBindViewHolder)
 

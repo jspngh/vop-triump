@@ -2,8 +2,6 @@ package be.ugent.vop.backend;
 
 
 
-import com.google.appengine.repackaged.org.joda.time.LocalDateTime;
-
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class VenueBean {
     private double currentDistance;
 
     public void setName(String name){
-        this.name= name;
+        this.name = name;
     }
 
     public String getName(){

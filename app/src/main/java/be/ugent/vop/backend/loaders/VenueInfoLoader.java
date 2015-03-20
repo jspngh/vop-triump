@@ -23,10 +23,10 @@ public class VenueInfoLoader extends AsyncTaskLoader<FoursquareVenue> {
 
     private FoursquareVenue venue;
     private Context context;
-    private String venueId;
+    private long venueId;
 
 
-    public VenueInfoLoader(Context context, String venueId) {
+    public VenueInfoLoader(Context context, long venueId) {
         super(context);
         this.context = context.getApplicationContext();
         this.venueId = venueId;
@@ -43,7 +43,7 @@ public class VenueInfoLoader extends AsyncTaskLoader<FoursquareVenue> {
         Log.d(TAG, "loadInBackground");
         FoursquareVenue result = null;
 
-        result = FoursquareAPI.get(context).getVenueInfo(venueId);
+        result = FoursquareAPI.get(context).getVenueInfo(Long.toString(venueId));
 
         // Done!
         return result;

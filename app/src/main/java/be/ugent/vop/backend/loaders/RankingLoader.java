@@ -11,7 +11,6 @@ import be.ugent.vop.Event;
 import be.ugent.vop.EventListener;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
 
 /**
  * Created by vincent on 03/03/15.
@@ -25,10 +24,10 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>> implements
 
     private List<RankingBean> rankings;
     private Context context;
-    private String venueId;
+    private long venueId;
 
 
-    public RankingLoader(Context context, String venueId) {
+    public RankingLoader(Context context, long venueId) {
         super(context);
         this.context = context.getApplicationContext();
         this.venueId = venueId;

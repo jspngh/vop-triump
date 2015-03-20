@@ -27,7 +27,6 @@ import java.util.List;
 
 import be.ugent.vop.Event;
 import be.ugent.vop.EventBroker;
-import be.ugent.vop.NetworkController;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
@@ -53,7 +52,7 @@ public class VenueFragment extends Fragment {
     private Spinner groupTypeSpinner;
     private Spinner groupSizeSpinner;
 
-    private String venueId;
+    private long venueId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,7 +93,7 @@ public class VenueFragment extends Fragment {
         groupSizeSpinner.setAdapter(adapterSize);
 
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
-            venueId = getArguments().getString(VenueActivity.VENUE_ID);
+            venueId = getArguments().getLong(VenueActivity.VENUE_ID);
 
         Log.d("VenueFragment", "venueId :" + venueId);
         //loader for venueInfo (to foursquare)

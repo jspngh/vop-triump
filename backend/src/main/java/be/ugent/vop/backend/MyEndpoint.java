@@ -12,7 +12,6 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.UnauthorizedException;
-import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -23,14 +22,12 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,7 +38,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
+
 import javax.inject.Named;
 
 //TODO: Pictures for group, users and venues
@@ -77,11 +74,25 @@ public class MyEndpoint {
     private static final String CHECKIN_VENUE_ID = "venueId";
     private static final String CHECKIN_GROUP_ID = "groupId";
 
+    private static final String VENUE_ENTITY = "Venue";
+    private static final String VENUE_CREATED= "created";
+    private static final String VENUE_ADMIN = "adminId";
+    private static final String VENUE_NAME = "name";
+    private static final String VENUE_CITY = "city";
+    private static final String VENUE_STREET = "street";
+    private static final String VENUE_HOUSE = "house_nr";
+    private static final String VENUE_DESCR = "description";
+    private static final String VENUE_LAT = "latitude";
+    private static final String VENUE_LONG = "longitude";
+    private static final String VENUE_TYPE = "type";
+
     private static final String USERGROUP_ENTITY = "userGroup";
     private static final String USERGROUP_USER_ID = "userId";
     private static final String USERGROUP_GROUP_ID = "groupId";
     private static final String USERGROUP_JOINED = "joined";
     private static final String USERGROUP_ACCEPTED = "accepted";
+
+    private static final String OVERVIEW_ENTITY = "Overview";
 
     private SecureRandom random = new SecureRandom();
 
@@ -124,6 +135,7 @@ public class MyEndpoint {
             e.printStackTrace();
         }
 
+
         return groupBean;
     }
 
@@ -133,17 +145,17 @@ public class MyEndpoint {
                                   @Named("description") String description, @Named("type") String type ) throws UnauthorizedException{
 
         String adminId = _getUserIdForToken(token);
-        Entity venue = new Entity("Venue");
-        venue.setProperty("created", new Date());
-        venue.setProperty("adminId", adminId);
-        venue.setProperty("name", name);
-        venue.setProperty("city", city);
-        venue.setProperty("street", street);
-        venue.setProperty("housenr", housenr);
-        venue.setProperty("description", description);
-        venue.setProperty("latitude", latitude);
-        venue.setProperty("longitude", longitude);
-        venue.setProperty("type",type);
+        Entity venue = new Entity(VENUE_ENTITY);
+        venue.setProperty(VENUE_CREATED, new Date());
+        venue.setProperty(VENUE_ADMIN, adminId);
+        venue.setProperty(VENUE_NAME, name);
+        venue.setProperty(VENUE_CITY, city);
+        venue.setProperty(VENUE_STREET, street);
+        venue.setProperty(VENUE_HOUSE, housenr);
+        venue.setProperty(VENUE_DESCR, description);
+        venue.setProperty(VENUE_LAT, latitude);
+        venue.setProperty(VENUE_LONG, longitude);
+        venue.setProperty(VENUE_TYPE, type);
 
         //TODO: check if venue is valid before adding in db
 
@@ -162,12 +174,11 @@ public class MyEndpoint {
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
         }
-
         return response;
     }
 
     @ApiMethod(name = "getVenueInfo")
-    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
+    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") long venueId) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         VenueBean response = null;
         response = _getVenueBean(venueId);
@@ -219,12 +230,10 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") long venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         _checkInVenue(userId, groupId, venueId);
         return _getRankings(venueId);
-        //return _orderVenueBean(_getVenueBean(venueId));
-
     }
 
     @ApiMethod(name = "getAuthToken")
@@ -478,14 +487,32 @@ public class MyEndpoint {
             rank.setPoints(points);
             leaderboard.add(rank);
         }
-
         return leaderboard;
     }
 
     @ApiMethod(name = "getRankings", path = "getRankings")
-    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") long venueId) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         return _getRankings(venueId);
+    }
+
+    /************************
+     * Overview methods
+     **************************/
+
+    @ApiMethod(name = "getOverview", path = "getOverview")
+    public OverviewBean getOverview(@Named("token") String token, @Named("latitude") double latitude, @Named("longitude") double longitude) throws UnauthorizedException, EntityNotFoundException {
+        String userId = _getUserIdForToken(token);
+        GroupsBean tmp = _getGroupsForUser(userId);
+        GroupBean group = null;
+        if(tmp.getGroups().size() != 0){
+            group = _getGroupsForUser(userId).getGroups().get(0);
+        }
+        VenuesBean venues = getNearbyVenues(token, latitude, longitude);
+        OverviewBean result = new OverviewBean();
+        result.setGroup(group);
+        result.setVenues(venues.getVenues());
+        return result;
     }
 
     /************************
@@ -550,7 +577,7 @@ public class MyEndpoint {
         datastore.put(userGroup);
     }
 
-    private CheckinBean _checkInVenue(String userId, long groupId, String venueId){
+    private CheckinBean _checkInVenue(String userId, long groupId, long venueId){
 
         //TODO: check if checkin is valid?
         // - niet te snel na elkaar?
@@ -576,16 +603,16 @@ public class MyEndpoint {
     private GroupsBean _getGroupsForUser(String userId){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         GroupsBean groupsbean = new GroupsBean();
-        List<GroupBean> groups = new ArrayList<>();
+        List<GroupBean> groups = new ArrayList<GroupBean>();
         Query.Filter propertyFilter =
-                new Query.FilterPredicate(USERGROUP_USER_ID,
+                new Query.FilterPredicate("userId",
                         Query.FilterOperator.EQUAL,
                         userId);
 
-        Query q = new Query(USERGROUP_ENTITY).setFilter(propertyFilter);
+        Query q = new Query("userGroup").setFilter(propertyFilter);
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()) {
-            long groupId = (Long) r.getProperty(USERGROUP_GROUP_ID);
+            long groupId = ((Long) r.getProperty("groupId")).longValue();
             try {
                 groups.add(_getGroupBean(groupId));
             } catch (EntityNotFoundException e) {
@@ -601,7 +628,7 @@ public class MyEndpoint {
 
     private GroupBean _getGroupBean(long groupId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key groupKey = KeyFactory.createKey(GROUP_ENTITY, groupId);
+        Key groupKey = KeyFactory.createKey("Group", groupId);
         Entity group = datastore.get(groupKey);
 
         return _getGroupBean(group);
@@ -611,24 +638,24 @@ public class MyEndpoint {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         GroupBean groupBean = new GroupBean();
         groupBean.setGroupId(group.getKey().getId());
-        groupBean.setName((String) group.getProperty(GROUP_NAME));
-        groupBean.setDescription((String) group.getProperty(GROUP_DESCRIPTION));
-        groupBean.setAdminId(((String) group.getProperty(GROUP_ADMIN_ID)));
-        groupBean.setCreated((Date) group.getProperty(GROUP_CREATED));
-        groupBean.setType((String) group.getProperty(GROUP_TYPE));
+        groupBean.setName((String) group.getProperty("name"));
+        groupBean.setDescription((String) group.getProperty("description"));
+        groupBean.setAdminId(((String) group.getProperty("adminId")));
+        groupBean.setCreated((Date) group.getProperty("created"));
+        groupBean.setType((String) group.getProperty("type"));
 
         ArrayList<UserBean> members = new ArrayList<>();
 
         Query.Filter propertyFilter =
-                new Query.FilterPredicate(USERGROUP_GROUP_ID,
+                new Query.FilterPredicate("groupId",
                         Query.FilterOperator.EQUAL,
                         group.getKey().getId());
 
-        Query q = new Query(USERGROUP_ENTITY).setFilter(propertyFilter);
+        Query q = new Query("userGroup").setFilter(propertyFilter);
 
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()){
-            String userId = ((String) r.getProperty(USERGROUP_USER_ID));
+            String userId = ((String) r.getProperty("userId"));
             members.add(_getUserBeanForId(userId));
         }
 
@@ -640,12 +667,12 @@ public class MyEndpoint {
     private CheckinBean _getCheckinBean(Entity checkin) {
 
         CheckinBean checkinbean = new CheckinBean();
-        checkinbean.setVenueId((String)checkin.getProperty(CHECKIN_VENUE_ID));
-        checkinbean.setGroupId((Long) checkin.getProperty(CHECKIN_GROUP_ID));
-        checkinbean.setUserId((String) checkin.getProperty(CHECKIN_USER_ID));
+        checkinbean.setVenueId((Long)checkin.getProperty("venueId"));
+        checkinbean.setGroupId((Long) checkin.getProperty("groupId"));
+        checkinbean.setUserId((String) checkin.getProperty("userId"));
         //  checkinbean.setPoints(((Integer) checkin.getProperty("points")).intValue());
         checkinbean.setPoints(1);
-        checkinbean.setDate((Date) checkin.getProperty(CHECKIN_DATE));
+        checkinbean.setDate((Date) checkin.getProperty("date"));
 
         return checkinbean;
     }
@@ -653,7 +680,7 @@ public class MyEndpoint {
     private UserBean _getUserBeanForId(String userId) throws EntityNotFoundException{
         UserBean bean = new UserBean();
         Entity user = null;
-        Key userKey = KeyFactory.createKey(USER_ENTITY, userId);
+        Key userKey = KeyFactory.createKey("User", userId);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         try {
             user = datastore.get(userKey);
@@ -674,10 +701,10 @@ public class MyEndpoint {
             }
         }
         bean.setUserId(userId);
-        bean.setEmail((String) user.getProperty(USER_EMAIL));
-        bean.setFirstName((String) user.getProperty(USER_FIRST_NAME));
-        bean.setLastName((String) user.getProperty(USER_LAST_NAME));
-        bean.setJoined((Date) user.getProperty(USER_JOINED));
+        bean.setEmail((String) user.getProperty("email"));
+        bean.setFirstName((String) user.getProperty("firstName"));
+        bean.setLastName((String) user.getProperty("lastName"));
+        bean.setJoined((Date) user.getProperty("joined"));
 
         return bean;
     }
@@ -688,7 +715,7 @@ public class MyEndpoint {
         AllGroupsBean result = new AllGroupsBean();
         ArrayList<GroupBean> groups = new ArrayList<>();
 
-        Query q = new Query(GROUP_ENTITY);
+        Query q = new Query("Group");
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()){
             groups.add(_getGroupBean(r));
@@ -700,19 +727,19 @@ public class MyEndpoint {
         return result;
     }
 
-    private List<RankingBean> _getRankings(String venueId){
+    private List<RankingBean> _getRankings(long venueId){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        List<RankingBean> ranking = new ArrayList<>();
+        List<RankingBean> ranking = new ArrayList<RankingBean>();
 
         HashMap<Long, Integer> groupPoints = new HashMap<>();
         Query.Filter filter1 =
-                new Query.FilterPredicate(CHECKIN_VENUE_ID,
+                new Query.FilterPredicate("venueId",
                         Query.FilterOperator.EQUAL,
                         venueId);
 
         CheckinBean checkin;
 
-        Query q = new Query(CHECKIN_ENTITY).setFilter(filter1);
+        Query q = new Query("Checkin").setFilter(filter1);
         PreparedQuery pq = datastore.prepare(q);
 
         for (Entity r : pq.asIterable()) {
@@ -747,7 +774,7 @@ public class MyEndpoint {
     // Note: Ranking in VenueBean is not sorted.
 
     // TODO: Do we still need this?
-    private VenueBean _getVenueBean(String venueId) throws EntityNotFoundException{
+    private VenueBean _getVenueBean(long venueId) throws EntityNotFoundException{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         Key keyVenue = KeyFactory.createKey("Venue", venueId);
@@ -755,7 +782,6 @@ public class MyEndpoint {
         VenueBean venue = _getVenueBean(venueEnt);
 
         return venue;
-
     }
 
     // TODO: Again, do we still need this?
@@ -838,7 +864,7 @@ public class MyEndpoint {
     };
 
     // Calculates distance between 2 coordinates
-    // param latitude and logitude in degrees
+    // param latitude and longitude in degrees
     // output distance in meters
     private double distance(double lat1, double lon1, double lat2, double lon2) {
 
@@ -857,7 +883,7 @@ public class MyEndpoint {
 
     /*
         Sorting en selecting in the venues ArrayList in a generic way.
-        This will allow us to adjust and improve the searchresults on the go.
+        This will allow us to adjust and improve the search results on the go.
      */
 
     private double deg2rad(double deg) {

@@ -33,12 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.ui.group.GroupListAdapter;
-import be.ugent.vop.ui.venue.VenueActivity;
-import be.ugent.vop.ui.venue.VenueListAdapter;
 import be.ugent.vop.ui.widget.CustomSwipeRefreshLayout;
 
 /**
@@ -160,22 +156,6 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
 
     }
 
-    @Override
-    public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
-        Log.d(TAG, "onCreateLoader");
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            return new VenueLoader(getActivity(), mLastLocation);
-        } else {
-            Location defaultLocation = new Location("");
-            //default location: rectoriaat sint pietersnieuwstraat Ghent
-            defaultLocation.setLatitude(51.046127);
-            defaultLocation.setLongitude(3.727251);
-            return new VenueLoader(getActivity(),defaultLocation );
-        }
-    }
-
     private MapFragment getMapFragment() {
         FragmentManager fm = null;
 
@@ -191,6 +171,22 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
         }
 
         return (MapFragment) fm.findFragmentById(R.id.map);
+    }
+
+    @Override
+    public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
+        Log.d(TAG, "onCreateLoader");
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            return new VenueLoader(getActivity(), mLastLocation);
+        } else {
+            Location defaultLocation = new Location("");
+            //default location: rectoriaat sint pietersnieuwstraat Ghent
+            defaultLocation.setLatitude(51.046127);
+            defaultLocation.setLongitude(3.727251);
+            return new VenueLoader(getActivity(),defaultLocation );
+        }
     }
 
     @Override

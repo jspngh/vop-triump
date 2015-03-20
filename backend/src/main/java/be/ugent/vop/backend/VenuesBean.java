@@ -7,14 +7,14 @@ import java.util.ArrayList;
  * Created by vincent on 11/03/15.
  */
 public class VenuesBean {
-    private ArrayList<VenueBean> veneus;
+    private ArrayList<VenueBean> venues;
 
     public ArrayList<VenueBean> getVenues(){
-        return veneus;
+        return venues;
     }
 
-    public void setVenues(ArrayList<VenueBean> veneus){
-        this.veneus = veneus;
+    public void setVenues(ArrayList<VenueBean> venues){
+        this.venues = venues;
     }
 
 }
