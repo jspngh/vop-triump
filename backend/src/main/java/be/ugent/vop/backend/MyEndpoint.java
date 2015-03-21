@@ -442,12 +442,13 @@ public class MyEndpoint {
     public OverviewBean getOverview(@Named("token") String token, @Named("venueIds") ArrayList<String> venueIds) throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         GroupsBean tmp = _getGroupsForUser(userId);
+        ArrayList<VenueBean> venues = new ArrayList<>();
+        VenueBean mVenueBean = null;
         GroupBean group = null;
         if(tmp.getGroups().size() != 0){
             group = _getGroupsForUser(userId).getGroups().get(0);
         }
-        ArrayList<VenueBean> venues = new ArrayList<>();
-        VenueBean mVenueBean = null;
+
         for(String venueId : venueIds){
             try {
                 mVenueBean = _getVenueBean(venueId);

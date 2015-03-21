@@ -23,8 +23,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.foursquare.FoursquareVenue;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
@@ -35,10 +38,12 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int VENUE_CARD = 1;
     private static final int EVENT_CARD = 2;
     private OverviewBean overview;
+    private ArrayList<FoursquareVenue> fsVenues;
 
-    public OverviewAdapter(OverviewBean overview){
+    public OverviewAdapter(OverviewBean overview, ArrayList<FoursquareVenue> fsVenues){
         super();
         this.overview = overview;
+        this.fsVenues = fsVenues;
     }
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
@@ -46,10 +51,15 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     public static class VenueViewHolder extends RecyclerView.ViewHolder {
-        protected TextView info;
+        protected TextView venue_1_info;
+        protected TextView venue_2_info;
+        protected TextView venue_3_info;
+
         public VenueViewHolder(View v) {
             super(v);
-            info = (TextView) v.findViewById(R.id.venue_info);
+            venue_1_info = (TextView) v.findViewById(R.id.venue_1_info);
+            venue_2_info = (TextView) v.findViewById(R.id.venue_2_info);
+            venue_3_info = (TextView) v.findViewById(R.id.venue_3_info);
         }
     }
     public static class GroupViewHolder extends RecyclerView.ViewHolder {
@@ -101,9 +111,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .inflate(R.layout.layout_card_venue, viewGroup, false);
 
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
-                if(overview == null) Log.d("Overview", "overview == null");
-                if(overview != null && overview.getVenues() != null && overview.getVenues().get(0) != null) {
-                    mVenueViewHolder.info.setText(overview.getVenues().get(0).getVenueId());
+                if(fsVenues != null && fsVenues.size() > 2){
+                    mVenueViewHolder.venue_1_info.setText(fsVenues.get(0).getName());
+                    mVenueViewHolder.venue_2_info.setText(fsVenues.get(1).getName());
+                    mVenueViewHolder.venue_3_info.setText(fsVenues.get(2).getName());
                 }
 
                 return mVenueViewHolder;

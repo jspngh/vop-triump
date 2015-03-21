@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
@@ -57,7 +58,7 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
         // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(new OverviewAdapter(null));
+        mRecyclerView.setAdapter(new OverviewAdapter(null, null));
 
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -69,14 +70,14 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
 
         new AsyncTask<Location, Void, OverviewBean>() {
             private Location mLocation;
+            private ArrayList<FoursquareVenue> fsVenues;
 
             @Override
             protected OverviewBean doInBackground(Location... params) {
                 mLocation = params[0];
-                ArrayList<FoursquareVenue> result = null;
-                result = FoursquareAPI.get(getActivity()).getNearbyVenues(mLocation);
+                fsVenues = FoursquareAPI.get(getActivity()).getNearbyVenues(mLocation);
                 ArrayList<String> venues = new ArrayList<>();
-                for(FoursquareVenue v : result){
+                for(FoursquareVenue v : fsVenues){
                     venues.add(v.getId());
                 }
                 OverviewBean overview = null;
@@ -85,13 +86,33 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                ArrayList<FoursquareVenue> venuesInOverview = new ArrayList<>();
+                if(overview != null && overview.getVenues() != null) {
+                    for (VenueBean venue : overview.getVenues()) {
+                        for(FoursquareVenue fsVenue : fsVenues) {
+                            if (venue.getVenueId().equals(fsVenue.getId())) {
+                                venuesInOverview.add(fsVenue);
+                            }
+                        }
+                    }
+                }
+                if(venuesInOverview.size() < 3){
+                    for(int i = 0; i < fsVenues.size() && venuesInOverview.size() < 3; i++){
+                        if(!venuesInOverview.contains(fsVenues.get(i)))
+                            venuesInOverview.add(fsVenues.get(i));
+                    }
+                }
+                fsVenues = venuesInOverview;
                 return overview;
             }
 
             @Override
             protected void onPostExecute(OverviewBean result) {
                 Log.d("overview", "" + result);
-                mRecyclerView.setAdapter(new OverviewAdapter(result));
+                if(result != null && (result.getVenues() == null || result.getVenues().size() < 3))
+                    mRecyclerView.setAdapter(new OverviewAdapter(result, fsVenues));
+                else
+                    mRecyclerView.setAdapter(new OverviewAdapter(result, null));
                 super.onPostExecute(result);
             }
         }.execute(mLastLocation);
