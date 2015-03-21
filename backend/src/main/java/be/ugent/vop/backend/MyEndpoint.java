@@ -214,10 +214,10 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId, @Named("groupSize") String groupSize, @Named("groupType") String groupType ) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         _checkInVenue(userId, groupId, venueId);
-        return _getRankings(venueId);
+        return _getRankings(venueId,groupSize,groupType);
     }
 
     @ApiMethod(name = "getAuthToken")
@@ -378,7 +378,6 @@ public class MyEndpoint {
 
         return response;
     }
-
     @ApiMethod(name = "closeSession")
     public CloseSessionResponse closeSession( @Named("token") String token){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -389,61 +388,6 @@ public class MyEndpoint {
         CloseSessionResponse response = new CloseSessionResponse();
         response.setMessage("Success");
         return response;
-    }
-
-    @ApiMethod(name = "getNearbyVenues")
-    public VenuesBean getNearbyVenues( @Named("token") String token, @Named("latitude") double latitude, @Named("longitude") double longitude) throws UnauthorizedException {
-        String userId = _getUserIdForToken(token);
-        VenuesBean result = new VenuesBean();
-        ArrayList<VenueBean> venues = new ArrayList<>();
-
-        Query q = new Query("Venue");
-        PreparedQuery pq = DatastoreServiceFactory.getDatastoreService().prepare(q);
-
-        double longitude2;
-        double latitude2;
-        VenueBean venue;
-        double dist;
-
-        double maxDistance = 500.0; //meters
-        //search for venues within a radius of maxDistance
-        //multiple augmentations are possible like looking for special types only etc...
-        for (Entity r : pq.asIterable()){
-            longitude2= (Double) r.getProperty("longitude");
-            latitude2 = (Double) r.getProperty("latitude");
-            dist = distance(latitude,longitude,latitude2,longitude2);
-            if(dist<maxDistance){
-                venue = _getVenueBean(r);
-                venues.add(venue);
-            }
-        }
-        VenueArrayList venueArrayList =  new VenueArrayList(venues);
-/*
-
-        venueArrayList.sort(new MyComparator<VenueBean>() {
-            public boolean compare(VenueBean venue1, VenueBean venue2) {
-                int pointsVenue1 = 0;
-                int pointsVenue2 = 0;
-                for (RankingBean r : venue1.getRanking()) pointsVenue1 += r.getPoints();
-                for (RankingBean r : venue1.getRanking()) pointsVenue2 += r.getPoints();
-                double venue1_pointsRatio = (double) pointsVenue1 / (double)(pointsVenue1+pointsVenue2);
-                double venue2_pointsRatio = (double) pointsVenue2 / (double)(pointsVenue1+pointsVenue2);
-
-                //flipping of venue1 and venue2 is not an error
-                //Larger distance is bad
-                double venue1_distRatio = (double) venue2.getCurrentDistance() /
-                        (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
-                double venue2_distRatio = (double) venue1.getCurrentDistance() /
-                        (double)(venue2.getCurrentDistance()+venue1.getCurrentDistance());
-
-                return venue1_pointsRatio+venue1_distRatio*3.0 > venue2_pointsRatio+venue2_distRatio*3.0;
-            }
-        });
-*/
-
-        result.setVenues(venueArrayList.getVenues());
-
-        return result;
     }
 
     @ApiMethod(name = "getLeaderboard")
@@ -476,9 +420,10 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getRankings", path = "getRankings")
-    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId, @Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
-        return _getRankings(venueId);
+
+        return _getRankings(venueId, groupSize,groupType );
     }
 
     @ApiMethod(name = "getOverview", path = "getOverview")
@@ -525,32 +470,12 @@ public class MyEndpoint {
             e.printStackTrace();
             throw e;
         }
-        //check 1
+        //check if user isn't already member of the group
         for(GroupBean g:groups.getGroups()){
-            if(g.getType()==group.getType()){
-                // User is already member of group with same type
-                // TODO: handle exception!
+            if(g.getGroupId()==group.getGroupId()){
                 return;
             }
         }
-        //checking if amount of members of group doesn't exceed the limit
-        if(group.getType().equals(GroupBean.TYPE_SMALL) || group.getType().equals(GroupBean.TYPE_MEDIUM)) {
-            Query.Filter filter1 =
-                    new Query.FilterPredicate(USERGROUP_ENTITY,
-                            Query.FilterOperator.EQUAL,
-                            groupId);
-            Query q = new Query(USERGROUP_ENTITY).setFilter(filter1);
-            PreparedQuery pq = datastore.prepare(q);
-            int amount = pq.countEntities(FetchOptions.Builder.withDefaults());
-
-            if ((group.getType().equals(GroupBean.TYPE_SMALL) && amount + 1 > GroupBean.AMOUNT_SMALL)
-                    || (group.getType().equals(GroupBean.TYPE_MEDIUM) && amount + 1 > GroupBean.AMOUNT_MEDIUM)) {
-                // groups to small to add extra member
-                // TODO: handle exception!
-                return;
-            }
-        }
-
         Entity userGroup = new Entity(USERGROUP_ENTITY);
         userGroup.setProperty(USERGROUP_USER_ID, userId);
         userGroup.setProperty(USERGROUP_GROUP_ID, groupId);
@@ -708,7 +633,41 @@ public class MyEndpoint {
         return result;
     }
 
-    private List<RankingBean> _getRankings(String venueId){
+    private List<RankingBean> _getRankings(String venueId, String groupSize, String groupType){
+        /**
+         *
+         * Merk op: gebruik van magic numbers is tijdelijk
+         * We kunnen bespreken welke groepgroottes ons het meest geschikt lijken
+         *
+         */
+        int minMembers=-1; //value -1 means no restriction on min members
+        int maxMembers=-1; //value -1 means no restriction on max members
+        switch(groupSize){
+            case GroupBean.GROUP_SIZE_INDIVIDUAL:
+                minMembers = 1;
+                maxMembers = 1;
+                break;
+            case GroupBean.GROUP_SIZE_SMALL:
+                minMembers = 2;
+                maxMembers = 10;
+                break;
+            case GroupBean.GROUP_SIZE_MEDIUM:
+                minMembers=11;
+                maxMembers=50;
+                break;
+            case GroupBean.GROUP_SIZE_LARGE:
+                minMembers=51;
+                maxMembers=-1;
+                break;
+            case GroupBean.GROUP_SIZE_ALL:
+                minMembers=-1;
+                maxMembers=-1;
+                break;
+            default:
+                minMembers=-1;
+                maxMembers=-1;
+        }
+
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         List<RankingBean> ranking = new ArrayList<RankingBean>();
 
@@ -720,18 +679,29 @@ public class MyEndpoint {
 
         CheckinBean checkin;
 
-        Query q = new Query("Checkin").setFilter(filter1);
+        Query q = new Query(CHECKIN_ENTITY).setFilter(filter1);
         PreparedQuery pq = datastore.prepare(q);
 
+        ArrayList<Long> unwantedGroups = new ArrayList<>();
+
+        int nrMembers = 0;
         for (Entity r : pq.asIterable()) {
             checkin = _getCheckinBean(r);
-            if (!(groupPoints.containsKey(checkin.getGroupId()))) {
-                groupPoints.put(checkin.getGroupId(), checkin.getPoints());
-            } else {
-                int currentPoints = groupPoints.get(checkin.getGroupId());
-                int newPoints = currentPoints + checkin.getPoints();
+            nrMembers = countMembersOfGroup(checkin.getGroupId());
+            if(!unwantedGroups.contains(checkin.getGroupId())) {
+                if (minMembers <= nrMembers && maxMembers >= nrMembers
+                        /*TODO: check grouptype*/) {
+                    if (!(groupPoints.containsKey(checkin.getGroupId()))) {
+                        groupPoints.put(checkin.getGroupId(), checkin.getPoints());
+                    } else {
+                        int currentPoints = groupPoints.get(checkin.getGroupId());
+                        int newPoints = currentPoints + checkin.getPoints();
 
-                groupPoints.put(checkin.getGroupId(), newPoints);
+                        groupPoints.put(checkin.getGroupId(), newPoints);
+                    }
+                } else {
+                    unwantedGroups.add(checkin.getGroupId());
+                }
             }
         }
 
@@ -749,6 +719,20 @@ public class MyEndpoint {
         }
 
         return ranking;
+    }
+
+    private int countMembersOfGroup(long groupId){
+        //TODO: verify if user is accepted in group!
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query.Filter filter =
+                new Query.FilterPredicate(USERGROUP_GROUP_ID,
+                        Query.FilterOperator.EQUAL,
+                        groupId);
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+      //  return pq.countEntities(FetchOptions.Builder.withDefaults());
+        return pq.countEntities();
     }
 
     // returns VenueBean

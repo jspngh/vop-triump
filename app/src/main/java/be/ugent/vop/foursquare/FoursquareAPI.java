@@ -124,7 +124,7 @@ public class FoursquareAPI {
                         VenueTable.COLUMN_LATITUDE,VenueTable.COLUMN_LONGITUDE};
         Cursor v = context.getContentResolver().query(venueUri, projection, null, null, null);
 
-        if(v.getCount()>=0){
+        if(v.getCount()>0){
             v.moveToFirst();
             id = v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_VENUE_ID));
             city=v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_CITY));

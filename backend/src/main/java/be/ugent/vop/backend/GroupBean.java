@@ -14,9 +14,16 @@ public class GroupBean {
     public static int AMOUNT_MEDIUM = 50;
     public static int AMOUNT_BIG = 100;
 
-    public static String TYPE_SMALL = "small";
-    public static String TYPE_MEDIUM = "medium";
-    public static String TYPE_BIG = "large";
+    public final static String GROUP_TYPE_ALL = "All";
+    public final static String GROUP_TYPE_FRIENDS = "Friends";
+    public final static String GROUP_TYPE_CLUB = "Club";
+    public final static String GROUP_TYPE_STUDENTGROUP = "Studentgroup";
+
+    public final static String GROUP_SIZE_ALL = "All";
+    public final static String GROUP_SIZE_INDIVIDUAL = "Individual";
+    public final static String GROUP_SIZE_SMALL = "Small";
+    public final static String GROUP_SIZE_MEDIUM = "Medium";
+    public final static String GROUP_SIZE_LARGE = "Large";
 
     private long groupId;
     private String name;
