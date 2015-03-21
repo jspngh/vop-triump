@@ -14,8 +14,16 @@ public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
 
     private Context context;
     private String venueId;
-    private String groupSize;
-    private String groupType;
+    private static String groupSize;
+    private static String groupType;
+
+    public static void setGroupSize(String gSize){
+        groupSize = gSize;
+    }
+
+    public static void setGroupType(String gType){
+        groupType = gType;
+    }
 
     public CheckInLoader(Context context, String venueId, String groupSize, String groupType) {
         super(context);

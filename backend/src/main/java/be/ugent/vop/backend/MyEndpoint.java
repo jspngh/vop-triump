@@ -598,7 +598,7 @@ public class MyEndpoint {
         checkinbean.setVenueId((String)checkin.getProperty("venueId"));
         checkinbean.setGroupId((Long) checkin.getProperty("groupId"));
         checkinbean.setUserId((String) checkin.getProperty("userId"));
-        //  checkinbean.setPoints(((Integer) checkin.getProperty("points")).intValue());
+    //    checkinbean.setPoints((Integer) checkin.getProperty("points"));
         checkinbean.setPoints(1);
         checkinbean.setDate((Date) checkin.getProperty("date"));
 

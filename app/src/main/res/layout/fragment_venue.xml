@@ -24,15 +24,6 @@
         android:id="@+id/textViewVenueName"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/loading_data"
-        android:id="@+id/textViewNoRanking"
-        android:layout_gravity="center_horizontal"
-        android:visibility="visible" />
-
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

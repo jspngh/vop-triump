@@ -23,8 +23,9 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
     private List<RankingBean> rankings;
     private Context context;
     private String VenueId;
-    private String groupSize;
-    private String groupType;
+    private static String groupSize;
+    private static String groupType;
+
 
     public RankingLoader(Context context, String venueId,String groupSize, String groupType) {
         super(context);
@@ -33,7 +34,14 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
         this.groupSize=groupSize;
         this.groupType=groupType;
 
-        //EventBroker.get().addListener(this);
+    }
+
+    public static void setGroupSize(String gSize){
+        groupSize = gSize;
+    }
+
+    public static void setGroupType(String gType){
+        groupType = gType;
     }
 
     /**
@@ -47,6 +55,7 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
         List<RankingBean> result = null;
 
         try{
+            Log.d(TAG, "looking up ranking w/ specs: "+groupSize+", "+groupType);
             result = BackendAPI.get(context).getRankings(VenueId,groupSize,groupType);
         } catch(IOException e){
             Log.d("AllGroupsLoader", e.getMessage());

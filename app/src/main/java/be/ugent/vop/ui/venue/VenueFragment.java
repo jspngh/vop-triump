@@ -39,7 +39,7 @@ public class VenueFragment extends Fragment {
 
     private VenueBean venueBean;
     private FoursquareVenue fsVenue;
-    private TextView noRankingTextView;
+ //   private TextView noRankingTextView;
     private TextView titleTextView;
     private ImageView venueImageView;
     private Button checkinButton;
@@ -60,7 +60,7 @@ public class VenueFragment extends Fragment {
         context = getActivity();
 
         titleTextView = (TextView)rootView.findViewById(R.id.textViewVenueName);
-        noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
+    //    noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
@@ -98,10 +98,12 @@ public class VenueFragment extends Fragment {
         getLoaderManager().initLoader(2, null, mVenueInfoLoaderListener);
         //loader for ranking (to backend)
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
+        //loader for loading updated ranking after checkin
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
+            //    getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
+                getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
 
             }
         });
@@ -109,6 +111,9 @@ public class VenueFragment extends Fragment {
         groupSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selected = (String) parentView.getSelectedItem();
+                Log.d("VenueFragment", "selected group size: "+selected);
+                RankingLoader.setGroupSize(selected);
                 getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
             }
 
@@ -122,6 +127,9 @@ public class VenueFragment extends Fragment {
         groupTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selected = (String) parentView.getSelectedItem();
+                Log.d("VenueFragment", "selected group size: "+selected);
+                RankingLoader.setGroupType(selected);
                 getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
             }
 
@@ -160,6 +168,7 @@ public class VenueFragment extends Fragment {
 
     private LoaderManager.LoaderCallbacks<List<RankingBean>> mRankingLoaderListener
             = new LoaderManager.LoaderCallbacks<List<RankingBean>>() {
+
         @Override
         public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
             Log.d("VenueFragment", "onLoadFinished rankingloader");
@@ -167,7 +176,7 @@ public class VenueFragment extends Fragment {
             if(rankings!=null){
                 rankingListView.setVisibility(View.VISIBLE);
 
-                noRankingTextView.setVisibility(View.INVISIBLE);
+            //    noRankingTextView.setVisibility(View.INVISIBLE);
                 adapter = new RankingAdapter(context, rankings);
 
                 rankingListView.setAdapter(adapter);
@@ -184,7 +193,7 @@ public class VenueFragment extends Fragment {
                     }
                 });
             }else{
-                noRankingTextView.setText(R.string.no_ranking);
+             //   noRankingTextView.setText(R.string.no_ranking);
             }
         }
 
@@ -234,7 +243,7 @@ public class VenueFragment extends Fragment {
 
                 adapter.notifyDataSetChanged();
             }else{
-                noRankingTextView.setText(R.string.no_ranking);
+             //   noRankingTextView.setText(R.string.no_ranking);
             }
 
         }
