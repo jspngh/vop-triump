@@ -151,13 +151,15 @@ public class MyEndpoint {
 
     @ApiMethod(name = "getGroupInfo")
     public GroupBean getGroupInfo(@Named("token") String token, @Named("groupId") long groupId) throws UnauthorizedException {
-        _getUserIdForToken(token); // Try to authenticate the user
+        String userId = _getUserIdForToken(token); // Try to authenticate the user
         GroupBean response = null;
         try {
             response = _getGroupBean(groupId);
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
         }
+        boolean userIsAdmin = response.getAdminId().equals(userId);
+        response.setUserAdmin(userIsAdmin);
         return response;
     }
 
@@ -529,16 +531,18 @@ public class MyEndpoint {
         GroupsBean groupsbean = new GroupsBean();
         List<GroupBean> groups = new ArrayList<GroupBean>();
         Query.Filter propertyFilter =
-                new Query.FilterPredicate("userId",
+                new Query.FilterPredicate(USERGROUP_USER_ID,
                         Query.FilterOperator.EQUAL,
                         userId);
 
-        Query q = new Query("userGroup").setFilter(propertyFilter);
+        Query q = new Query(USERGROUP_ENTITY).setFilter(propertyFilter);
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()) {
-            long groupId = ((Long) r.getProperty("groupId")).longValue();
+            long groupId = ((long) r.getProperty(USERGROUP_GROUP_ID));
             try {
-                groups.add(_getGroupBean(groupId));
+                GroupBean g = _getGroupBean(groupId);
+                g.setUserAdmin(g.getAdminId().equals(userId));
+                groups.add(g);
             } catch (EntityNotFoundException e) {
                 e.printStackTrace();
             }
@@ -552,7 +556,7 @@ public class MyEndpoint {
 
     private GroupBean _getGroupBean(long groupId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key groupKey = KeyFactory.createKey("Group", groupId);
+        Key groupKey = KeyFactory.createKey(GROUP_ENTITY, groupId);
         Entity group = datastore.get(groupKey);
 
         return _getGroupBean(group);
@@ -707,8 +711,9 @@ public class MyEndpoint {
             checkin = _getCheckinBean(r);
             nrMembers = countMembersOfGroup(checkin.getGroupId());
             if(!unwantedGroups.contains(checkin.getGroupId())) {
-                if (minMembers <= nrMembers && maxMembers >= nrMembers
-                        /*TODO: check grouptype*/) {
+                if ((minMembers==-1 || minMembers <= nrMembers)
+                        && (maxMembers==-1 || maxMembers >= nrMembers)
+                        && (groupType.equals(GroupBean.GROUP_TYPE_ALL) || groupType.equals(getGroupType(checkin.getGroupId())))) {
                     if (!(groupPoints.containsKey(checkin.getGroupId()))) {
                         groupPoints.put(checkin.getGroupId(), checkin.getPoints());
                     } else {
@@ -751,6 +756,19 @@ public class MyEndpoint {
         PreparedQuery pq = datastore.prepare(q);
       //  return pq.countEntities(FetchOptions.Builder.withDefaults());
         return pq.countEntities();
+    }
+
+    private String getGroupType(long groupId){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key keyGroup = KeyFactory.createKey(GROUP_ENTITY, groupId);
+        Entity groupEntity = null;
+        try{
+            groupEntity = datastore.get(keyGroup);
+        }
+        catch(EntityNotFoundException e){
+            e.printStackTrace();
+        }
+        return ((String) groupEntity.getProperty(GROUP_TYPE));
     }
 
     // returns VenueBean

@@ -32,6 +32,14 @@ public class GroupBean {
     private String description;
     private List<UserBean> members;
     private String type;
+    private boolean userAdmin;
+
+    public boolean isUserAdmin(){
+        return userAdmin;
+    }
+    public void setUserAdmin(boolean flag){
+        this.userAdmin = flag;
+    }
 
 
     public String getDescription(){
