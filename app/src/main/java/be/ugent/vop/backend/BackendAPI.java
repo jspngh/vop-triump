@@ -99,6 +99,7 @@ public class BackendAPI {
     }
 
     public List<RankingBean> checkIn(String venueId ,String groupSize, String groupType) throws IOException{
+        Log.d("BackendAPI",token);
         return myApiService.checkInVenue(token, venueId, groupSize,  groupType).execute().getItems();
     }
 

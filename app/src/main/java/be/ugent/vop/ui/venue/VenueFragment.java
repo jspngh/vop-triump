@@ -99,12 +99,12 @@ public class VenueFragment extends Fragment {
         //loader for ranking (to backend)
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
         //loader for loading updated ranking after checkin
+
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            //    getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
-                getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
-
+                getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
+                getLoaderManager().restartLoader(0,null,mCheckInLoaderListener);
             }
         });
 
@@ -114,6 +114,7 @@ public class VenueFragment extends Fragment {
                 String selected = (String) parentView.getSelectedItem();
                 Log.d("VenueFragment", "selected group size: "+selected);
                 RankingLoader.setGroupSize(selected);
+                CheckInLoader.setGroupSize(selected);
                 getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
             }
 
@@ -130,6 +131,7 @@ public class VenueFragment extends Fragment {
                 String selected = (String) parentView.getSelectedItem();
                 Log.d("VenueFragment", "selected group size: "+selected);
                 RankingLoader.setGroupType(selected);
+                CheckInLoader.setGroupType(selected);
                 getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
             }
 
@@ -175,7 +177,9 @@ public class VenueFragment extends Fragment {
             ranking=rankings;
             if(rankings!=null){
                 rankingListView.setVisibility(View.VISIBLE);
-
+                for(RankingBean r:rankings){
+                    Log.d("VenueFragment",r.getGroupBean().getName()+ " | "+r.getPoints());
+                }
             //    noRankingTextView.setVisibility(View.INVISIBLE);
                 adapter = new RankingAdapter(context, rankings);
 
@@ -192,6 +196,7 @@ public class VenueFragment extends Fragment {
                     }
                 });
             }else{
+                rankingListView.setVisibility(View.INVISIBLE);
              //   noRankingTextView.setText(R.string.no_ranking);
             }
         }
@@ -214,7 +219,7 @@ public class VenueFragment extends Fragment {
 
     /**
      *
-     * Loader 2: Refresh ranking after checkin
+     * Loader 2: Checkin & Refresh ranking after checkin
      *
      */
 

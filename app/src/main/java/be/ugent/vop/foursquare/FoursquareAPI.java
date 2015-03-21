@@ -246,7 +246,7 @@ public class FoursquareAPI {
                         foursquareVenue.setPhotos(getPhotos(foursquareVenue));
 
                         // only adds verified venues.
-                        if(true || foursquareVenue.isVerified()) {
+                        if(foursquareVenue.isVerified()) {
                             venueList.add(foursquareVenue);
                             saveVenue(foursquareVenue);
                         }
