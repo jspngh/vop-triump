@@ -7,9 +7,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import be.ugent.vop.Event;
-import be.ugent.vop.EventBroker;
-import be.ugent.vop.EventListener;
 import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
@@ -17,7 +14,7 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> implements EventListener {
+public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> {
     private final String TAG = "VenueLoader";
 
     private int i = 0;
@@ -30,7 +27,6 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> imp
         super(context);
         this.context = context.getApplicationContext();
         this.location = loc;
-        EventBroker.get().addListener(this);
     }
 
     /**
@@ -113,15 +109,4 @@ public class VenueLoader extends AsyncTaskLoader<ArrayList<FoursquareVenue>> imp
         }
     }
 
-    /**************************************
-     *
-     * Override methodes interface EventListener
-     *
-     ***************************************/
-
-    @Override
-    public void handleEvent(Event e){
-        Log.d(TAG,"handleEvent");
-        onContentChanged();
-    }
 }

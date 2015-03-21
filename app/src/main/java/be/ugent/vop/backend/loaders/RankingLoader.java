@@ -7,8 +7,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.List;
 
-import be.ugent.vop.Event;
-import be.ugent.vop.EventListener;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 
@@ -19,18 +17,21 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class RankingLoader extends AsyncTaskLoader<List<RankingBean>> implements EventListener {
+public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
     private final String TAG = "RankingLoader";
 
     private List<RankingBean> rankings;
     private Context context;
     private String VenueId;
+    private String groupSize;
+    private String groupType;
 
-
-    public RankingLoader(Context context, String fsVenueId) {
+    public RankingLoader(Context context, String venueId,String groupSize, String groupType) {
         super(context);
         this.context = context.getApplicationContext();
-        this.VenueId = fsVenueId;
+        this.VenueId = venueId;
+        this.groupSize=groupSize;
+        this.groupType=groupType;
 
         //EventBroker.get().addListener(this);
     }
@@ -46,7 +47,7 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>> implements
         List<RankingBean> result = null;
 
         try{
-            result = BackendAPI.get(context).getRankings(VenueId);
+            result = BackendAPI.get(context).getRankings(VenueId,groupSize,groupType);
         } catch(IOException e){
             Log.d("AllGroupsLoader", e.getMessage());
         }
@@ -116,15 +117,6 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>> implements
         if (rankings != null) {
             rankings = null;
         }
-    }
-
-    /**
-     *  Event listener
-     */
-    @Override
-    public void handleEvent(Event e){
-        Log.d("RankingLoader", "onContent changed");
-        if(e.getType().equals("checkin") || e.getType().equals("refresh")) { Log.d("RankingLoader", "testing onConten changed"); onContentChanged();}
     }
 
 

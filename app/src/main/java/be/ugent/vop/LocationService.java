@@ -29,7 +29,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private Location mLastLocation;
 
     private boolean mCurrentlyProcessingLocation = false;
-    private boolean mFoundFirtLocation = false;
+    private boolean mFoundFirstLocation = false;
 
 
     /*************************************
@@ -49,11 +49,11 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         buildGoogleApiClient();
         mGoogleApiClient.connect();
         mCurrentlyProcessingLocation = true;
-        mFoundFirtLocation = false;
+        mFoundFirstLocation = false;
 
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirtLocation);
+        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirstLocation);
         editor.commit();
     }
 
@@ -155,7 +155,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     @Override
     public void onLocationChanged(Location location) {
         //Log.d(TAG, "Location changed, lat: "+location.getLatitude()+ "| long: "+location.getLongitude());
-        if(mFoundFirtLocation==true) {
+        if(mFoundFirstLocation==true) {
             if (mLastLocation.distanceTo(location) >= 5.0) {
                 Log.d(TAG, "Location Changed");
                 mLastLocation = location;
@@ -164,7 +164,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
                 editor.putFloat(getString(R.string.locationLongitude), (float) location.getLongitude());
                 editor.putFloat(getString(R.string.locationLatitude), (float) location.getLatitude());
                 editor.commit();
-                EventBroker.get().addEvent(new Event("LocationChanged"));
             }
         }
         else foundFirstLocation(location);
@@ -174,10 +173,10 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     private void foundFirstLocation(Location location){
         Log.d(TAG, "foundFirstLocation");
-        mFoundFirtLocation = true;
+        mFoundFirstLocation = true;
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirtLocation);
+        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirstLocation);
 
         // attention: double to float cast, possible source for errors !
 
@@ -185,7 +184,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         editor.putFloat(getString(R.string.locationLatitude), (float) location.getLatitude());
         editor.commit();
 
-        EventBroker.get().addEvent(new Event("LocationChanged"));
 
         /////////////////////////////////////////////////////////////////////////////////////////
         // Mogelijkheid om te werken met een LocationEvent die longitude en latitude van    /////

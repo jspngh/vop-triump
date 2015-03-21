@@ -13,14 +13,16 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
 
     private Context context;
-    private long groupId;
     private String venueId;
+    private String groupSize;
+    private String groupType;
 
-    public CheckInLoader(Context context, String fsVenueId, long groupId) {
+    public CheckInLoader(Context context, String venueId, String groupSize, String groupType) {
         super(context);
         this.context = context.getApplicationContext();
-        this.groupId = groupId;
-        this.venueId = fsVenueId;
+        this.venueId = venueId;
+        this.groupSize=groupSize;
+        this.groupType=groupType;
     }
 
     /**
@@ -31,9 +33,9 @@ public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
     @Override
     public List<RankingBean> loadInBackground() {
         List<RankingBean> result = null;
-        Log.d("Checking In", venueId + " for " + groupId);
+        Log.d("Checking In", venueId );
         try{
-            result = BackendAPI.get(context).checkIn(venueId, groupId);
+            result = BackendAPI.get(context).checkIn(venueId,groupSize,groupType);
             Log.d("Checked In", "Succes");
         } catch(IOException e){
             Log.d("Checking In", e.getMessage());

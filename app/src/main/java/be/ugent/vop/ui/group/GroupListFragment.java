@@ -26,7 +26,7 @@ import be.ugent.vop.backend.myApi.model.GroupBean;
 
 
 
-public class GroupListFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean> {
+public class GroupListFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean>, android.widget.SearchView.OnQueryTextListener {
     private static final String TAG = "CheckinFragment";
 
     protected GroupListFragment mFragment;
@@ -39,7 +39,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.groups_menu, menu);
         // Associate searchable configuration with the SearchView
-
         super.onCreateOptionsMenu(menu, inflater);
 
     }
@@ -80,7 +79,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         mAdapter = new GroupListAdapter();
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(null);
@@ -159,6 +157,16 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<AllGroupsBean> objectLoader) {
         mRecyclerView.setAdapter(null);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
     }
 }
 

@@ -6,39 +6,23 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import be.ugent.vop.Event;
-import be.ugent.vop.EventBroker;
-import be.ugent.vop.R;
-import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.LeaderboardLoader;
-import be.ugent.vop.backend.loaders.RankingLoader;
-import be.ugent.vop.backend.myApi.model.AllGroupsBean;
-import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.group.GroupActivity;
 
 import be.ugent.vop.ui.venue.RankingAdapter;
-import be.ugent.vop.ui.venue.VenueActivity;
 
 
 public class LeaderboardsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<RankingBean>>{

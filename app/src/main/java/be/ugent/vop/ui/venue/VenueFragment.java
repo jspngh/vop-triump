@@ -25,8 +25,6 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.ugent.vop.Event;
-import be.ugent.vop.EventBroker;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
@@ -100,14 +98,38 @@ public class VenueFragment extends Fragment {
         getLoaderManager().initLoader(2, null, mVenueInfoLoaderListener);
         //loader for ranking (to backend)
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
-
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
-                EventBroker.get().addEvent(new Event("checkin"));
 
             }
+        });
+
+        groupSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        groupTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
         });
 
 
@@ -169,7 +191,7 @@ public class VenueFragment extends Fragment {
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            RankingLoader loader = new RankingLoader(context, fsVenueId);
+            RankingLoader loader = new RankingLoader(context, fsVenueId,groupSizeSpinner.getSelectedItem().toString(),groupTypeSpinner.getSelectedItem().toString());
             return loader;
         }
 
@@ -198,7 +220,6 @@ public class VenueFragment extends Fragment {
             if(rankings!=null){
                 adapter = new RankingAdapter(context, rankings);
                 rankingListView.setAdapter(adapter);
-
                 rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
@@ -221,14 +242,8 @@ public class VenueFragment extends Fragment {
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
-            long groupId = settings.getLong(getString(R.string.group_id), 0);
-            if(groupId != 0) {
-                CheckInLoader loader = new CheckInLoader(context, fsVenueId, groupId);
-                return loader;
-            }
-            Log.d("Invalid LogIn", "Fail !");
-            return null;
+            CheckInLoader loader = new CheckInLoader(context, fsVenueId,groupSizeSpinner.getSelectedItem().toString(),groupTypeSpinner.getSelectedItem().toString());
+            return loader;
         }
 
         @Override

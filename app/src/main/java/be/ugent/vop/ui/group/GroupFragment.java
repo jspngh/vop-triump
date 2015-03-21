@@ -130,7 +130,6 @@ public class GroupFragment extends Fragment {
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null) {
                 btn.setVisibility(View.GONE);
-
                 name.setText("Name: " + response.getName());
                 description.setText(response.getDescription().toString());
                 created.setText("Created on: " + response.getCreated().toString());

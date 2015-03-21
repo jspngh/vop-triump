@@ -214,10 +214,17 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId, @Named("groupSize") String groupSize, @Named("groupType") String groupType ) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId,@Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
-        _checkInVenue(userId, groupId, venueId);
-        return _getRankings(venueId,groupSize,groupType);
+        GroupsBean groups = _getGroupsForUser(userId);
+        if(groups.getNumGroups()==0) {
+            return null;
+         //needs to be catched
+        }
+        for(GroupBean g : groups.getGroups()){
+            _checkInVenue(userId, g.getGroupId(), venueId);
+        }
+        return _getRankings(venueId, groupSize,groupType);
     }
 
     @ApiMethod(name = "getAuthToken")

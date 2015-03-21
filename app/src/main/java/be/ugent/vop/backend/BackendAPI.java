@@ -98,8 +98,8 @@ public class BackendAPI {
         return myApiService.getGroupInfo(token, groupId).execute();
     }
 
-    public List<RankingBean> checkIn(String venueId, long groupId) throws IOException{
-        return myApiService.checkInVenue(token, venueId, groupId).execute().getItems();
+    public List<RankingBean> checkIn(String venueId ,String groupSize, String groupType) throws IOException{
+        return myApiService.checkInVenue(token, venueId, groupSize,  groupType).execute().getItems();
     }
 
     public OverviewBean getOverview(ArrayList<String> venues) throws IOException{
@@ -110,8 +110,8 @@ public class BackendAPI {
         return myApiService.getLeaderboard(token).execute();
     }
 
-    public List<RankingBean> getRankings(String venueId) throws IOException{
-        return myApiService.getRankings(token, venueId).execute().getItems();
+    public List<RankingBean> getRankings(String venueId, String groupSize, String groupType) throws IOException{
+        return myApiService.getRankings(groupSize, groupType, token, venueId).execute().getItems();
     }
 
     public GroupBean createGroup(String name, String description, String type) throws IOException{
