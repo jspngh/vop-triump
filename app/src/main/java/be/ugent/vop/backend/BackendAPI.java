@@ -2,7 +2,6 @@ package be.ugent.vop.backend;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.util.Log;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -11,6 +10,7 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.R;
@@ -102,8 +102,8 @@ public class BackendAPI {
         return myApiService.checkInVenue(token, venueId, groupId).execute().getItems();
     }
 
-    public OverviewBean getOverview(Location loc) throws IOException{
-        return myApiService.getOverview(loc.getLatitude(), loc.getLongitude(), token).execute();
+    public OverviewBean getOverview(ArrayList<String> venues) throws IOException{
+        return myApiService.getOverview(token, venues).execute();
     }
 
     public RankingBeanCollection getLeaderboard() throws IOException{

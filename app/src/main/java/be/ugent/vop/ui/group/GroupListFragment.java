@@ -3,15 +3,12 @@ package be.ugent.vop.ui.group;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,9 +20,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.loaders.AllGroupsLoader;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
-import be.ugent.vop.backend.loaders.AllGroupsLoader;
 
 
 
@@ -146,10 +143,12 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
          Resultaat kan null zijn
          Rekening mee houden!
          **************************************/
-        mAdapter.setGroups((ArrayList<GroupBean>)allGroupsBean.getGroups());
-        Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
-        mAdapter.setContext(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+        if(allGroupsBean.getGroups() != null) {
+            mAdapter.setGroups((ArrayList<GroupBean>) allGroupsBean.getGroups());
+            Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
+            mAdapter.setContext(getActivity());
+            mRecyclerView.setAdapter(mAdapter);
+        }
 
         mRecyclerView.setVisibility(View.VISIBLE);
         mSwipeRefreshLayout.setRefreshing(false);
