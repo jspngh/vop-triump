@@ -35,5 +35,4 @@ public class OverviewBean {
         this.update = update;
     }
 */
-
 }

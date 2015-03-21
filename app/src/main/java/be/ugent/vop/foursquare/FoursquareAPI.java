@@ -136,11 +136,11 @@ public class FoursquareAPI {
             lat= v.getDouble(v.getColumnIndexOrThrow(VenueTable.COLUMN_LATITUDE));
             lon=v.getDouble(v.getColumnIndexOrThrow(VenueTable.COLUMN_LONGITUDE));
             v.close();
-            Log.d(TAG, "getVenueInfo: loaded venue from local db");
+            //Log.d(TAG, "getVenueInfo: loaded venue from local db");
 
         }else{
             String url =API_URL + "/venues/" + venueId +"?oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
-            Log.d("FoursquareAPI", "getVenueInfo used url:"+url);
+            //Log.d("FoursquareAPI", "getVenueInfo used url:"+url);
 
             try {
                 String response = request(url);
@@ -169,7 +169,7 @@ public class FoursquareAPI {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, "getVenueInfo: loaded venue from foursquare");
+            //Log.d(TAG, "getVenueInfo: loaded venue from foursquare");
         }
 
         FoursquareVenue venue = new FoursquareVenue(id,name,address,city,country,lon,lat,verified);
@@ -194,10 +194,10 @@ public class FoursquareAPI {
         contentValues.put(VenueTable.COLUMN_VERIFIED, venue.isVerified());
         contentValues.put(VenueTable.COLUMN_LAST_UPDATED, (new Date()).getTime());
         context.getContentResolver().insert(VenueContentProvider.CONTENT_URI, contentValues);
-        Log.d(TAG, "saved venue in db with id: "+venue.getId());
+        //Log.d(TAG, "saved venue in db with id: "+venue.getId());
         }
         else{
-            Log.d(TAG,"venue "+venue.getId()+" already in db.");
+            //Log.d(TAG,"venue "+venue.getId()+" already in db.");
         }
     }
 
@@ -205,7 +205,7 @@ public class FoursquareAPI {
     public ArrayList<FoursquareVenue> getNearbyVenues(double latitude, double longitude, int limit, int radius)  {
 
         String url =API_URL + "/venues/search?ll=" + latitude +","+longitude +"&radius="+radius+"&limit="+limit+"&oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
-        Log.d("FoursquareAPI", url);
+        //Log.d("FoursquareAPI", url);
         ArrayList<FoursquareVenue> venueList = new ArrayList<>();
 
         try {
@@ -263,7 +263,7 @@ public class FoursquareAPI {
         for(FoursquareVenue v:venueList){
           s+=v.toString();
         }
-        Log.d("FoursquareAPI",s);
+        //Log.d("FoursquareAPI",s);
         }
         return venueList;
     }
@@ -279,7 +279,7 @@ public class FoursquareAPI {
         Cursor images = context.getContentResolver().query(venueUri, projection, null, null, null);
 
         if (images.getCount() > 0) {
-            Log.d(TAG, "" + images.getCount() + " images found for venue " + venue.getId() + " in database");
+            //Log.d(TAG, "" + images.getCount() + " images found for venue " + venue.getId() + " in database");
             while (images.moveToNext()) {
                 String prefix = images.getString(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_PREFIX));
                 String suffix = images.getString(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_SUFFIX));
@@ -294,7 +294,7 @@ public class FoursquareAPI {
 
             images.close();
         } else {
-            Log.d(TAG, "no images found for venue " + venue.getId() + " in database, retrieving from Foursquare");
+            //Log.d(TAG, "no images found for venue " + venue.getId() + " in database, retrieving from Foursquare");
             photos = getPhotosFromFS(venue);
             savePhotos(photos, venue.getId());
         }
@@ -334,7 +334,7 @@ public class FoursquareAPI {
 
         int numSaved = context.getContentResolver().bulkInsert(VenueImageContentProvider.CONTENT_URI, values);
 
-        Log.d(TAG, "" + numSaved + " images saved for venue " + venueId + " in database");
+        //Log.d(TAG, "" + numSaved + " images saved for venue " + venueId + " in database");
     }
 
     private ArrayList<Photo> getPhotosFromFS(FoursquareVenue venue){
@@ -342,7 +342,7 @@ public class FoursquareAPI {
         String prefix, suffix;
         int width, height;
         String url =API_URL + "/venues/"+venue.getId()+"/photos?&limit=10&oauth_token=" + FSQToken + "&v=" + VERSION+ "&m=" + MODE;
-        Log.d("FoursquareAPI getPhotos", url);
+        //Log.d("FoursquareAPI getPhotos", url);
 
         try {
             String response = request(url);
@@ -374,7 +374,7 @@ public class FoursquareAPI {
             String response = post(urlBase, urlParams);
             JSONObject obj = new JSONObject(response);
             if ((obj.getJSONObject("meta").getInt("code")) == 200) {
-                Log.d("Checking In", "Succes");
+                //Log.d("Checking In", "Succes");
                 JSONObject checkIn = obj.getJSONObject("response").getJSONObject("checkin");
                 if(checkIn.has("id")) result.setId(checkIn.getString("id"));
                 if(checkIn.has("createdAt")) result.setCreatedAt(checkIn.getString("createdAt"));
@@ -383,7 +383,7 @@ public class FoursquareAPI {
             }
         }
         catch (IOException | JSONException e){
-                Log.d("Checking In", "Failure");
+                //Log.d("Checking In", "Failure");
             e.printStackTrace();
         }
         return result;
