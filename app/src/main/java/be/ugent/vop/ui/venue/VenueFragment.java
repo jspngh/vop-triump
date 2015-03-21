@@ -44,7 +44,7 @@ public class VenueFragment extends Fragment {
     private ImageView venueImageView;
     private Button checkinButton;
     private RankingAdapter adapter;
-    private ArrayList<RankingBean> ranking;
+    private List<RankingBean> ranking;
     private ListView rankingListView;
     private Context context;
     private Spinner groupTypeSpinner;
@@ -163,7 +163,7 @@ public class VenueFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
             Log.d("VenueFragment", "onLoadFinished rankingloader");
-
+            ranking=rankings;
             if(rankings!=null){
                 rankingListView.setVisibility(View.VISIBLE);
 
@@ -171,7 +171,6 @@ public class VenueFragment extends Fragment {
                 adapter = new RankingAdapter(context, rankings);
 
                 rankingListView.setAdapter(adapter);
-
                 rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
@@ -180,7 +179,7 @@ public class VenueFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
                         intent.putExtras(bundle);
-                        startActivity(intent);
+                        context.startActivity(intent);
                     }
                 });
             }else{
@@ -216,7 +215,7 @@ public class VenueFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
             Log.d("VenueFragment", "onLoadFinished after checkin loader");
-
+            ranking=rankings;
             if(rankings!=null){
                 adapter = new RankingAdapter(context, rankings);
                 rankingListView.setAdapter(adapter);
@@ -228,7 +227,7 @@ public class VenueFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
                         intent.putExtras(bundle);
-                        startActivity(intent);
+                        context.startActivity(intent);
                     }
                 });
 

@@ -123,30 +123,30 @@ public class LeaderboardsFragment extends Fragment{
         @Override
         public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> data) {
             Log.d("LeaderboardsFragment", "onLoadFinished");
+                if (data!=null &&data.size() != 0) {
+                    noRankingTextView.setVisibility(View.GONE);
+                    rankingListView.setVisibility(View.VISIBLE);
+                    Log.d("LeaderboardsFragment", "size of data " + data.size());
+                    ranking = new ArrayList<RankingBean>();
+                    for (RankingBean r : data) ranking.add(r);
+                    adapter = new RankingAdapter(context, ranking);
+                    rankingListView.setAdapter(adapter);
 
-            if (data.size() != 0) {
-                noRankingTextView.setVisibility(View.GONE);
-                rankingListView.setVisibility(View.VISIBLE);
-                Log.d("LeaderboardsFragment", "size of data " + data.size());
-                ranking = new ArrayList<RankingBean>();
-                for (RankingBean r : data) ranking.add(r);
-                adapter = new RankingAdapter(context, ranking);
-                rankingListView.setAdapter(adapter);
+                    rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            Intent intent = new Intent(getActivity(), GroupActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                        }
+                    });
+                } else {
+                    noRankingTextView.setText(R.string.no_ranking);
+                }
 
-                rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        Intent intent = new Intent(getActivity(), GroupActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }
-                });
-            } else {
-                noRankingTextView.setText(R.string.no_ranking);
-            }
         }
 
 
