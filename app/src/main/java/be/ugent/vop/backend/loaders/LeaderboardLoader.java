@@ -20,11 +20,14 @@ import be.ugent.vop.backend.myApi.model.VenueBean;
 public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
 
     private Context context;
-    private long groupId;
+    private String groupSize;
+    private String groupType;
 
-    public LeaderboardLoader(Context context ) {
+    public LeaderboardLoader(Context context,String groupSize,String groupType ) {
         super(context);
         this.context = context.getApplicationContext();
+        this.groupSize=groupSize;
+        this.groupType=groupType;
     }
 
     /**
@@ -34,12 +37,12 @@ public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
      */
     @Override
     public List<RankingBean> loadInBackground() {
-        Log.d("JoinGroupLoader", ""+groupId);
+        Log.d("LeaderboardLoader", "");
         List<RankingBean> result = null;
         try{
-            result = (BackendAPI.get(context).getLeaderboard().getItems());
+            result = (BackendAPI.get(context).getLeaderboard(groupSize,groupType).getItems());
         } catch(IOException e){
-            Log.d("JoinGroupLoader", e.getMessage());
+            Log.d("LeaderboardLoader", e.getMessage());
         }
         // Done!
         return result;

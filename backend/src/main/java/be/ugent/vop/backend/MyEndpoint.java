@@ -398,7 +398,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getLeaderboard")
-    public List<RankingBean> getLeaderboard(@Named("token") String token) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getLeaderboard(@Named("token") String token, @Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         List<RankingBean> leaderboard = new ArrayList<>();
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -409,19 +409,22 @@ public class MyEndpoint {
             long groupId = r.getKey().getId();
             int points = 0;
             GroupBean group = _getGroupBean(groupId);
-            rank.setGroupBean(group);
-            Query.Filter propertyFilter =
-                    new Query.FilterPredicate(CHECKIN_GROUP_ID,
-                            Query.FilterOperator.EQUAL,
-                            groupId);
-            q  = new Query(CHECKIN_ENTITY).setFilter(propertyFilter);
-            pq = datastore.prepare(q);
-            for (Entity s : pq.asIterable()) {
-                points += (int)s.getProperty(CHECKIN_POINTS);
+            //TODO: check for groupsize
+            if(group.getType()==groupType ) {
+                rank.setGroupBean(group);
+                Query.Filter propertyFilter =
+                        new Query.FilterPredicate(CHECKIN_GROUP_ID,
+                                Query.FilterOperator.EQUAL,
+                                groupId);
+                q = new Query(CHECKIN_ENTITY).setFilter(propertyFilter);
+                pq = datastore.prepare(q);
+                for (Entity s : pq.asIterable()) {
+                    points += (int) s.getProperty(CHECKIN_POINTS);
 
+                }
+                rank.setPoints(points);
+                leaderboard.add(rank);
             }
-            rank.setPoints(points);
-            leaderboard.add(rank);
         }
         return leaderboard;
     }
