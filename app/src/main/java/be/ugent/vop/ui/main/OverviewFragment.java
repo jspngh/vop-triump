@@ -17,10 +17,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.MapFragment;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.foursquare.FoursquareAPI;
+import be.ugent.vop.foursquare.FoursquareVenue;
 
 public class OverviewFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "OverviewFragment";
@@ -54,6 +57,7 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
         // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(new OverviewAdapter(null));
 
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -69,23 +73,26 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
             @Override
             protected OverviewBean doInBackground(Location... params) {
                 mLocation = params[0];
-                OverviewBean result = null;
+                ArrayList<FoursquareVenue> result = null;
+                result = FoursquareAPI.get(getActivity()).getNearbyVenues(mLocation);
+                ArrayList<String> venues = new ArrayList<>();
+                for(FoursquareVenue v : result){
+                    venues.add(v.getId());
+                }
+                OverviewBean overview = null;
                 try {
-                    result = BackendAPI.get(getActivity()).getOverview(mLocation);
-                    Log.d("overview", "" + result);
+                    overview = BackendAPI.get(getActivity()).getOverview(venues);
                 } catch (IOException e) {
-                    Log.d("overview", "receiving ERROR");
                     e.printStackTrace();
                 }
-                return result;
+                return overview;
             }
 
             @Override
             protected void onPostExecute(OverviewBean result) {
-                Log.d("overview", ""+result);
+                Log.d("overview", "" + result);
+                mRecyclerView.setAdapter(new OverviewAdapter(result));
                 super.onPostExecute(result);
-                mAdapter = new OverviewAdapter(result);
-                mRecyclerView.setAdapter(mAdapter);
             }
         }.execute(mLastLocation);
 

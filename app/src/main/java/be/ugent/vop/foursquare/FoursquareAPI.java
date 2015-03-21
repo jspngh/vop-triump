@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -18,17 +18,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import android.net.Uri;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
 import be.ugent.vop.R;
-import be.ugent.vop.database.MySQLiteHelper;
+import be.ugent.vop.database.VenueImageTable;
 import be.ugent.vop.database.VenueTable;
 import be.ugent.vop.database.contentproviders.VenueContentProvider;
 import be.ugent.vop.database.contentproviders.VenueImageContentProvider;
-import be.ugent.vop.database.VenueImageTable;
 
 public class FoursquareAPI {
 
@@ -124,7 +122,7 @@ public class FoursquareAPI {
                         VenueTable.COLUMN_LATITUDE,VenueTable.COLUMN_LONGITUDE};
         Cursor v = context.getContentResolver().query(venueUri, projection, null, null, null);
 
-        if(v.getCount()>=0){
+        if(v.getCount() > 0){
             v.moveToFirst();
             id = v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_VENUE_ID));
             city=v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_CITY));

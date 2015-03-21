@@ -76,7 +76,7 @@ public class MyEndpoint {
     private static final String VENUE_FIRST_CHECKIN= "firstCheckin";
     private static final String VENUE_ADMIN = "adminId";
     private static final String VENUE_VERIFIED = "verfied";
-    private static final String VENUE_ID = "VenueId";
+    private static final String VENUE_ID = "venueId";
 
     private static final String USERGROUP_ENTITY = "userGroup";
     private static final String USERGROUP_USER_ID = "userId";
@@ -482,17 +482,25 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getOverview", path = "getOverview")
-    public OverviewBean getOverview(@Named("token") String token, @Named("latitude") double latitude, @Named("longitude") double longitude) throws UnauthorizedException, EntityNotFoundException {
+    public OverviewBean getOverview(@Named("token") String token, @Named("venueIds") ArrayList<String> venueIds) throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         GroupsBean tmp = _getGroupsForUser(userId);
         GroupBean group = null;
         if(tmp.getGroups().size() != 0){
             group = _getGroupsForUser(userId).getGroups().get(0);
         }
-        VenuesBean venues = null ; //getNearbyVenues(token, latitude, longitude);
+        ArrayList<VenueBean> venues = new ArrayList<>();
+        VenueBean mVenueBean = null;
+        for(String venueId : venueIds){
+            try {
+                mVenueBean = _getVenueBean(venueId);
+                venues.add(mVenueBean);
+            }
+            catch(EntityNotFoundException e){}
+        }
         OverviewBean result = new OverviewBean();
         result.setGroup(group);
-        result.setVenues(null); //venues.getVenues());
+        result.setVenues(venues);
         return result;
     }
 
@@ -661,7 +669,7 @@ public class MyEndpoint {
     private UserBean _getUserBeanForId(String userId) throws EntityNotFoundException{
         UserBean bean = new UserBean();
         Entity user = null;
-        Key userKey = KeyFactory.createKey("User", userId);
+        Key userKey = KeyFactory.createKey(USER_ENTITY, userId);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         try {
             user = datastore.get(userKey);
@@ -672,7 +680,7 @@ public class MyEndpoint {
                     new Query.FilterPredicate("userId",
                             Query.FilterOperator.EQUAL,
                             userId);
-            Query q = new Query("User").setFilter(filter);
+            Query q = new Query(USER_ENTITY).setFilter(filter);
             PreparedQuery pq = datastore.prepare(q);
             for(Entity r: pq.asIterable()){
                 user = r;
@@ -763,7 +771,7 @@ public class MyEndpoint {
             venueEnt = datastore.get(keyVenue);
         } catch(EntityNotFoundException e){
             Query.Filter filter =
-                    new Query.FilterPredicate(VENUE_ID,
+                    new Query.FilterPredicate("venueId",
                             Query.FilterOperator.EQUAL,
                             venueId);
             Query q = new Query(VENUE_ENTITY).setFilter(filter);
