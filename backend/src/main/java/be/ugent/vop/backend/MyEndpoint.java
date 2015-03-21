@@ -741,6 +741,7 @@ public class MyEndpoint {
             ranking.add(groupRanking);
         }
 
+        sortRaningList(ranking);
         return ranking;
     }
 
@@ -798,6 +799,25 @@ public class MyEndpoint {
         VenueBean venue = _getVenueBean(venueEnt);
 
         return venue;
+    }
+
+    private void sortRaningList(List<RankingBean> l){
+        RankingBean temp;
+        int length = l.size();
+        if (length>1) // check if the number of orders is larger than 1
+        {
+            for (int x=0; x<length; x++) // bubble sort outer loop
+            {
+                for (int i=0; i < length-x-1; i++) {
+                    if (l.get(i).getPoints()<l.get(i+1).getPoints())
+                    {
+                        temp = l.get(i);
+                        l.set(i,l.get(i+1) );
+                        l.set(i+1, temp);
+                    }
+                }
+            }
+        }
     }
 
     // TODO: Again, do we still need this?
@@ -916,7 +936,7 @@ public class MyEndpoint {
             }
         }
 
-        // simple bubblesort
+
         public synchronized void select(MySelector f){
             ArrayList<VenueBean> newVenues = new ArrayList<>();
             for(VenueBean v:venues){
