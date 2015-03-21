@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
 /**
@@ -76,14 +75,14 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
             @Override
             public void onItemClick(View caller, int position) {
 
-                String venueId = venues.get(position).getId();
+                String fsVenueId = venues.get(position).getId();
                 Intent intent = new Intent(context, VenueActivity.class);
-                intent.putExtra(VenueActivity.VENUE_ID, venueId);
+                intent.putExtra(VenueActivity.VENUE_ID, fsVenueId);
 
                 context.startActivity(intent);
 
                 // TODO: Start new fragment showing details for this venue
-                Log.d("VenueListAdapter", "Showing details for venue " + venueId);
+                Log.d("VenueListAdapter", "Showing details for venue " + fsVenueId);
             }
         });
 

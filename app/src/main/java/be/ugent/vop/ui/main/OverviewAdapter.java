@@ -101,9 +101,9 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .inflate(R.layout.layout_card_venue, viewGroup, false);
 
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
-                if(overview.getVenues() == null) Log.d("Overview", "venues == null");
+                if(overview == null) Log.d("Overview", "overview == null");
                 if(overview != null && overview.getVenues() != null && overview.getVenues().get(0) != null) {
-                    mVenueViewHolder.info.setText(overview.getVenues().get(0).getName());
+                    mVenueViewHolder.info.setText(overview.getVenues().get(0).getVenueId());
                 }
 
                 return mVenueViewHolder;

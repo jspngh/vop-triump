@@ -24,7 +24,6 @@ import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.RankingBeanCollection;
 import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.backend.myApi.model.VenuesBean;
 
 public class BackendAPI {
     public static BackendAPI instance;
@@ -36,12 +35,9 @@ public class BackendAPI {
         if(instance == null){
             SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
             token = prefs.getString(context.getString(R.string.backendtoken), "N.A.");
-
-            Log.d("FUCK YOU", token);
-
+            Log.d("BACKEND TOKEN", token);
             instance = new BackendAPI();
         }
-
         return instance;
     }
 
@@ -64,7 +60,6 @@ public class BackendAPI {
                         }
                     });
             // end options for devappserver
-
             myApiService = builder.build();
         }
     }
@@ -87,8 +82,11 @@ public class BackendAPI {
         return myApiService.getAllGroups(token).execute();
     }
 
+    public VenueBean createVenue(String VenueId, boolean verified) throws IOException{
+        return myApiService.createVenue(token, VenueId, verified).execute();
+    }
 
-    public VenueBean getVenueInfo(long venueId) throws IOException {
+    public VenueBean getVenueInfo(String venueId) throws IOException {
         return myApiService.getVenueInfo(token, venueId).execute();
     }
 
@@ -100,12 +98,8 @@ public class BackendAPI {
         return myApiService.getGroupInfo(token, groupId).execute();
     }
 
-    public List<RankingBean> checkIn(long venueId, long groupId) throws IOException{
+    public List<RankingBean> checkIn(String venueId, long groupId) throws IOException{
         return myApiService.checkInVenue(token, venueId, groupId).execute().getItems();
-    }
-
-    public VenuesBean getNearbyVenues(Location loc) throws IOException{
-        return myApiService.getNearbyVenues(token, loc.getLatitude(), loc.getLongitude()).execute();
     }
 
     public OverviewBean getOverview(Location loc) throws IOException{
@@ -116,12 +110,11 @@ public class BackendAPI {
         return myApiService.getLeaderboard(token).execute();
     }
 
-    public List<RankingBean> getRankings(long venueId) throws IOException{
+    public List<RankingBean> getRankings(String venueId) throws IOException{
         return myApiService.getRankings(token, venueId).execute().getItems();
     }
 
     public GroupBean createGroup(String name, String description, String type) throws IOException{
         return myApiService.createGroup(token,  name, description, type).execute();
     }
-
 }

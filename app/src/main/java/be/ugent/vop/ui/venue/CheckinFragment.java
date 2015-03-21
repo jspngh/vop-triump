@@ -250,7 +250,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(venues.get(0).getLatitude(),
                                 venues.get(0).getLongitude()), 15));
                     }else{
-                        //Move to centrum of UGhent
+                        //Move to centrum of UGent
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.046127,
                                 3.727251), 15));
                     }

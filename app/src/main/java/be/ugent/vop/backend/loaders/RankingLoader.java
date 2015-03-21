@@ -24,13 +24,13 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>> implements
 
     private List<RankingBean> rankings;
     private Context context;
-    private long venueId;
+    private String VenueId;
 
 
-    public RankingLoader(Context context, long venueId) {
+    public RankingLoader(Context context, String fsVenueId) {
         super(context);
         this.context = context.getApplicationContext();
-        this.venueId = venueId;
+        this.VenueId = fsVenueId;
 
         //EventBroker.get().addListener(this);
     }
@@ -46,7 +46,7 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>> implements
         List<RankingBean> result = null;
 
         try{
-            result = BackendAPI.get(context).getRankings(venueId);
+            result = BackendAPI.get(context).getRankings(VenueId);
         } catch(IOException e){
             Log.d("AllGroupsLoader", e.getMessage());
         }

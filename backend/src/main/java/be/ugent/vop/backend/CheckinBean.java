@@ -9,7 +9,7 @@ public class CheckinBean {
         private Date date;
         private int points;
         private String userId;
-        private long venueId;
+        private String venueId;
         private long groupId;
 
         public void setDate(Date date){
@@ -28,7 +28,7 @@ public class CheckinBean {
             return this.points;
         }
 
-        public void setVenueId(long venueId){
+        public void setVenueId(String venueId){
             this.venueId = venueId;
         }
 
@@ -44,7 +44,7 @@ public class CheckinBean {
             return this.userId;
         }
 
-        public long getVenueId(){
+        public String getVenueId(){
             return this.venueId;
         }
 

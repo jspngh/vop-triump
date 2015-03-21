@@ -52,7 +52,7 @@ public class VenueFragment extends Fragment {
     private Spinner groupTypeSpinner;
     private Spinner groupSizeSpinner;
 
-    private long venueId;
+    private String fsVenueId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,9 +93,9 @@ public class VenueFragment extends Fragment {
         groupSizeSpinner.setAdapter(adapterSize);
 
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
-            venueId = getArguments().getLong(VenueActivity.VENUE_ID);
+            fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
 
-        Log.d("VenueFragment", "venueId :" + venueId);
+        Log.d("VenueFragment", "venueId :" + fsVenueId);
         //loader for venueInfo (to foursquare)
         getLoaderManager().initLoader(2, null, mVenueInfoLoaderListener);
         //loader for ranking (to backend)
@@ -169,7 +169,7 @@ public class VenueFragment extends Fragment {
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            RankingLoader loader = new RankingLoader(context, venueId);
+            RankingLoader loader = new RankingLoader(context, fsVenueId);
             return loader;
         }
 
@@ -224,7 +224,7 @@ public class VenueFragment extends Fragment {
             SharedPreferences settings = context.getSharedPreferences(getString(R.string.sharedprefs),Context.MODE_PRIVATE);
             long groupId = settings.getLong(getString(R.string.group_id), 0);
             if(groupId != 0) {
-                CheckInLoader loader = new CheckInLoader(context, venueId, groupId);
+                CheckInLoader loader = new CheckInLoader(context, fsVenueId, groupId);
                 return loader;
             }
             Log.d("Invalid LogIn", "Fail !");
@@ -269,7 +269,7 @@ public class VenueFragment extends Fragment {
         @Override
         public Loader<FoursquareVenue> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            VenueInfoLoader loader = new VenueInfoLoader(context, venueId);
+            VenueInfoLoader loader = new VenueInfoLoader(context, fsVenueId);
             return loader;
         }
 

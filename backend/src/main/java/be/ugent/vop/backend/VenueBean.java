@@ -3,119 +3,47 @@ package be.ugent.vop.backend;
 
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Lars on 19/02/15.
  */
 public class VenueBean {
-    public static String TYPE_RESTO = "Restaurant";
-    public static String TYPE_CAFE = "Cafe";
-    public static String TYPE_OTHER = "Other";
-
-    private long venueId;
     private String adminId;
-    //picture
-    private String city;
-    private String street;
-    private String houseNr;
-    private double longitude;
-    private double latitude;
-    private String type;
-    private String name;
-    private String description;
-    private Date created;
-    private List<RankingBean> ranking;
-    private double currentDistance;
 
-    public void setName(String name){
-        this.name = name;
-    }
+    private boolean verified;
+    private Date firstCheckin;
+    private String VenueId;
 
-    public String getName(){
-        return this.name;
-    }
-
-    public void setCurrentDistance(double currentDistance){
-           this.currentDistance = currentDistance;
-    }
-
-    public double getCurrentDistance(){
-        return this.currentDistance;
-    }
-
-    public void setAdminId(String adminId) {
-        this.adminId= adminId;
-    }
-
-    public void setCity(String city) {
-        this.city= city;
-    }
-
-    public void setStreet(String street) {
-        this.street= street;
-    }
-
-    public void setHouseNr(String houseNr) {
-        this.houseNr= houseNr;
-    }
-
-    public void setDescription(String description) {
-        this.description= description;
-    }
-
-    public void setCreated(Date createdDate){ this.created = createdDate; }
-
-    public void setType(String type){this.type = type;}
-
-    public void setLongitude(double longitude){ this.longitude = longitude;}
-
-    public void setLatitude(double latitude){ this.latitude = latitude;}
-
-    public String getType() { return this.type;}
-
-    public String getCity(){
-        return city;
-    }
-
-    public String getStreet(){
-        return street;
-    }
-
-    public String getHouseNr(){
-        return houseNr;
-    }
-
-    public String getDescription(){
-        return description;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public String getAdminId(){
+    public String getAdminId() {
         return adminId;
     }
 
-    public Date getCreated(){
-        return created;
+    public void setAdminId(String adminId) {
+        this.adminId = adminId;
     }
 
-    public void setVenueId(long venueId) {
-        this.venueId= venueId;
+    public boolean isVerified() {
+        return verified;
     }
 
-    public long getVenueId() { return venueId; }
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
 
-    public List<RankingBean> getRanking() {
-        return ranking;
+    public Date getFirstCheckin() {
+        return firstCheckin;
     }
-    public void setRanking(List<RankingBean> ranking) {
-        this.ranking= ranking;
+
+    public void setFirstCheckin(Date firstCheckin) {
+        this.firstCheckin = firstCheckin;
     }
+
+    public String getVenueId() {
+        return VenueId;
+    }
+
+    public void setVenueId(String VenueId) {
+        this.VenueId = VenueId;
+    }
+
 }

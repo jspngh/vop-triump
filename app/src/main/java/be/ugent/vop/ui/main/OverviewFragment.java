@@ -55,8 +55,8 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        Location mLastLocation = null;/*LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);*/
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
         if (mLastLocation == null) {
             mLastLocation = new Location("");
             mLastLocation.setLatitude(51.115789);

@@ -33,8 +33,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,16 +73,10 @@ public class MyEndpoint {
     private static final String CHECKIN_GROUP_ID = "groupId";
 
     private static final String VENUE_ENTITY = "Venue";
-    private static final String VENUE_CREATED= "created";
+    private static final String VENUE_FIRST_CHECKIN= "firstCheckin";
     private static final String VENUE_ADMIN = "adminId";
-    private static final String VENUE_NAME = "name";
-    private static final String VENUE_CITY = "city";
-    private static final String VENUE_STREET = "street";
-    private static final String VENUE_HOUSE = "house_nr";
-    private static final String VENUE_DESCR = "description";
-    private static final String VENUE_LAT = "latitude";
-    private static final String VENUE_LONG = "longitude";
-    private static final String VENUE_TYPE = "type";
+    private static final String VENUE_VERIFIED = "verfied";
+    private static final String VENUE_ID = "VenueId";
 
     private static final String USERGROUP_ENTITY = "userGroup";
     private static final String USERGROUP_USER_ID = "userId";
@@ -140,22 +132,14 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "createVenue")
-    public VenueBean createVenue( @Named("token") String token,@Named("name") String name, @Named("city") String city, @Named("street") String street,
-                                  @Named("housenr") String housenr,@Named("latitude") double latitude,@Named("longitude") double longitude,
-                                  @Named("description") String description, @Named("type") String type ) throws UnauthorizedException{
+    public VenueBean createVenue( @Named("token") String token, @Named("VenueId") String VenueId, @Named("verified") boolean verified) throws UnauthorizedException{
 
         String adminId = _getUserIdForToken(token);
-        Entity venue = new Entity(VENUE_ENTITY);
-        venue.setProperty(VENUE_CREATED, new Date());
+        Entity venue = new Entity(VENUE_ENTITY, VenueId);
+        venue.setProperty(VENUE_ID, VenueId);
         venue.setProperty(VENUE_ADMIN, adminId);
-        venue.setProperty(VENUE_NAME, name);
-        venue.setProperty(VENUE_CITY, city);
-        venue.setProperty(VENUE_STREET, street);
-        venue.setProperty(VENUE_HOUSE, housenr);
-        venue.setProperty(VENUE_DESCR, description);
-        venue.setProperty(VENUE_LAT, latitude);
-        venue.setProperty(VENUE_LONG, longitude);
-        venue.setProperty(VENUE_TYPE, type);
+        venue.setProperty(VENUE_FIRST_CHECKIN, new Date());
+        venue.setProperty(VENUE_VERIFIED, verified);
 
         //TODO: check if venue is valid before adding in db
 
@@ -178,11 +162,11 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getVenueInfo")
-    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") long venueId) throws UnauthorizedException, EntityNotFoundException {
+    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         VenueBean response = null;
         response = _getVenueBean(venueId);
-        return _orderVenueBean(response);
+        return response;
     }
 
     @ApiMethod(name = "getGroupsForUser")
@@ -230,7 +214,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") long venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         _checkInVenue(userId, groupId, venueId);
         return _getRankings(venueId);
@@ -430,11 +414,11 @@ public class MyEndpoint {
             dist = distance(latitude,longitude,latitude2,longitude2);
             if(dist<maxDistance){
                 venue = _getVenueBean(r);
-                venue.setCurrentDistance(dist);
                 venues.add(venue);
             }
         }
         VenueArrayList venueArrayList =  new VenueArrayList(venues);
+/*
 
         venueArrayList.sort(new MyComparator<VenueBean>() {
             public boolean compare(VenueBean venue1, VenueBean venue2) {
@@ -455,6 +439,7 @@ public class MyEndpoint {
                 return venue1_pointsRatio+venue1_distRatio*3.0 > venue2_pointsRatio+venue2_distRatio*3.0;
             }
         });
+*/
 
         result.setVenues(venueArrayList.getVenues());
 
@@ -491,14 +476,10 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getRankings", path = "getRankings")
-    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") long venueId) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         return _getRankings(venueId);
     }
-
-    /************************
-     * Overview methods
-     **************************/
 
     @ApiMethod(name = "getOverview", path = "getOverview")
     public OverviewBean getOverview(@Named("token") String token, @Named("latitude") double latitude, @Named("longitude") double longitude) throws UnauthorizedException, EntityNotFoundException {
@@ -508,10 +489,10 @@ public class MyEndpoint {
         if(tmp.getGroups().size() != 0){
             group = _getGroupsForUser(userId).getGroups().get(0);
         }
-        VenuesBean venues = getNearbyVenues(token, latitude, longitude);
+        VenuesBean venues = null ; //getNearbyVenues(token, latitude, longitude);
         OverviewBean result = new OverviewBean();
         result.setGroup(group);
-        result.setVenues(venues.getVenues());
+        result.setVenues(null); //venues.getVenues());
         return result;
     }
 
@@ -533,7 +514,7 @@ public class MyEndpoint {
         return userId;
     }
 
-    private void _registerUserInGroup(String userId, long groupId) throws EntityNotFoundException{
+    private void _registerUserInGroup(String userId, long groupId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         GroupsBean groups = _getGroupsForUser(userId);
@@ -577,7 +558,7 @@ public class MyEndpoint {
         datastore.put(userGroup);
     }
 
-    private CheckinBean _checkInVenue(String userId, long groupId, long venueId){
+    private CheckinBean _checkInVenue(String userId, long groupId, String venueId){
 
         //TODO: check if checkin is valid?
         // - niet te snel na elkaar?
@@ -667,7 +648,7 @@ public class MyEndpoint {
     private CheckinBean _getCheckinBean(Entity checkin) {
 
         CheckinBean checkinbean = new CheckinBean();
-        checkinbean.setVenueId((Long)checkin.getProperty("venueId"));
+        checkinbean.setVenueId((String)checkin.getProperty("venueId"));
         checkinbean.setGroupId((Long) checkin.getProperty("groupId"));
         checkinbean.setUserId((String) checkin.getProperty("userId"));
         //  checkinbean.setPoints(((Integer) checkin.getProperty("points")).intValue());
@@ -727,7 +708,7 @@ public class MyEndpoint {
         return result;
     }
 
-    private List<RankingBean> _getRankings(long venueId){
+    private List<RankingBean> _getRankings(String venueId){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         List<RankingBean> ranking = new ArrayList<RankingBean>();
 
@@ -774,11 +755,26 @@ public class MyEndpoint {
     // Note: Ranking in VenueBean is not sorted.
 
     // TODO: Do we still need this?
-    private VenueBean _getVenueBean(long venueId) throws EntityNotFoundException{
+    private VenueBean _getVenueBean(String venueId) throws EntityNotFoundException{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        Key keyVenue = KeyFactory.createKey("Venue", venueId);
-        Entity venueEnt = datastore.get(keyVenue);
+        Entity venueEnt = null;
+        Key keyVenue = KeyFactory.createKey(VENUE_ENTITY, venueId);
+        try {
+            venueEnt = datastore.get(keyVenue);
+        } catch(EntityNotFoundException e){
+            Query.Filter filter =
+                    new Query.FilterPredicate(VENUE_ID,
+                            Query.FilterOperator.EQUAL,
+                            venueId);
+            Query q = new Query(VENUE_ENTITY).setFilter(filter);
+            PreparedQuery pq = datastore.prepare(q);
+            for(Entity r: pq.asIterable()){
+                venueEnt = r;
+            }
+            if(venueEnt==null){
+                throw new EntityNotFoundException(keyVenue);
+            }
+        }
         VenueBean venue = _getVenueBean(venueEnt);
 
         return venue;
@@ -787,21 +783,13 @@ public class MyEndpoint {
     // TODO: Again, do we still need this?
     private VenueBean _getVenueBean(Entity venue) {
         VenueBean venue2 = new VenueBean();
-        long venueId  = venue.getKey().getId();
 
-        venue2.setVenueId(venue.getKey().getId());
-        venue2.setCreated((Date) venue.getProperty("created"));
-        venue2.setName((String) venue.getProperty("name"));
-        venue2.setAdminId((String) venue.getProperty("adminId"));
-        venue2.setCity((String) venue.getProperty("city"));
-        venue2.setStreet((String) venue.getProperty("street"));
-        venue2.setHouseNr((String) venue.getProperty("housenr"));
-        venue2.setDescription((String) venue.getProperty("description"));
-        venue2.setLatitude((Double) venue.getProperty("latitude"));
-        venue2.setLongitude((Double) venue.getProperty("longitude"));
-        venue2.setType((String) venue.getProperty("type"));
+        venue2.setVenueId((String) venue.getProperty(VENUE_ID));
+        venue2.setAdminId((String) venue.getProperty(VENUE_ADMIN));
+        venue2.setVerified((boolean) venue.getProperty(VENUE_VERIFIED));
+        venue2.setFirstCheckin((Date) venue.getProperty(VENUE_FIRST_CHECKIN));
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+/*        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         RankingBean rank = null;
         List<RankingBean> ranking = new ArrayList<RankingBean>();
         Query.Filter filter2;
@@ -841,27 +829,10 @@ public class MyEndpoint {
             }
         }
 
-        venue2.setRanking(ranking);
+        venue2.setRanking(ranking);*/
 
         return venue2;
     }
-
-    private VenueBean _orderVenueBean(VenueBean venue) {
-        List<RankingBean> ranking = venue.getRanking();
-        Collections.sort(ranking, comparator);
-        venue.setRanking(ranking);
-        return venue;
-    }
-
-    private static Comparator<RankingBean> comparator = new Comparator<RankingBean>() {
-
-        public int compare(RankingBean bean1, RankingBean bean2) {
-            if(bean1.getPoints() < bean2.getPoints()) return -1;
-            else if(bean1.getPoints() == bean2.getPoints()) return 0;
-            else return 1;
-        }
-
-    };
 
     // Calculates distance between 2 coordinates
     // param latitude and longitude in degrees
