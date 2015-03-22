@@ -20,6 +20,7 @@ import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponseFB;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.GroupsBean;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.RankingBeanCollection;
@@ -80,6 +81,10 @@ public class BackendAPI {
 
     public AllGroupsBean getAllGroups() throws IOException{
         return myApiService.getAllGroups(token).execute();
+    }
+
+    public GroupsBean getGroupsForUser() throws IOException{
+        return myApiService.getGroupsForUser(token).execute();
     }
 
     public VenueBean createVenue(String VenueId, boolean verified) throws IOException{

@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 
@@ -103,8 +104,10 @@ public class VenueFragment extends Fragment {
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(getLoaderManager().getLoader(1)==null)
                 getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
-                getLoaderManager().restartLoader(0,null,mCheckInLoaderListener);
+                else
+                getLoaderManager().restartLoader(1, null, mCheckInLoaderListener);
             }
         });
 
@@ -210,7 +213,7 @@ public class VenueFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<List<RankingBean>> loader) {
-            rankingListView.setAdapter(null);
+            //rankingListView.setAdapter(null);
         }
 
 
@@ -246,6 +249,11 @@ public class VenueFragment extends Fragment {
                 });
 
                 adapter.notifyDataSetChanged();
+                if( rankingListView.getVisibility()==View.INVISIBLE){
+                    rankingListView.setVisibility(View.VISIBLE);
+                    Toast t = Toast.makeText(getActivity(),"Congrats! You just scored the first points at this venue.",Toast.LENGTH_SHORT);
+                    t.show();
+                }
             }else{
              //   noRankingTextView.setText(R.string.no_ranking);
             }

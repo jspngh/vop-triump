@@ -124,7 +124,7 @@ public class FoursquareAPI {
                         VenueTable.COLUMN_LATITUDE,VenueTable.COLUMN_LONGITUDE};
         Cursor v = context.getContentResolver().query(venueUri, projection, null, null, null);
 
-        if(v.getCount()>=0){
+        if(v.getCount()>0){
             v.moveToFirst();
             id = v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_VENUE_ID));
             city=v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_CITY));
@@ -201,6 +201,73 @@ public class FoursquareAPI {
         }
     }
 
+    public ArrayList<FoursquareVenue> searchVenues(double latitude, double longitude, int radius, String query)  {
+
+        String url =API_URL + "/venues/search?ll=" + latitude +","+longitude +"&radius="+radius+"&query="+query+"&oauth_token="+ FSQToken + "&v=" + VERSION+ "&m=" + MODE;
+        //Log.d("FoursquareAPI", url);
+        ArrayList<FoursquareVenue> venueList = new ArrayList<>();
+
+        try {
+            String response = request(url);
+            JSONObject obj = new JSONObject(response);
+            if((obj.getJSONObject("meta").getInt("code"))==200){
+
+                JSONArray venues = obj.getJSONObject("response").getJSONArray("venues");
+
+                int numVenues = venues.length();
+                for (int i = 0; i < numVenues; i++) {
+                    JSONObject venue = venues.getJSONObject(i);
+                    String id = "no id available";
+                    String city="no city info available";
+                    String name="no name info available";
+                    String address="no address available";
+                    String country="no country info available";
+                    boolean verified = false;
+                    double lon=-1;
+                    double lat=-1;
+
+                    if(venue.has("id")) id = venue.getString("id");
+                    if(venue.has("name")) name = venue.getString("name");
+                    if(venue.has("verified")) verified = venue.getBoolean("verified");
+
+                    JSONObject location = venue.getJSONObject("location");
+
+                    if(location.has("lng")) lon = location.getDouble("lng");
+                    if(location.has("lat")) lat = location.getDouble("lat");
+
+
+                    if(location.has("address"))  address = location.getString("address");
+                    if(location.has("city"))  city = location.getString("city");
+                    if(location.has("country"))  country = location.getString("country");
+
+                    FoursquareVenue foursquareVenue =
+                            new FoursquareVenue(id,name,address,city,country,lon,lat,verified);
+                    foursquareVenue.setPhotos(getPhotos(foursquareVenue));
+
+                    // only adds verified venues.
+                    if(true || foursquareVenue.isVerified()) {
+                        venueList.add(foursquareVenue);
+                        saveVenue(foursquareVenue);
+                    }
+
+                }
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(DEBUG){
+            String s = "size: "+venueList.size()+" ";
+            for(FoursquareVenue v:venueList){
+                s+=v.toString();
+            }
+            //Log.d("FoursquareAPI",s);
+        }
+        return venueList;
+    }
+
+
     //only returns verified venues
     public ArrayList<FoursquareVenue> getNearbyVenues(double latitude, double longitude, int limit, int radius)  {
 
@@ -246,7 +313,7 @@ public class FoursquareAPI {
                         foursquareVenue.setPhotos(getPhotos(foursquareVenue));
 
                         // only adds verified venues.
-                        if(foursquareVenue.isVerified()) {
+                        if(true || foursquareVenue.isVerified()) {
                             venueList.add(foursquareVenue);
                             saveVenue(foursquareVenue);
                         }

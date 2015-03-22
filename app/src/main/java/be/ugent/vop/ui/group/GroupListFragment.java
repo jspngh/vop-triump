@@ -21,12 +21,13 @@ import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.AllGroupsLoader;
+import be.ugent.vop.backend.loaders.GroupsForUserLoader;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.GroupsBean;
 
 
-
-public class GroupListFragment extends Fragment implements LoaderManager.LoaderCallbacks<AllGroupsBean>, android.widget.SearchView.OnQueryTextListener {
+public class GroupListFragment extends Fragment implements LoaderManager.LoaderCallbacks<GroupsBean>, android.widget.SearchView.OnQueryTextListener {
     private static final String TAG = "CheckinFragment";
 
     protected GroupListFragment mFragment;
@@ -128,14 +129,18 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public Loader<AllGroupsBean> onCreateLoader(int id, Bundle bundle) {
+    public Loader<GroupsBean> onCreateLoader(int id, Bundle bundle) {
         Log.d(TAG, "onCreateLoader");
-        return new AllGroupsLoader(getActivity());
+        return new GroupsForUserLoader(getActivity());
 
     }
 
     @Override
-    public void onLoadFinished(Loader<AllGroupsBean> objectLoader, AllGroupsBean allGroupsBean) {
+    /*
+    Note:
+    Adjusted Loader to only load the groups where the user is a member
+     */
+    public void onLoadFinished(Loader<GroupsBean> objectLoader, GroupsBean allGroupsBean) {
         Log.d(TAG, "onLoadFinished");
         /**************************************
          Resultaat kan null zijn
@@ -155,7 +160,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public void onLoaderReset(Loader<AllGroupsBean> objectLoader) {
+    public void onLoaderReset(Loader<GroupsBean> objectLoader) {
         mRecyclerView.setAdapter(null);
     }
 
