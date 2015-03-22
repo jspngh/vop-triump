@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import be.ugent.vop.R;
 
 public class ProfileFragment extends Fragment {
@@ -64,10 +66,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-/*        Ion.with(profilePic)
+        Ion.with(profilePic)
                 .placeholder(R.drawable.ic_launcher)
                 .error(R.drawable.ic_drawer_logout)
-                .load("http://fc06.deviantart.net/fs70/f/2012/115/2/0/diablo_3__demon_hunter_by_go_maxpower-d4xiwg1.jpg");*/
+                .load("http://fc06.deviantart.net/fs70/f/2012/115/2/0/diablo_3__demon_hunter_by_go_maxpower-d4xiwg1.jpg");
     }
 
     public interface OnFragmentInteractionListener {

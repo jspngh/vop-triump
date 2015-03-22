@@ -42,8 +42,6 @@ public class MainActivity extends BaseActivity {
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
 
-        NetworkController.make(this);
-
         this.startService(new Intent(this, LocationService.class));
 
         if (mSlidingTabLayout != null) {
@@ -69,6 +67,19 @@ public class MainActivity extends BaseActivity {
 
         registerHideableHeaderView(findViewById(R.id.toolbar_actionbar));
         overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        this.registerReceiver(NetworkController.get(this), NetworkController.make());
+
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        this.unregisterReceiver(NetworkController.get(this));
     }
 
     @Override
@@ -102,13 +113,6 @@ public class MainActivity extends BaseActivity {
         public CharSequence getPageTitle(int position) {
             return getResources().getStringArray(R.array.main_tabs)[position];
         }
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        NetworkController.get().unregister(this);
-
     }
 
 }

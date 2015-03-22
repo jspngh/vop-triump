@@ -455,13 +455,14 @@ public class MyEndpoint {
         PreparedQuery pq_groups = datastore.prepare(q_groups);
         Query q_checkins;
         PreparedQuery pq_checkins;
+        CheckinBean checkin;
         for (Entity r : pq_groups.asIterable()){
             RankingBean rank = new RankingBean();
             long groupId = r.getKey().getId();
             int points = 0;
             GroupBean group = _getGroupBean(groupId);
             //TODO: check for groupsize
-            if(group.getType()==groupType||groupType==GroupBean.GROUP_TYPE_ALL) {
+            if(group.getType().equals(groupType)||groupType.equals(GroupBean.GROUP_TYPE_ALL)) {
                 rank.setGroupBean(group);
                 Query.Filter propertyFilter =
                         new Query.FilterPredicate(CHECKIN_GROUP_ID,
@@ -469,8 +470,10 @@ public class MyEndpoint {
                                 groupId);
                 q_checkins = new Query(CHECKIN_ENTITY).setFilter(propertyFilter);
                 pq_checkins = datastore.prepare(q_checkins);
+
                 for (Entity s : pq_checkins.asIterable()) {
-                    points += (int) s.getProperty(CHECKIN_POINTS);
+                    checkin = _getCheckinBean(s);
+                    points += checkin.getPoints();
 
                 }
                 rank.setPoints(points);

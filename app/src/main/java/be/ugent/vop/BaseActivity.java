@@ -51,6 +51,7 @@ import java.util.ArrayList;
 
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
+import be.ugent.vop.ui.login.ProfileFragment;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.LUtils;
 
@@ -388,8 +389,13 @@ public abstract class BaseActivity extends ActionBarActivity {
                 finish();
                 break;
             case NAVDRAWER_ITEM_LOGOUT:
+                //temporarily make this go to profile
                 intent = new Intent(this, LoginActivity.class);
-                intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
+                intent.putExtra(getString(R.string.profile), ProfileFragment.PROFILE_ACTIVITY);
+                SharedPreferences prefs = this.getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+                String userId = prefs.getString(getString(R.string.userid), "N.A.");
+                intent.putExtra(ProfileFragment.USER_ID, userId);
+                //intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
                 startActivity(intent);
                 finish();
                 break;

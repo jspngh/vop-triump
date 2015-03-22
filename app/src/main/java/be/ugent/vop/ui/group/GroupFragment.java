@@ -4,18 +4,13 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
-import android.content.SharedPreferences;
-import android.database.DataSetObserver;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,10 +19,10 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.myApi.model.GroupBean;
-import be.ugent.vop.backend.myApi.model.UserBean;
 import be.ugent.vop.backend.loaders.GroupBeanLoader;
 import be.ugent.vop.backend.loaders.JoinGroupLoader;
+import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.UserBean;
 
 public class GroupFragment extends Fragment {
     private ImageView groupImageView;
@@ -138,7 +133,7 @@ public class GroupFragment extends Fragment {
                 for (UserBean user : response.getMembers()) {
                     members.add(user.getFirstName() + " " + user.getLastName());
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, members );
+                ArrayAdapter<String> adapter = new ArrayAdapter<>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, members );
                 membersView.setAdapter(adapter);
             }
         }

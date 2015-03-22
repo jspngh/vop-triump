@@ -14,10 +14,12 @@ import android.widget.Toast;
 public class NetworkController extends BroadcastReceiver {
     private static NetworkController instance;
     private boolean connection;
+    private Context context;
 
     private NetworkController(Context context){
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        context.registerReceiver(this, filter);
+        this.context = context;
+        //IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        //context.registerReceiver(this, filter);
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -25,17 +27,14 @@ public class NetworkController extends BroadcastReceiver {
         connection = (networkInfo != null && networkInfo.isConnected());
     }
 
-    public void unregister(Context context){
-        context.unregisterReceiver(this);
+    public static IntentFilter make(){
+        return new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     }
 
-    public static void make(Context context){
-        if(instance==null){
-            instance = new NetworkController((context));
+    public static NetworkController get(Context context){
+        if(instance == null){
+            instance = new NetworkController(context);
         }
-    }
-
-    public static NetworkController get(){
         return instance;
     }
 

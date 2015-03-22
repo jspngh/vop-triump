@@ -113,7 +113,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
 
         });
 
-
         return rootView;
     }
 

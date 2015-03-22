@@ -58,7 +58,7 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
         // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(new OverviewAdapter(null, null));
+        mRecyclerView.setAdapter(new OverviewAdapter(null, null, null));
 
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -109,10 +109,7 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
             @Override
             protected void onPostExecute(OverviewBean result) {
                 Log.d("overview", "" + result);
-                if(result != null && (result.getVenues() == null || result.getVenues().size() < 3))
-                    mRecyclerView.setAdapter(new OverviewAdapter(result, fsVenues));
-                else
-                    mRecyclerView.setAdapter(new OverviewAdapter(result, null));
+                mRecyclerView.setAdapter(new OverviewAdapter(result, fsVenues, getActivity()));
                 super.onPostExecute(result);
             }
         }.execute(mLastLocation);
