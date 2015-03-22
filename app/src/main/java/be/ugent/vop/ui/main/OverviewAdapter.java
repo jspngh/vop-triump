@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -54,19 +55,36 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         protected TextView venue_1_info;
         protected TextView venue_2_info;
         protected TextView venue_3_info;
+        protected TextView venue_1_name;
+        protected TextView venue_2_name;
+        protected TextView venue_3_name;
+        protected ImageView icon1;
+        protected ImageView icon2;
+        protected ImageView icon3;
 
         public VenueViewHolder(View v) {
             super(v);
             venue_1_info = (TextView) v.findViewById(R.id.venue_1_info);
             venue_2_info = (TextView) v.findViewById(R.id.venue_2_info);
             venue_3_info = (TextView) v.findViewById(R.id.venue_3_info);
+            venue_1_name = (TextView) v.findViewById(R.id.venue_1_name);
+            venue_2_name = (TextView) v.findViewById(R.id.venue_2_name);
+            venue_3_name = (TextView) v.findViewById(R.id.venue_3_name);
+            icon1 = (ImageView) v.findViewById(R.id.icon1);
+            icon2 = (ImageView) v.findViewById(R.id.icon2);
+            icon3 = (ImageView) v.findViewById(R.id.icon3);
         }
     }
     public static class GroupViewHolder extends RecyclerView.ViewHolder {
-        protected TextView info;
+        protected TextView group_info;
+        protected TextView group_name;
+        protected ImageView icon;
+
         public GroupViewHolder(View v) {
             super(v);
-            info = (TextView) v.findViewById(R.id.group_info);
+            group_info = (TextView) v.findViewById(R.id.group_info);
+            group_name = (TextView) v.findViewById(R.id.group_name);
+            icon = (ImageView) v.findViewById(R.id.icon);
         }
     }
     public static class EventViewHolder extends RecyclerView.ViewHolder {
@@ -101,7 +119,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .inflate(R.layout.layout_card_group, viewGroup, false);
                 GroupViewHolder mGroupViewHolder = new GroupViewHolder(v);
                 if(overview != null && overview.getGroup() != null) {
-                    mGroupViewHolder.info.setText(overview.getGroup().getName());
+                    mGroupViewHolder.group_name.setText(overview.getGroup().getName());
                 }
 
                 return mGroupViewHolder;
@@ -112,9 +130,9 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
                 if(fsVenues != null && fsVenues.size() > 2){
-                    mVenueViewHolder.venue_1_info.setText(fsVenues.get(0).getName());
-                    mVenueViewHolder.venue_2_info.setText(fsVenues.get(1).getName());
-                    mVenueViewHolder.venue_3_info.setText(fsVenues.get(2).getName());
+                    mVenueViewHolder.venue_1_name.setText(fsVenues.get(0).getName());
+                    mVenueViewHolder.venue_2_name.setText(fsVenues.get(1).getName());
+                    mVenueViewHolder.venue_3_name.setText(fsVenues.get(2).getName());
                 }
 
                 return mVenueViewHolder;

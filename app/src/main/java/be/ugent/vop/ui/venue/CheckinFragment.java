@@ -108,7 +108,7 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
                 //if(state == RecyclerView.SCROLL_STATE_DRAGGING){
-                Log.d(TAG, "Vertical scroll: " + dy);
+                //Log.d(TAG, "Vertical scroll: " + dy);
                     mRecyclerView.animate().translationY(dy);
                 //}
             }

@@ -169,9 +169,10 @@ public class FoursquareAPI {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             //Log.d(TAG, "getVenueInfo: loaded venue from foursquare");
         }
-
+        v.close();
         FoursquareVenue venue = new FoursquareVenue(id,name,address,city,country,lon,lat,verified);
         venue.setPhotos(getPhotos(venue));
         return venue;
@@ -199,6 +200,7 @@ public class FoursquareAPI {
         else{
             //Log.d(TAG,"venue "+venue.getId()+" already in db.");
         }
+        v.close();
     }
 
     //only returns verified venues
@@ -246,10 +248,10 @@ public class FoursquareAPI {
                         foursquareVenue.setPhotos(getPhotos(foursquareVenue));
 
                         // only adds verified venues.
-                        if(foursquareVenue.isVerified()) {
+                        //if(foursquareVenue.isVerified()) {
                             venueList.add(foursquareVenue);
                             saveVenue(foursquareVenue);
-                        }
+                        //}
 
                     }
                 }
