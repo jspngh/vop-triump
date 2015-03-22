@@ -16,6 +16,9 @@
 
 package be.ugent.vop.ui.main;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +32,8 @@ import java.util.ArrayList;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.ui.group.GroupActivity;
+import be.ugent.vop.ui.venue.VenueActivity;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
@@ -40,11 +45,13 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int EVENT_CARD = 2;
     private OverviewBean overview;
     private ArrayList<FoursquareVenue> fsVenues;
+    private Context context;
 
-    public OverviewAdapter(OverviewBean overview, ArrayList<FoursquareVenue> fsVenues){
+    public OverviewAdapter(OverviewBean overview, ArrayList<FoursquareVenue> fsVenues, Context context){
         super();
         this.overview = overview;
         this.fsVenues = fsVenues;
+        this.context = context;
     }
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
@@ -120,6 +127,16 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 GroupViewHolder mGroupViewHolder = new GroupViewHolder(v);
                 if(overview != null && overview.getGroup() != null) {
                     mGroupViewHolder.group_name.setText(overview.getGroup().getName());
+                    mGroupViewHolder.group_name.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Bundle bundle = new Bundle();
+                            bundle.putLong("groupId", overview.getGroup().getGroupId());
+                            Intent intent = new Intent(context, GroupActivity.class);
+                            intent.putExtras(bundle);
+                            context.startActivity(intent);
+                        }
+                    });
                 }
 
                 return mGroupViewHolder;
@@ -131,8 +148,35 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
                 if(fsVenues != null && fsVenues.size() > 2){
                     mVenueViewHolder.venue_1_name.setText(fsVenues.get(0).getName());
+                    mVenueViewHolder.venue_1_name.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, VenueActivity.class);
+                            intent.putExtra(VenueActivity.VENUE_ID, fsVenues.get(0).getId());
+
+                            context.startActivity(intent);
+                        }
+                    });
                     mVenueViewHolder.venue_2_name.setText(fsVenues.get(1).getName());
+                    mVenueViewHolder.venue_2_name.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, VenueActivity.class);
+                            intent.putExtra(VenueActivity.VENUE_ID, fsVenues.get(1).getId());
+
+                            context.startActivity(intent);
+                        }
+                    });
                     mVenueViewHolder.venue_3_name.setText(fsVenues.get(2).getName());
+                    mVenueViewHolder.venue_3_name.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, VenueActivity.class);
+                            intent.putExtra(VenueActivity.VENUE_ID, fsVenues.get(2).getId());
+
+                            context.startActivity(intent);
+                        }
+                    });
                 }
 
                 return mVenueViewHolder;
