@@ -40,7 +40,7 @@ public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
         Log.d("LeaderboardLoader", "");
         List<RankingBean> result = null;
         try{
-            result = (BackendAPI.get(context).getLeaderboard(groupSize,groupType).getItems());
+            result = (BackendAPI.get(context).getLeaderboard(groupSize,groupType));
         } catch(IOException e){
             Log.d("LeaderboardLoader", e.getMessage());
         }

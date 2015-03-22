@@ -107,8 +107,8 @@ public class BackendAPI {
         return myApiService.getOverview(token, venues).execute();
     }
 
-    public RankingBeanCollection getLeaderboard(String groupSize, String groupType) throws IOException{
-        return myApiService.getLeaderboard(token,groupSize,groupType).execute();
+    public List<RankingBean> getLeaderboard(String groupSize, String groupType) throws IOException{
+        return myApiService.getLeaderboard(token,groupSize,groupType).execute().getItems();
     }
 
     public List<RankingBean> getRankings(String venueId, String groupSize, String groupType) throws IOException{
