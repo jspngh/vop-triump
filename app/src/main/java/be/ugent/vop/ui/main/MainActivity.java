@@ -80,6 +80,7 @@ public class MainActivity extends BaseActivity {
     public void onPause(){
         super.onPause();
         this.unregisterReceiver(NetworkController.get(this));
+
     }
 
     @Override

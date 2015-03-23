@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Make your own event"
+        android:id="@+id/textView"
+        android:paddingBottom="25dp"
+        android:paddingTop="10dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextDescription"
+        android:paddingTop="5dp"
+        android:autoText="false"
+        android:hint="Short Description" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextReward"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="5dp"
+        android:hint="Reward" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextStartDate"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="5dp"
+        android:hint="Startdate [YYYY-MM-DD HH:MM:SS]" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextEndDate"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="5dp"
+        android:hint="Enddate [YYYY-MM-DD HH:MM:SS]" />
+
+  <!--  <TimePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timePickerStart"
+        android:layout_gravity="center_horizontal" />
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/datePickerStart" />
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/datePickerEnd" />
+
+    <TimePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timePickerEnd"
+        android:layout_gravity="right" />-->
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="50dp">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="171dp"
+        android:layout_height="fill_parent"
+        android:id="@+id/checkboxSizeContainer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select applicable group sizes"
+            android:id="@+id/textView2" />
+
+        <CheckBox android:id="@+id/checkboxSizeAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox android:id="@+id/checkboxSizeIndividual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Individual"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox android:id="@+id/checkboxSizeSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Small"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox android:id="@+id/checkboxSizeMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medium"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox android:id="@+id/checkboxSizeLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Large"
+            android:onClick="onCheckboxClicked"/>
+    </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:id="@+id/checkboxTypeContainer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select applicable group types"
+                android:id="@+id/textView3" />
+
+            <CheckBox android:id="@+id/checkboxTypeAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                android:onClick="onCheckboxClicked"/>
+            <CheckBox android:id="@+id/checkboxTypeFriends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friends"
+                android:onClick="onCheckboxClicked"/>
+            <CheckBox android:id="@+id/checkboxTypeClub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Club"
+                android:onClick="onCheckboxClicked"/>
+            <CheckBox android:id="@+id/checkboxTypeStudentGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Studentgroup"
+                android:onClick="onCheckboxClicked"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Event"
+        android:id="@+id/buttonCreateEvent"
+        android:layout_gravity="center_horizontal"/>
+
+
+</LinearLayout>

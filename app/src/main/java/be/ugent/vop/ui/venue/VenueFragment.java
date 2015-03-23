@@ -35,6 +35,7 @@ import be.ugent.vop.backend.loaders.VenueInfoLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.ui.Event.EventFragment;
 import be.ugent.vop.ui.group.GroupActivity;
 
 
@@ -46,6 +47,7 @@ public class VenueFragment extends Fragment {
     private TextView titleTextView;
     private ImageView venueImageView;
     private Button checkinButton;
+    private Button newEventButton;
     private RankingAdapter adapter;
     private List<RankingBean> ranking;
     private ListView rankingListView;
@@ -72,7 +74,7 @@ public class VenueFragment extends Fragment {
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
-
+        newEventButton = (Button) rootView.findViewById(R.id.buttonNewEvent);
 
         /**
          *
@@ -180,7 +182,16 @@ public class VenueFragment extends Fragment {
 
         });
 
-
+        newEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventFragment fragment = new EventFragment();
+                getActivity().getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .commit();
+            }
+        });
 
         return rootView;
     }
