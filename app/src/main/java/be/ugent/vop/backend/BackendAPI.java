@@ -17,13 +17,11 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
-import be.ugent.vop.backend.myApi.model.AuthTokenResponseFB;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.GroupsBean;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.RankingBeanCollection;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 
 public class BackendAPI {
@@ -68,11 +66,6 @@ public class BackendAPI {
     public AuthTokenResponse getAuthToken(String fsUserId, String fsToken) throws IOException {
         Log.d("FUCK AUTH TOKEN", fsToken + fsUserId);
         return myApiService.getAuthToken(fsUserId,fsToken).execute();
-    }
-
-    public AuthTokenResponseFB getAuthTokenFB(String fbUserId, String fbToken) throws IOException {
-        Log.d("FUCK AUTH TOKEN", fbToken + fbUserId);
-        return myApiService.getAuthTokenFB(fbUserId,fbToken).execute();
     }
 
     public CloseSessionResponse close() throws IOException {

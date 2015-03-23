@@ -245,7 +245,7 @@ public class MyEndpoint {
             response = _getAllGroups();
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException("Sorry, we screwed something up...");
+            throw new InternalServerErrorException("Sorry, we could not find any groups");
         }
 
         return response;
@@ -350,93 +350,6 @@ public class MyEndpoint {
         return response;
     }
 
-    @ApiMethod(name = "getAuthTokenFB")
-    public AuthTokenResponseFB getAuthTokenFB(@Named("fbUserID") String fbUserId, @Named("fbToken") String fbToken) throws UnauthorizedException, InternalServerErrorException{
-        AuthTokenResponseFB response = new AuthTokenResponseFB();
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        response.setAuthToken("Siebe");
-
-        try {
-            URL url = new URL("https://graph.facebook.com/v2.2/me?access_token=" + fbToken);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuilder jsonResponseBuilder = new StringBuilder();
-
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                jsonResponseBuilder.append(line);
-            }
-
-            String jsonResponse = jsonResponseBuilder.toString();
-            JSONObject fbResponse = new JSONObject(jsonResponse);
-
-            if(fbResponse.has("error")){
-                JSONObject error = fbResponse.getJSONObject("error");
-                int code = error.getInt("code");
-                if(code == 190)
-                    throw new UnauthorizedException("Invalid Facebook login");
-            }
-
-            String firstName;
-            String lastName = "";
-
-            String id = fbResponse.getString("id");
-            firstName = fbResponse.getString("first_name");
-
-            if(fbResponse.has("last_name"))
-                lastName = fbResponse.getString("last_name");
-
-            String returnedUserId = id;
-
-            response.setUserId(returnedUserId);
-
-            if(returnedUserId.equals(fbUserId)){
-                // User is who he claims to be
-                // Check if we already saved his info
-                try{
-                    UserBean userBean = _getUserBeanForId(returnedUserId);
-                }catch (EntityNotFoundException e){
-                    // User not in our database
-                    Entity userEntity = new Entity("User", returnedUserId);
-                    userEntity.setProperty("userId", returnedUserId);
-                    userEntity.setProperty("firstName", firstName);
-                    userEntity.setProperty("lastName", lastName);
-                    userEntity.setProperty("joined",new Date());
-                    //userEntity.setProperty("email", email); // TODO: get user email from FB
-                    datastore.put(userEntity);
-                }
-
-                // Create session for user and send back auth token
-
-                // Create random token
-                String sessionToken = new BigInteger(256, random).toString(32);
-
-                // Store session information in datastore
-
-                Entity session = new Entity("Session", sessionToken);
-                session.setProperty("userId", returnedUserId);
-                session.setProperty("sessionToken", sessionToken);
-                datastore.put(session);
-
-                // set token in response
-                response.setAuthToken(sessionToken);
-            }
-
-            reader.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Whoops, we screwed something up :( MalformedURLException \n" + e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Whoops, we screwed something up :( IOException \n" + e.getMessage());
-        } catch (JSONException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Whoops, we screwed something up :( JSONException \n" + e.getMessage());
-        }
-
-
-        return response;
-    }
     @ApiMethod(name = "closeSession")
     public CloseSessionResponse closeSession( @Named("token") String token){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -491,7 +404,7 @@ public class MyEndpoint {
     public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId, @Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
 
-        return _getRankings(venueId, groupSize,groupType );
+        return _getRankings(venueId, groupSize, groupType);
     }
 
     @ApiMethod(name = "getOverview", path = "getOverview")
@@ -645,24 +558,24 @@ public class MyEndpoint {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         GroupBean groupBean = new GroupBean();
         groupBean.setGroupId(group.getKey().getId());
-        groupBean.setName((String) group.getProperty("name"));
-        groupBean.setDescription((String) group.getProperty("description"));
-        groupBean.setAdminId(((String) group.getProperty("adminId")));
-        groupBean.setCreated((Date) group.getProperty("created"));
-        groupBean.setType((String) group.getProperty("type"));
+        groupBean.setName((String) group.getProperty(GROUP_NAME));
+        groupBean.setDescription((String) group.getProperty(GROUP_DESCRIPTION));
+        groupBean.setAdminId(((String) group.getProperty(GROUP_ADMIN_ID)));
+        groupBean.setCreated((Date) group.getProperty(GROUP_CREATED));
+        groupBean.setType((String) group.getProperty(GROUP_TYPE));
 
         ArrayList<UserBean> members = new ArrayList<>();
 
         Query.Filter propertyFilter =
-                new Query.FilterPredicate("groupId",
+                new Query.FilterPredicate(USERGROUP_GROUP_ID,
                         Query.FilterOperator.EQUAL,
                         group.getKey().getId());
 
-        Query q = new Query("userGroup").setFilter(propertyFilter);
+        Query q = new Query(USERGROUP_ENTITY).setFilter(propertyFilter);
 
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()){
-            String userId = ((String) r.getProperty("userId"));
+            String userId = ((String) r.getProperty(USERGROUP_USER_ID));
             members.add(_getUserBeanForId(userId));
         }
 
@@ -674,44 +587,29 @@ public class MyEndpoint {
     private CheckinBean _getCheckinBean(Entity checkin) {
 
         CheckinBean checkinbean = new CheckinBean();
-        checkinbean.setVenueId((String)checkin.getProperty("venueId"));
-        checkinbean.setGroupId((Long) checkin.getProperty("groupId"));
-        checkinbean.setUserId((String) checkin.getProperty("userId"));
+        checkinbean.setVenueId((String)checkin.getProperty(CHECKIN_VENUE_ID));
+        checkinbean.setGroupId((Long) checkin.getProperty(CHECKIN_GROUP_ID));
+        checkinbean.setUserId((String) checkin.getProperty(CHECKIN_USER_ID));
     //    checkinbean.setPoints((Integer) checkin.getProperty("points"));
         checkinbean.setPoints(1);
-        checkinbean.setDate((Date) checkin.getProperty("date"));
+        checkinbean.setDate((Date) checkin.getProperty(CHECKIN_DATE));
 
         return checkinbean;
     }
 
     private UserBean _getUserBeanForId(String userId) throws EntityNotFoundException{
         UserBean bean = new UserBean();
-        Entity user = null;
+
         Key userKey = KeyFactory.createKey(USER_ENTITY, userId);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        try {
-            user = datastore.get(userKey);
-        } catch(EntityNotFoundException e){
-            // TODO: This catch should not be necessary as we already know the entity isn't there
 
-            Query.Filter filter =
-                    new Query.FilterPredicate("userId",
-                            Query.FilterOperator.EQUAL,
-                            userId);
-            Query q = new Query(USER_ENTITY).setFilter(filter);
-            PreparedQuery pq = datastore.prepare(q);
-            for(Entity r: pq.asIterable()){
-                user = r;
-            }
-            if(user==null){
-                throw new EntityNotFoundException(userKey);
-            }
-        }
+        Entity user = datastore.get(userKey);
+
         bean.setUserId(userId);
-        bean.setEmail((String) user.getProperty("email"));
-        bean.setFirstName((String) user.getProperty("firstName"));
-        bean.setLastName((String) user.getProperty("lastName"));
-        bean.setJoined((Date) user.getProperty("joined"));
+        bean.setEmail((String) user.getProperty(USER_EMAIL));
+        bean.setFirstName((String) user.getProperty(USER_FIRST_NAME));
+        bean.setLastName((String) user.getProperty(USER_LAST_NAME));
+        bean.setJoined((Date) user.getProperty(USER_JOINED));
 
         return bean;
     }
@@ -722,7 +620,7 @@ public class MyEndpoint {
         AllGroupsBean result = new AllGroupsBean();
         ArrayList<GroupBean> groups = new ArrayList<>();
 
-        Query q = new Query("Group");
+        Query q = new Query(GROUP_ENTITY);
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()){
             groups.add(_getGroupBean(r));
@@ -770,11 +668,11 @@ public class MyEndpoint {
         }
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        List<RankingBean> ranking = new ArrayList<RankingBean>();
+        List<RankingBean> ranking = new ArrayList<>();
 
         HashMap<Long, Integer> groupPoints = new HashMap<>();
         Query.Filter filter1 =
-                new Query.FilterPredicate("venueId",
+                new Query.FilterPredicate(CHECKIN_VENUE_ID,
                         Query.FilterOperator.EQUAL,
                         venueId);
 
