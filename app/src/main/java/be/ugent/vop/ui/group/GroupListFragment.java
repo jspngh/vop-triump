@@ -3,12 +3,15 @@ package be.ugent.vop.ui.group;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,9 +23,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.loaders.AllGroupsLoader;
 import be.ugent.vop.backend.loaders.GroupsForUserLoader;
-import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.GroupsBean;
 
@@ -36,11 +37,59 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView.LayoutManager mLayoutManager;
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.groups_menu, menu);
+        // Associate searchable configuration with the SearchView
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    Log.d(TAG, "Searching: " + s);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    Log.d(TAG, "Typing: " + s);
+                    return false;
+                }
+            });
+        }
+
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                Intent intent = new Intent(this.getActivity(), GroupActivity.class);
+                this.getActivity().startActivity(intent);
+                //this.getActivity().finish();
+                Log.d("GroupListAdapter", "Adding a new group ");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,9 +108,10 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         mAdapter = new GroupListAdapter();
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(null);
-        // END_INCLUDE(initializeRecyclerView);
+
         getLoaderManager().initLoader(1, null, this);
         mFragment=this;
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -71,7 +121,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             int state;
-
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -86,7 +135,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
                 mRecyclerView.animate().translationY(dy);
                 //}
             }
-
         });
 
         return rootView;
@@ -110,18 +158,18 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
 
     }
 
-    @Override
     /*
     Note:
     Adjusted Loader to only load the groups where the user is a member
      */
+    @Override
     public void onLoadFinished(Loader<GroupsBean> objectLoader, GroupsBean allGroupsBean) {
         Log.d(TAG, "onLoadFinished");
         /**************************************
          Resultaat kan null zijn
          Rekening mee houden!
          **************************************/
-        if(allGroupsBean.getGroups() != null) {
+        if(allGroupsBean != null && allGroupsBean.getGroups() != null) {
             mAdapter.setGroups((ArrayList<GroupBean>) allGroupsBean.getGroups());
             Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
             mAdapter.setContext(getActivity());
@@ -130,8 +178,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
 
         mRecyclerView.setVisibility(View.VISIBLE);
         mSwipeRefreshLayout.setRefreshing(false);
-
-
     }
 
     @Override
@@ -149,4 +195,3 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         return false;
     }
 }
-
