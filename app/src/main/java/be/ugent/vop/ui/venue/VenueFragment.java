@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -51,6 +53,11 @@ public class VenueFragment extends Fragment {
     private Spinner groupTypeSpinner;
     private Spinner groupSizeSpinner;
 
+    private String currentGroupType = "All";
+    private String currentGroupSize = "All";
+
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
+
     private String fsVenueId;
 
     @Override
@@ -65,6 +72,21 @@ public class VenueFragment extends Fragment {
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
+
+
+        /**
+         *
+         * Listview refresh
+         */
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_venue_swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLoaderManager().restartLoader(1,null,mRankingLoaderListener);
+            }
+        });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
+
 
         /**
          * Populate the spinners
@@ -91,10 +113,17 @@ public class VenueFragment extends Fragment {
         // Apply the adapter to the spinner
         groupSizeSpinner.setAdapter(adapterSize);
 
+
+
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
             fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
 
         Log.d("VenueFragment", "venueId :" + fsVenueId);
+
+        /**
+         *
+         * Initialize loaders
+         */
         //loader for venueInfo (to foursquare)
         getLoaderManager().initLoader(2, null, mVenueInfoLoaderListener);
         //loader for ranking (to backend)
@@ -116,9 +145,12 @@ public class VenueFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selected = (String) parentView.getSelectedItem();
                 Log.d("VenueFragment", "selected group size: "+selected);
-                RankingLoader.setGroupSize(selected);
-                CheckInLoader.setGroupSize(selected);
-                getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
+                if(!currentGroupSize.equals(selected)) {
+                    currentGroupSize = selected;
+                    RankingLoader.setGroupSize(selected);
+                    CheckInLoader.setGroupSize(selected);
+                    getLoaderManager().restartLoader(0, null, mRankingLoaderListener);
+                }
             }
 
             @Override
@@ -133,9 +165,12 @@ public class VenueFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selected = (String) parentView.getSelectedItem();
                 Log.d("VenueFragment", "selected group size: "+selected);
-                RankingLoader.setGroupType(selected);
-                CheckInLoader.setGroupType(selected);
-                getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
+                if(!currentGroupType.equals(selected)){
+                    currentGroupType = selected;
+                    RankingLoader.setGroupType(selected);
+                    CheckInLoader.setGroupType(selected);
+                    getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
+                }
             }
 
             @Override
@@ -202,6 +237,8 @@ public class VenueFragment extends Fragment {
                 rankingListView.setVisibility(View.INVISIBLE);
              //   noRankingTextView.setText(R.string.no_ranking);
             }
+
+            mSwipeRefreshLayout.setRefreshing(false);
         }
 
         @Override
