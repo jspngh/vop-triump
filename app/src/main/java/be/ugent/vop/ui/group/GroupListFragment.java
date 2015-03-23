@@ -36,30 +36,6 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView.LayoutManager mLayoutManager;
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.groups_menu, menu);
-        // Associate searchable configuration with the SearchView
-        super.onCreateOptionsMenu(menu, inflater);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_add:
-                Intent intent = new Intent(this.getActivity(), GroupActivity.class);
-                this.getActivity().startActivity(intent);
-                //this.getActivity().finish();
-                Log.d("GroupListAdapter", "Adding a new group ");
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

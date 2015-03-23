@@ -7,6 +7,8 @@
 package be.ugent.vop.backend;
 
 
+import android.os.DropBoxManager;
+
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Named;
 
@@ -781,15 +784,36 @@ public class MyEndpoint {
         PreparedQuery pq = datastore.prepare(q);
 
         ArrayList<Long> unwantedGroups = new ArrayList<>();
-
+        HashMap<Long,Integer> groupMemberSize = new  HashMap<Long,Integer>();
+        HashMap<Long,String> groupTypeMap = new  HashMap<Long,String>();
+        Long groupId = null;
+        String groupType2;
         int nrMembers = 0;
+
         for (Entity r : pq.asIterable()) {
             checkin = _getCheckinBean(r);
-            nrMembers = countMembersOfGroup(checkin.getGroupId());
+            groupId = checkin.getGroupId();
             if(!unwantedGroups.contains(checkin.getGroupId())) {
+                //calculate groupSize
+                if(groupMemberSize.keySet().contains(groupId)) {
+                    nrMembers = groupMemberSize.get(groupId);
+                } else{
+                    //save fetched number of groups member
+                    nrMembers = countMembersOfGroup(checkin.getGroupId());
+                    groupMemberSize.put(groupId,nrMembers);
+                }
+                //get group type
+                if(groupTypeMap.keySet().contains(groupId)) {
+                    groupType2 = groupTypeMap.get(groupId);
+                } else{
+                    //save fetched groupType
+                    groupType2 = getGroupType(groupId);
+                    groupTypeMap.put(groupId,groupType2);
+                }
+
                 if ((minMembers==-1 || minMembers <= nrMembers)
                         && (maxMembers==-1 || maxMembers >= nrMembers)
-                        && (groupType.equals(GroupBean.GROUP_TYPE_ALL) || groupType.equals(getGroupType(checkin.getGroupId())))) {
+                        && (groupType.equals(GroupBean.GROUP_TYPE_ALL) || groupType.equals(groupType2))) {
                     if (!(groupPoints.containsKey(checkin.getGroupId()))) {
                         groupPoints.put(checkin.getGroupId(), checkin.getPoints());
                     } else {
@@ -804,15 +828,15 @@ public class MyEndpoint {
             }
         }
 
-        for (long groupId : groupPoints.keySet()) {
+        for (long groupId2 : groupPoints.keySet()) {
             RankingBean groupRanking = new RankingBean();
             try {
-                groupRanking.setGroupBean(_getGroupBean(groupId));
+                groupRanking.setGroupBean(_getGroupBean(groupId2));
             } catch (EntityNotFoundException e) {
                 e.printStackTrace();
             }
 
-            groupRanking.setPoints(groupPoints.get(groupId));
+            groupRanking.setPoints(groupPoints.get(groupId2));
 
             ranking.add(groupRanking);
         }
