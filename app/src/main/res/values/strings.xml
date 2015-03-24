@@ -81,4 +81,5 @@
     <string name="action_add">Add group</string>
     <string name="navdrawer_item_events">Events</string>
     <string name="no_event">No events available for you.</string>
+    <string name="title_activity_event">event</string>
 </resources>

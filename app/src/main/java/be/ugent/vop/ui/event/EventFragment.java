@@ -84,11 +84,11 @@ public class EventFragment extends Fragment{
 
         @Override
         public void onLoadFinished(Loader<List<EventBean>> loader, List<EventBean> data) {
-            Log.d("LeaderboardsFragment", "onLoadFinished");
+            Log.d("EventFragment", "onLoadFinished");
             if (data!=null &&data.size() != 0) {
                 noEventTextView.setVisibility(View.GONE);
                 eventListView.setVisibility(View.VISIBLE);
-                Log.d("LeaderboardsFragment", "size of data " + data.size());
+                Log.d("EventFragment", "size of data " + data.size());
                 events = new ArrayList<EventBean>();
                 for (EventBean r : data) events.add(r);
                 adapter = new EventAdapter(context, events);
