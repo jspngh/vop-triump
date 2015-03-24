@@ -1,4 +1,4 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.leaderboard;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -20,6 +20,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.LeaderboardLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.ui.group.GroupActivity;
