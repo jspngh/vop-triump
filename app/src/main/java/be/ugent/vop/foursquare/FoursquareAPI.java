@@ -172,6 +172,7 @@ public class FoursquareAPI {
             //Log.d(TAG, "getVenueInfo: loaded venue from foursquare");
         }
 
+        v.close();
         FoursquareVenue venue = new FoursquareVenue(id,name,address,city,country,lon,lat,verified);
         venue.setPhotos(getPhotos(venue));
         return venue;
@@ -199,6 +200,7 @@ public class FoursquareAPI {
         else{
             //Log.d(TAG,"venue "+venue.getId()+" already in db.");
         }
+        v.close();
     }
 
     public ArrayList<FoursquareVenue> searchVenues(double latitude, double longitude, int radius, String query)  {
@@ -454,6 +456,23 @@ public class FoursquareAPI {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public String getUserProfilePicture() {
+        String url = API_URL + "/users/self?oauth_token=" + FSQToken + "&v=" + VERSION + "&m=" + MODE;
+        String profilePictureUrl = null;
+        try {
+            String response = request(url);
+            JSONObject obj = new JSONObject(response);
+            JSONObject photo = obj.getJSONObject("response").getJSONObject("user").getJSONObject("photo");
+            String prefix = null, suffix = null;
+            if(photo.has("prefix")) prefix = photo.getString("prefix");
+            if(photo.has("suffix")) suffix = photo.getString("suffix");
+            profilePictureUrl = prefix + "original" + suffix;
+        } catch(IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return profilePictureUrl;
     }
 
     /**

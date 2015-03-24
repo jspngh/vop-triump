@@ -1,25 +1,23 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="be.ugent.vop.ui.login.ProfileFragment">
-
-    <TextView
-        android:id="@+id/userId"
+    android:layout_height="match_parent" tools:context="be.ugent.vop.ui.login.ProfileFragment"
+    android:paddingBottom="10dp">
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:text="hi there" />
+        android:layout_height="200dp"
+        android:id="@+id/profilePic"
+        android:contentDescription="@string/profile_picture"
+        android:adjustViewBounds="false"
+        android:src="@drawable/fantastic_background"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="end"
+        android:background="@drawable/log_out_button"
         android:text="@string/logOutButton"
-        android:id="@+id/btnLogout"/>
+        android:id="@+id/btnLogout"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="20dp"
-        android:id="@+id/profilePic"
-        android:contentDescription="@string/profile_picture"
-        android:src="@drawable/fantastic_background"/>
-
-</FrameLayout>
+</RelativeLayout>

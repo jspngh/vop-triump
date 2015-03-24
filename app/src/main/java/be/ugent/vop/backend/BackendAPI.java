@@ -15,14 +15,7 @@ import java.util.List;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.MyApi;
-import be.ugent.vop.backend.myApi.model.AllGroupsBean;
-import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
-import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
-import be.ugent.vop.backend.myApi.model.GroupBean;
-import be.ugent.vop.backend.myApi.model.GroupsBean;
-import be.ugent.vop.backend.myApi.model.OverviewBean;
-import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.backend.myApi.model.*;
 
 public class BackendAPI {
     public static BackendAPI instance;
@@ -76,6 +69,9 @@ public class BackendAPI {
         return myApiService.getAllGroups(token).execute();
     }
 
+    public UserBean getUserInfo() throws IOException{
+        return myApiService.getUserInfo(token).execute();
+    }
     public GroupsBean getGroupsForUser() throws IOException{
         return myApiService.getGroupsForUser(token).execute();
     }

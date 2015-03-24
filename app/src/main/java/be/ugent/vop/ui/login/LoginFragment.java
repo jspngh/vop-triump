@@ -428,7 +428,7 @@ public class LoginFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
             SharedPreferences.Editor editor = prefs.edit();
-            Log.d("FUCK LOGIN", token.getAuthToken());
+            Log.d("Login, BACKENDTOKEN", token.getAuthToken());
             editor.putString(getString(R.string.backendtoken), token.getAuthToken());
             editor.commit();
 

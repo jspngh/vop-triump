@@ -6,14 +6,12 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,7 +23,6 @@ import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.R;
@@ -35,7 +32,7 @@ import be.ugent.vop.backend.loaders.VenueInfoLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.ui.Event.EventFragment;
+import be.ugent.vop.ui.event.EventFragment;
 import be.ugent.vop.ui.group.GroupActivity;
 
 
@@ -344,7 +341,7 @@ public class VenueFragment extends Fragment {
                 else photoUrl =
                         "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
                 Ion.with(venueImageView)
-                        .placeholder(R.drawable.ic_launcher)
+                        .placeholder(R.drawable.fantastic_background)
                         .error(R.drawable.ic_drawer_logout)
                         .load(photoUrl);
             }

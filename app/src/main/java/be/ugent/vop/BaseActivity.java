@@ -83,8 +83,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     // it's a list of all possible items.
     protected static final int NAVDRAWER_ITEM_MAIN = 0;
     protected static final int NAVDRAWER_ITEM_LEADERBOARDS = 1;
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 2;
-    protected static final int NAVDRAWER_ITEM_LOGOUT = 3;
+    protected static final int NAVDRAWER_ITEM_EVENT = 2;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 3;
+    protected static final int NAVDRAWER_ITEM_LOGOUT = 4;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -94,6 +95,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
             R.string.navdrawer_item_main,
             R.string.navdrawer_item_leaderboards,
+            R.string.navdrawer_item_event,
             R.string.navdrawer_item_settings,
             R.string.navdrawer_item_logout
     };
@@ -102,6 +104,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static final int[] NAVDRAWER_ICON_RES_ID = new int[] {
             R.drawable.ic_drawer_people_met,  // My Schedule
             R.drawable.ic_drawer_social,
+            R.drawable.ic_drawer_event,
             R.drawable.ic_drawer_settings,
             R.drawable.ic_drawer_logout
     };
@@ -164,7 +167,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         mLUtils = LUtils.getInstance(this);
         mThemedStatusBarColor = getResources().getColor(R.color.theme_primary_dark);
         mNormalStatusBarColor = mThemedStatusBarColor;
-
 
         startLoginProcess();
     }
@@ -296,6 +298,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         mNavDrawerItems.add(NAVDRAWER_ITEM_MAIN);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LEADERBOARDS);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_EVENT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LOGOUT);
@@ -387,6 +390,11 @@ public abstract class BaseActivity extends ActionBarActivity {
                 intent = new Intent(this, LeaderboardsActivity.class);
                 startActivity(intent);
                 finish();
+                break;
+            case NAVDRAWER_ITEM_EVENT:
+                //intent = new Intent(this, EventActivity.class);
+                //startActivity(intent);
+                //finish();
                 break;
             case NAVDRAWER_ITEM_LOGOUT:
                 //temporarily make this go to profile

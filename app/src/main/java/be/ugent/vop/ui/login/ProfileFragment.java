@@ -2,7 +2,12 @@ package be.ugent.vop.ui.login;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.Loader;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,45 +17,30 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
-import be.ugent.vop.R;
+import java.io.IOException;
+import java.util.ArrayList;
 
-public class ProfileFragment extends Fragment {
+import be.ugent.vop.R;
+import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.backend.loaders.UserInfoLoader;
+import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.backend.myApi.model.UserBean;
+import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.foursquare.FoursquareAPI;
+import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.ui.main.OverviewAdapter;
+
+public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<UserBean> {
     public final static String USER_ID = "userId";
     public final static String PROFILE_ACTIVITY = "Go to profile";
-    private String userId;
     private ImageView profilePic;
     private Button btnLogout;
+    private UserBean userInfo;
 
     private OnFragmentInteractionListener mListener;
 
     public ProfileFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        Bundle bundle = this.getArguments();
-        userId = bundle.getString(USER_ID);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        profilePic = (ImageView) rootView.findViewById(R.id.profilePic);
-        TextView txt = (TextView) rootView.findViewById(R.id.userId);
-        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onProfileFragmentInteraction();
-                }
-            }
-        });
-        txt.setText(""+ userId);
-        return rootView;
     }
 
     @Override
@@ -63,18 +53,59 @@ public class ProfileFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        profilePic = (ImageView) rootView.findViewById(R.id.profilePic);
+        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onProfileFragmentInteraction();
+                }
+            }
+        });
+        return rootView;
+    }
+
     @Override
     public void onStart(){
         super.onStart();
-        Ion.with(profilePic)
-                .placeholder(R.drawable.ic_launcher)
-                .error(R.drawable.ic_drawer_logout)
-                .load("http://fc06.deviantart.net/fs70/f/2012/115/2/0/diablo_3__demon_hunter_by_go_maxpower-d4xiwg1.jpg");
+        getLoaderManager().initLoader(0, null, this);
+
+
     }
 
     public interface OnFragmentInteractionListener {
         public void onProfileFragmentInteraction();
     }
 
+    @Override
+    public Loader<UserBean> onCreateLoader(int i, Bundle bundle) {
+        return new UserInfoLoader(getActivity());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<UserBean> userInfoLoader, final UserBean userInfo) {
+       this.userInfo = userInfo;
+       if(userInfo != null && userInfo.getProfilePictureUrl() != null){
+           Ion.with(profilePic)
+                   .placeholder(R.drawable.fantastic_background)
+                   .error(R.drawable.ic_drawer_logout)
+                   .load(userInfo.getProfilePictureUrl());
+       }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<UserBean> userInfoLoader) {
+    }
 
 }
