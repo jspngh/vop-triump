@@ -20,7 +20,7 @@ import be.ugent.vop.R;
 /**
  * Created by vincent on 23/03/15.
  */
-public class EventFragment extends Fragment implements View.OnClickListener{
+public class NewEventFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "EventFragment";
 
     Button createButton;

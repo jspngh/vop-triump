@@ -8,7 +8,7 @@ import be.ugent.vop.R;
 /**
  * Created by vincent on 24/03/15.
  */
-public class EventActivity extends BaseActivity {
+public class NewEventActivity extends BaseActivity {
 
     public static final String VENUE_ID = "venueID";
 
@@ -16,7 +16,7 @@ public class EventActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        EventFragment fragment = new EventFragment();
+        NewEventFragment fragment = new NewEventFragment();
         Bundle venueBundle = getIntent().getExtras();
 
         fragment.setArguments(venueBundle);
