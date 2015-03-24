@@ -59,7 +59,7 @@
                 android:value=".ui.main.MainActivity" />
         </activity>
         <activity
-            android:name=".LeaderboardsActivity"
+            android:name=".ui.leaderboard.LeaderboardsActivity"
             android:label="@string/title_activity_leaderboards"
             android:parentActivityName=".ui.main.MainActivity" >
             <meta-data
