@@ -80,8 +80,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onStart(){
         super.onStart();
         getLoaderManager().initLoader(0, null, this);
-
-
     }
 
     public interface OnFragmentInteractionListener {
