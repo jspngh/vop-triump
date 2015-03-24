@@ -1,6 +1,8 @@
 package be.ugent.vop.ui.event;
 
+import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -13,7 +15,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import be.ugent.vop.R;
 
@@ -24,18 +29,24 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "EventFragment";
 
     Button createButton;
-    DatePicker startDatePicker, endDatePicker;
-    TimePicker startTimePicker, endTimePicker;
+
     EditText descriptionEditText, rewardEditText;
     EditText startDateEditText, startTimeEditText;
     EditText endDateEditText, endTimeEditText;
+
+    DatePickerDialog startDateDialog;
+    DatePickerDialog endDateDialog;
+    TimePickerDialog startTimeDialog;
+    TimePickerDialog endTimeDialog;
+    SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    int startYear=-1, startDay=-1, startMonth=-1;
 
     CheckBox verifiedCheckBox;
     CheckBox typeAllCheckBox, typeFriendsCheckBox, typeClubCheckBox, typeStudentGroupCheckBox;
     CheckBox sizeAllCheckBox, sizeIndividualCheckBox, sizeSmallCheckBox, sizeMediumCheckBox, sizeLargeCheckBox;
     Boolean typeAll= false, typeFriends= false, typeClub= false, typeStudentGroup = false;
     Boolean sizeAll= false, sizeIndividual= false, sizeSmall= false, sizeMedium= false, sizeLarge= false;
-    Boolean verified;
+    Boolean verified = false;
 
     String venueId;
 
@@ -55,22 +66,12 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         rewardEditText = (EditText) rootView.findViewById(R.id.editTextReward);
 
         //date
-        /*
-        startDatePicker = (DatePicker) rootView.findViewById(R.id.datePickerStart);
-        startTimePicker = (TimePicker) rootView.findViewById(R.id.timePickerStart);
-        endDatePicker = (DatePicker) rootView.findViewById(R.id.datePickerEnd);
-        endTimePicker = (TimePicker) rootView.findViewById(R.id.timePickerEnd);*/
         startDateEditText = (EditText) rootView.findViewById(R.id.editTextStartDate);
         startTimeEditText = (EditText) rootView.findViewById(R.id.editTextStartTime);
         endDateEditText = (EditText) rootView.findViewById(R.id.editTextEndDate);
         endTimeEditText = (EditText) rootView.findViewById(R.id.editTextEndTime);
-        startDateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // DialogFragment newFragment = new TimePickerFragment();
-                // newFragment.show(getSupportFragmentManager(), "timePicker");
-            }
-        });
+        initDateTimeDialog();
+
 
         //type checkbox
         typeAllCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxTypeAll);
@@ -92,6 +93,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         sizeSmallCheckBox.setOnClickListener(this);
         sizeMediumCheckBox.setOnClickListener(this);
         sizeLargeCheckBox.setOnClickListener(this);
+
         //verified
         verifiedCheckBox = (CheckBox) rootView.findViewById(R.id.checkBoxVerified);
         verifiedCheckBox.setOnClickListener(this);
@@ -101,16 +103,106 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
             public void onClick(View v) {
                 description = descriptionEditText.getText().toString();
                 reward = rewardEditText.getText().toString();
-
-
                 Log.d(TAG,"description: "+description);
                 Log.d(TAG,"reward: "+reward);
-
             }
         });
 
 
         return rootView;
+    }
+
+    private void initDateTimeDialog() {
+        startDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar newCalendar = Calendar.getInstance();
+
+                startDateDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        startYear = year;
+                        startMonth = monthOfYear;
+                        startDay= dayOfMonth;
+                        Calendar newDate = Calendar.getInstance();
+                        newDate.set(year, monthOfYear, dayOfMonth);
+                        startDateEditText.setText(dateFormatter.format(newDate.getTime()));
+                    }
+
+                },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+                startDateDialog.show();
+            }
+        });
+
+
+        startTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar newCalendar = Calendar.getInstance();
+
+                startTimeDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener(){
+                    public void onTimeSet(TimePicker view, int hour, int minute) {
+                        //   Calendar newTime = Calendar.getInstance();
+                        //   newDate.set(year, monthOfYear, dayOfMonth);
+                        startTimeEditText.setText(hour+":"+minute+":00");
+                    }
+
+                },newCalendar.get(Calendar.HOUR_OF_DAY), newCalendar.get(Calendar.MINUTE), true);
+
+                startTimeDialog.show();
+
+            }
+        });
+
+        endDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar newCalendar = Calendar.getInstance();
+
+                int day = newCalendar.get(Calendar.DAY_OF_MONTH);
+                int month =newCalendar.get(Calendar.MONTH);
+                int year = newCalendar.get(Calendar.YEAR);
+
+                //initialize day, month and year to startDate
+                if(startDay!=-1 && startYear!=-1 && startMonth!=-1){
+                    day = startDay;
+                    month = startMonth;
+                    year = startYear;
+                }
+                endDateDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Calendar newDate = Calendar.getInstance();
+                        newDate.set(year, monthOfYear, dayOfMonth);
+                        endDateEditText.setText(dateFormatter.format(newDate.getTime()));
+                    }
+
+                },year,month,day);
+
+                endDateDialog.show();
+            }
+        });
+
+        endTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar newCalendar = Calendar.getInstance();
+
+                endTimeDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener(){
+                    public void onTimeSet(TimePicker view, int hour, int minute) {
+                        //   Calendar newTime = Calendar.getInstance();
+                        //   newDate.set(year, monthOfYear, dayOfMonth);
+                        endTimeEditText.setText(hour+":"+minute+":00");
+                    }
+
+                },newCalendar.get(Calendar.HOUR_OF_DAY), newCalendar.get(Calendar.MINUTE), true);
+
+                endTimeDialog.show();
+
+            }
+        });
     }
 
     /*
