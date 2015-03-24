@@ -102,7 +102,7 @@ public class BackendAPI {
     }
 
     public OverviewBean getOverview(ArrayList<String> venues) throws IOException{
-        return myApiService.getOverview(token, venues).execute();
+        return myApiService.getOverview(token).setVenueIds(venues).execute();
     }
 
     public List<RankingBean> getLeaderboard(String groupSize, String groupType) throws IOException{
