@@ -1,4 +1,4 @@
-package be.ugent.vop.ui.login;
+package be.ugent.vop.ui.profile;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -23,6 +23,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private ImageView profilePic;
     private Button btnLogout;
     private UserBean userInfo;
+    private String userId;
 
     private OnFragmentInteractionListener mListener;
 
@@ -43,6 +44,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onCreate(Bundle savedInstanceState){
+        userId = this.getArguments().getString(USER_ID);
         super.onCreate(savedInstanceState);
     }
 
@@ -51,7 +53,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         profilePic = (ImageView) rootView.findViewById(R.id.profilePic);
-        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
+/*        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,14 +61,16 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                     mListener.onProfileFragmentInteraction();
                 }
             }
-        });
+        });*/
         return rootView;
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        getLoaderManager().initLoader(0, null, this);
+        Bundle args = new Bundle();
+        args.putString(USER_ID, userId);
+        getLoaderManager().initLoader(0, args, this);
     }
 
     public interface OnFragmentInteractionListener {
@@ -75,7 +79,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<UserBean> onCreateLoader(int i, Bundle bundle) {
-        return new UserInfoLoader(getActivity());
+        return new UserInfoLoader(getActivity(), bundle.getString(USER_ID, "N.A."));
     }
 
     @Override

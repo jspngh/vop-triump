@@ -19,6 +19,8 @@
     <string name="profile_picture">Profile Picture</string>
 
     <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_event">Events</string>
+    <string name="title_activity_profile">Profile</string>
     <string name="logOutButton">Sign out</string>
 	<string name="signin_with_foursquare">Sign in with your Foursquare account!</string>
     <string name="app_not_installed_message">To do this, you’ll need the latest version of Foursquare installed.</string>
@@ -81,5 +83,4 @@
     <string name="action_add">Add group</string>
     <string name="navdrawer_item_events">Events</string>
     <string name="no_event">No events available for you.</string>
-    <string name="title_activity_event">event</string>
 </resources>

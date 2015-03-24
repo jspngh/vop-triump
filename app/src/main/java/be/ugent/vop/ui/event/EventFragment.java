@@ -1,27 +1,16 @@
 package be.ugent.vop.ui.event;
 
-import android.app.Fragment;
-
-/**
- * Created by Lars on 24/03/15.
- */
-
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,14 +18,11 @@ import java.util.List;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.EventLoader;
-import be.ugent.vop.backend.loaders.LeaderboardLoader;
 import be.ugent.vop.backend.myApi.model.EventBean;
-import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.ui.group.GroupActivity;
 
-import be.ugent.vop.ui.event.EventAdapter;
-
-
+/**
+ * Created by Lars on 24/03/15.
+ */
 public class EventFragment extends Fragment{
 
     /**

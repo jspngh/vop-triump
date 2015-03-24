@@ -458,8 +458,8 @@ public class FoursquareAPI {
         return result;
     }
 
-    public String getUserProfilePicture() {
-        String url = API_URL + "/users/self?oauth_token=" + FSQToken + "&v=" + VERSION + "&m=" + MODE;
+    public String getUserProfilePicture(String userId) {
+        String url = API_URL + "/users/" + userId + "?oauth_token=" + FSQToken + "&v=" + VERSION + "&m=" + MODE;
         String profilePictureUrl = null;
         try {
             String response = request(url);
