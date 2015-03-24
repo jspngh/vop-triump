@@ -154,12 +154,12 @@
             android:text="Select applicable group sizes:"
             android:id="@+id/textView2" />
 
-        <CheckBox android:id="@+id/checkboxSizeAll"
+       <!-- <CheckBox android:id="@+id/checkboxSizeAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="All"
             android:buttonTint="@color/theme_primary_dark"
-            android:layout_margin="0dp" />
+            android:layout_margin="0dp" />-->
         <CheckBox android:id="@+id/checkboxSizeIndividual"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -197,11 +197,11 @@
                 android:id="@+id/textView3"
                 />
 
-            <CheckBox android:id="@+id/checkboxTypeAll"
+       <!--     <CheckBox android:id="@+id/checkboxTypeAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="All"
-                android:buttonTint="@color/theme_primary_dark"/>
+                android:buttonTint="@color/theme_primary_dark"/>-->
             <CheckBox android:id="@+id/checkboxTypeFriends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

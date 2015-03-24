@@ -189,7 +189,7 @@ public class VenueFragment extends Fragment {
                         .commit();*/
 
                 Intent intent = new Intent(getActivity(),NewEventActivity.class);
-                intent.putExtra(VenueActivity.VENUE_ID, v.getId());
+                intent.putExtra(VenueActivity.VENUE_ID, fsVenueId);
 
                 getActivity().startActivity(intent);
             }
