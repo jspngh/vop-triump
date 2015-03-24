@@ -97,7 +97,7 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         FoursquareVenue venue = venues.get(position);
 
         viewHolder.venueName.setText(venue.getName());
-        viewHolder.venueInfo.setText("Restaurant - 5 groups currently here");
+        viewHolder.venueInfo.setText(venue.getAddress());
 
         // No photos yet...
         /*

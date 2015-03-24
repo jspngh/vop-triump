@@ -1,18 +1,21 @@
-package be.ugent.vop;
+package be.ugent.vop.ui.event;
 
 import android.os.Bundle;
+
+import be.ugent.vop.BaseActivity;
+import be.ugent.vop.R;
 
 /**
  * Created by siebe on 25/02/15.
  */
-public class LeaderboardsActivity extends BaseActivity {
+public class EventActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leaderboards);
+        setContentView(R.layout.activity_event);
 
-        LeaderboardsFragment fragment = new LeaderboardsFragment();
+        EventFragment fragment = new EventFragment();
         Bundle venueBundle = getIntent().getExtras();
 
         fragment.setArguments(venueBundle);

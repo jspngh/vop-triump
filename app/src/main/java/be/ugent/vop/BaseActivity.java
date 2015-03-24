@@ -49,6 +49,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import be.ugent.vop.ui.event.EventActivity;
+import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
 import be.ugent.vop.ui.login.ProfileFragment;
@@ -103,7 +105,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     // icons for navdrawer items (indices must correspond to above array)
     private static final int[] NAVDRAWER_ICON_RES_ID = new int[] {
             R.drawable.ic_drawer_people_met,  // My Schedule
-            R.drawable.ic_drawer_social,
+            R.drawable.ic_drawer_leaderboard,
             R.drawable.ic_drawer_event,
             R.drawable.ic_drawer_settings,
             R.drawable.ic_drawer_logout
@@ -392,9 +394,9 @@ public abstract class BaseActivity extends ActionBarActivity {
                 finish();
                 break;
             case NAVDRAWER_ITEM_EVENT:
-                //intent = new Intent(this, EventActivity.class);
-                //startActivity(intent);
-                //finish();
+                intent = new Intent(this, EventActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             case NAVDRAWER_ITEM_LOGOUT:
                 //temporarily make this go to profile

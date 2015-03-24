@@ -59,7 +59,7 @@
                 android:value=".ui.main.MainActivity" />
         </activity>
         <activity
-            android:name=".LeaderboardsActivity"
+            android:name=".ui.leaderboard.LeaderboardsActivity"
             android:label="@string/title_activity_leaderboards"
             android:parentActivityName=".ui.main.MainActivity" >
             <meta-data
@@ -67,6 +67,14 @@
                 android:value=".ui.main.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".ui.event.EventActivity"
+            android:label="@string/title_activity_event"
+            android:parentActivityName=".ui.main.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity" />
+        </activity>
         <activity
             android:name=".ui.venue.VenueActivity"
             android:label="@string/app_name"

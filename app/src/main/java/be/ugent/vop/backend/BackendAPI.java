@@ -8,9 +8,11 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+import com.google.api.client.util.DateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import be.ugent.vop.R;
@@ -112,4 +114,13 @@ public class BackendAPI {
     public GroupBean createGroup(String name, String description, String type) throws IOException{
         return myApiService.createGroup(token,  name, description, type).execute();
     }
+
+    public EventBean createEvent(String venueId, List<Long> groupIds, DateTime start, DateTime end, String description,String reward, int requirement,String size,String type) throws IOException{
+        return myApiService.createEvent(token, venueId, groupIds,  start,end, description, reward,requirement, size, type).execute();
+    }
+
+    public List<EventBean> getEvents() throws IOException{
+        return myApiService.getEventsforUser(token).execute().getItems();
+    }
+
 }
