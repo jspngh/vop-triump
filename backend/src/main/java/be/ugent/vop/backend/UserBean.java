@@ -13,6 +13,7 @@ public class UserBean {
     private String lastName;
     private String email;
     private Date joined;
+    private String profilePictureUrl;
 
     public void setJoined(Date joined){
         this.joined= joined;
@@ -52,5 +53,13 @@ public class UserBean {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 }

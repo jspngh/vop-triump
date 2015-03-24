@@ -15,7 +15,6 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -35,8 +34,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 
 //TODO: Pictures for group, users and venues
@@ -266,6 +265,12 @@ public class MyEndpoint {
     public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId,@Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         GroupsBean groups = _getGroupsForUser(userId);
+        VenueBean venue;
+        try {
+            venue = _getVenueBean(venueId);
+        } catch(EntityNotFoundException e){
+            venue = createVenue(token, venueId, false);
+        }
         if(groups.getNumGroups()==0) {
             return null;
          //needs to be catched
@@ -405,7 +410,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getOverview", path = "getOverview")
-    public OverviewBean getOverview(@Named("token") String token, @Named("venueIds") ArrayList<String> venueIds) throws UnauthorizedException, EntityNotFoundException {
+    public OverviewBean getOverview(@Named("token") String token, @Nullable @Named("venueIds") ArrayList<String> venueIds) throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         GroupsBean tmp = _getGroupsForUser(userId);
         ArrayList<VenueBean> venues = new ArrayList<>();
@@ -414,13 +419,14 @@ public class MyEndpoint {
         if(tmp.getGroups().size() != 0){
             group = _getGroupsForUser(userId).getGroups().get(0);
         }
-
-        for(String venueId : venueIds){
-            try {
-                mVenueBean = _getVenueBean(venueId);
-                venues.add(mVenueBean);
+        if(venueIds != null) {
+            for (String venueId : venueIds) {
+                try {
+                    mVenueBean = _getVenueBean(venueId);
+                    venues.add(mVenueBean);
+                } catch (EntityNotFoundException e) {
+                }
             }
-            catch(EntityNotFoundException e){}
         }
         OverviewBean result = new OverviewBean();
         result.setGroup(group);
@@ -787,13 +793,12 @@ public class MyEndpoint {
             for(Entity r: pq.asIterable()){
                 venueEnt = r;
             }
-            if(venueEnt==null){
+            if(venueEnt == null){
                 throw new EntityNotFoundException(keyVenue);
             }
         }
-        VenueBean venue = _getVenueBean(venueEnt);
 
-        return venue;
+        return _getVenueBean(venueEnt);
     }
 
 

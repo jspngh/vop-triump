@@ -2,61 +2,72 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="be.ugent.vop.ui.group.GroupActivity$PlaceholderFragment">
-
-    <ImageView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/imageView"
-        android:contentDescription="@string/group_banner_description"
-        android:adjustViewBounds="false"
-        android:scaleType="centerCrop"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/imageView"
-        android:id="@+id/name"
-        android:gravity="center"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/name"
-        android:id="@+id/type"
-        android:gravity="center"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/type"
-        android:id="@+id/description"
-        android:gravity="center"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/description"
-        android:id="@+id/created"
-        android:gravity="center"/>
-    <Button
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Join group"
-        android:id="@+id/joinbtn"
-        android:layout_below="@+id/created"
-        android:layout_centerHorizontal="true" />
-    <TextView
+        android:id="@+id/banner">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/imageView"
+            android:contentDescription="@string/group_banner_description"
+            android:adjustViewBounds="false"
+           android:scaleType="centerCrop"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/members"
+            android:layout_below="@id/imageView"
+            android:text="Members:"
+            android:gravity="center"/>
+        <ListView
+            android:layout_height="150dp"
+            android:layout_width="match_parent"
+            android:id="@+id/membersView"
+            android:layout_below="@id/members"
+            android:layout_margin="0dp"
+            android:elevation="8dp"/>
+    </RelativeLayout>
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/joinbtn"
-        android:id="@+id/members"
-        android:text="Members:"
-        android:gravity="center"/>
-    <ListView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/membersView"
-        android:layout_below="@id/members"
-        android:layout_margin="0dp"
-        android:elevation="8dp"/>
-
+        android:layout_height="match_parent"
+        android:layout_below="@id/banner">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/name"
+            android:gravity="center"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@id/name"
+            android:id="@+id/type"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@id/type"
+            android:id="@+id/description"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@id/description"
+            android:id="@+id/created"
+            android:gravity="center"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join group"
+            android:id="@+id/joinbtn"
+            android:layout_below="@+id/created"
+            android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
