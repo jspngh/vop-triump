@@ -115,6 +115,19 @@ public class MyEndpoint {
         return response;
     }
 
+    @ApiMethod(name = "getUserInfoForId")
+    public UserBean getUserInfoForId(@Named("token") String token, @Named("userId") String userId) throws UnauthorizedException {
+        _getUserIdForToken(token);
+        UserBean response = null;
+        try {
+            response = _getUserBeanForId(userId);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
     @ApiMethod(name = "createGroup")
     public GroupBean createGroup(@Named("token") String token, @Named("groupName") String groupName, @Named("description") String description, @Named("type") String type) throws UnauthorizedException {
         String userId = _getUserIdForToken(token);

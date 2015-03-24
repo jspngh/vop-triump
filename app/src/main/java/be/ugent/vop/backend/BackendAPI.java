@@ -74,6 +74,11 @@ public class BackendAPI {
     public UserBean getUserInfo() throws IOException{
         return myApiService.getUserInfo(token).execute();
     }
+
+    public UserBean getUserInfoForId(String userId) throws IOException{
+        return myApiService.getUserInfoForId(token, userId).execute();
+    }
+
     public GroupsBean getGroupsForUser() throws IOException{
         return myApiService.getGroupsForUser(token).execute();
     }

@@ -19,21 +19,25 @@ public class UserInfoLoader extends AsyncTaskLoader<UserBean> {
 
     UserBean mUserBean;
     private Context context;
+    private String userId;
 
-    public UserInfoLoader(Context context) {
+    public UserInfoLoader(Context context, String userId) {
         super(context);
         this.context = context.getApplicationContext();
+        this.userId = userId;
     }
 
     @Override public UserBean loadInBackground() {
         UserBean result = null;
-        try{
-            result = BackendAPI.get(context).getUserInfo();
-        } catch(IOException e){
-            Log.d(TAG, e.getMessage());
-        }
-        if(result != null && result.getProfilePictureUrl() == null){
-            result.setProfilePictureUrl(FoursquareAPI.get(context).getUserProfilePicture());
+        if(userId != null && !userId.equals("N.A.")) {
+            try {
+                result = BackendAPI.get(context).getUserInfoForId(userId);
+            } catch (IOException e) {
+                Log.d(TAG, e.getMessage());
+            }
+            if (result != null && result.getProfilePictureUrl() == null) {
+                result.setProfilePictureUrl(FoursquareAPI.get(context).getUserProfilePicture(userId));
+            }
         }
         return result;
     }

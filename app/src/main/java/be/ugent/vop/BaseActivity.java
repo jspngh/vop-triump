@@ -53,7 +53,8 @@ import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
-import be.ugent.vop.ui.login.ProfileFragment;
+import be.ugent.vop.ui.profile.ProfileActivity;
+import be.ugent.vop.ui.profile.ProfileFragment;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.LUtils;
 
@@ -88,6 +89,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected static final int NAVDRAWER_ITEM_EVENT = 2;
     protected static final int NAVDRAWER_ITEM_SETTINGS = 3;
     protected static final int NAVDRAWER_ITEM_LOGOUT = 4;
+    protected static final int NAVDRAWER_ITEM_PROFILE = 5;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -99,7 +101,8 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.string.navdrawer_item_leaderboards,
             R.string.navdrawer_item_event,
             R.string.navdrawer_item_settings,
-            R.string.navdrawer_item_logout
+            R.string.navdrawer_item_logout,
+            R.string.navdrawer_item_profile
     };
 
     // icons for navdrawer items (indices must correspond to above array)
@@ -108,7 +111,8 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.drawable.ic_drawer_leaderboard,
             R.drawable.ic_drawer_event,
             R.drawable.ic_drawer_settings,
-            R.drawable.ic_drawer_logout
+            R.drawable.ic_drawer_logout,
+            R.drawable.ic_drawer_user
     };
 
     // delay to launch nav drawer item, to allow close animation to play
@@ -120,7 +124,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
 
     // list of navdrawer items that were actually added to the navdrawer, in order
-    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
+    private ArrayList<Integer> mNavDrawerItems = new ArrayList<>();
 
     // views that correspond to each navdrawer item, null if not yet created
     private View[] mNavDrawerItemViews = null;
@@ -304,6 +308,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LOGOUT);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_PROFILE);
 
         createNavDrawerItems();
     }
@@ -399,13 +404,16 @@ public abstract class BaseActivity extends ActionBarActivity {
                 finish();
                 break;
             case NAVDRAWER_ITEM_LOGOUT:
-                //temporarily make this go to profile
                 intent = new Intent(this, LoginActivity.class);
-                intent.putExtra(getString(R.string.profile), ProfileFragment.PROFILE_ACTIVITY);
+                intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
+                startActivity(intent);
+                finish();
+                break;
+            case NAVDRAWER_ITEM_PROFILE:
+                intent = new Intent(this, ProfileActivity.class);
                 SharedPreferences prefs = this.getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
                 String userId = prefs.getString(getString(R.string.userid), "N.A.");
                 intent.putExtra(ProfileFragment.USER_ID, userId);
-                //intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
                 startActivity(intent);
                 finish();
                 break;
