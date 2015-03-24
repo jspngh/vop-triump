@@ -4,31 +4,18 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
-import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import be.ugent.vop.R;
-import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.loaders.UserInfoLoader;
-import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareAPI;
-import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.ui.main.OverviewAdapter;
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<UserBean> {
     public final static String USER_ID = "userId";
@@ -93,15 +80,14 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<UserBean> userInfoLoader, final UserBean userInfo) {
-       this.userInfo = userInfo;
-       if(userInfo != null && userInfo.getProfilePictureUrl() != null){
-           Ion.with(profilePic)
-                   .placeholder(R.drawable.fantastic_background)
-                   .error(R.drawable.ic_drawer_logout)
-                   .load(userInfo.getProfilePictureUrl());
-       }
+        this.userInfo = userInfo;
+        if(userInfo != null && userInfo.getProfilePictureUrl() != null){
+            Ion.with(profilePic)
+                    .placeholder(R.drawable.fantastic_background)
+                    .error(R.drawable.ic_drawer_logout)
+                    .load(userInfo.getProfilePictureUrl());
+        }
     }
-
     @Override
     public void onLoaderReset(Loader<UserBean> userInfoLoader) {
     }
