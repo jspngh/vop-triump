@@ -129,8 +129,8 @@ public class BackendAPI {
     }
 
 
-    public void createEvent2(String venueId, List<Long> groupIds, DateTime start, DateTime end, String description,String reward, List<String> applicableTypes,List<String> applicableSizes, boolean verified) throws IOException{
-         myApiService.createEvent2(token, venueId, groupIds,  start,end, description, reward, applicableTypes, applicableSizes,verified).execute();
+    public EventBean createEvent2(String venueId, List<Long> groupIds, DateTime start, DateTime end, String description,String reward, List<String> applicableTypes,List<String> applicableSizes, boolean verified) throws IOException{
+         return myApiService.createEvent2(token, venueId, groupIds,  start,end, description, reward, applicableTypes, applicableSizes,verified).execute();
         //TODO: make eventBean in backend
     }
 
