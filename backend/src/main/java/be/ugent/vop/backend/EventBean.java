@@ -7,54 +7,59 @@ import java.util.List;
  * Created by Lars on 21/03/15.
  */
 public class EventBean {
-    private String venue;
-    private String userId;
+    private VenueBean venue;
+    private UserBean user;
     private Date start;
     private Date end;
     private String description;
     private String reward;
-    private String size;
-    private String type;
-    private int requirement;
+    private List<String> sizes;
+    private List<String> types;
+    private List<GroupBean> groups;
+    private boolean verified;
 
-    public String getSize() {
-        return size;
+    public boolean isVerified(){
+        return verified;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setVerified(boolean flag){
+        verified = flag;
     }
 
-    public String getType() {
-        return type;
+    public List<String> getSizes() {
+        return sizes;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setSizes(List<String> sizes) {
+        this.sizes = sizes;
     }
 
-    public int getRequirement() {
-        return requirement;
+    public List<String> getTypes() {
+        return types;
     }
 
-    public void setRequirement(int requirement) {
-        this.requirement = requirement;
+    public void setTypes(List<String> type) {
+        this.types = types;
     }
 
-    public String getVenue() {
+    public void setGroups(List<GroupBean> groups){this.groups = groups;}
+
+    public List<GroupBean> getGroups() { return groups;}
+
+    public VenueBean getVenue() {
         return venue;
     }
 
-    public void setVenue(String venue) {
+    public void setVenue(VenueBean venue) {
         this.venue = venue;
     }
 
-    public String getOrganizer() {
-        return userId;
+    public UserBean getOrganizer() {
+        return user;
     }
 
-    public void setOrganizer(String organizer) {
-        this.userId = organizer;
+    public void setOrganizer(UserBean organizer) {
+        this.user = organizer;
     }
 
 
