@@ -914,27 +914,27 @@ public class MyEndpoint {
         eventbean.setStart((Date) event.getProperty(EVENT_START));
 
         List<String> types = new ArrayList<>();
-        if(event.getProperty(EVENT_SIZE_INDIVIDUAL)==1)
+        if((Integer)event.getProperty(EVENT_SIZE_INDIVIDUAL)==1)
             types.add(GroupBean.GROUP_SIZE_INDIVIDUAL);
-        if(event.getProperty(EVENT_SIZE_SMALL)==1)
+        if((Integer)event.getProperty(EVENT_SIZE_SMALL)==1)
             types.add(GroupBean.GROUP_SIZE_SMALL);
-        if(event.getProperty(EVENT_SIZE_MEDIUM)==1)
+        if((Integer)event.getProperty(EVENT_SIZE_MEDIUM)==1)
             types.add(GroupBean.GROUP_SIZE_MEDIUM);
-        if(event.getProperty(EVENT_SIZE_LARGE)==1)
+        if((Integer)event.getProperty(EVENT_SIZE_LARGE)==1)
             types.add(GroupBean.GROUP_SIZE_LARGE);
 
         List<String> sizes = new ArrayList<>();
-        if(event.getProperty(EVENT_TYPE_CLUB)==1)
+        if((Integer)event.getProperty(EVENT_TYPE_CLUB)==1)
             sizes.add(GroupBean.GROUP_TYPE_CLUB);
-        if(event.getProperty(EVENT_TYPE_FRIENDS)==1)
+        if((Integer)event.getProperty(EVENT_TYPE_FRIENDS)==1)
             sizes.add(GroupBean.GROUP_TYPE_FRIENDS);
-        if(event.getProperty(EVENT_TYPE_STUDENTGROUP)==1)
+        if((Integer)event.getProperty(EVENT_TYPE_STUDENTGROUP)==1)
             sizes.add(GroupBean.GROUP_TYPE_STUDENTGROUP);
 
         eventbean.setSizes(sizes);
         eventbean.setTypes(types);
 
-        if(event.getProperty(EVENT_VERIFIED)==1) eventbean.setVerified(true);
+        if((Integer)event.getProperty(EVENT_VERIFIED)==1) eventbean.setVerified(true);
         else eventbean.setVerified(false);
 
         eventbean.setOrganizer(_getUserBeanForId((String) event.getProperty(EVENT_USER_ID)));

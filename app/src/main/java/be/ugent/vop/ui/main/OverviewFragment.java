@@ -1,6 +1,8 @@
 package be.ugent.vop.ui.main;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import com.google.android.gms.maps.MapFragment;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import be.ugent.vop.LocationService;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
@@ -26,23 +29,17 @@ import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
-public class OverviewFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class OverviewFragment extends Fragment {
     private static final String TAG = "OverviewFragment";
-    private static final int SPAN_COUNT = 2;
-    private static final int DATASET_COUNT = 60;
 
-    private GoogleApiClient mGoogleApiClient;
-    private MapFragment fragment;
+    private LocationService mLocationService = null;
+    private Location mLastLocation;
+    private Location location;
+
     protected RecyclerView mRecyclerView;
-    protected OverviewAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected String[] mDataset;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
+    public OverviewFragment(){
     }
 
     @Override
@@ -50,6 +47,10 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_overview, container, false);
         rootView.setTag(TAG);
+        SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), MainActivity.MODE_PRIVATE);
+        mLastLocation = new Location("");
+        mLastLocation.setLatitude(prefs.getFloat(getString(R.string.locationLatitude), (float)51.046127));
+        mLastLocation.setLongitude(prefs.getFloat(getString(R.string.locationLongitude), (float)3.727251));
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_overview);
 
@@ -59,13 +60,20 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(new OverviewAdapter(null, null, null));
+        if(getActivity() instanceof MainActivity){
+            mLocationService = ((MainActivity)getActivity()).getLocationService();
+        }
+        setOverview();
+        return rootView;
+    }
 
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation == null) {
-            mLastLocation = new Location("");
-            mLastLocation.setLatitude(51.115789);
-            mLastLocation.setLongitude(4.002567);
+    public void setOverview(){
+
+        if(mLocationService != null) {
+            location = mLocationService.getLocation();
+        }
+        if(location == null){
+            location = mLastLocation;
         }
 
         new AsyncTask<Location, Void, OverviewBean>() {
@@ -112,39 +120,6 @@ public class OverviewFragment extends Fragment implements GoogleApiClient.Connec
                 mRecyclerView.setAdapter(new OverviewAdapter(result, fsVenues, getActivity()));
                 super.onPostExecute(result);
             }
-        }.execute(mLastLocation);
-
-        return rootView;
+        }.execute(location);
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "Google API onConnected");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
-    private void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
 }

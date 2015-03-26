@@ -3,15 +3,14 @@ package be.ugent.vop;
 /**
  * Created by vincent on 28/02/15.
  */
-import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,8 +27,10 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
 
+    private final IBinder mBinder = new LocationBinder();
+
     private boolean mCurrentlyProcessingLocation = false;
-    private boolean mFoundFirstLocation = false;
+    private boolean locationFound = false;
 
 
     /*************************************
@@ -37,8 +38,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
      *  Override methods for extending Service
      *
      *************************************/
-
-
 
     @Override
     public void onCreate() {
@@ -49,11 +48,11 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         buildGoogleApiClient();
         mGoogleApiClient.connect();
         mCurrentlyProcessingLocation = true;
-        mFoundFirstLocation = false;
+        locationFound = false;
 
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirstLocation);
+        editor.putBoolean(getString(R.string.locationAvailable),locationFound);
         editor.commit();
     }
 
@@ -78,6 +77,13 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    public Location getLocation(){
+        if(locationFound){
+            return mLastLocation;
+        }
         return null;
     }
 
@@ -86,7 +92,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
      *  Google API builder
      *
      *************************************/
-
 
     protected synchronized void buildGoogleApiClient() {
         Log.d(TAG, "buildGoogleApiClient");
@@ -125,7 +130,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
-
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d(TAG,"onConnected");
@@ -137,7 +141,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
         startLocationUpdates();
     }
-
 
     @Override
     public void onConnectionSuspended(int nr){
@@ -155,7 +158,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     @Override
     public void onLocationChanged(Location location) {
         //Log.d(TAG, "Location changed, lat: "+location.getLatitude()+ "| long: "+location.getLongitude());
-        if(mFoundFirstLocation==true) {
+        if(locationFound == true) {
             if (mLastLocation.distanceTo(location) >= 5.0) {
                 Log.d(TAG, "Location Changed");
                 mLastLocation = location;
@@ -173,10 +176,10 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     private void foundFirstLocation(Location location){
         Log.d(TAG, "foundFirstLocation");
-        mFoundFirstLocation = true;
+        locationFound = true;
         SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), this.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(getString(R.string.locationAvailable),mFoundFirstLocation);
+        editor.putBoolean(getString(R.string.locationAvailable),locationFound);
 
         // attention: double to float cast, possible source for errors !
 
@@ -190,6 +193,12 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         // nieuwe locatie meegeeft zodat we niet moeten werken met de sharedPref?           /////
         /////////////////////////////////////////////////////////////////////////////////////////
 
+    }
+
+    public class LocationBinder extends Binder {
+        public LocationService getService(){
+            return LocationService.this;
+        }
     }
 
 }
