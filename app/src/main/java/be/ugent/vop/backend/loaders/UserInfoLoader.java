@@ -14,7 +14,7 @@ import be.ugent.vop.foursquare.FoursquareAPI;
  * Created by jonas on 24-3-2015.
  */
 public class UserInfoLoader extends AsyncTaskLoader<UserBean> {
-    private final String TAG = "GroupsForUserLoader";
+    private final String TAG = "UserInfoLoader";
 
 
     UserBean mUserBean;

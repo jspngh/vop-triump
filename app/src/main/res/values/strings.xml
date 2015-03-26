@@ -42,6 +42,7 @@
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
     <string name="no_ranking">Currently there aren\'t any groups competing for this venue. Click check-in to be the first to conquer it!</string>
     <string name="loading_data">Crunching the latest data for you…</string>
+    <string name="retrieving_data">Retrieving data</string>
 
     <string name="group_title">Updates from your groups</string>
     <string name="venue_title">Places nearby</string>

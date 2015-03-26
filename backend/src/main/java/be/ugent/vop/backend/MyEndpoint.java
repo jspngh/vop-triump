@@ -56,6 +56,7 @@ public class MyEndpoint {
     private static final String USER_LAST_NAME = "lastName";
     private static final String USER_EMAIL = "email";
     private static final String USER_JOINED = "joined";
+    private static final String USER_PICTURE = "profilePicture";
 
     private static final String GROUP_ENTITY = "Group";
     private static final String GROUP_NAME = "name";
@@ -404,6 +405,10 @@ public class MyEndpoint {
             String lastName = "";
             if(user.has("lastName"))
                 lastName = user.getString("lastName");
+            JSONObject photo = user.getJSONObject("photo");
+            String profilePicture = "";
+            if(photo.has("prefix") && photo.has("suffix"))
+                profilePicture = photo.getString("prefix") + "original" + photo.getString("suffix");
             JSONObject contact = user.getJSONObject("contact");
             String email = contact.getString("email");
             response.setUserId(returnedUserId);
@@ -420,6 +425,7 @@ public class MyEndpoint {
                     userEntity.setProperty(USER_LAST_NAME, lastName);
                     userEntity.setProperty(USER_EMAIL, email);
                     userEntity.setProperty(USER_JOINED, new Date());
+                    userEntity.setProperty(USER_PICTURE, profilePicture);
                     datastore.put(userEntity);
                 }
                 // Create session for user and send back auth token
@@ -710,6 +716,7 @@ public class MyEndpoint {
         bean.setFirstName((String) user.getProperty(USER_FIRST_NAME));
         bean.setLastName((String) user.getProperty(USER_LAST_NAME));
         bean.setJoined((Date) user.getProperty(USER_JOINED));
+        bean.setProfilePictureUrl((String) user.getProperty(USER_PICTURE));
 
         return bean;
     }

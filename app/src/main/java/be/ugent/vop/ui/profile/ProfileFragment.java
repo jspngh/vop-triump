@@ -8,20 +8,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.UserInfoLoader;
 import be.ugent.vop.backend.myApi.model.UserBean;
+import be.ugent.vop.ui.widget.CircularImageView;
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<UserBean> {
     public final static String USER_ID = "userId";
     public final static String PROFILE_ACTIVITY = "Go to profile";
     private ImageView profilePic;
-    private Button btnLogout;
+    private TextView firstname;
+    private TextView lastname;
+    private TextView email;
+    private TextView date_joined;;
     private UserBean userInfo;
     private String userId;
 
@@ -52,7 +56,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        profilePic = (ImageView) rootView.findViewById(R.id.profilePic);
+        profilePic = (CircularImageView) rootView.findViewById(R.id.profilePic);
+        firstname = (TextView) rootView.findViewById(R.id.firstname);
+        lastname = (TextView) rootView.findViewById(R.id.lastname);
+        email = (TextView) rootView.findViewById(R.id.email);
+        date_joined = (TextView) rootView.findViewById(R.id.date_joined);
 /*        btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,11 +93,17 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoadFinished(Loader<UserBean> userInfoLoader, final UserBean userInfo) {
         this.userInfo = userInfo;
-        if(userInfo != null && userInfo.getProfilePictureUrl() != null){
-            Ion.with(profilePic)
-                    .placeholder(R.drawable.fantastic_background)
-                    .error(R.drawable.ic_drawer_logout)
-                    .load(userInfo.getProfilePictureUrl());
+        if(userInfo != null){
+            if(userInfo.getProfilePictureUrl() != null) {
+                Ion.with(profilePic)
+                        .placeholder(R.drawable.fantastic_background)
+                        .error(R.drawable.ic_drawer_logout)
+                        .load(userInfo.getProfilePictureUrl());
+            }
+            firstname.setText(userInfo.getFirstName());
+            lastname.setText(userInfo.getLastName());
+            email.setText(userInfo.getEmail());
+            date_joined.setText(userInfo.getJoined().toString());
         }
     }
     @Override

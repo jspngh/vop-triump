@@ -28,6 +28,6 @@ public class EventActivity extends BaseActivity {
 
     @Override
     protected int getSelfNavDrawerItem() {
-        return NAVDRAWER_ITEM_LEADERBOARDS;
+        return NAVDRAWER_ITEM_EVENT;
     }
 }
