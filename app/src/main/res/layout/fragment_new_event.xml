@@ -23,7 +23,26 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:weightSum="1">
+
+        <TextView
+            android:paddingTop="7dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check this box if the event is verified:"
+            android:id="@+id/textView6"
+            >
+
+
+        </TextView>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verified"
+            android:id="@+id/checkBoxVerified"
+            android:checked="true"
+            android:buttonTint="@color/theme_accent_1" />
 
 
     <EditText
@@ -70,77 +89,14 @@
         android:layout_gravity="center_horizontal"
         android:paddingTop="5dp"
         android:hint="end time" />
-<!--
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Select start date and time:"
-                android:id="@+id/textView4" />
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/horizontalScrollView2" >
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
-
-            <DatePicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/datePickerStart"
-                android:calendarViewShown="false"
-                android:layout_weight="0.5" />
-
-            <TimePicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/timePickerStart"
-                android:layout_weight="0.5" />
-        </LinearLayout>
-            </HorizontalScrollView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Select end date and time:"
-                android:id="@+id/textView5"
-                />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/horizontalScrollView1" >
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            >
-
-            <DatePicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/datePickerEnd"
-                android:calendarViewShown="false"
-                android:layout_weight="0.5" />
-
-            <TimePicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/timePickerEnd"
-                android:layout_weight="0.5" />
-
-        </LinearLayout>
-        </HorizontalScrollView>
--->
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp">
+        android:paddingTop="5dp"
+        android:id="@+id/selectTypesAndSize">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="wrap_content"
@@ -154,12 +110,12 @@
             android:text="Select applicable group sizes:"
             android:id="@+id/textView2" />
 
-       <!-- <CheckBox android:id="@+id/checkboxSizeAll"
+    <CheckBox android:id="@+id/checkboxSizeAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="All"
             android:buttonTint="@color/theme_primary_dark"
-            android:layout_margin="0dp" />-->
+            android:layout_margin="0dp" />
         <CheckBox android:id="@+id/checkboxSizeIndividual"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -197,11 +153,11 @@
                 android:id="@+id/textView3"
                 />
 
-       <!--     <CheckBox android:id="@+id/checkboxTypeAll"
+           <CheckBox android:id="@+id/checkboxTypeAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="All"
-                android:buttonTint="@color/theme_primary_dark"/>-->
+                android:buttonTint="@color/theme_primary_dark"/>
             <CheckBox android:id="@+id/checkboxTypeFriends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -218,42 +174,64 @@
                 android:text="Studentgroup"
                 android:buttonTint="@color/theme_primary_dark"/>
     </LinearLayout>
-    </LinearLayout>
-
-
-            <TextView
-                android:paddingTop="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Check this box if the event is verified:"
-                android:id="@+id/textView6"
-                >
-
-
-            </TextView>
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Verified"
-                android:id="@+id/checkBoxVerified"
-                android:checked="false"
-                android:buttonTint="@color/theme_accent_1" />
+    </LinearLayout>-->
 
             <TextView
                 android:paddingTop="7dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select the groups:"
+                android:text="Select groups:"
                 android:id="@+id/textView7"
                 />
 
-            <ListView
+            <Button
                 android:layout_width="wrap_content"
-                android:layout_height="125dp"
-                android:id="@+id/listViewSelectGroups"
-                android:clickable="true"
-                android:focusable="true"
+                android:layout_height="wrap_content"
+                android:text="Select groups"
+                android:id="@+id/buttonSelectGroups"
+                android:layout_gravity="center_horizontal"/>
+
+
+            <!--          <TextView
+                          android:paddingTop="7dp"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="Select the groups:"
+                          and:id="@+id/textView7"
+                          />
+
+                    <ListView
+                          android:layout_width="wrap_content"
+                          android:layout_height="200dp"
+                          android:id="@+id/listViewSelectGroups"
+                          android:clickable="true"
+                          android:focusable="true"
+                         />-->
+
+            <TextView
+                android:paddingTop="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select groupsize"
+                android:id="@+id/textView8"
                 />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editTextMin"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="5dp"
+                android:hint="Min members" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editTextMax"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="5dp"
+                android:hint="Max members" />
+
 
             <Button
                 android:layout_width="wrap_content"
@@ -261,9 +239,6 @@
                 android:text="Create Event"
                 android:id="@+id/buttonCreateEvent"
                 android:layout_gravity="center_horizontal"/>
-
-
-
 
         </LinearLayout>
         </ScrollView>

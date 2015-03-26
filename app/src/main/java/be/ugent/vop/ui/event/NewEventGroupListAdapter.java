@@ -31,7 +31,6 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 
 public class NewEventGroupListAdapter extends ArrayAdapter<GroupBean> {
     private int resourceId;
-    private NewEventFragment parent;
 
     public NewEventGroupListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
@@ -58,17 +57,17 @@ public class NewEventGroupListAdapter extends ArrayAdapter<GroupBean> {
 
         if(r!=null){
             ctw.setText(r.getName());
-
-
-        ctw.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                ((CheckedTextView) v).toggle();
-            }
-        });
+            ctw.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v)
+                {
+                    ((CheckedTextView) v).toggle();
+                }
+            });
         }
         return v;
     }
+
+
 
 
 }

@@ -2,6 +2,7 @@ package be.ugent.vop.ui.event;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -55,8 +56,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     String fsVenueId;
 
     Button createButton;
-
-    NewEventGroupListAdapter adapter;
+    Button selectGroupsButton;
 
     /*
      * TODO: Add hour and minute to start- and end date!
@@ -65,31 +65,34 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     EditText descriptionEditText, rewardEditText;
     EditText startDateEditText, startTimeEditText;
     EditText endDateEditText, endTimeEditText;
-    ListView groupsListView;
+    EditText minEditText, maxEditText;
 
     DatePickerDialog startDateDialog;
     DatePickerDialog endDateDialog;
     TimePickerDialog startTimeDialog;
     TimePickerDialog endTimeDialog;
     SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+    SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     int startYear=-1, startDay=-1, startMonth=-1;
-    int startHour, startMinute;
-    int endHour, endMinute;
+    String startHourMinute;
+    String endHourMinute;
     Date startDate = null;
     Date endDate = null;
     DateTime start;
     DateTime end;
 
+    int minMembers = -1;
+    int maxMembers = -1;
+
     CheckBox verifiedCheckBox;
-    CheckBox typeFriendsCheckBox, typeClubCheckBox, typeStudentGroupCheckBox;
-    CheckBox sizeIndividualCheckBox, sizeSmallCheckBox, sizeMediumCheckBox, sizeLargeCheckBox;
-    Boolean typeAll= false, typeFriends= false, typeClub= false, typeStudentGroup = false;
-    Boolean sizeAll= false, sizeIndividual= false, sizeSmall= false, sizeMedium= false, sizeLarge= false;
-    List<String> types = new ArrayList<>();
-    List<String> sizes = new ArrayList<>();
-    Boolean verified = false;
+    Boolean verified = true;
+
+    SelectGroupsDialog dialog;
+    FragmentManager fm;
 
     List<Long> groupIds = new ArrayList<Long>();
+    List<GroupBean> userGroups = null;
+    List<GroupBean> selectedGroups = new ArrayList<>();
 
     String description ="", reward="";
 
@@ -104,29 +107,17 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
             fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
 
         createButton = (Button) rootView.findViewById(R.id.buttonCreateEvent);
+        selectGroupsButton = (Button) rootView.findViewById(R.id.buttonSelectGroups);
 
         descriptionEditText = (EditText) rootView.findViewById(R.id.editTextDescription);
         rewardEditText = (EditText) rootView.findViewById(R.id.editTextReward);
-        groupsListView = (ListView) rootView.findViewById(R.id.listViewSelectGroups);
 
-        groupsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        dialog = new SelectGroupsDialog();
+        dialog.setContext(getActivity());
+        fm = getFragmentManager();
+
+        //init loader
         getLoaderManager().initLoader(0, null, groupLoaderListener);
-
-        groupsListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            public void onItemClick(AdapterView<?> parent, View view,int position,long id) {
-              //  View v = groupsListView.getChildAt(position);
-                CheckedTextView ctv = (CheckedTextView) view.findViewById(R.id.checkedTextViewGroup);
-
-                Log.d("TAG","GroupName: "+ adapter.getItem(position).getName());
-                if(!ctv.isChecked()){
-                    ctv.setChecked(true);
-                groupIds.add(adapter.getItem(position).getGroupId());
-                }else{
-                    ctv.setChecked(false);
-                    groupIds.remove(adapter.getItem(position).getGroupId());
-                }
-            }
-        });
 
         //date
         startDateEditText = (EditText) rootView.findViewById(R.id.editTextStartDate);
@@ -135,125 +126,27 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         endTimeEditText = (EditText) rootView.findViewById(R.id.editTextEndTime);
         initDateTimeDialog();
 
-
-        //type checkbox
-        //typeAllCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxTypeAll);
-        typeFriendsCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxTypeFriends);
-        typeClubCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxTypeClub);
-        typeStudentGroupCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxTypeStudentGroup);
-        //typeAllCheckBox.setOnClickListener(this);
-        typeFriendsCheckBox.setOnClickListener(this);
-        typeClubCheckBox.setOnClickListener(this);
-        typeStudentGroupCheckBox.setOnClickListener(this);
-        //size checkbox
-        //sizeAllCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxSizeAll);
-        sizeIndividualCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxSizeIndividual);
-        sizeSmallCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxSizeSmall);
-        sizeMediumCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxSizeMedium);
-        sizeLargeCheckBox = (CheckBox) rootView.findViewById(R.id.checkboxSizeLarge);
-        //sizeAllCheckBox.setOnClickListener(this);
-        sizeIndividualCheckBox.setOnClickListener(this);
-        sizeSmallCheckBox.setOnClickListener(this);
-        sizeMediumCheckBox.setOnClickListener(this);
-        sizeLargeCheckBox.setOnClickListener(this);
+        minEditText = (EditText) rootView.findViewById(R.id.editTextMin);
+        maxEditText = (EditText) rootView.findViewById(R.id.editTextMax);
 
         //verified
         verifiedCheckBox = (CheckBox) rootView.findViewById(R.id.checkBoxVerified);
         verifiedCheckBox.setOnClickListener(this);
 
+        selectGroupsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelectGroupDialog();
+            }
+        });
+
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean correctDatesInput = true;
-                boolean correctSizeInput = true;
-                boolean correctTypeInput = true;
-                boolean correctTextInput = true;
-
-                /*if(!verified)*/ fillGroupIds();
-                description = descriptionEditText.getText().toString();
-                reward = rewardEditText.getText().toString();
-              /*  if(!(correctDatesInput=correctDates())){
-                    Log.d(TAG, "Incorrect date and time");
-                    //startDateEditText.setHintTextColor(some color);
-                }
-                if(!(correctSizeInput=correctGroupSize())){
-                    Log.d(TAG, "Incorrect checkbox input in groupsizes");
-                    //startDateEditText.setHintTextColor(some color);
-                }
-                if(!(correctTypeInput=correctGroupTypes())){
-                    Log.d(TAG, "Incorrect checkbox input in grouptypes");
-                    //startDateEditText.setHintTextColor(some color);
-                }
-                if(!(correctTextInput=correctTextInput())){
-                    Log.d(TAG, "Incorrect description or reward");
-                    //startDateEditText.setHintTextColor(some color);
-                }*/
-                if(correctDatesInput && correctSizeInput && correctTypeInput && correctTextInput ){
-                   if(!verified){
-                       start = new DateTime(startDate);
-                       end = new DateTime(endDate);
-                       Log.d(TAG, "startDate:"+start.toString());
-                       Log.d(TAG, "endDate:"+end.toString());
-                       Log.d(TAG, "des: "+description);
-                       Log.d(TAG, "reward: "+reward);
-                       Log.d(TAG, "venueId: "+fsVenueId);
-                       for(String s:types){
-                           Log.d(TAG, "type: "+s);
-                       }
-                       for(String s:sizes){
-                           Log.d(TAG, "size: "+s);
-                       }
-                       for(Long s:groupIds){
-                           Log.d(TAG, "group: "+s);
-                       }
-
-
-
-
-                   }
-
-                }
-
-
+                createButtonPressed();
             }
         });
         return rootView;
-    }
-
-
-    private void fillGroupIds(){
-        for(int i = 0;i<groupsListView.getChildCount();i++)
-        {
-            View view = groupsListView.getChildAt(i);
-            CheckedTextView cv =(CheckedTextView)view.findViewById(R.id.checkedTextViewGroup);
-            if(cv.isChecked())
-            {
-                groupIds.add(adapter.getItem(i).getGroupId());
-            }
-        }
-    }
-
-    /*
-
-    Check user input
-     */
-    private boolean correctDates(){
-        if(startDate!=null && endDate != null){
-            return (startDate.before(endDate) ||
-                    (!startDate.after(endDate) && startHour*60+startMinute<endHour*60+endMinute));}
-        else return false;
-    }
-    private boolean correctGroupSize(){
-        //incorrect if no item are checked
-       return (sizeAll || sizeIndividual|| sizeSmall|| sizeMedium|| sizeLarge);
-    }
-    private boolean correctGroupTypes(){
-        //incorrect if no item are checked
-        return (typeAll|| typeFriends|| typeClub|| typeStudentGroup);
-    }
-    private boolean correctTextInput(){
-        //TODO: check user input for event description and event reward
-        return true;
     }
 
     @Override
@@ -261,50 +154,6 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         boolean checked = ((CheckBox) view).isChecked();
         // Check which checkbox was clicked
         switch(view.getId()) {
-            //size
-            //case R.id.checkboxSizeAll:
-            //        sizeAll = !sizeAll;
-            //    break;
-            case R.id.checkboxSizeIndividual:
-                sizeIndividual = !sizeIndividual;
-                if(checked) sizes.add("Individual");
-                else sizes.remove("Individual");
-                break;
-            case R.id.checkboxSizeSmall:
-               sizeSmall = !sizeSmall;
-                if(checked) sizes.add("Small");
-                else sizes.remove("Small");
-                break;
-            case R.id.checkboxSizeMedium:
-                sizeMedium = !sizeMedium;
-                if(checked) sizes.add("Medium");
-                else sizes.remove("Medium");
-                break;
-            case R.id.checkboxSizeLarge:
-                sizeLarge = !sizeLarge;
-                if(checked) sizes.add("Large");
-                else sizes.remove("Large");
-                break;
-           //type
-           // case R.id.checkboxTypeAll:
-           //     typeAll = !typeAll;
-           //     break;
-            case R.id.checkboxTypeClub:
-                typeClub = !typeClub;
-                if(checked) types.add("Club");
-                else types.remove("Club");
-                break;
-            case R.id.checkboxTypeFriends:
-                typeFriends = !typeFriends;
-                if(checked) types.add("Friends");
-                else types.remove("Friends");
-                break;
-            case R.id.checkboxTypeStudentGroup:
-                typeStudentGroup = !typeStudentGroup;
-                if(checked) types.add("Studentgroup");
-                else types.remove("Studentgroup");
-                break;
-
             //verified venue
             case R.id.checkBoxVerified:
                 verified = !verified;
@@ -313,10 +162,35 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    /*
-        Date and time on click listeners initializing
-
+    /**
+     *
+     * Check user input
+     *
      */
+    private boolean correctDates(){
+
+        return false;
+    }
+    private boolean correctGroupSize(){
+        //incorrect if no item are checked
+        //   return (sizeAll || sizeIndividual|| sizeSmall|| sizeMedium|| sizeLarge);
+        return true;
+    }
+    private boolean correctGroupTypes(){
+        //incorrect if no item are checked
+        //    return (typeAll|| typeFriends|| typeClub|| typeStudentGroup);
+        return true;
+    }
+    private boolean correctTextInput(){
+        //TODO: check user input for event description and event reward
+        return true;
+    }
+
+    /**
+     *
+     * Date and time on click listeners initializing
+     */
+
     private void initDateTimeDialog() {
 
         startDateEditText.setOnClickListener(new View.OnClickListener() {
@@ -357,7 +231,10 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
                     public void onTimeSet(TimePicker view, int hour, int minute) {
                         //   Calendar newTime = Calendar.getInstance();
                         //   newDate.set(year, monthOfYear, dayOfMonth);
-                        startTimeEditText.setText(hour+":"+minute+":00");
+
+                        startHourMinute = ""+((hour<9)? "0"+hour:hour)+":"+(""+((minute<9)?"0"+minute:minute));
+                        startTimeEditText.setText(startHourMinute);
+
                     }
 
                 },newCalendar.get(Calendar.HOUR_OF_DAY), newCalendar.get(Calendar.MINUTE), true);
@@ -412,7 +289,9 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
                     public void onTimeSet(TimePicker view, int hour, int minute) {
                         //   Calendar newTime = Calendar.getInstance();
                         //   newDate.set(year, monthOfYear, dayOfMonth);
-                        endTimeEditText.setText(hour+":"+minute+":00");
+                        endHourMinute = ""+((hour<9)? "0"+hour:hour)+":"+(""+((minute<9)?"0"+minute:minute));
+                        endTimeEditText.setText(endHourMinute);
+
                     }
 
                 },newCalendar.get(Calendar.HOUR_OF_DAY), newCalendar.get(Calendar.MINUTE), true);
@@ -422,6 +301,12 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
             }
         });
     }
+
+
+    /**
+     *
+     * User group loader
+     */
 
 
     private LoaderManager.LoaderCallbacks<GroupsBean> groupLoaderListener
@@ -435,15 +320,8 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
              Rekening mee houden!
              **************************************/
             if(groups != null && groups.getGroups() != null) {
-                Log.d(TAG, "amount of groups : " + groups.getGroups().size());
-
-                for(int i=0;i<groups.getGroups().size();i++){
-                    Log.d(TAG, "Group: "+groups.getGroups().get(i).toString());
-                }
-
-                adapter = new NewEventGroupListAdapter(getActivity(),groups.getGroups());
-
-                groupsListView.setAdapter(adapter);
+                userGroups = groups.getGroups();
+                dialog.setGroups(userGroups);
             }
         }
 
@@ -460,9 +338,81 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     };
 
 
-    public void selectedGroups(){
-        for(int i=0;i<adapter.getCount();i++){
+
+    /**
+     *
+     * Logic if buttons are pressed
+     */
+
+    private void showSelectGroupDialog() {
+        selectedGroups = new ArrayList<>();
+        dialog.setSelectedGroups(selectedGroups);
+        dialog.show(fm, "dialog");
+    }
+
+    private void createButtonPressed(){
+        boolean correctDatesInput = true;
+        boolean correctSizeInput = true;
+        boolean correctTypeInput = true;
+        boolean correctTextInput = true;
+
+        description = descriptionEditText.getText().toString();
+        reward = rewardEditText.getText().toString();
+        minMembers = Integer.parseInt(minEditText.getText().toString());
+        maxMembers = Integer.parseInt(maxEditText.getText().toString());
+
+        procesDates();
+        start = new DateTime(startDate);
+        end = new DateTime(endDate);
+
+              /*  if(!(correctDatesInput=correctDates())){
+                    Log.d(TAG, "Incorrect date and time");
+                    //startDateEditText.setHintTextColor(some color);
+                }
+                if(!(correctSizeInput=correctGroupSize())){
+                    Log.d(TAG, "Incorrect checkbox input in groupsizes");
+                    //startDateEditText.setHintTextColor(some color);
+                }
+                if(!(correctTypeInput=correctGroupTypes())){
+                    Log.d(TAG, "Incorrect checkbox input in grouptypes");
+                    //startDateEditText.setHintTextColor(some color);
+                }
+                if(!(correctTextInput=correctTextInput())){
+                    Log.d(TAG, "Incorrect description or reward");
+                    //startDateEditText.setHintTextColor(some color);
+                }*/
+        if(correctDatesInput && correctSizeInput && correctTypeInput && correctTextInput ){
+
+                Log.d(TAG, "startDate:"+start.toString());
+                Log.d(TAG, "endDate:"+end.toString());
+                Log.d(TAG, "des: "+description);
+                Log.d(TAG, "reward: "+reward);
+                Log.d(TAG, "venueId: "+fsVenueId);
+                Log.d(TAG, "min: "+minMembers);
+                Log.d(TAG, "max: "+maxMembers);
+                for(GroupBean g:selectedGroups){
+                    Log.d(TAG, "group: "+g.toString());
+                }
+
+
 
         }
+    }
+
+    public void procesDates(){
+        String date = dateFormatter.format(startDate.getTime())+" "+startHourMinute;
+        try {
+          startDate = dateTimeFormatter.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        date = dateFormatter.format(endDate.getTime())+" "+endHourMinute;
+        try {
+            endDate = dateTimeFormatter.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 }

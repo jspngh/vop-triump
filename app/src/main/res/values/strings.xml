@@ -83,5 +83,12 @@
     <string name="search_hint">Enter group</string>
     <string name="action_add">Add group</string>
     <string name="navdrawer_item_events">Events</string>
+
+
+    <!-- Event -->
     <string name="no_event">No events available for you.</string>
+    <string name="button_text_set">Set</string>
+    <string name="button_text_cancel">Cancel</string>
+    <string name="event_select_groups_dialog_title">Select groups for event</string>
+
 </resources>
