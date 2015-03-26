@@ -2,18 +2,25 @@ package be.ugent.vop.ui.event;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.Loader;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -30,6 +37,13 @@ import java.util.Locale;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.backend.loaders.GroupsForUserLoader;
+import be.ugent.vop.backend.loaders.RankingLoader;
+import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.GroupsBean;
+import be.ugent.vop.backend.myApi.model.RankingBean;
+import be.ugent.vop.ui.group.GroupActivity;
+import be.ugent.vop.ui.venue.RankingAdapter;
 import be.ugent.vop.ui.venue.VenueActivity;
 
 /**
@@ -42,6 +56,8 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
 
     Button createButton;
 
+    NewEventGroupListAdapter adapter;
+
     /*
      * TODO: Add hour and minute to start- and end date!
      */
@@ -49,6 +65,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     EditText descriptionEditText, rewardEditText;
     EditText startDateEditText, startTimeEditText;
     EditText endDateEditText, endTimeEditText;
+    ListView groupsListView;
 
     DatePickerDialog startDateDialog;
     DatePickerDialog endDateDialog;
@@ -58,23 +75,21 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     int startYear=-1, startDay=-1, startMonth=-1;
     int startHour, startMinute;
     int endHour, endMinute;
-    Date startDate;
-    Date endDate;
+    Date startDate = null;
+    Date endDate = null;
     DateTime start;
     DateTime end;
 
     CheckBox verifiedCheckBox;
-    CheckBox typeAllCheckBox, typeFriendsCheckBox, typeClubCheckBox, typeStudentGroupCheckBox;
-    CheckBox sizeAllCheckBox, sizeIndividualCheckBox, sizeSmallCheckBox, sizeMediumCheckBox, sizeLargeCheckBox;
+    CheckBox typeFriendsCheckBox, typeClubCheckBox, typeStudentGroupCheckBox;
+    CheckBox sizeIndividualCheckBox, sizeSmallCheckBox, sizeMediumCheckBox, sizeLargeCheckBox;
     Boolean typeAll= false, typeFriends= false, typeClub= false, typeStudentGroup = false;
     Boolean sizeAll= false, sizeIndividual= false, sizeSmall= false, sizeMedium= false, sizeLarge= false;
     List<String> types = new ArrayList<>();
     List<String> sizes = new ArrayList<>();
     Boolean verified = false;
 
-    List<Long> groupIds;
-
-    String venueId;
+    List<Long> groupIds = new ArrayList<Long>();
 
     String description ="", reward="";
 
@@ -92,6 +107,26 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
 
         descriptionEditText = (EditText) rootView.findViewById(R.id.editTextDescription);
         rewardEditText = (EditText) rootView.findViewById(R.id.editTextReward);
+        groupsListView = (ListView) rootView.findViewById(R.id.listViewSelectGroups);
+
+        groupsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        getLoaderManager().initLoader(0, null, groupLoaderListener);
+
+        groupsListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            public void onItemClick(AdapterView<?> parent, View view,int position,long id) {
+              //  View v = groupsListView.getChildAt(position);
+                CheckedTextView ctv = (CheckedTextView) view.findViewById(R.id.checkedTextViewGroup);
+
+                Log.d("TAG","GroupName: "+ adapter.getItem(position).getName());
+                if(!ctv.isChecked()){
+                    ctv.setChecked(true);
+                groupIds.add(adapter.getItem(position).getGroupId());
+                }else{
+                    ctv.setChecked(false);
+                    groupIds.remove(adapter.getItem(position).getGroupId());
+                }
+            }
+        });
 
         //date
         startDateEditText = (EditText) rootView.findViewById(R.id.editTextStartDate);
@@ -133,9 +168,11 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
                 boolean correctSizeInput = true;
                 boolean correctTypeInput = true;
                 boolean correctTextInput = true;
+
+                /*if(!verified)*/ fillGroupIds();
                 description = descriptionEditText.getText().toString();
                 reward = rewardEditText.getText().toString();
-                if(!(correctDatesInput=correctDates())){
+              /*  if(!(correctDatesInput=correctDates())){
                     Log.d(TAG, "Incorrect date and time");
                     //startDateEditText.setHintTextColor(some color);
                 }
@@ -150,7 +187,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
                 if(!(correctTextInput=correctTextInput())){
                     Log.d(TAG, "Incorrect description or reward");
                     //startDateEditText.setHintTextColor(some color);
-                }
+                }*/
                 if(correctDatesInput && correctSizeInput && correctTypeInput && correctTextInput ){
                    if(!verified){
                        start = new DateTime(startDate);
@@ -166,16 +203,12 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
                        for(String s:sizes){
                            Log.d(TAG, "size: "+s);
                        }
+                       for(Long s:groupIds){
+                           Log.d(TAG, "group: "+s);
+                       }
 
-                      /* new Thread(){
-                          public void run(){
-                              try{
-                                  BackendAPI.get(getActivity()).createEvent2(fsVenueId,groupIds,start,end,description,reward,types,sizes,false);
-                              }catch(IOException e){
-                                   e.printStackTrace();
-                               }
-                           }
-                       }.start();*/
+
+
 
                    }
 
@@ -184,20 +217,31 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
 
             }
         });
-
-
         return rootView;
     }
 
 
+    private void fillGroupIds(){
+        for(int i = 0;i<groupsListView.getChildCount();i++)
+        {
+            View view = groupsListView.getChildAt(i);
+            CheckedTextView cv =(CheckedTextView)view.findViewById(R.id.checkedTextViewGroup);
+            if(cv.isChecked())
+            {
+                groupIds.add(adapter.getItem(i).getGroupId());
+            }
+        }
+    }
 
     /*
 
     Check user input
      */
     private boolean correctDates(){
-        return (startDate.before(endDate) ||
-                (!startDate.after(endDate) && startHour*60+startMinute<endHour*60+endMinute));
+        if(startDate!=null && endDate != null){
+            return (startDate.before(endDate) ||
+                    (!startDate.after(endDate) && startHour*60+startMinute<endHour*60+endMinute));}
+        else return false;
     }
     private boolean correctGroupSize(){
         //incorrect if no item are checked
@@ -379,4 +423,46 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         });
     }
 
+
+    private LoaderManager.LoaderCallbacks<GroupsBean> groupLoaderListener
+            = new LoaderManager.LoaderCallbacks<GroupsBean>() {
+
+        @Override
+        public void onLoadFinished(Loader<GroupsBean> loader, GroupsBean groups) {
+            Log.d(TAG, "onLoadFinished");
+            /**************************************
+             Resultaat kan null zijn
+             Rekening mee houden!
+             **************************************/
+            if(groups != null && groups.getGroups() != null) {
+                Log.d(TAG, "amount of groups : " + groups.getGroups().size());
+
+                for(int i=0;i<groups.getGroups().size();i++){
+                    Log.d(TAG, "Group: "+groups.getGroups().get(i).toString());
+                }
+
+                adapter = new NewEventGroupListAdapter(getActivity(),groups.getGroups());
+
+                groupsListView.setAdapter(adapter);
+            }
+        }
+
+        @Override
+        public Loader<GroupsBean> onCreateLoader(int id, Bundle args) {
+            Log.d(TAG, "onCreateLoader");
+            return new GroupsForUserLoader(getActivity());
+        }
+
+        @Override
+        public void onLoaderReset(Loader<GroupsBean> loader) {
+            //rankingListView.setAdapter(null);
+        }
+    };
+
+
+    public void selectedGroups(){
+        for(int i=0;i<adapter.getCount();i++){
+
+        }
+    }
 }

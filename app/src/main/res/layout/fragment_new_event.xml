@@ -222,7 +222,7 @@
 
 
             <TextView
-                android:paddingTop="30dp"
+                android:paddingTop="7dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Check this box if the event is verified:"
@@ -239,13 +239,28 @@
                 android:checked="false"
                 android:buttonTint="@color/theme_accent_1" />
 
+            <TextView
+                android:paddingTop="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select the groups:"
+                android:id="@+id/textView7"
+                />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="125dp"
+                android:id="@+id/listViewSelectGroups"
+                android:clickable="true"
+                android:focusable="true"
+                />
 
             <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Event"
-        android:id="@+id/buttonCreateEvent"
-        android:layout_gravity="center_horizontal"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Event"
+                android:id="@+id/buttonCreateEvent"
+                android:layout_gravity="center_horizontal"/>
 
 
 
