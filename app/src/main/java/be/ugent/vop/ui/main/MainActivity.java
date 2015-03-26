@@ -2,12 +2,19 @@ package be.ugent.vop.ui.main;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+
+import java.io.Serializable;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.LocationService;
@@ -18,6 +25,8 @@ import be.ugent.vop.ui.venue.CheckinFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
 
 public class MainActivity extends BaseActivity {
+    private LocationService mLocationService;
+    private boolean isBound = false;
 
     // View pager and adapter (for narrow mode)
     ViewPager mViewPager = null;
@@ -43,7 +52,6 @@ public class MainActivity extends BaseActivity {
         mSlidingTabLayout.setViewPager(mViewPager);
 
         this.startService(new Intent(this, LocationService.class));
-
         if (mSlidingTabLayout != null) {
             mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
@@ -70,18 +78,53 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, LocationService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isBound) {
+            unbindService(mConnection);
+            isBound = false;
+        }
+    }
+
+    public LocationService getLocationService(){
+        return mLocationService;
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
         this.registerReceiver(NetworkController.get(this), NetworkController.make());
 
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         this.unregisterReceiver(NetworkController.get(this));
 
     }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            LocationService.LocationBinder binder = (LocationService.LocationBinder) service;
+            mLocationService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            isBound = false;
+        }
+    };
 
     @Override
     protected int getSelfNavDrawerItem() {
@@ -94,7 +137,6 @@ public class MainActivity extends BaseActivity {
             }
         @Override
         public Fragment getItem(int position) {
-            //LOGD(TAG, "Creating fragment #" + position);
             switch(position){
                 case 0:
                     return new OverviewFragment();
@@ -103,7 +145,7 @@ public class MainActivity extends BaseActivity {
                 case 2:
                     return new GroupListFragment();
             }
-            GroupListFragment frag = new GroupListFragment();
+            OverviewFragment frag = new OverviewFragment();
             return frag;
         }
         @Override
