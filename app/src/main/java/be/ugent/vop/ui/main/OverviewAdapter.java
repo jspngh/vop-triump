@@ -185,9 +185,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 v = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.layout_card_event, viewGroup, false);
 
-                EventViewHolder mEventViewHolder =  new EventViewHolder(v);
-
-                return mEventViewHolder;
+                return new EventViewHolder(v);
 
             default:
                 v = LayoutInflater.from(viewGroup.getContext())

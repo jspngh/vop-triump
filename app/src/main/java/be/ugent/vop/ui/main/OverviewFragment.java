@@ -1,5 +1,6 @@
 package be.ugent.vop.ui.main;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
@@ -12,17 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import be.ugent.vop.LocationService;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.OverviewLoader;
 
 public class OverviewFragment extends Fragment implements LoaderManager.LoaderCallbacks<OverviewAdapter> {
     private static final String TAG = "OverviewFragment";
 
-    private LocationService mLocationService = null;
     private Location mLastLocation;
-    private Location location;
-
+    private Activity context;
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
 
@@ -35,6 +33,8 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
         View rootView = inflater.inflate(R.layout.fragment_overview, container, false);
         rootView.setTag(TAG);
         SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), MainActivity.MODE_PRIVATE);
+        context = getActivity();
+
         mLastLocation = new Location("");
         mLastLocation.setLatitude(prefs.getFloat(getString(R.string.locationLatitude), (float)51.046127));
         mLastLocation.setLongitude(prefs.getFloat(getString(R.string.locationLongitude), (float)3.727251));
@@ -47,9 +47,7 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(new OverviewAdapter(null, null, null));
-        if(getActivity() instanceof MainActivity){
-            mLocationService = ((MainActivity)getActivity()).getLocationService();
-        }
+
         getLoaderManager().initLoader(0, null, this);
         return rootView;
     }
@@ -112,7 +110,7 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<OverviewAdapter> onCreateLoader(int i, Bundle bundle) {
-        return new OverviewLoader(getActivity(), mLocationService, mLastLocation);
+        return new OverviewLoader(context, mLastLocation);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -90,8 +91,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public LocationService getLocationService(){
-        return mLocationService;
+    public Location getLocation(){
+        if(isBound) return mLocationService.getLocation();
+        return null;
     }
 
     public final Object getSyncToken(){
