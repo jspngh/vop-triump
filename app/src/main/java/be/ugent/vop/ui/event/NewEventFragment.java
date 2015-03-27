@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -46,12 +50,15 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.ui.group.GroupActivity;
 import be.ugent.vop.ui.venue.RankingAdapter;
 import be.ugent.vop.ui.venue.VenueActivity;
+import be.ugent.vop.utils.RangeSeekBar;
 
 /**
  * Created by vincent on 23/03/15.
  */
 public class NewEventFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "EventFragment";
+    private static final int MIN_PARTICIPANTS = 1;
+    private static final int MAX_PARTICIPANTS = 1000;
 
     String fsVenueId;
 
@@ -81,8 +88,9 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     DateTime start;
     DateTime end;
 
-    int minMembers = -1;
-    int maxMembers = -1;
+    RangeSeekBar<Integer> seekBar;
+    int minMembers = MIN_PARTICIPANTS;
+    int maxMembers = MAX_PARTICIPANTS;
 
     CheckBox verifiedCheckBox;
     Boolean verified = true;
@@ -133,19 +141,14 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         verifiedCheckBox = (CheckBox) rootView.findViewById(R.id.checkBoxVerified);
         verifiedCheckBox.setOnClickListener(this);
 
-        selectGroupsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSelectGroupDialog();
-            }
-        });
+        // create RangeSeekBar as Integer range between Min- and Max participants
+        seekBar = new RangeSeekBar<Integer>(MIN_PARTICIPANTS, MAX_PARTICIPANTS, getActivity());
+        // add RangeSeekBar to pre-defined layout
+        ViewGroup layout = (ViewGroup) rootView.findViewById(R.id.viewGroup);
+        layout.addView(seekBar);
 
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createButtonPressed();
-            }
-        });
+        initButtonPressedLogic();
+
         return rootView;
     }
 
@@ -383,16 +386,16 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
                 }*/
         if(correctDatesInput && correctSizeInput && correctTypeInput && correctTextInput ){
 
-                Log.d(TAG, "startDate:"+start.toString());
-                Log.d(TAG, "endDate:"+end.toString());
-                Log.d(TAG, "des: "+description);
-                Log.d(TAG, "reward: "+reward);
-                Log.d(TAG, "venueId: "+fsVenueId);
-                Log.d(TAG, "min: "+minMembers);
-                Log.d(TAG, "max: "+maxMembers);
-                for(GroupBean g:selectedGroups){
-                    Log.d(TAG, "group: "+g.toString());
-                }
+            Log.d(TAG, "startDate:"+start.toString());
+            Log.d(TAG, "endDate:"+end.toString());
+            Log.d(TAG, "des: "+description);
+            Log.d(TAG, "reward: "+reward);
+            Log.d(TAG, "venueId: "+fsVenueId);
+            Log.d(TAG, "min: "+minMembers);
+            Log.d(TAG, "max: "+maxMembers);
+            for(GroupBean g:selectedGroups){
+                Log.d(TAG, "group: "+g.toString());
+            }
 
 
 
@@ -402,7 +405,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     public void procesDates(){
         String date = dateFormatter.format(startDate.getTime())+" "+startHourMinute;
         try {
-          startDate = dateTimeFormatter.parse(date);
+            startDate = dateTimeFormatter.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -414,5 +417,83 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
             e.printStackTrace();
         }
 
+    }
+
+    public void initButtonPressedLogic(){
+        selectGroupsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelectGroupDialog();
+            }
+        });
+
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createButtonPressed();
+            }
+        });
+
+        seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+            @Override
+            public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                // handle changed range values
+                minEditText.setText(""+minValue);
+                maxEditText.setText(""+maxValue);
+            }
+        });
+
+
+        minEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int min,max;
+                try {
+                    min = Integer.parseInt(minEditText.getText().toString());
+                } catch(NumberFormatException e){
+                    min = MIN_PARTICIPANTS;
+                }
+                try {
+                    max = Integer.parseInt(maxEditText.getText().toString());
+                } catch(NumberFormatException e){
+                    max = MAX_PARTICIPANTS;
+                }
+                if(min<MIN_PARTICIPANTS) min = MIN_PARTICIPANTS;
+                if(min>max) min=max;
+                seekBar.setSelectedMinValue(min);
+           }
+        });
+
+        maxEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int min,max;
+                try {
+                    min = Integer.parseInt(minEditText.getText().toString());
+                } catch(NumberFormatException e){
+                    min = MIN_PARTICIPANTS;
+                }
+                try {
+                    max = Integer.parseInt(maxEditText.getText().toString());
+                } catch(NumberFormatException e){
+                    max = MAX_PARTICIPANTS;
+                }
+                if(max>MAX_PARTICIPANTS) max=MAX_PARTICIPANTS;
+                if(max<min) max=min;
+                seekBar.setSelectedMaxValue(max);
+            }
+        });
     }
 }

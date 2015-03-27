@@ -233,6 +233,14 @@
                 android:hint="Max members" />
 
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:id="@+id/viewGroup"
+                android:layout_height="fill_parent">
+
+            </LinearLayout>
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
