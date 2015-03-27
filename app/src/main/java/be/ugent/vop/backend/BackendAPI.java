@@ -12,7 +12,6 @@ import com.google.api.client.util.DateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import be.ugent.vop.R;

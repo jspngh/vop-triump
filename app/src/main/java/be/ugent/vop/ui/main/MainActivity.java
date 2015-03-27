@@ -7,14 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-
-import java.io.Serializable;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.LocationService;
@@ -27,6 +23,7 @@ import be.ugent.vop.ui.widget.SlidingTabLayout;
 public class MainActivity extends BaseActivity {
     private LocationService mLocationService;
     private boolean isBound = false;
+    public final Object syncToken = new Object();
 
     // View pager and adapter (for narrow mode)
     ViewPager mViewPager = null;
@@ -97,6 +94,10 @@ public class MainActivity extends BaseActivity {
         return mLocationService;
     }
 
+    public final Object getSyncToken(){
+        return syncToken;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -115,9 +116,12 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            LocationService.LocationBinder binder = (LocationService.LocationBinder) service;
-            mLocationService = binder.getService();
-            isBound = true;
+            synchronized (syncToken){
+                LocationService.LocationBinder binder = (LocationService.LocationBinder) service;
+                mLocationService = binder.getService();
+                isBound = true;
+                syncToken.notifyAll();
+            }
         }
 
         @Override

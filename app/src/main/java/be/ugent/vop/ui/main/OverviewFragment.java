@@ -1,35 +1,22 @@
 package be.ugent.vop.ui.main;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.MapFragment;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import be.ugent.vop.LocationService;
 import be.ugent.vop.R;
-import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.OverviewBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareAPI;
-import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.backend.loaders.OverviewLoader;
 
-public class OverviewFragment extends Fragment {
+public class OverviewFragment extends Fragment implements LoaderManager.LoaderCallbacks<OverviewAdapter> {
     private static final String TAG = "OverviewFragment";
 
     private LocationService mLocationService = null;
@@ -63,11 +50,11 @@ public class OverviewFragment extends Fragment {
         if(getActivity() instanceof MainActivity){
             mLocationService = ((MainActivity)getActivity()).getLocationService();
         }
-        setOverview();
+        getLoaderManager().initLoader(0, null, this);
         return rootView;
     }
 
-    public void setOverview(){
+/*    public void setOverview(){
 
         if(mLocationService != null) {
             location = mLocationService.getLocation();
@@ -121,5 +108,19 @@ public class OverviewFragment extends Fragment {
                 super.onPostExecute(result);
             }
         }.execute(location);
+    }*/
+
+    @Override
+    public Loader<OverviewAdapter> onCreateLoader(int i, Bundle bundle) {
+        return new OverviewLoader(getActivity(), mLocationService, mLastLocation);
     }
+
+    @Override
+    public void onLoadFinished(Loader<OverviewAdapter> overviewLoader, final OverviewAdapter overviewAdapter) {
+        mRecyclerView.setAdapter(overviewAdapter);
+    }
+    @Override
+    public void onLoaderReset(Loader<OverviewAdapter> overviewLoader) {
+    }
+
 }
