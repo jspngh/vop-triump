@@ -106,7 +106,7 @@ public class GroupFragment extends Fragment {
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null){
 
-                name.setText("Name: " + response.getName());
+                name.setText(response.getName());
                 description.setText(response.getDescription().toString());
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType().toString() + " group");
@@ -126,7 +126,7 @@ public class GroupFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<GroupBean> loader) {
-            //membersView.setAdapter(null);
+            mRecyclerView.setAdapter(null);
         }
     };
 
@@ -136,16 +136,16 @@ public class GroupFragment extends Fragment {
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null) {
                 btn.setVisibility(View.GONE);
-                name.setText("Name: " + response.getName());
+                name.setText(response.getName());
                 description.setText(response.getDescription().toString());
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType().toString() + " group");
-                ArrayList<String> members = new ArrayList<>();
+                ArrayList<UserBean> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
-                    members.add(user.getFirstName() + " " + user.getLastName());
+                    members.add(user);
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, members );
-                //membersView.setAdapter(adapter);
+                mAdapter = new MemberListAdapter(context, members);
+                mRecyclerView.setAdapter(mAdapter);
             }
         }
 
@@ -156,7 +156,7 @@ public class GroupFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<GroupBean> loader) {
-            //membersView.setAdapter(null);
+            mRecyclerView.setAdapter(null);
         }
     };
 }
