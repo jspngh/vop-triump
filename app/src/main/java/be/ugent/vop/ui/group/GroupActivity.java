@@ -30,11 +30,11 @@ public class GroupActivity extends BaseActivity {
                 GroupFragment groupFragment = new GroupFragment();
                 groupFragment.setArguments(getIntent().getExtras());
                 getFragmentManager().beginTransaction()
-                        .add(R.id.fragment_container, groupFragment).commit();
+                        .replace(R.id.fragment_container, groupFragment).commit();
             }else{
                 GroupNewFragment groupNewFragment = new GroupNewFragment();
                 getFragmentManager().beginTransaction()
-                        .add(R.id.fragment_container, groupNewFragment).commit();
+                        .replace(R.id.fragment_container, groupNewFragment).commit();
             }
         }
     }

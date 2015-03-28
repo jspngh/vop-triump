@@ -15,15 +15,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         app:border="false"/>
-<!--    <ImageView
-        android:id="@+id/profilePic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="TODO"
-        android:src="@drawable/profile_default"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />-->
-
     <TextView
         android:id="@+id/member_name"
         android:minWidth="100dp"

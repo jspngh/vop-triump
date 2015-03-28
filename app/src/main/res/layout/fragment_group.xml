@@ -29,11 +29,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/group_name"
-                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:background="#ffededed"
-                android:text="Hello"
-                android:textColor="#000" />
+                android:text="Groupname"
+                android:background="#b4ededed"
+                android:textColor="#000"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
         </RelativeLayout>
     </RelativeLayout>
     <ScrollView
@@ -90,12 +91,13 @@
                     android:text="@string/placeholder_lorem_ipsum"
                     android:gravity="center"/>
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
                     android:id="@+id/joinbtn"
-                    android:text="Join group"
+                    android:background="@drawable/join_group_button"
                     android:layout_below="@+id/group_created"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"/>
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>

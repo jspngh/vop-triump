@@ -3,6 +3,8 @@ package be.ugent.vop.ui.group;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,8 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.ui.profile.ProfileActivity;
+import be.ugent.vop.ui.profile.ProfileFragment;
 
 /**
  * Created by jonas on 28-3-2015.
@@ -56,6 +60,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        final int pos = position;
         if(members != null){
             holder.member_name.setText(members.get(position).getFirstName());
             if(members.get(position).getProfilePictureUrl() != null) {
@@ -64,6 +69,14 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Vi
                         .error(R.drawable.ic_drawer_user)
                         .load(members.get(position).getProfilePictureUrl());
             }
+            holder.profilePic.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ProfileActivity.class);
+                    intent.putExtra(ProfileFragment.USER_ID, members.get(pos).getUserId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 
