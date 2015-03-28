@@ -27,15 +27,14 @@ public class GroupActivity extends BaseActivity {
 //            getActivity().finish();
             Bundle b = getIntent().getExtras();
             if(b!=null) {
-                GroupFragment groupListFragment = new GroupFragment();
-                groupListFragment.setArguments(getIntent().getExtras());
+                GroupFragment groupFragment = new GroupFragment();
+                groupFragment.setArguments(getIntent().getExtras());
                 getFragmentManager().beginTransaction()
-                        .add(R.id.fragment_container, groupListFragment).commit();
+                        .add(R.id.fragment_container, groupFragment).commit();
             }else{
                 GroupNewFragment groupNewFragment = new GroupNewFragment();
                 getFragmentManager().beginTransaction()
                         .add(R.id.fragment_container, groupNewFragment).commit();
-
             }
         }
     }

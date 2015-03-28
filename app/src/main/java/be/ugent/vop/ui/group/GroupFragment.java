@@ -5,13 +5,16 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
+
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -25,12 +28,15 @@ import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
 
 public class GroupFragment extends Fragment {
-    private ImageView groupImageView;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private GridLayoutManager mLayoutManager;
+
+    private ImageView bannerImage;
     private TextView description;
     private TextView name;
     private TextView type;
     private TextView created;
-    private ListView membersView;
     private Button btn;
 
 
@@ -54,15 +60,20 @@ public class GroupFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
         context = getActivity();
 
-        groupImageView = (ImageView) rootView.findViewById(R.id.imageView);
-        description = (TextView) rootView.findViewById(R.id.description);
-        name = (TextView) rootView.findViewById(R.id.name);
-        type = (TextView) rootView.findViewById(R.id.type);
-        created = (TextView) rootView.findViewById(R.id.created);
-        membersView = (ListView) rootView.findViewById(R.id.membersView);
+        bannerImage = (ImageView) rootView.findViewById(R.id.bannerImage);
+        description = (TextView) rootView.findViewById(R.id.group_description);
+        name = (TextView) rootView.findViewById(R.id.group_name);
+        type = (TextView) rootView.findViewById(R.id.group_type);
+        created = (TextView) rootView.findViewById(R.id.group_created);
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.members_list);
+        mLayoutManager = new GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new MemberListAdapter(null, null);
+        mRecyclerView.setAdapter(mAdapter);
 
         String photoUrl = "http://www.beeldarchief.ugent.be/fotocollectie/gebouwen/images/prevs/prev64.jpg";
-        Ion.with(groupImageView)
+        Ion.with(bannerImage)
             .placeholder(R.drawable.ic_launcher)
             .error(R.drawable.ic_drawer_logout)
             .load(photoUrl);
@@ -99,12 +110,12 @@ public class GroupFragment extends Fragment {
                 description.setText(response.getDescription().toString());
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType().toString() + " group");
-                ArrayList<String> members = new ArrayList<>();
+                ArrayList<UserBean> members = new ArrayList<>();
                 for (UserBean user : response.getMembers()) {
-                    members.add(user.getFirstName() + " " + user.getLastName());
+                    members.add(user);
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, members );
-                membersView.setAdapter(adapter);
+                mAdapter = new MemberListAdapter(context, members);
+                mRecyclerView.setAdapter(mAdapter);
             }
         }
 
@@ -115,7 +126,7 @@ public class GroupFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<GroupBean> loader) {
-            membersView.setAdapter(null);
+            //membersView.setAdapter(null);
         }
     };
 
@@ -134,7 +145,7 @@ public class GroupFragment extends Fragment {
                     members.add(user.getFirstName() + " " + user.getLastName());
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>( getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, members );
-                membersView.setAdapter(adapter);
+                //membersView.setAdapter(adapter);
             }
         }
 
@@ -145,7 +156,7 @@ public class GroupFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<GroupBean> loader) {
-            membersView.setAdapter(null);
+            //membersView.setAdapter(null);
         }
     };
 }

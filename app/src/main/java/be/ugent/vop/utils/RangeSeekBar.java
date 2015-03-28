@@ -38,8 +38,8 @@ import be.ugent.vop.R;
  */
 public class RangeSeekBar<T extends Number> extends ImageView {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Bitmap thumbImage = BitmapFactory.decodeResource(getResources(), R.drawable.seek_thumb_normal);
-    private final Bitmap thumbPressedImage = BitmapFactory.decodeResource(getResources(), R.drawable.seek_thumb_pressed);
+    private final Bitmap thumbImage = BitmapFactory.decodeResource(getResources(), R.drawable.common_full_open_on_phone);
+    private final Bitmap thumbPressedImage = BitmapFactory.decodeResource(getResources(), R.drawable.common_full_open_on_phone);
     private final float thumbWidth = thumbImage.getWidth();
     private final float thumbHalfWidth = 0.5f * thumbWidth;
     private final float thumbHalfHeight = 0.5f * thumbImage.getHeight();

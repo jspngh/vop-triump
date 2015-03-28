@@ -52,6 +52,19 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
         return rootView;
     }
 
+    @Override
+    public Loader<OverviewAdapter> onCreateLoader(int i, Bundle bundle) {
+        return new OverviewLoader(context, mLastLocation);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<OverviewAdapter> overviewLoader, final OverviewAdapter overviewAdapter) {
+        mRecyclerView.setAdapter(overviewAdapter);
+    }
+    @Override
+    public void onLoaderReset(Loader<OverviewAdapter> overviewLoader) {
+    }
+
 /*    public void setOverview(){
 
         if(mLocationService != null) {
@@ -107,18 +120,4 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
             }
         }.execute(location);
     }*/
-
-    @Override
-    public Loader<OverviewAdapter> onCreateLoader(int i, Bundle bundle) {
-        return new OverviewLoader(context, mLastLocation);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<OverviewAdapter> overviewLoader, final OverviewAdapter overviewAdapter) {
-        mRecyclerView.setAdapter(overviewAdapter);
-    }
-    @Override
-    public void onLoaderReset(Loader<OverviewAdapter> overviewLoader) {
-    }
-
 }
