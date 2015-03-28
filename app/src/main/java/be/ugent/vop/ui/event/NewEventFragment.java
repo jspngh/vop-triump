@@ -42,8 +42,10 @@ import java.util.Locale;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.backend.loaders.EventLoader;
 import be.ugent.vop.backend.loaders.GroupsForUserLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
+import be.ugent.vop.backend.myApi.model.EventBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.GroupsBean;
 import be.ugent.vop.backend.myApi.model.RankingBean;
@@ -340,6 +342,38 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         }
     };
 
+    /**
+     *
+     * new event loader
+     */
+
+
+    private LoaderManager.LoaderCallbacks<EventBean> newEventLoader
+            = new LoaderManager.LoaderCallbacks<EventBean>() {
+
+        @Override
+        public void onLoadFinished(Loader<EventBean> loader, EventBean event) {
+            Log.d(TAG, "onLoadFinished, NewEventLoader");
+
+            if(event != null) {
+                   Toast.makeText(getActivity(),"Succes",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public Loader<EventBean> onCreateLoader(int id, Bundle args) {
+            Log.d(TAG, "onCreateLoader");
+            NewEventLoader loader = new NewEventLoader(getActivity());
+            loader.setParams(fsVenueId,groupIds,start,end,description,reward,minMembers,maxMembers,verified);
+            return loader;
+        }
+
+        @Override
+        public void onLoaderReset(Loader<EventBean> loader) {
+            //rankingListView.setAdapter(null);
+        }
+    };
+
 
 
     /**
@@ -396,8 +430,12 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
             for(GroupBean g:selectedGroups){
                 Log.d(TAG, "group: "+g.toString());
             }
+            for(GroupBean g:selectedGroups){
+                groupIds.add(g.getGroupId());
+            }
 
-
+            //init loader
+            getLoaderManager().initLoader(1, null, newEventLoader);
 
         }
     }

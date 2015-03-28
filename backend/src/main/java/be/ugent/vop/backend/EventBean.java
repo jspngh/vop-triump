@@ -13,8 +13,8 @@ public class EventBean {
     private Date end;
     private String description;
     private String reward;
-    private List<String> sizes;
-    private List<String> types;
+    private int minParticipants;
+    private int maxParticipants;
     private List<GroupBean> groups;
     private boolean verified;
 
@@ -26,20 +26,20 @@ public class EventBean {
         verified = flag;
     }
 
-    public List<String> getSizes() {
-        return sizes;
+    public int getMaxParticipants() {
+        return maxParticipants;
     }
 
-    public void setSizes(List<String> sizes) {
-        this.sizes = sizes;
+    public int getMinParticipants() {
+        return minParticipants;
     }
 
-    public List<String> getTypes() {
-        return types;
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
     }
 
-    public void setTypes(List<String> type) {
-        this.types = types;
+    public void setMinParticipants(int minParticipants) {
+        this.minParticipants = minParticipants;
     }
 
     public void setGroups(List<GroupBean> groups){this.groups = groups;}

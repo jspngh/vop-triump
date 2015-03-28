@@ -25,8 +25,8 @@ public class NewEventLoader extends AsyncTaskLoader<EventBean> {
     private DateTime end;
     private String description;
     private String reward;
-    private List<String> types;
-    private List<String> sizes;
+    private int min;
+    private int max;
     private boolean verified;
 
 
@@ -34,15 +34,15 @@ public class NewEventLoader extends AsyncTaskLoader<EventBean> {
         super(context);
     }
 
-    public void setParams(String fsVenueId,List<Long> groupIds,DateTime start,DateTime end,String description,String reward,List<String> types,List<String> sizes,boolean verified){
+    public void setParams(String fsVenueId,List<Long> groupIds,DateTime start,DateTime end,String description,String reward,int min, int max,boolean verified){
         this.fsVenueId = fsVenueId;
         this.groupIds = groupIds;
         this.start = start;
         this.end = end;
         this.description = description;
         this.reward = reward;
-        this.types = types;
-        this.sizes = sizes;
+        this.min = min;
+        this.max = max;
         this.verified = verified;
     }
 
@@ -55,7 +55,7 @@ public class NewEventLoader extends AsyncTaskLoader<EventBean> {
     public EventBean loadInBackground() {
         EventBean result = null;
         try{
-            result = BackendAPI.get(context).createEvent2(fsVenueId, groupIds, start, end, description, reward, types, sizes, false);
+            result = BackendAPI.get(context).createEvent(fsVenueId, groupIds,start, end, description, reward, min, max, verified);
         } catch(IOException e){
             Log.d("CreateGroupLoader", e.getMessage());
         }

@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.MyApi;
 import be.ugent.vop.backend.myApi.model.*;
@@ -119,8 +121,13 @@ public class BackendAPI {
         return myApiService.createGroup(token,  name, description, type).execute();
     }
 
-    public EventBean createEvent(String venueId, List<Long> groupIds, DateTime start, DateTime end, String description,String reward, int requirement,String size,String type) throws IOException{
-        return myApiService.createEvent(token, venueId, groupIds,  start,end, description, reward,requirement, size, type).execute();
+    public EventBean createEvent(String venueId, List<Long> groupIds, DateTime start, DateTime end, String description,String reward, int minParticipants,int maxParticipants,boolean verified) throws IOException{
+        MyApi.CreateEventFinal e = myApiService.createEventFinal(token, venueId,  start,end, description, reward, minParticipants, maxParticipants,verified);
+        if(groupIds!=null){
+        e.setGroupIds(groupIds);
+        }
+        return e.execute();
+
     }
 
     public List<EventBean> getEvents() throws IOException{
@@ -128,9 +135,6 @@ public class BackendAPI {
     }
 
 
-    public EventBean createEvent2(String venueId, List<Long> groupIds, DateTime start, DateTime end, String description,String reward, List<String> applicableTypes,List<String> applicableSizes, boolean verified) throws IOException{
-         return myApiService.createEvent2(token, venueId, groupIds,  start,end, description, reward, applicableTypes, applicableSizes,verified).execute();
-        //TODO: make eventBean in backend
-    }
+
 
     }

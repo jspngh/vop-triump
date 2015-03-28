@@ -92,7 +92,7 @@ public class MyEndpoint {
     private static final String EVENT_DESCRIPTION = "description";
     private static final String EVENT_REWARD = "reward";
     private static final String EVENT_REQUIREMENT = "requirement";
-    private static final String EVENT_SIZE = "size";
+/*    private static final String EVENT_SIZE = "size";
     private static final String EVENT_TYPE = "type";
     private static final String EVENT_SIZE_INDIVIDUAL = "individual";
     private static final String EVENT_SIZE_SMALL = "small";
@@ -100,7 +100,9 @@ public class MyEndpoint {
     private static final String EVENT_SIZE_LARGE = "large";
     private static final String EVENT_TYPE_CLUB = "club";
     private static final String EVENT_TYPE_FRIENDS = "friends";
-    private static final String EVENT_TYPE_STUDENTGROUP = "studentgroup";
+    private static final String EVENT_TYPE_STUDENTGROUP = "studentgroup";*/
+    private static final String EVENT_MIN_PARTICIPANTS = "minParticipants";
+    private static final String EVENT_MAX_PARTICIPANTS = "maxParticipants";
     private static final String EVENT_VERIFIED = "verified";
 
 
@@ -208,12 +210,11 @@ public class MyEndpoint {
         return response;
     }
 
-    @ApiMethod(name = "createEvent2")
-    public EventBean createEvent2(@Named("token") String token, @Named("venueId") String venueId,
-                                  @Named("groupIds") List<Long> groupIds,@Named("start") Date start,@Named("end") Date end,
-                                  @Named ("description") String description,@Named ("reward")String reward, @Named ("applicableTypes") List<String> types,
-                                  @Named ("applicableSizes") List<String> sizes, @Named("Verified") boolean verified)
-                                  throws UnauthorizedException, EntityNotFoundException {
+    @ApiMethod(name = "createEventFinal")
+    public EventBean createEventFinal(@Named("token") String token, @Named("venueId") String venueId,@Named("start") Date start,@Named("end") Date end,  @Named ("description") String description,@Named ("reward")String reward, @Named ("minParticipants") int minParticipants,
+                                 @Named ("maxParticipants") int maxParticipants,@Named ("verified") boolean verified,
+                                 @Nullable @Named("groupIds") List<Long> groupIds)
+            throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token); // Try to authenticate the user
         List<GroupBean> groups = new ArrayList<>();
 
@@ -224,90 +225,38 @@ public class MyEndpoint {
         event.setProperty(EVENT_REWARD, reward);
         event.setProperty(EVENT_USER_ID,userId);
         event.setProperty(EVENT_VENUE_ID,venueId);
-        if(!verified){
-            event.setProperty(EVENT_VERIFIED,0);
-            event.setProperty(EVENT_SIZE_INDIVIDUAL, -1);
-            event.setProperty(EVENT_SIZE_SMALL, -1);
-            event.setProperty(EVENT_SIZE_MEDIUM, -1);
-            event.setProperty(EVENT_SIZE_LARGE, -1);
-            event.setProperty(EVENT_TYPE_CLUB, -1);
-            event.setProperty(EVENT_TYPE_FRIENDS, -1);
-            event.setProperty(EVENT_TYPE_STUDENTGROUP, -1);
+        event.setProperty(EVENT_VERIFIED,((verified)?1:0));
+        if(verified){
+        event.setProperty(EVENT_MIN_PARTICIPANTS,minParticipants);
+        event.setProperty(EVENT_MAX_PARTICIPANTS,maxParticipants);
+        DatastoreServiceFactory.getDatastoreService().put(event);
+        }else{
+            //when event is not verified the min and max participants is not importent
+            event.setProperty(EVENT_MIN_PARTICIPANTS,-1);
+            event.setProperty(EVENT_MAX_PARTICIPANTS,-1);
 
-            //ASSOCIATE GROUPS WITH EVENT
+            //insert event to retrieve key in "groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());"
+            DatastoreServiceFactory.getDatastoreService().put(event);
 
-        if(groupIds!=null){
-            for(Long s:groupIds){
-                Entity groupEvent = new Entity(GROUPEVENT_ENTITY);
-                groupEvent.setProperty(GROUPEVENT_GROUP_ID, s.longValue());
-                groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId() );
-                DatastoreServiceFactory.getDatastoreService().put(groupEvent);
-                groups.add(_getGroupBean(s));
+            if (groupIds != null) {
+                for (Long s : groupIds) {
+                    Entity groupEvent = new Entity(GROUPEVENT_ENTITY);
+                    groupEvent.setProperty(GROUPEVENT_GROUP_ID, s.longValue());
+                    groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());
+                    DatastoreServiceFactory.getDatastoreService().put(groupEvent);
+                    groups.add(_getGroupBean(s));
                 }
             }
         }
-        else{
-            event.setProperty(EVENT_VERIFIED,1);
-            //SIZE
-            if(sizes.contains(GroupBean.GROUP_SIZE_INDIVIDUAL))
-                event.setProperty(EVENT_SIZE_INDIVIDUAL, 1);
-            else event.setProperty(EVENT_SIZE_INDIVIDUAL, 0);
-            if(sizes.contains(GroupBean.GROUP_SIZE_SMALL))
-                event.setProperty(EVENT_SIZE_SMALL, 1);
-            else event.setProperty(EVENT_SIZE_SMALL, 0);
-            if(sizes.contains(GroupBean.GROUP_SIZE_LARGE))
-                event.setProperty(EVENT_SIZE_LARGE, 1);
-            else event.setProperty(EVENT_SIZE_LARGE, 0);
-            if(sizes.contains(GroupBean.GROUP_SIZE_MEDIUM))
-                event.setProperty(EVENT_SIZE_MEDIUM, 1);
-            else event.setProperty(EVENT_SIZE_MEDIUM, 0);
-            //TYPES
-            if(types.contains(GroupBean.GROUP_TYPE_CLUB))
-                event.setProperty(EVENT_TYPE_CLUB, 1);
-            else event.setProperty(EVENT_TYPE_CLUB, 0);
-            if(types.contains(GroupBean.GROUP_TYPE_FRIENDS))
-                event.setProperty(EVENT_TYPE_FRIENDS, 1);
-            else event.setProperty(EVENT_TYPE_FRIENDS, 0);
-            if(types.contains(GroupBean.GROUP_TYPE_STUDENTGROUP))
-                event.setProperty(EVENT_TYPE_STUDENTGROUP, 1);
-            else event.setProperty(EVENT_TYPE_STUDENTGROUP, 0);
-
-            //when event is verified all groups are associated with the event
-        }
 
         //TODO: check if venue is valid before adding in db
-        DatastoreServiceFactory.getDatastoreService().put(event);
 
-        EventBean e =  _getEventBean(event);
+        EventBean e = _getEventBean(event);
+
         e.setGroups(groups);
+
         return e;
     }
-
-    @ApiMethod(name = "createEvent")
-    public EventBean createEvent(@Named("token") String token, @Named("venueId") String venueId, @Named("groupIds") List<Long> groupIds,@Named("start") Date start,@Named("end") Date end,@Named ("description") String description,@Named ("reward")String reward, @Named ("requirement")int requirement,@Named ("size")String size,@Named ("type")String type) throws UnauthorizedException, EntityNotFoundException {
-        String userId = _getUserIdForToken(token); // Try to authenticate the user
-        Entity event = new Entity(EVENT_ENTITY);
-        event.setProperty(EVENT_DESCRIPTION, description);
-        event.setProperty(EVENT_END, end);
-        event.setProperty(EVENT_START, start);
-        event.setProperty(EVENT_REQUIREMENT, requirement);
-        event.setProperty(EVENT_REWARD, reward);
-        event.setProperty(EVENT_SIZE, size); //TODO: save all sizes and types
-        event.setProperty(EVENT_TYPE, type);
-        event.setProperty(EVENT_USER_ID,userId);
-        event.setProperty(EVENT_VENUE_ID,venueId);
-
-        //TODO: check if venue is valid before adding in db
-        DatastoreServiceFactory.getDatastoreService().put(event);
-        for(Long s:groupIds){
-            Entity groupEvent = new Entity(GROUPEVENT_ENTITY);
-            groupEvent.setProperty(GROUPEVENT_GROUP_ID, s.longValue());
-            groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId() );
-            DatastoreServiceFactory.getDatastoreService().put(groupEvent);
-        }
-        return _getEventBean(event);
-    }
-
 
     @ApiMethod(name = "getEventsforUser")
     public List<EventBean> getEventsforUser(@Named("token") String token) throws UnauthorizedException, EntityNotFoundException, InternalServerErrorException {
@@ -913,34 +862,15 @@ public class MyEndpoint {
         eventbean.setEnd((Date) event.getProperty(EVENT_END));
         eventbean.setStart((Date) event.getProperty(EVENT_START));
 
-        List<String> types = new ArrayList<>();
-        if((Integer)event.getProperty(EVENT_SIZE_INDIVIDUAL)==1)
-            types.add(GroupBean.GROUP_SIZE_INDIVIDUAL);
-        if((Integer)event.getProperty(EVENT_SIZE_SMALL)==1)
-            types.add(GroupBean.GROUP_SIZE_SMALL);
-        if((Integer)event.getProperty(EVENT_SIZE_MEDIUM)==1)
-            types.add(GroupBean.GROUP_SIZE_MEDIUM);
-        if((Integer)event.getProperty(EVENT_SIZE_LARGE)==1)
-            types.add(GroupBean.GROUP_SIZE_LARGE);
+        eventbean.setMinParticipants((int) event.getProperty(EVENT_MIN_PARTICIPANTS));
+        eventbean.setMaxParticipants((int) event.getProperty(EVENT_MAX_PARTICIPANTS));
 
-        List<String> sizes = new ArrayList<>();
-        if((Integer)event.getProperty(EVENT_TYPE_CLUB)==1)
-            sizes.add(GroupBean.GROUP_TYPE_CLUB);
-        if((Integer)event.getProperty(EVENT_TYPE_FRIENDS)==1)
-            sizes.add(GroupBean.GROUP_TYPE_FRIENDS);
-        if((Integer)event.getProperty(EVENT_TYPE_STUDENTGROUP)==1)
-            sizes.add(GroupBean.GROUP_TYPE_STUDENTGROUP);
-
-        eventbean.setSizes(sizes);
-        eventbean.setTypes(types);
-
-        if((Integer)event.getProperty(EVENT_VERIFIED)==1) eventbean.setVerified(true);
-        else eventbean.setVerified(false);
+        eventbean.setVerified(((int)event.getProperty(EVENT_VERIFIED)==1)?true:false);
 
         eventbean.setOrganizer(_getUserBeanForId((String) event.getProperty(EVENT_USER_ID)));
         eventbean.setVenue(_getVenueBean((String) event.getProperty(EVENT_VENUE_ID)));
 
-        //TODO: check if venue is valid before adding in db
+        //TODO: set groups for event!!
         return eventbean;
     }
 
