@@ -83,16 +83,16 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
     int startYear=-1, startDay=-1, startMonth=-1;
-    String startHourMinute;
-    String endHourMinute;
-    Date startDate = null;
-    Date endDate = null;
+    String startHourMinute = "00:00";
+    String endHourMinute = "00:00";
+    Date startDate = new Date();
+    Date endDate = new Date();
     DateTime start;
     DateTime end;
 
     RangeSeekBar<Integer> seekBar;
-    int minMembers = MIN_PARTICIPANTS;
-    int maxMembers = MAX_PARTICIPANTS;
+    int minMembers = -1;
+    int maxMembers = -1;
 
     CheckBox verifiedCheckBox;
     Boolean verified = true;
@@ -167,29 +167,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    /**
-     *
-     * Check user input
-     *
-     */
-    private boolean correctDates(){
 
-        return false;
-    }
-    private boolean correctGroupSize(){
-        //incorrect if no item are checked
-        //   return (sizeAll || sizeIndividual|| sizeSmall|| sizeMedium|| sizeLarge);
-        return true;
-    }
-    private boolean correctGroupTypes(){
-        //incorrect if no item are checked
-        //    return (typeAll|| typeFriends|| typeClub|| typeStudentGroup);
-        return true;
-    }
-    private boolean correctTextInput(){
-        //TODO: check user input for event description and event reward
-        return true;
-    }
 
     /**
      *
@@ -390,35 +368,42 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
     private void createButtonPressed(){
         boolean correctDatesInput = true;
         boolean correctSizeInput = true;
-        boolean correctTypeInput = true;
+        boolean correctSelectedGroupsInput = true;
         boolean correctTextInput = true;
 
         description = descriptionEditText.getText().toString();
         reward = rewardEditText.getText().toString();
-        minMembers = Integer.parseInt(minEditText.getText().toString());
-        maxMembers = Integer.parseInt(maxEditText.getText().toString());
+
+        try {
+            minMembers = Integer.parseInt(minEditText.getText().toString());
+            maxMembers = Integer.parseInt(maxEditText.getText().toString());
+        }catch(NumberFormatException e){
+            minMembers = -1;
+            maxMembers = -1;
+        }
+
 
         procesDates();
         start = new DateTime(startDate);
         end = new DateTime(endDate);
 
-              /*  if(!(correctDatesInput=correctDates())){
-                    Log.d(TAG, "Incorrect date and time");
-                    //startDateEditText.setHintTextColor(some color);
-                }
-                if(!(correctSizeInput=correctGroupSize())){
-                    Log.d(TAG, "Incorrect checkbox input in groupsizes");
-                    //startDateEditText.setHintTextColor(some color);
-                }
-                if(!(correctTypeInput=correctGroupTypes())){
-                    Log.d(TAG, "Incorrect checkbox input in grouptypes");
-                    //startDateEditText.setHintTextColor(some color);
-                }
-                if(!(correctTextInput=correctTextInput())){
-                    Log.d(TAG, "Incorrect description or reward");
-                    //startDateEditText.setHintTextColor(some color);
-                }*/
-        if(correctDatesInput && correctSizeInput && correctTypeInput && correctTextInput ){
+       if(!(correctDatesInput=correctDates())){
+            Log.d(TAG, "Incorrect date and time");
+            //startDateEditText.setHintTextColor(some color);
+        }
+        if(!(correctSizeInput=correctGroupSize())){
+            Log.d(TAG, "Incorrect input in applicable groupsizes, min and max members");
+            //startDateEditText.setHintTextColor(some color);
+        }
+        if(!(correctSelectedGroupsInput=correctSelectedGroups())){
+            Log.d(TAG, "Incorrect input, no groups selected (only for non verified events)");
+            //startDateEditText.setHintTextColor(some color);
+        }
+        if(!(correctTextInput=correctTextInput())){
+            Log.d(TAG, "Incorrect description or reward");
+            //startDateEditText.setHintTextColor(some color);
+        }
+        if(correctDatesInput && correctSizeInput && correctSelectedGroupsInput && correctTextInput ){
 
             Log.d(TAG, "startDate:"+start.toString());
             Log.d(TAG, "endDate:"+end.toString());
@@ -433,11 +418,33 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
             for(GroupBean g:selectedGroups){
                 groupIds.add(g.getGroupId());
             }
-
             //init loader
             getLoaderManager().initLoader(1, null, newEventLoader);
 
         }
+    }
+    /**
+     *
+     * Check user input
+     *
+     */
+    private boolean correctDates(){
+        return startDate.before(endDate);
+    }
+    private boolean correctGroupSize(){
+        return minMembers>=MIN_PARTICIPANTS && minMembers<maxMembers && maxMembers<=MAX_PARTICIPANTS;
+    }
+    private boolean correctSelectedGroups(){
+        if(!verified){
+            return selectedGroups.size()>0;
+        }
+        //when the event is verified the selected groups don't matter.
+        //all the groups can participate
+        else return true;
+    }
+    private boolean correctTextInput(){
+        //TODO: check user input for event description and event reward
+        return description.length()>0 && reward.length()>0;
     }
 
     public void procesDates(){
