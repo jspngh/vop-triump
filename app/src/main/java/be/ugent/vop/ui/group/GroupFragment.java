@@ -6,22 +6,21 @@ import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 
+import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.GroupBeanLoader;
 import be.ugent.vop.backend.loaders.JoinGroupLoader;
@@ -106,11 +105,12 @@ public class GroupFragment extends Fragment {
         @Override
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null){
+                ((BaseActivity) getActivity()).setTitle(response.getName());
 
                 name.setText(response.getName());
-                description.setText(response.getDescription().toString());
+                description.setText(response.getDescription());
                 created.setText("Created on: " + response.getCreated().toString());
-                type.setText(response.getType().toString() + " group");
+                type.setText(response.getType() + " group");
                 ArrayList<UserBean> members = new ArrayList<>();
                 SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
                 String userId = prefs.getString(getString(R.string.userid), "N.A.");

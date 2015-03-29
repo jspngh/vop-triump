@@ -256,9 +256,23 @@ public class VenueFragment extends Fragment {
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
             String groupType = groupTypeSpinner.getSelectedItem().toString();
-            String groupSize = groupSizeSpinner.getSelectedItem().toString();
+            int groupSize = groupSizeSpinner.getSelectedItemPosition();
 
-            int minSize = 0, maxSize = 0;
+            int minSize = 1, maxSize = 1;
+
+            switch(groupSize){
+                case 0: // Individual
+                    break;
+                case 1: // Small
+                    maxSize = 10;
+                    break;
+                case 2: // Medium
+                    maxSize = 50;
+                    break;
+                case 3: // Large
+                    maxSize = Integer.MAX_VALUE;
+                    break;
+            }
 
             RankingLoader loader = new RankingLoader(context, fsVenueId, minSize, maxSize, groupType);
             return loader;
@@ -317,9 +331,23 @@ public class VenueFragment extends Fragment {
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
             String groupType = groupTypeSpinner.getSelectedItem().toString();
-            String groupSize = groupSizeSpinner.getSelectedItem().toString();
+            int groupSize = groupSizeSpinner.getSelectedItemPosition();
 
-            int minSize = 0, maxSize = 0;
+            int minSize = 1, maxSize = 1;
+
+            switch(groupSize){
+                case 0: // Individual
+                    break;
+                case 1: // Small
+                    maxSize = 10;
+                    break;
+                case 2: // Medium
+                    maxSize = 50;
+                    break;
+                case 3: // Large
+                    maxSize = Integer.MAX_VALUE;
+                    break;
+            }
 
             CheckInLoader loader = new CheckInLoader(context, fsVenueId, minSize, maxSize, groupType);
             return loader;

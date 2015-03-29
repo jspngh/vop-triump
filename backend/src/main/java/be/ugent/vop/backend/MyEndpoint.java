@@ -767,6 +767,7 @@ public class MyEndpoint {
                     // Correct group type, now check size
                     try {
                         GroupBean currentGB = _getGroupBean(groupId);
+                        groupBeans.put(groupId, currentGB);
 
                         if(isCorrectGroupSize(currentGB.getNumMembers(), minGroupSize, maxGroupSize))
                             wantedGroups.add(groupId);
