@@ -13,32 +13,32 @@ public class EventBean {
     private Date end;
     private String description;
     private String reward;
-    private int minParticipants;
-    private int maxParticipants;
+    private long minParticipants;
+    private long maxParticipants;
     private List<GroupBean> groups;
-    private boolean verified;
+    private long verified;
 
-    public boolean isVerified(){
+    public long isVerified(){
         return verified;
     }
 
-    public void setVerified(boolean flag){
+    public void setVerified(long flag){
         verified = flag;
     }
 
-    public int getMaxParticipants() {
+    public long getMaxParticipants() {
         return maxParticipants;
     }
 
-    public int getMinParticipants() {
+    public long getMinParticipants() {
         return minParticipants;
     }
 
-    public void setMaxParticipants(int maxParticipants) {
+    public void setMaxParticipants(long maxParticipants) {
         this.maxParticipants = maxParticipants;
     }
 
-    public void setMinParticipants(int minParticipants) {
+    public void setMinParticipants(long minParticipants) {
         this.minParticipants = minParticipants;
     }
 

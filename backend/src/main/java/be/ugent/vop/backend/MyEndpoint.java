@@ -225,15 +225,15 @@ public class MyEndpoint {
         event.setProperty(EVENT_REWARD, reward);
         event.setProperty(EVENT_USER_ID,userId);
         event.setProperty(EVENT_VENUE_ID,venueId);
-        event.setProperty(EVENT_VERIFIED,((verified)?1:0));
+        event.setProperty(EVENT_VERIFIED,((verified)?(long)1:(long)0));
         if(verified){
-        event.setProperty(EVENT_MIN_PARTICIPANTS,minParticipants);
-        event.setProperty(EVENT_MAX_PARTICIPANTS,maxParticipants);
+        event.setProperty(EVENT_MIN_PARTICIPANTS,(long)minParticipants);
+        event.setProperty(EVENT_MAX_PARTICIPANTS,(long)maxParticipants);
         DatastoreServiceFactory.getDatastoreService().put(event);
         }else{
             //when event is not verified the min and max participants is not importent
-            event.setProperty(EVENT_MIN_PARTICIPANTS,-1);
-            event.setProperty(EVENT_MAX_PARTICIPANTS,-1);
+            event.setProperty(EVENT_MIN_PARTICIPANTS,(long)-1);
+            event.setProperty(EVENT_MAX_PARTICIPANTS,(long)-1);
 
             //insert event to retrieve key in "groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());"
             DatastoreServiceFactory.getDatastoreService().put(event);
@@ -582,20 +582,41 @@ public class MyEndpoint {
     private List<EventBean> _getEventsForUser(String userId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         List<EventBean> events = new ArrayList<>();
-        GroupsBean groups;
-        groups = _getGroupsForUser(userId);
-        for(GroupBean g: groups.getGroups() ){
-            Query.Filter propertyFilter =
-                    new Query.FilterPredicate(GROUPEVENT_GROUP_ID,
-                            Query.FilterOperator.EQUAL,
-                            g.getGroupId());
+        long verified = 1;
+        Query.Filter verifiedFilter =
+                new Query.FilterPredicate(EVENT_VERIFIED,
+                        Query.FilterOperator.EQUAL,
+                        verified);
+        Query verifiedQuery = new Query(EVENT_ENTITY).setFilter(verifiedFilter);
+        PreparedQuery preparedVerified = datastore.prepare(verifiedQuery);
+        for (Entity r : preparedVerified.asIterable()) {
+            events.add(_getEventBean(r));
+            //TODO: still need to add groups
+        }
+         GroupsBean groups = null;
+        try {
+            groups = getGroupsForUser(userId);
+        } catch (UnauthorizedException e) {
+            e.printStackTrace();
+        } catch (InternalServerErrorException e) {
+            e.printStackTrace();
+        }
+        if(groups!=null) {
+            if (groups.getGroups() != null) {
+                for (GroupBean g : groups.getGroups()) {
+                    Query.Filter groupFilter =
+                            new Query.FilterPredicate(GROUPEVENT_GROUP_ID,
+                                    Query.FilterOperator.EQUAL,
+                                    g.getGroupId());
 
-            Query q = new Query(GROUPEVENT_ENTITY).setFilter(propertyFilter);
-            PreparedQuery pq = datastore.prepare(q);
-            for (Entity r : pq.asIterable()) {
-                Key eventKey = KeyFactory.createKey(GROUPEVENT_EVENT_ID, (long)r.getProperty(GROUPEVENT_EVENT_ID));
-                Entity event = datastore.get(eventKey);
-                events.add(_getEventBean(event));
+                    Query q = new Query(GROUPEVENT_ENTITY).setFilter(groupFilter);
+                    PreparedQuery pq = datastore.prepare(q);
+                    for (Entity r : pq.asIterable()) {
+                        Key eventKey = KeyFactory.createKey(EVENT_ENTITY, (long) r.getProperty(GROUPEVENT_EVENT_ID));
+                        Entity event = datastore.get(eventKey);
+                        events.add(_getEventBean(event));
+                    }
+                }
             }
         }
         return events;
@@ -862,10 +883,10 @@ public class MyEndpoint {
         eventbean.setEnd((Date) event.getProperty(EVENT_END));
         eventbean.setStart((Date) event.getProperty(EVENT_START));
 
-        eventbean.setMinParticipants((int) event.getProperty(EVENT_MIN_PARTICIPANTS));
-        eventbean.setMaxParticipants((int) event.getProperty(EVENT_MAX_PARTICIPANTS));
+        eventbean.setMinParticipants((long) event.getProperty(EVENT_MIN_PARTICIPANTS));
+        eventbean.setMaxParticipants((long) event.getProperty(EVENT_MAX_PARTICIPANTS));
 
-        eventbean.setVerified(((int)event.getProperty(EVENT_VERIFIED)==1)?true:false);
+        eventbean.setVerified(((long)event.getProperty(EVENT_VERIFIED)==(long)1)?(long)1:(long)0);
 
         eventbean.setOrganizer(_getUserBeanForId((String) event.getProperty(EVENT_USER_ID)));
         eventbean.setVenue(_getVenueBean((String) event.getProperty(EVENT_VENUE_ID)));
