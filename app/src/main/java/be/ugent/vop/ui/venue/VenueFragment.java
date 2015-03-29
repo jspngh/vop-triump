@@ -1,6 +1,7 @@
 package be.ugent.vop.ui.venue;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -17,12 +18,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.R;
@@ -37,6 +38,8 @@ import be.ugent.vop.ui.group.GroupActivity;
 
 
 public class VenueFragment extends Fragment {
+    private static final int MIN_PARTICIPANTS = 1;
+    private static final int MAX_PARTICIPANTS = 1000;
 
     private VenueBean venueBean;
     private FoursquareVenue fsVenue;
@@ -45,12 +48,14 @@ public class VenueFragment extends Fragment {
     private ImageView venueImageView;
     private Button checkinButton;
     private Button newEventButton;
+    private Button listEventsButton;
+
     private RankingAdapter adapter;
     private List<RankingBean> ranking;
     private ListView rankingListView;
+    private Dialog EventsList;
     private Context context;
-    private static final int MIN_PARTICIPANTS = 1;
-    private static final int MAX_PARTICIPANTS = 1000;
+
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     private String fsVenueId;
@@ -63,11 +68,26 @@ public class VenueFragment extends Fragment {
         context = getActivity();
 
         titleTextView = (TextView)rootView.findViewById(R.id.textViewVenueName);
-    //    noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
+//        noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
         newEventButton = (Button) rootView.findViewById(R.id.buttonNewEvent);
+        listEventsButton = (Button) rootView.findViewById(R.id.buttonListEvents);
+
+        EventsList = new Dialog(context);
+        EventsList.setContentView(R.layout.layout_event_list);
+        EventsList.setTitle("Events for this venue");
+        EventsList.setCancelable(true);
+        ListView list = (ListView) EventsList.findViewById(R.id.event_list);
+        ArrayList<String> sample_events = new ArrayList<>();
+        sample_events.add("sample 1");
+        sample_events.add("sample 2");
+        sample_events.add("sample 3");
+        sample_events.add("sample 4");
+        sample_events.add("sample 5");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1, sample_events);
+        list.setAdapter(adapter);
 
         /**
          *
@@ -125,19 +145,25 @@ public class VenueFragment extends Fragment {
             }
         });
 
+        listEventsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventsList.show();
+            }
+        });
+
         return rootView;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
     }
+
 
     /***********
      Loaders
@@ -293,7 +319,5 @@ public class VenueFragment extends Fragment {
         public void onLoaderReset(Loader<FoursquareVenue> loader) {}
 
     };
-
-
 
 }

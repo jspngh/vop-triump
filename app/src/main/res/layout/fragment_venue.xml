@@ -1,70 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1">
-
-
-
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_weight="0.33"
+        android:layout_height="200dp"
         android:id="@+id/imageView"
         android:contentDescription="image of the venue"
+        android:src="@drawable/fantastic_background"
         android:adjustViewBounds="false"
-        android:scaleType="centerCrop"
-        android:layout_height="0dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textViewVenueName"
-        android:layout_gravity="center_horizontal" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/fragment_venue_swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="95dp"
-        android:layout_weight="0.54">
-    <ListView
-        android:layout_height="wrap_content"
-        android:layout_weight="0.66"
-        android:layout_width="match_parent"
-        android:id="@+id/listViewRanking"
-        android:layout_margin="0dp"
-        android:elevation="8dp"
-        android:visibility="invisible" />
-    </android.support.v4.widget.SwipeRefreshLayout>
-
+        android:scaleType="centerCrop" />
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="73dp">
-
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rankingSection"
+        android:layout_below="@id/imageView" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/venue_name"
+            android:id="@+id/textViewVenueName"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/fragment_venue_swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_below="@+id/textViewVenueName">
+            <ListView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/listViewRanking"
+                android:layout_margin="0dp"
+                android:elevation="8dp"
+                android:visibility="invisible" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rankingSection">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="checkin"
             android:id="@+id/buttonCheckin"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="43dp"
-            android:layout_marginStart="43dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Make new Event"
             android:id="@+id/buttonNewEvent"
             android:layout_gravity="center_horizontal"
-            android:layout_marginRight="28dp"
-            android:layout_marginEnd="28dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_toRightOf="@+id/buttonCheckin"
+            android:layout_toEndOf="@+id/buttonCheckin" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="List Events"
+            android:id="@+id/buttonListEvents"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/buttonCheckin"
+            android:layout_toStartOf="@+id/buttonCheckin" />
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
