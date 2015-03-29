@@ -144,6 +144,7 @@ public class MyEndpoint {
         group.setProperty(GROUP_TYPE, type);
         group.setProperty(GROUP_DESCRIPTION, description);
         group.setProperty(GROUP_ADMIN_ID, userId);
+        group.setProperty(GROUP_NUM_MEMBERS, 0);
 
         Date created = new Date();
         group.setProperty(GROUP_CREATED, created);
@@ -537,6 +538,12 @@ public class MyEndpoint {
         userGroup.setProperty(USERGROUP_GROUP_ID, groupId);
         userGroup.setProperty(USERGROUP_JOINED, new Date());
         datastore.put(userGroup);
+
+        Entity groupEntity = datastore.get(KeyFactory.createKey(GROUP_ENTITY, groupId));
+        long numMembers = (long) groupEntity.getProperty(GROUP_NUM_MEMBERS);
+        long newNumMembers = numMembers + 1;
+        groupEntity.setProperty(GROUP_NUM_MEMBERS, newNumMembers);
+        datastore.put(groupEntity);
     }
 
     private CheckinBean _checkInVenue(String userId, long groupId, String venueId){
@@ -661,7 +668,7 @@ public class MyEndpoint {
         groupBean.setAdminId(((String) group.getProperty(GROUP_ADMIN_ID)));
         groupBean.setCreated((Date) group.getProperty(GROUP_CREATED));
         groupBean.setType((String) group.getProperty(GROUP_TYPE));
-        groupBean.setNumMembers((int) group.getProperty(GROUP_NUM_MEMBERS));
+        groupBean.setNumMembers((long) group.getProperty(GROUP_NUM_MEMBERS));
 
         ArrayList<UserBean> members = new ArrayList<>();
 
@@ -815,7 +822,7 @@ public class MyEndpoint {
         return pq.countEntities();
     }
 
-    private boolean isCorrectGroupSize(int size, int min, int max){
+    private boolean isCorrectGroupSize(long size, int min, int max){
         return ((min == -1 || min <= size)
                 && (max == -1 || max >= size));
     }

@@ -18,7 +18,7 @@ public class GroupBean {
     private List<UserBean> members;
     private String type;
     private boolean userAdmin;
-    private int numMembers;
+    private long numMembers;
 
     public final static String GROUP_TYPE_ALL = "All";
     public final static String GROUP_TYPE_FRIENDS = "Friends";
@@ -90,11 +90,11 @@ public class GroupBean {
     }
 
 
-    public int getNumMembers() {
+    public long getNumMembers() {
         return numMembers;
     }
 
-    public void setNumMembers(int numMembers) {
+    public void setNumMembers(long numMembers) {
         this.numMembers = numMembers;
     }
 }
