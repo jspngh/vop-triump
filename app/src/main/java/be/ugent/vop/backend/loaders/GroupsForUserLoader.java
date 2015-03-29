@@ -7,7 +7,6 @@ import android.util.Log;
 import java.io.IOException;
 
 import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.AllGroupsBean;
 import be.ugent.vop.backend.myApi.model.GroupsBean;
 
 /**
@@ -32,8 +31,6 @@ public class GroupsForUserLoader extends AsyncTaskLoader<GroupsBean> {
      */
     @Override public GroupsBean loadInBackground() {
         GroupsBean result = null;
-        AllGroupsBean b;
-
         try{
             result = BackendAPI.get(context).getGroupsForUser();
         } catch(IOException e){

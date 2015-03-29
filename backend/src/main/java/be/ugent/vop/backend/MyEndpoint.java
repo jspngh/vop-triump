@@ -279,19 +279,16 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getAllGroups")
-    public AllGroupsBean getAllGroups(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
+    public List<GroupBean> getAllGroups(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
         _getUserIdForToken(token); // Try to authenticate the user
 
-        AllGroupsBean response = null;
-
-        try {
-            response = _getAllGroups();
+       try {
+           return _getAllGroups();
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException("Sorry, we could not find any groups");
+         throw new InternalServerErrorException("Sorry, we could not find any groups");
         }
 
-        return response;
     }
 
     @ApiMethod(name = "registerUserInGroup")
@@ -691,10 +688,9 @@ public class MyEndpoint {
         return bean;
     }
 
-    private AllGroupsBean _getAllGroups() throws EntityNotFoundException {
+    private List<GroupBean> _getAllGroups() throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        AllGroupsBean result = new AllGroupsBean();
         ArrayList<GroupBean> groups = new ArrayList<>();
 
         Query q = new Query(GROUP_ENTITY);
@@ -703,10 +699,7 @@ public class MyEndpoint {
             groups.add(_getGroupBean(r));
         }
 
-        result.setNumGroups(groups.size());
-        result.setGroups(groups);
-
-        return result;
+        return groups;
     }
 
     private List<RankingBean> _getRankings(String venueId, String groupSize, String groupType){

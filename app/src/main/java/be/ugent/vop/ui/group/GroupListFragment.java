@@ -23,19 +23,21 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.loaders.AllGroupsLoader;
 import be.ugent.vop.backend.loaders.GroupsForUserLoader;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.GroupsBean;
 
 
-public class GroupListFragment extends Fragment implements LoaderManager.LoaderCallbacks<GroupsBean>, android.widget.SearchView.OnQueryTextListener {
-    private static final String TAG = "CheckinFragment";
+public class GroupListFragment extends Fragment implements android.widget.SearchView.OnQueryTextListener {
+    private static final String TAG = "GroupListFragment";
 
     protected GroupListFragment mFragment;
     protected RecyclerView mRecyclerView;
     protected GroupListAdapter mAdapter;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView.LayoutManager mLayoutManager;
+    protected boolean allUsers;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -91,11 +93,22 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_group_list, container, false);
         rootView.setTag(TAG);
         setHasOptionsMenu(true);
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_list);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
@@ -108,16 +121,23 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         mAdapter = new GroupListAdapter();
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(null);
-
-        getLoaderManager().initLoader(1, null, this);
-        mFragment=this;
-
+        mFragment = this;
+        allUsers = mFragment.getArguments().getBoolean("allGroups", true);
+        if(allUsers){
+            getLoaderManager().initLoader(1, null, mAllGroupsLoader);
+        }else {
+            getLoaderManager().initLoader(1, null, mGroupsForUserLoader);
+        }
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getLoaderManager().restartLoader(1,null,mFragment);
+                if(allUsers){
+                    getLoaderManager().initLoader(1, null, mAllGroupsLoader);
+                }else {
+                    getLoaderManager().initLoader(1, null, mGroupsForUserLoader);
+                }
             }
-            });
+        });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             int state;
@@ -129,7 +149,7 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 //if(state == RecyclerView.SCROLL_STATE_DRAGGING){
                 Log.d(TAG, "Vertical scroll: " + dy);
                 mRecyclerView.animate().translationY(dy);
@@ -151,47 +171,77 @@ public class GroupListFragment extends Fragment implements LoaderManager.LoaderC
         super.onAttach(activity);
     }
 
-    @Override
-    public Loader<GroupsBean> onCreateLoader(int id, Bundle bundle) {
-        Log.d(TAG, "onCreateLoader");
-        return new GroupsForUserLoader(getActivity());
+    private LoaderManager.LoaderCallbacks<GroupsBean> mGroupsForUserLoader
+            = new LoaderManager.LoaderCallbacks<GroupsBean>() {
+        @Override
+        public Loader<GroupsBean> onCreateLoader(int id, Bundle bundle) {
+            Log.d(TAG, "onCreateLoader");
+            return new GroupsForUserLoader(getActivity());
 
-    }
-
-    /*
-    Note:
-    Adjusted Loader to only load the groups where the user is a member
-     */
-    @Override
-    public void onLoadFinished(Loader<GroupsBean> objectLoader, GroupsBean allGroupsBean) {
-        Log.d(TAG, "onLoadFinished");
-        /**************************************
-         Resultaat kan null zijn
-         Rekening mee houden!
-         **************************************/
-        if(allGroupsBean != null && allGroupsBean.getGroups() != null) {
-            mAdapter.setGroups((ArrayList<GroupBean>) allGroupsBean.getGroups());
-            Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
-            mAdapter.setContext(getActivity());
-            mRecyclerView.setAdapter(mAdapter);
         }
 
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
+        /*
+        Note:
+        Adjusted Loader to only load the groups where the user is a member
+         */
+        @Override
+        public void onLoadFinished(Loader<GroupsBean> objectLoader, GroupsBean allGroupsBean) {
+            Log.d(TAG, "onLoadFinished");
+            /**************************************
+             Resultaat kan null zijn
+             Rekening mee houden!
+             **************************************/
+            if (allGroupsBean != null && allGroupsBean.getGroups() != null) {
+                mAdapter.setGroups((ArrayList<GroupBean>) allGroupsBean.getGroups());
+                Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
+                mAdapter.setContext(getActivity());
+                mRecyclerView.setAdapter(mAdapter);
+            }
 
-    @Override
-    public void onLoaderReset(Loader<GroupsBean> objectLoader) {
-        mRecyclerView.setAdapter(null);
-    }
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
 
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return false;
-    }
+        @Override
+        public void onLoaderReset(Loader<GroupsBean> objectLoader) {
+            mRecyclerView.setAdapter(null);
+        }
+    };
 
-    @Override
-    public boolean onQueryTextChange(String s) {
-        return false;
-    }
+    private LoaderManager.LoaderCallbacks<GroupsBean> mAllGroupsLoader
+            = new LoaderManager.LoaderCallbacks<GroupsBean>() {
+        @Override
+        public Loader<GroupsBean> onCreateLoader(int id, Bundle bundle) {
+            Log.d(TAG, "onCreateLoader");
+            return new AllGroupsLoader(getActivity());
+
+        }
+
+        /*
+        Note:
+        Adjusted Loader to only load the groups where the user is a member
+         */
+        @Override
+        public void onLoadFinished(Loader<GroupsBean> objectLoader, GroupsBean allGroupsBean) {
+            Log.d(TAG, "onLoadFinished");
+            /**************************************
+             Resultaat kan null zijn
+             Rekening mee houden!
+             **************************************/
+            if (allGroupsBean != null && allGroupsBean.getGroups() != null) {
+                mAdapter.setGroups((ArrayList<GroupBean>) allGroupsBean.getGroups());
+                Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
+                mAdapter.setContext(getActivity());
+                mRecyclerView.setAdapter(mAdapter);
+            }
+
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<GroupsBean> objectLoader) {
+            mRecyclerView.setAdapter(null);
+        }
+    };
 }

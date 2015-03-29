@@ -60,7 +60,7 @@ public class BackendAPI {
     }
 
     public AuthTokenResponse getAuthToken(String fsUserId, String fsToken) throws IOException {
-        Log.d("FUCK AUTH TOKEN", fsToken + fsUserId);
+        Log.d("AUTH TOKEN", fsToken +"   " +fsUserId);
         return myApiService.getAuthToken(fsUserId,fsToken).execute();
     }
 
@@ -68,8 +68,8 @@ public class BackendAPI {
         return myApiService.closeSession(token).execute();
     }
 
-    public AllGroupsBean getAllGroups() throws IOException{
-        return myApiService.getAllGroups(token).execute();
+    public List<GroupBean> getAllGroups() throws IOException{
+       return myApiService.getAllGroups(token).execute().getItems();
     }
 
     public UserBean getUserInfo() throws IOException{

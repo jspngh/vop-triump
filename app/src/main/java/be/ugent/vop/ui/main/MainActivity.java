@@ -149,7 +149,11 @@ public class MainActivity extends BaseActivity {
                 case 1:
                     return new CheckinFragment();
                 case 2:
-                    return new GroupListFragment();
+                    GroupListFragment fragment = new GroupListFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("allGroups", false);
+                    fragment.setArguments(bundle);
+                    return fragment;
             }
             OverviewFragment frag = new OverviewFragment();
             return frag;

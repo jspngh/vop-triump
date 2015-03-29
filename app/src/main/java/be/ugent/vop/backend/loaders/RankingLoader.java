@@ -58,9 +58,8 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
             Log.d(TAG, "looking up ranking w/ specs: "+groupSize+", "+groupType);
             result = BackendAPI.get(context).getRankings(VenueId,groupSize,groupType);
         } catch(IOException e){
-            Log.d("AllGroupsLoader", e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
-
         // Done!
         return result;
     }

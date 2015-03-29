@@ -5,18 +5,19 @@ import android.content.AsyncTaskLoader;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.List;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.MyApi;
-import be.ugent.vop.backend.myApi.model.AllGroupsBean;
+import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.GroupsBean;
 
 /**
  * A custom Loader that loads all of the installed applications.
  */
-public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
-
-    AllGroupsBean mAllGroupsBean;
-    private static MyApi myApiService = null;
+public class AllGroupsLoader extends AsyncTaskLoader<GroupsBean> {
+    private final String TAG = "AllGroupsLoader";
+    GroupsBean mAllGroupsBean;
     private Context context;
 
     public AllGroupsLoader(Context context) {
@@ -29,13 +30,15 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
      * called in a background thread and should generate a new set of
      * data to be published by the loader.
      */
-    @Override public AllGroupsBean loadInBackground() {
-        AllGroupsBean result = null;
+    @Override public GroupsBean loadInBackground() {
+        GroupsBean result = new GroupsBean();
 
         try{
-            result = BackendAPI.get(context).getAllGroups();
+            List<GroupBean> temp =BackendAPI.get(context).getAllGroups();
+            result.setGroups(temp);
+            result.setNumGroups(temp.size());
         } catch(IOException e){
-            Log.d("AllGroupsLoader", e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
 
         // Done!
@@ -47,7 +50,7 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult(AllGroupsBean allGroupsBean) {
+    @Override public void deliverResult(GroupsBean allGroupsBean) {
         if (isReset()) {
             // An async query came in while the loader is stopped.  We
             // don't need the result.
@@ -55,7 +58,7 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
                 onReleaseResources(allGroupsBean);
             }
         }
-        AllGroupsBean oldAllGroupsBean = allGroupsBean;
+        GroupsBean oldAllGroupsBean = allGroupsBean;
         mAllGroupsBean = allGroupsBean;
 
         if (isStarted()) {
@@ -100,7 +103,7 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(AllGroupsBean allGroupsBean) {
+    @Override public void onCanceled(GroupsBean allGroupsBean) {
         super.onCanceled(allGroupsBean);
 
         // At this point we can release the resources associated with 'apps'
@@ -129,7 +132,7 @@ public class AllGroupsLoader extends AsyncTaskLoader<AllGroupsBean> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(AllGroupsBean allGroupsBean) {
+    protected void onReleaseResources(GroupsBean allGroupsBean) {
         // For a simple List<> there is nothing to do.  For something
         // like a Cursor, we would close it here.
     }

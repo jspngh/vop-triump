@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -111,7 +112,12 @@ public class GroupFragment extends Fragment {
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType().toString() + " group");
                 ArrayList<UserBean> members = new ArrayList<>();
+                SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
+                String userId = prefs.getString(getString(R.string.userid), "N.A.");
                 for (UserBean user : response.getMembers()) {
+                    if(user.getUserId().equals(userId)){
+                        btn.setVisibility(View. GONE);
+                    }
                     members.add(user);
                 }
                 mAdapter = new MemberListAdapter(context, members);

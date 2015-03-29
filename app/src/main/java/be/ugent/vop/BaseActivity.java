@@ -50,6 +50,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import be.ugent.vop.ui.event.EventActivity;
+import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
@@ -87,9 +88,10 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected static final int NAVDRAWER_ITEM_MAIN = 0;
     protected static final int NAVDRAWER_ITEM_LEADERBOARDS = 1;
     protected static final int NAVDRAWER_ITEM_EVENT = 2;
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 3;
-    protected static final int NAVDRAWER_ITEM_LOGOUT = 4;
-    protected static final int NAVDRAWER_ITEM_PROFILE = 5;
+    protected static final int NAVDRAWER_ITEM_GROUPS = 3;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 4;
+    protected static final int NAVDRAWER_ITEM_LOGOUT = 5;
+    protected static final int NAVDRAWER_ITEM_PROFILE = 6;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -100,6 +102,7 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.string.navdrawer_item_main,
             R.string.navdrawer_item_leaderboards,
             R.string.navdrawer_item_event,
+            R.string.navdrawer_item_groups,
             R.string.navdrawer_item_settings,
             R.string.navdrawer_item_logout,
             R.string.navdrawer_item_profile
@@ -110,6 +113,7 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.drawable.ic_drawer_people_met,  // My Schedule
             R.drawable.ic_drawer_leaderboard,
             R.drawable.ic_drawer_event,
+            R.drawable.ic_drawer_people_met,
             R.drawable.ic_drawer_settings,
             R.drawable.ic_drawer_logout,
             R.drawable.ic_drawer_user
@@ -305,6 +309,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         mNavDrawerItems.add(NAVDRAWER_ITEM_MAIN);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LEADERBOARDS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_EVENT);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_GROUPS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LOGOUT);
@@ -400,6 +405,11 @@ public abstract class BaseActivity extends ActionBarActivity {
                 break;
             case NAVDRAWER_ITEM_EVENT:
                 intent = new Intent(this, EventActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case NAVDRAWER_ITEM_GROUPS:
+                intent = new Intent(this, GroupListActivity.class);
                 startActivity(intent);
                 finish();
                 break;

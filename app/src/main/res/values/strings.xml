@@ -90,5 +90,7 @@
     <string name="button_text_set">Set</string>
     <string name="button_text_cancel">Cancel</string>
     <string name="event_select_groups_dialog_title">Select groups for event</string>
+    <string name="navdrawer_item_groups">Groups</string>
+    <string name="title_activity_grouplist">Groups</string>
 
 </resources>

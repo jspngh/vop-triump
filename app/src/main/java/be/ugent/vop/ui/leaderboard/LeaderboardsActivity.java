@@ -16,9 +16,6 @@ public class LeaderboardsActivity extends BaseActivity {
         setContentView(R.layout.activity_leaderboards);
 
         LeaderboardsFragment fragment = new LeaderboardsFragment();
-        Bundle venueBundle = getIntent().getExtras();
-
-        fragment.setArguments(venueBundle);
 
         this.getFragmentManager()
                 .beginTransaction()

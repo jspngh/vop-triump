@@ -68,6 +68,14 @@
                 android:value=".ui.main.MainActivity" />
         </activity>
         <activity
+            android:name=".ui.group.GroupListActivity"
+            android:label="@string/title_activity_grouplist"
+            android:parentActivityName=".ui.main.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity" />
+        </activity>
+        <activity
             android:name=".ui.event.EventActivity"
             android:label="@string/title_activity_event"
             android:parentActivityName=".ui.main.MainActivity" >
