@@ -255,6 +255,11 @@ public class MyEndpoint {
         return _getEventsForUser(userId);
     }
 
+    @ApiMethod(name = "getEventsForVenue")
+    public List<EventBean> getEventsForVenue(@Named("token") String token,@Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException, InternalServerErrorException {
+        _getUserIdForToken(token);
+        return _getEventsForVenue(venueId);
+    }
     @ApiMethod(name = "getGroupsForUser")
     public GroupsBean getGroupsForUser(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
         String userId = _getUserIdForToken(token);
@@ -608,6 +613,18 @@ public class MyEndpoint {
                     }
                 }
             }
+        }
+        return events;
+    }
+
+    private List<EventBean> _getEventsForVenue(String venueId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<EventBean> events = new ArrayList<>();
+        Query.Filter venueFilter = new Query.FilterPredicate(EVENT_VENUE_ID, Query.FilterOperator.EQUAL, venueId);
+        Query verifiedQuery = new Query(EVENT_ENTITY).setFilter(venueFilter);
+        PreparedQuery preparedVerified = datastore.prepare(verifiedQuery);
+        for (Entity r : preparedVerified.asIterable()) {
+            events.add(_getEventBean(r));
         }
         return events;
     }
