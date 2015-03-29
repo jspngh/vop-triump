@@ -100,21 +100,21 @@ public class BackendAPI {
         return myApiService.getGroupInfo(token, groupId).execute();
     }
 
-    public List<RankingBean> checkIn(String venueId ,String groupSize, String groupType) throws IOException{
+    public List<RankingBean> checkIn(String venueId ,int min, int max) throws IOException{
         Log.d("BackendAPI",token);
-        return myApiService.checkInVenue(token, venueId, groupSize,  groupType).execute().getItems();
+        return myApiService.checkInVenue(token, venueId, min,  max).execute().getItems();
     }
 
     public OverviewBean getOverview(ArrayList<String> venues) throws IOException{
         return myApiService.getOverview(token).setVenueIds(venues).execute();
     }
 
-    public List<RankingBean> getLeaderboard(String groupSize, String groupType) throws IOException{
-        return myApiService.getLeaderboard(token,groupSize,groupType).execute().getItems();
+    public List<RankingBean> getLeaderboard(int min, int max) throws IOException{
+        return myApiService.getLeaderboard(token,min,max).execute().getItems();
     }
 
-    public List<RankingBean> getRankings(String venueId, String groupSize, String groupType) throws IOException{
-        return myApiService.getRankings(groupSize, groupType, token, venueId).execute().getItems();
+    public List<RankingBean> getRankings(String venueId, int min, int max) throws IOException{
+        return myApiService.getRankings(max,min,token,venueId).execute().getItems();
     }
 
     public GroupBean createGroup(String name, String description, String type) throws IOException{

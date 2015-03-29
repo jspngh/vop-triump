@@ -92,15 +92,6 @@ public class MyEndpoint {
     private static final String EVENT_DESCRIPTION = "description";
     private static final String EVENT_REWARD = "reward";
     private static final String EVENT_REQUIREMENT = "requirement";
-/*    private static final String EVENT_SIZE = "size";
-    private static final String EVENT_TYPE = "type";
-    private static final String EVENT_SIZE_INDIVIDUAL = "individual";
-    private static final String EVENT_SIZE_SMALL = "small";
-    private static final String EVENT_SIZE_MEDIUM = "medium";
-    private static final String EVENT_SIZE_LARGE = "large";
-    private static final String EVENT_TYPE_CLUB = "club";
-    private static final String EVENT_TYPE_FRIENDS = "friends";
-    private static final String EVENT_TYPE_STUDENTGROUP = "studentgroup";*/
     private static final String EVENT_MIN_PARTICIPANTS = "minParticipants";
     private static final String EVENT_MAX_PARTICIPANTS = "maxParticipants";
     private static final String EVENT_VERIFIED = "verified";
@@ -306,7 +297,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId,@Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId,@Named("Min") int min, @Named("Max") int max) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         GroupsBean groups = _getGroupsForUser(userId);
         VenueBean venue;
@@ -322,7 +313,7 @@ public class MyEndpoint {
         for(GroupBean g : groups.getGroups()){
             _checkInVenue(userId, g.getGroupId(), venueId);
         }
-        return _getRankings(venueId, groupSize,groupType);
+        return _getRankings(venueId, min,max);
     }
 
     @ApiMethod(name = "getAuthToken")
@@ -414,7 +405,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getLeaderboard")
-    public List<RankingBean> getLeaderboard(@Named("token") String token, @Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getLeaderboard(@Named("token") String token, @Named("Min") int min, @Named("Max") int max) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         List<RankingBean> leaderboard = new ArrayList<>();
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -429,7 +420,9 @@ public class MyEndpoint {
             int points = 0;
             GroupBean group = _getGroupBean(groupId);
             //TODO: check for groupsize
-            if(group.getType().equals(groupType)||groupType.equals(GroupBean.GROUP_TYPE_ALL)) {
+            int nrMembers = countMembersOfGroup(groupId);
+            if ((min==-1 || min <= nrMembers)
+                    && (max==-1 || max >= nrMembers))  {
                 rank.setGroupBean(group);
                 Query.Filter propertyFilter =
                         new Query.FilterPredicate(CHECKIN_GROUP_ID,
@@ -452,10 +445,10 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getRankings", path = "getRankings")
-    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId, @Named("groupSize") String groupSize, @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId, @Named("Min") int min, @Named("Max") int max) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
 
-        return _getRankings(venueId, groupSize, groupType);
+        return _getRankings(venueId, min, max);
     }
 
     @ApiMethod(name = "getOverview", path = "getOverview")
@@ -702,40 +695,7 @@ public class MyEndpoint {
         return groups;
     }
 
-    private List<RankingBean> _getRankings(String venueId, String groupSize, String groupType){
-        /**
-         *
-         * Merk op: gebruik van magic numbers is tijdelijk
-         * We kunnen bespreken welke groepgroottes ons het meest geschikt lijken
-         *
-         */
-        int minMembers=-1; //value -1 means no restriction on min members
-        int maxMembers=-1; //value -1 means no restriction on max members
-        switch(groupSize){
-            case GroupBean.GROUP_SIZE_INDIVIDUAL:
-                minMembers = 1;
-                maxMembers = 1;
-                break;
-            case GroupBean.GROUP_SIZE_SMALL:
-                minMembers = 2;
-                maxMembers = 10;
-                break;
-            case GroupBean.GROUP_SIZE_MEDIUM:
-                minMembers=11;
-                maxMembers=50;
-                break;
-            case GroupBean.GROUP_SIZE_LARGE:
-                minMembers=51;
-                maxMembers=-1;
-                break;
-            case GroupBean.GROUP_SIZE_ALL:
-                minMembers=-1;
-                maxMembers=-1;
-                break;
-            default:
-                minMembers=-1;
-                maxMembers=-1;
-        }
+    private List<RankingBean> _getRankings(String venueId, int min, int max){
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         List<RankingBean> ranking = new ArrayList<>();
@@ -753,9 +713,7 @@ public class MyEndpoint {
 
         ArrayList<Long> unwantedGroups = new ArrayList<>();
         HashMap<Long,Integer> groupMemberSize = new  HashMap<Long,Integer>();
-        HashMap<Long,String> groupTypeMap = new  HashMap<Long,String>();
-        Long groupId = null;
-        String groupType2;
+        Long groupId;
         int nrMembers = 0;
 
         for (Entity r : pq.asIterable()) {
@@ -770,18 +728,9 @@ public class MyEndpoint {
                     nrMembers = countMembersOfGroup(checkin.getGroupId());
                     groupMemberSize.put(groupId,nrMembers);
                 }
-                //get group type
-                if(groupTypeMap.keySet().contains(groupId)) {
-                    groupType2 = groupTypeMap.get(groupId);
-                } else{
-                    //save fetched groupType
-                    groupType2 = getGroupType(groupId);
-                    groupTypeMap.put(groupId,groupType2);
-                }
 
-                if ((minMembers==-1 || minMembers <= nrMembers)
-                        && (maxMembers==-1 || maxMembers >= nrMembers)
-                        && (groupType.equals(GroupBean.GROUP_TYPE_ALL) || groupType.equals(groupType2))) {
+                if ((min==-1 || min <= nrMembers)
+                        && (max==-1 || max >= nrMembers)) {
                     if (!(groupPoints.containsKey(checkin.getGroupId()))) {
                         groupPoints.put(checkin.getGroupId(), checkin.getPoints());
                     } else {

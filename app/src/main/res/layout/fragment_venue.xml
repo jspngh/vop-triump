@@ -24,17 +24,6 @@
         android:id="@+id/textViewVenueName"
         android:layout_gravity="center_horizontal" />
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinnerGroupType"
-        android:spinnerMode="dropdown" />
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinnerGroupSize"
-        android:spinnerMode="dropdown" />
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_venue_swipe_refresh"
         android:layout_width="match_parent"

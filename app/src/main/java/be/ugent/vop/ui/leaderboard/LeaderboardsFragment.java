@@ -26,6 +26,7 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.ui.group.GroupActivity;
 
 import be.ugent.vop.ui.venue.RankingAdapter;
+import be.ugent.vop.utils.RangeSeekBar;
 
 
 public class LeaderboardsFragment extends Fragment{
@@ -40,10 +41,12 @@ public class LeaderboardsFragment extends Fragment{
     private TextView noRankingTextView;
     private RankingAdapter adapter;
     private ArrayList<RankingBean> ranking;
-    private Spinner groupTypeSpinner;
-    private Spinner groupSizeSpinner;
     public LeaderboardsFragment(){}
-
+    RangeSeekBar<Integer> seekBar;
+    int minMembers = -1;
+    int maxMembers = -1;
+    private static final int MIN_PARTICIPANTS = 1;
+    private static final int MAX_PARTICIPANTS = 1000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,52 +56,8 @@ public class LeaderboardsFragment extends Fragment{
         noRankingTextView = (TextView) rootView.findViewById(R.id.noRankingTextView);
         context = getActivity();
         activity = getActivity();
-        groupTypeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupType);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(context,
-                R.array.groupType_spinner_options, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        groupTypeSpinner.setAdapter(adapterType);
 
-        /**
-         * groupSize
-         */
-        groupSizeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupSize);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapterSize = ArrayAdapter.createFromResource(context,
-                R.array.groupSize_spinner_options, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        groupSizeSpinner.setAdapter(adapterSize);
-        getLoaderManager().initLoader(0, null, mLeaderboardLoaderListener);
-        groupSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                getLoaderManager().restartLoader(0,null,mLeaderboardLoaderListener);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
-
-        groupTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                getLoaderManager().restartLoader(0, null, mLeaderboardLoaderListener);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
+        getLoaderManager().initLoader(1, null, mLeaderboardLoaderListener);
 
         return rootView;
     }
@@ -117,7 +76,7 @@ public class LeaderboardsFragment extends Fragment{
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("LeaderboardsFragment", "onCreateLoader");
-            LeaderboardLoader loader = new LeaderboardLoader(context,groupSizeSpinner.getSelectedItem().toString(),groupTypeSpinner.getSelectedItem().toString());
+            LeaderboardLoader loader = new LeaderboardLoader(context,MIN_PARTICIPANTS,MAX_PARTICIPANTS);
             return loader;
         }
 

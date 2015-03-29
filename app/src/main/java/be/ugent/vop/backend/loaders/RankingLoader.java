@@ -23,25 +23,25 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
     private List<RankingBean> rankings;
     private Context context;
     private String VenueId;
-    private static String groupSize;
-    private static String groupType;
+    private static int min;
+    private static int max;
 
 
-    public RankingLoader(Context context, String venueId,String groupSize, String groupType) {
+    public RankingLoader(Context context, String venueId,int min, int max) {
         super(context);
         this.context = context.getApplicationContext();
         this.VenueId = venueId;
-        this.groupSize=groupSize;
-        this.groupType=groupType;
+        this.min=min;
+        this.max=max;
 
     }
 
-    public static void setGroupSize(String gSize){
-        groupSize = gSize;
+    public static void setMin(int m){
+        min = m;
     }
 
-    public static void setGroupType(String gType){
-        groupType = gType;
+    public static void setMax(int m){
+        max = m;
     }
 
     /**
@@ -55,8 +55,8 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
         List<RankingBean> result = null;
 
         try{
-            Log.d(TAG, "looking up ranking w/ specs: "+groupSize+", "+groupType);
-            result = BackendAPI.get(context).getRankings(VenueId,groupSize,groupType);
+            Log.d(TAG, "looking up ranking w/ specs: "+min+", "+max);
+            result = BackendAPI.get(context).getRankings(VenueId,min,max);
         } catch(IOException e){
             Log.d(TAG, e.getMessage());
         }

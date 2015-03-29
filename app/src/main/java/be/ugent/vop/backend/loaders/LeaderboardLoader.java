@@ -20,14 +20,14 @@ import be.ugent.vop.backend.myApi.model.VenueBean;
 public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
 
     private Context context;
-    private String groupSize;
-    private String groupType;
+    private int min;
+    private int max;
 
-    public LeaderboardLoader(Context context,String groupSize,String groupType ) {
+    public LeaderboardLoader(Context context,int min,int max ) {
         super(context);
         this.context = context.getApplicationContext();
-        this.groupSize=groupSize;
-        this.groupType=groupType;
+        this.min=min;
+        this.max=max;
     }
 
     /**
@@ -40,7 +40,7 @@ public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
         Log.d("LeaderboardLoader", "");
         List<RankingBean> result = null;
         try{
-            result = (BackendAPI.get(context).getLeaderboard(groupSize,groupType));
+            result = (BackendAPI.get(context).getLeaderboard(min,max));
         } catch(IOException e){
             Log.d("LeaderboardLoader", e.getMessage());
         }
