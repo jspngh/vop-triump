@@ -5,29 +5,25 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.RankingBeanCollection;
-import be.ugent.vop.backend.myApi.model.VenueBean;
 
-/**
- * Created by jonas on 3/3/15.
- */
+
 public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
 
-    private Context context;
-    private int min;
-    private int max;
+    private final Context context;
+    private final int minGroupSize;
+    private final int maxGroupSize;
+    private final String groupType;
 
-    public LeaderboardLoader(Context context,int min,int max ) {
+    public LeaderboardLoader(Context context, int minGroupSize, int maxGroupSize, String groupType) {
         super(context);
         this.context = context.getApplicationContext();
-        this.min=min;
-        this.max=max;
+        this.minGroupSize = minGroupSize;
+        this.maxGroupSize = maxGroupSize;
+        this.groupType=groupType;
     }
 
     /**
@@ -40,7 +36,7 @@ public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
         Log.d("LeaderboardLoader", "");
         List<RankingBean> result = null;
         try{
-            result = (BackendAPI.get(context).getLeaderboard(min,max));
+            result = (BackendAPI.get(context).getLeaderboard(minGroupSize, maxGroupSize, groupType));
         } catch(IOException e){
             Log.d("LeaderboardLoader", e.getMessage());
         }

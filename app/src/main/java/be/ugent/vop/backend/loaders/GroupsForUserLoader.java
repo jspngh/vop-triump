@@ -15,7 +15,6 @@ import be.ugent.vop.backend.myApi.model.GroupsBean;
 public class GroupsForUserLoader extends AsyncTaskLoader<GroupsBean> {
     private final String TAG = "GroupsForUserLoader";
 
-
     GroupsBean mAllGroupsBean;
     private Context context;
 

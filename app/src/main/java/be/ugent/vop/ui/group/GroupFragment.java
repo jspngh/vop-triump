@@ -157,7 +157,7 @@ public class GroupFragment extends Fragment {
 
         @Override
         public Loader<GroupBean> onCreateLoader(int id, Bundle args) {
-            return new JoinGroupLoader(context, groupId, token);
+            return new JoinGroupLoader(context, groupId);
         }
 
         @Override

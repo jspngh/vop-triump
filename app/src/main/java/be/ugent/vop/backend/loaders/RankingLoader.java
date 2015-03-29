@@ -11,37 +11,26 @@ import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 
 /**
- * Created by vincent on 03/03/15.
- */
-
-/**
  * A custom Loader that loads all of the installed applications.
  */
 public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
     private final String TAG = "RankingLoader";
 
     private List<RankingBean> rankings;
-    private Context context;
-    private String VenueId;
-    private static int min;
-    private static int max;
+    private final Context context;
+    private final String venueId;
+    private final int minGroupSize;
+    private final int maxGroupSize;
+    private final String groupType;
 
 
-    public RankingLoader(Context context, String venueId,int min, int max) {
+    public RankingLoader(Context context, String venueId, int minGroupSize, int maxGroupSize, String groupType) {
         super(context);
         this.context = context.getApplicationContext();
-        this.VenueId = venueId;
-        this.min=min;
-        this.max=max;
-
-    }
-
-    public static void setMin(int m){
-        min = m;
-    }
-
-    public static void setMax(int m){
-        max = m;
+        this.venueId = venueId;
+        this.minGroupSize = minGroupSize;
+        this.maxGroupSize = maxGroupSize;
+        this.groupType=groupType;
     }
 
     /**
@@ -55,11 +44,12 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
         List<RankingBean> result = null;
 
         try{
-            Log.d(TAG, "looking up ranking w/ specs: "+min+", "+max);
-            result = BackendAPI.get(context).getRankings(VenueId,min,max);
+            Log.d(TAG, "looking up ranking w/ specs: " + minGroupSize + ", " + maxGroupSize + ", " + groupType);
+            result = BackendAPI.get(context).getRankings(venueId, minGroupSize, maxGroupSize, groupType);
         } catch(IOException e){
-            Log.d(TAG, e.getMessage());
+            Log.d("AllGroupsLoader", e.getMessage());
         }
+
         // Done!
         return result;
     }
@@ -126,6 +116,4 @@ public class RankingLoader extends AsyncTaskLoader<List<RankingBean>>  {
             rankings = null;
         }
     }
-
-
 }

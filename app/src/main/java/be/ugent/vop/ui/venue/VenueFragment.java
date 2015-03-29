@@ -51,6 +51,12 @@ public class VenueFragment extends Fragment {
     private Context context;
     private static final int MIN_PARTICIPANTS = 1;
     private static final int MAX_PARTICIPANTS = 1000;
+    private Spinner groupTypeSpinner;
+    private Spinner groupSizeSpinner;
+
+    private String currentGroupType = "All";
+    private String currentGroupSize = "All";
+
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     private String fsVenueId;
@@ -83,6 +89,33 @@ public class VenueFragment extends Fragment {
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
 
 
+        /**
+         * Populate the spinners
+         * groupType
+         */
+        groupTypeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupType);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(context,
+                R.array.groupType_spinner_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        groupTypeSpinner.setAdapter(adapterType);
+
+        /**
+         * groupSize
+         */
+        groupSizeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupSize);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterSize = ArrayAdapter.createFromResource(context,
+                R.array.groupSize_spinner_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        groupSizeSpinner.setAdapter(adapterSize);
+
+
+
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
             fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
 
@@ -108,6 +141,41 @@ public class VenueFragment extends Fragment {
             }
         });
 
+        groupSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selected = (String) parentView.getSelectedItem();
+                Log.d("VenueFragment", "selected group size: "+selected);
+                if(!currentGroupSize.equals(selected)) {
+                    currentGroupSize = selected;
+                    getLoaderManager().restartLoader(0, null, mRankingLoaderListener);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        groupTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selected = (String) parentView.getSelectedItem();
+                Log.d("VenueFragment", "selected group size: "+selected);
+                if(!currentGroupType.equals(selected)){
+                    currentGroupType = selected;
+                    getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
 
         newEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,7 +255,12 @@ public class VenueFragment extends Fragment {
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            RankingLoader loader = new RankingLoader(context, fsVenueId,MIN_PARTICIPANTS,MAX_PARTICIPANTS);
+            String groupType = groupTypeSpinner.getSelectedItem().toString();
+            String groupSize = groupSizeSpinner.getSelectedItem().toString();
+
+            int minSize = 0, maxSize = 0;
+
+            RankingLoader loader = new RankingLoader(context, fsVenueId, minSize, maxSize, groupType);
             return loader;
         }
 
@@ -243,7 +316,12 @@ public class VenueFragment extends Fragment {
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            CheckInLoader loader = new CheckInLoader(context, fsVenueId,MIN_PARTICIPANTS,MAX_PARTICIPANTS);
+            String groupType = groupTypeSpinner.getSelectedItem().toString();
+            String groupSize = groupSizeSpinner.getSelectedItem().toString();
+
+            int minSize = 0, maxSize = 0;
+
+            CheckInLoader loader = new CheckInLoader(context, fsVenueId, minSize, maxSize, groupType);
             return loader;
         }
 
@@ -293,7 +371,4 @@ public class VenueFragment extends Fragment {
         public void onLoaderReset(Loader<FoursquareVenue> loader) {}
 
     };
-
-
-
 }

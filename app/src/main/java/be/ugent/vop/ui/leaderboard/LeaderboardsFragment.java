@@ -76,7 +76,7 @@ public class LeaderboardsFragment extends Fragment{
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("LeaderboardsFragment", "onCreateLoader");
-            LeaderboardLoader loader = new LeaderboardLoader(context,MIN_PARTICIPANTS,MAX_PARTICIPANTS);
+            LeaderboardLoader loader = new LeaderboardLoader(context, MIN_PARTICIPANTS, MAX_PARTICIPANTS, "All");
             return loader;
         }
 
