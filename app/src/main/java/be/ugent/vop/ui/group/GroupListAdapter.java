@@ -25,13 +25,30 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.ViewHolder> {
     private static final String TAG = "GroupListAdapter";
     private ArrayList<GroupBean> groups;
+    private ArrayList<GroupBean> visibleGroups;
     private Context context;
 
     public void setGroups(ArrayList<GroupBean> groups) {
         this.groups = groups;
+        this.visibleGroups=groups;
     }
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void clearFilter(){
+        visibleGroups=groups;
+        notifyDataSetChanged();
+    }
+
+
+    public void setFilter(String filter) {
+        visibleGroups=new ArrayList<>();
+        for (GroupBean item: groups) {
+            if (item.getName().toLowerCase().contains(filter))
+                visibleGroups.add(item);
+        }
+        notifyDataSetChanged();
     }
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
@@ -78,7 +95,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         ViewHolder vh = new ViewHolder(v, new ViewHolder.IMyViewHolderClicks() {
             @Override
             public void onItemClick(View caller, int position) {
-                Long groupId = groups.get(position).getGroupId();
+                Long groupId = visibleGroups.get(position).getGroupId();
                 Bundle bundle = new Bundle();
                 bundle.putLong("groupId", groupId);
                 Intent intent = new Intent(context, GroupActivity.class);
@@ -99,7 +116,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        GroupBean group = groups.get(position);
+        GroupBean group = visibleGroups.get(position);
 
         viewHolder.groupName.setText(group.getName());
         viewHolder.groupInfo.setText(group.getDescription());
@@ -122,6 +139,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return groups.size();
+        return visibleGroups.size();
     }
 }
