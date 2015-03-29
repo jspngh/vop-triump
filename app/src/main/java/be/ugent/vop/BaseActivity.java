@@ -774,4 +774,8 @@ public abstract class BaseActivity extends ActionBarActivity {
             }
         }
     }
+
+    public void setTitle(String title){
+        getSupportActionBar().setTitle(title);
+    }
 }

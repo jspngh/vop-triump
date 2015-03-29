@@ -12,25 +12,19 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 
 public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
 
+    private final int minGroupSize;
+    private final int maxGroupSize;
     private Context context;
     private String venueId;
-    private static int min;
-    private static int max;
+    private final String groupType;
 
-    public static void setMin(int m){
-        min = m;
-    }
-
-    public static void setMax(int m){
-        max = m;
-    }
-
-    public CheckInLoader(Context context, String venueId, int min, int max) {
+    public CheckInLoader(Context context, String venueId, int minGroupSize, int maxGroupSize, String groupType) {
         super(context);
         this.context = context.getApplicationContext();
         this.venueId = venueId;
-        this.min=min;
-        this.max=max;
+        this.minGroupSize = minGroupSize;
+        this.maxGroupSize = maxGroupSize;
+        this.groupType=groupType;
     }
 
     /**
@@ -38,13 +32,12 @@ public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
      * called in a background thread and should generate a new set of
      * data to be published by the loader.
      */
-
     @Override
     public List<RankingBean> loadInBackground() {
         List<RankingBean> result = null;
         Log.d("Checking In", venueId );
         try{
-            result = BackendAPI.get(context).checkIn(venueId,min,max);
+            result = BackendAPI.get(context).checkIn(venueId, minGroupSize, maxGroupSize, groupType);
             Log.d("Checked In", "Succes");
         } catch(IOException e){
             Log.d("Checking In", e.getMessage());

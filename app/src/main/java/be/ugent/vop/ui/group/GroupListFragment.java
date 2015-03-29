@@ -54,6 +54,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
         }
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
@@ -137,9 +138,9 @@ public class GroupListFragment extends Fragment implements android.widget.Search
             @Override
             public void onRefresh() {
                 if(allUsers){
-                    getLoaderManager().initLoader(1, null, mAllGroupsLoader);
+                    getLoaderManager().restartLoader(1, null, mAllGroupsLoader);
                 }else {
-                    getLoaderManager().initLoader(1, null, mGroupsForUserLoader);
+                    getLoaderManager().restartLoader(1, null, mGroupsForUserLoader);
                 }
             }
         });
@@ -191,7 +192,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
          */
         @Override
         public void onLoadFinished(Loader<GroupsBean> objectLoader, GroupsBean allGroupsBean) {
-            Log.d(TAG, "onLoadFinished");
+            Log.d(TAG, "onLoadFinished Groups For User");
             /**************************************
              Resultaat kan null zijn
              Rekening mee houden!
@@ -228,7 +229,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
          */
         @Override
         public void onLoadFinished(Loader<GroupsBean> objectLoader, GroupsBean allGroupsBean) {
-            Log.d(TAG, "onLoadFinished");
+            Log.d(TAG, "onLoadFinished All Groups");
             /**************************************
              Resultaat kan null zijn
              Rekening mee houden!

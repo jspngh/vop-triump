@@ -15,6 +15,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -64,6 +65,7 @@ public class MyEndpoint {
     private static final String GROUP_TYPE = "type";
     private static final String GROUP_ADMIN_ID = "adminId";
     private static final String GROUP_CREATED = "created";
+    private static final String GROUP_NUM_MEMBERS = "numMembers";
 
     private static final String CHECKIN_ENTITY = "Checkin";
     private static final String CHECKIN_DATE = "date";
@@ -96,7 +98,6 @@ public class MyEndpoint {
     private static final String EVENT_MAX_PARTICIPANTS = "maxParticipants";
     private static final String EVENT_VERIFIED = "verified";
 
-
     private static final String GROUPEVENT_ENTITY = "groupEvent";
     private static final String GROUPEVENT_GROUP_ID = "groupId";
     private static final String GROUPEVENT_EVENT_ID = "eventId";
@@ -119,7 +120,8 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getUserInfoForId")
-    public UserBean getUserInfoForId(@Named("token") String token, @Named("userId") String userId) throws UnauthorizedException {
+    public UserBean getUserInfoForId(@Named("token") String token,
+                                     @Named("userId") String userId) throws UnauthorizedException {
         _getUserIdForToken(token);
         UserBean response = null;
         try {
@@ -127,12 +129,14 @@ public class MyEndpoint {
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
         }
-
         return response;
     }
 
     @ApiMethod(name = "createGroup")
-    public GroupBean createGroup(@Named("token") String token, @Named("groupName") String groupName, @Named("description") String description, @Named("type") String type) throws UnauthorizedException {
+    public GroupBean createGroup(@Named("token") String token,
+                                 @Named("groupName") String groupName,
+                                 @Named("description") String description,
+                                 @Named("type") String type) throws UnauthorizedException {
         String userId = _getUserIdForToken(token);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity group = new Entity(GROUP_ENTITY);
@@ -140,6 +144,7 @@ public class MyEndpoint {
         group.setProperty(GROUP_TYPE, type);
         group.setProperty(GROUP_DESCRIPTION, description);
         group.setProperty(GROUP_ADMIN_ID, userId);
+        group.setProperty(GROUP_NUM_MEMBERS, 0);
 
         Date created = new Date();
         group.setProperty(GROUP_CREATED, created);
@@ -157,12 +162,13 @@ public class MyEndpoint {
             e.printStackTrace();
         }
 
-
         return groupBean;
     }
 
     @ApiMethod(name = "createVenue")
-    public VenueBean createVenue( @Named("token") String token, @Named("VenueId") String VenueId, @Named("verified") boolean verified) throws UnauthorizedException{
+    public VenueBean createVenue( @Named("token") String token,
+                                  @Named("VenueId") String VenueId,
+                                  @Named("verified") boolean verified) throws UnauthorizedException{
 
         String adminId = _getUserIdForToken(token);
         Entity venue = new Entity(VENUE_ENTITY, VenueId);
@@ -180,7 +186,8 @@ public class MyEndpoint {
 
 
     @ApiMethod(name = "getGroupInfo")
-    public GroupBean getGroupInfo(@Named("token") String token, @Named("groupId") long groupId) throws UnauthorizedException {
+    public GroupBean getGroupInfo(@Named("token") String token,
+                                  @Named("groupId") long groupId) throws UnauthorizedException {
         String userId = _getUserIdForToken(token); // Try to authenticate the user
         GroupBean response = null;
         try {
@@ -194,7 +201,8 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getVenueInfo")
-    public VenueBean getVenueInfo(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
+    public VenueBean getVenueInfo(@Named("token") String token,
+                                  @Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         VenueBean response = null;
         response = _getVenueBean(venueId);
@@ -202,13 +210,19 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "createEventFinal")
-    public EventBean createEventFinal(@Named("token") String token, @Named("venueId") String venueId,@Named("start") Date start,@Named("end") Date end,  @Named ("description") String description,@Named ("reward")String reward, @Named ("minParticipants") int minParticipants,
-                                 @Named ("maxParticipants") int maxParticipants,@Named ("verified") boolean verified,
-                                 @Nullable @Named("groupIds") List<Long> groupIds)
+    public EventBean createEventFinal(@Named("token") String token,
+                                      @Named("venueId") String venueId,
+                                      @Named("start") Date start,
+                                      @Named("end") Date end,
+                                      @Named ("description") String description,
+                                      @Named ("reward")String reward,
+                                      @Named ("minParticipants") int minParticipants,
+                                      @Named ("maxParticipants") int maxParticipants,
+                                      @Named ("verified") boolean verified,
+                                      @Nullable @Named("groupIds") List<Long> groupIds)
             throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token); // Try to authenticate the user
         List<GroupBean> groups = new ArrayList<>();
-
         Entity event = new Entity(EVENT_ENTITY);
         event.setProperty(EVENT_DESCRIPTION, description);
         event.setProperty(EVENT_END, end);
@@ -218,17 +232,15 @@ public class MyEndpoint {
         event.setProperty(EVENT_VENUE_ID,venueId);
         event.setProperty(EVENT_VERIFIED,((verified)?(long)1:(long)0));
         if(verified){
-        event.setProperty(EVENT_MIN_PARTICIPANTS,(long)minParticipants);
-        event.setProperty(EVENT_MAX_PARTICIPANTS,(long)maxParticipants);
-        DatastoreServiceFactory.getDatastoreService().put(event);
+            event.setProperty(EVENT_MIN_PARTICIPANTS,(long)minParticipants);
+            event.setProperty(EVENT_MAX_PARTICIPANTS,(long)maxParticipants);
+            DatastoreServiceFactory.getDatastoreService().put(event);
         }else{
-            //when event is not verified the min and max participants is not importent
+//when event is not verified the min and max participants is not importent
             event.setProperty(EVENT_MIN_PARTICIPANTS,(long)-1);
             event.setProperty(EVENT_MAX_PARTICIPANTS,(long)-1);
-
-            //insert event to retrieve key in "groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());"
+//insert event to retrieve key in "groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());"
             DatastoreServiceFactory.getDatastoreService().put(event);
-
             if (groupIds != null) {
                 for (Long s : groupIds) {
                     Entity groupEvent = new Entity(GROUPEVENT_ENTITY);
@@ -239,18 +251,14 @@ public class MyEndpoint {
                 }
             }
         }
-
-        //TODO: check if venue is valid before adding in db
-
+//TODO: check if venue is valid before adding in db
         EventBean e = _getEventBean(event);
-
         e.setGroups(groups);
-
         return e;
     }
 
-    @ApiMethod(name = "getEventsforUser")
-    public List<EventBean> getEventsforUser(@Named("token") String token) throws UnauthorizedException, EntityNotFoundException, InternalServerErrorException {
+    @ApiMethod(name = "getEventsForUser")
+    public List<EventBean> getEventsForUser(@Named("token") String token) throws UnauthorizedException, EntityNotFoundException, InternalServerErrorException {
         String userId = _getUserIdForToken(token);
         return _getEventsForUser(userId);
     }
@@ -260,6 +268,7 @@ public class MyEndpoint {
         _getUserIdForToken(token);
         return _getEventsForVenue(venueId);
     }
+
     @ApiMethod(name = "getGroupsForUser")
     public GroupsBean getGroupsForUser(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
         String userId = _getUserIdForToken(token);
@@ -277,18 +286,17 @@ public class MyEndpoint {
     @ApiMethod(name = "getAllGroups")
     public List<GroupBean> getAllGroups(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
         _getUserIdForToken(token); // Try to authenticate the user
-
-       try {
-           return _getAllGroups();
+        try {
+            return _getAllGroups();
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
-         throw new InternalServerErrorException("Sorry, we could not find any groups");
+            throw new InternalServerErrorException("Sorry, we could not find any groups");
         }
-
     }
 
     @ApiMethod(name = "registerUserInGroup")
-    public GroupBean registerUserInGroup(@Named("token") String token, @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException {
+    public GroupBean registerUserInGroup(@Named("token") String token,
+                                         @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException {
         String userId = _getUserIdForToken(token);
         GroupBean response = null;
         try {
@@ -302,7 +310,11 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "checkInVenue")
-    public List<RankingBean> checkInVenue(@Named("token") String token, @Named("venueId") String venueId,@Named("Min") int min, @Named("Max") int max) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+    public List<RankingBean> checkInVenue(@Named("token") String token,
+                                          @Named("venueId") String venueId,
+                                          @Named("minGroupSize") int minGroupSize,
+                                          @Named("maxGroupSize") int maxGroupSize,
+                                          @Named("groupType") String groupType) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         GroupsBean groups = _getGroupsForUser(userId);
         VenueBean venue;
@@ -313,16 +325,17 @@ public class MyEndpoint {
         }
         if(groups.getNumGroups()==0) {
             return null;
-         //needs to be catched
+            //needs to be catched
         }
         for(GroupBean g : groups.getGroups()){
             _checkInVenue(userId, g.getGroupId(), venueId);
         }
-        return _getRankings(venueId, min,max);
+        return _getRankings(venueId, minGroupSize, maxGroupSize, groupType);
     }
 
     @ApiMethod(name = "getAuthToken")
-    public AuthTokenResponse getAuthToken(@Named("fsUserID") String fsUserId, @Named("fsToken") String fsToken) throws UnauthorizedException, InternalServerErrorException{
+    public AuthTokenResponse getAuthToken(@Named("fsUserID") String fsUserId,
+                                          @Named("fsToken") String fsToken) throws UnauthorizedException, InternalServerErrorException{
         AuthTokenResponse response = new AuthTokenResponse();
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         response.setAuthToken("Siebe");
@@ -355,12 +368,12 @@ public class MyEndpoint {
             String email = contact.getString("email");
             response.setUserId(returnedUserId);
             if(returnedUserId.equals(fsUserId)){
-                // User is who he claims to be
-                // Check if we already saved his info
+// User is who he claims to be
+// Check if we already saved his info
                 try{
                     _getUserBeanForId(returnedUserId);
                 }catch (EntityNotFoundException e){
-                    // User not in our database
+// User not in our database
                     Entity userEntity = new Entity(USER_ENTITY, returnedUserId);
                     userEntity.setProperty(USER_ID, returnedUserId);
                     userEntity.setProperty(USER_FIRST_NAME, firstName);
@@ -370,17 +383,15 @@ public class MyEndpoint {
                     userEntity.setProperty(USER_PICTURE, profilePicture);
                     datastore.put(userEntity);
                 }
-                // Create session for user and send back auth token
-                // Create random token
+// Create session for user and send back auth token
+// Create random token
                 String sessionToken = new BigInteger(256, random).toString(32);
-
-                // Store session information in datastore
+// Store session information in datastore
                 Entity session = new Entity(SESSION_ENTITY, sessionToken);
                 session.setProperty(SESSION_USER_ID, returnedUserId);
                 session.setProperty(SESSION_TOKEN, sessionToken);
                 datastore.put(session);
-
-                // set token in response
+// set token in response
                 response.setAuthToken(sessionToken);
             }
             reader.close();
@@ -410,7 +421,10 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getLeaderboard")
-    public List<RankingBean> getLeaderboard(@Named("token") String token, @Named("Min") int min, @Named("Max") int max) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getLeaderboard(@Named("token") String token,
+                                            @Named("minGroupSize") int minGroupSize,
+                                            @Named("maxGroupSize") int maxGroupSize,
+                                            @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         List<RankingBean> leaderboard = new ArrayList<>();
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -425,9 +439,7 @@ public class MyEndpoint {
             int points = 0;
             GroupBean group = _getGroupBean(groupId);
             //TODO: check for groupsize
-            int nrMembers = countMembersOfGroup(groupId);
-            if ((min==-1 || min <= nrMembers)
-                    && (max==-1 || max >= nrMembers))  {
+            if(group.getType().equals(groupType)||groupType.equals(GroupBean.GROUP_TYPE_ALL)) {
                 rank.setGroupBean(group);
                 Query.Filter propertyFilter =
                         new Query.FilterPredicate(CHECKIN_GROUP_ID,
@@ -450,14 +462,19 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "getRankings", path = "getRankings")
-    public List<RankingBean> getRankings(@Named("token") String token, @Named("venueId") String venueId, @Named("Min") int min, @Named("Max") int max) throws UnauthorizedException, EntityNotFoundException {
+    public List<RankingBean> getRankings(@Named("token") String token,
+                                         @Named("venueId") String venueId,
+                                         @Named("minGroupSize") int minGroupSize,
+                                         @Named("maxGroupSize") int maxGroupSize,
+                                         @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
 
-        return _getRankings(venueId, min, max);
+        return _getRankings(venueId, minGroupSize, maxGroupSize, groupType);
     }
 
     @ApiMethod(name = "getOverview", path = "getOverview")
-    public OverviewBean getOverview(@Named("token") String token, @Nullable @Named("venueIds") ArrayList<String> venueIds) throws UnauthorizedException, EntityNotFoundException {
+    public OverviewBean getOverview(@Named("token") String token,
+                                    @Nullable @Named("venueIds") ArrayList<String> venueIds) throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token);
         GroupsBean tmp = _getGroupsForUser(userId);
         ArrayList<VenueBean> venues = new ArrayList<>();
@@ -521,6 +538,12 @@ public class MyEndpoint {
         userGroup.setProperty(USERGROUP_GROUP_ID, groupId);
         userGroup.setProperty(USERGROUP_JOINED, new Date());
         datastore.put(userGroup);
+
+        Entity groupEntity = datastore.get(KeyFactory.createKey(GROUP_ENTITY, groupId));
+        long numMembers = (long) groupEntity.getProperty(GROUP_NUM_MEMBERS);
+        long newNumMembers = numMembers + 1;
+        groupEntity.setProperty(GROUP_NUM_MEMBERS, newNumMembers);
+        datastore.put(groupEntity);
     }
 
     private CheckinBean _checkInVenue(String userId, long groupId, String venueId){
@@ -586,9 +609,9 @@ public class MyEndpoint {
         PreparedQuery preparedVerified = datastore.prepare(verifiedQuery);
         for (Entity r : preparedVerified.asIterable()) {
             events.add(_getEventBean(r));
-            //TODO: still need to add groups
+//TODO: still need to add groups
         }
-         GroupsBean groups = null;
+        GroupsBean groups = null;
         try {
             groups = getGroupsForUser(userId);
         } catch (UnauthorizedException e) {
@@ -603,7 +626,6 @@ public class MyEndpoint {
                             new Query.FilterPredicate(GROUPEVENT_GROUP_ID,
                                     Query.FilterOperator.EQUAL,
                                     g.getGroupId());
-
                     Query q = new Query(GROUPEVENT_ENTITY).setFilter(groupFilter);
                     PreparedQuery pq = datastore.prepare(q);
                     for (Entity r : pq.asIterable()) {
@@ -646,6 +668,7 @@ public class MyEndpoint {
         groupBean.setAdminId(((String) group.getProperty(GROUP_ADMIN_ID)));
         groupBean.setCreated((Date) group.getProperty(GROUP_CREATED));
         groupBean.setType((String) group.getProperty(GROUP_TYPE));
+        groupBean.setNumMembers((long) group.getProperty(GROUP_NUM_MEMBERS));
 
         ArrayList<UserBean> members = new ArrayList<>();
 
@@ -657,7 +680,9 @@ public class MyEndpoint {
         Query q = new Query(USERGROUP_ENTITY).setFilter(propertyFilter);
 
         PreparedQuery pq = datastore.prepare(q);
-        for (Entity r : pq.asIterable()){
+
+        // Limit the number of returned members to save on datastore reads
+        for (Entity r : pq.asList(FetchOptions.Builder.withLimit(5))){
             String userId = ((String) r.getProperty(USERGROUP_USER_ID));
             members.add(_getUserBeanForId(userId));
         }
@@ -673,7 +698,7 @@ public class MyEndpoint {
         checkinbean.setVenueId((String)checkin.getProperty(CHECKIN_VENUE_ID));
         checkinbean.setGroupId((Long) checkin.getProperty(CHECKIN_GROUP_ID));
         checkinbean.setUserId((String) checkin.getProperty(CHECKIN_USER_ID));
-    //    checkinbean.setPoints((Integer) checkin.getProperty("points"));
+        //    checkinbean.setPoints((Integer) checkin.getProperty("points"));
         checkinbean.setPoints(1);
         checkinbean.setDate((Date) checkin.getProperty(CHECKIN_DATE));
 
@@ -700,20 +725,16 @@ public class MyEndpoint {
 
     private List<GroupBean> _getAllGroups() throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
         ArrayList<GroupBean> groups = new ArrayList<>();
-
         Query q = new Query(GROUP_ENTITY);
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()){
             groups.add(_getGroupBean(r));
         }
-
         return groups;
     }
 
-    private List<RankingBean> _getRankings(String venueId, int min, int max){
-
+    private List<RankingBean> _getRankings(String venueId, int minGroupSize, int maxGroupSize, String groupType){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         List<RankingBean> ranking = new ArrayList<>();
 
@@ -723,53 +744,62 @@ public class MyEndpoint {
                         Query.FilterOperator.EQUAL,
                         venueId);
 
-        CheckinBean checkin;
-
         Query q = new Query(CHECKIN_ENTITY).setFilter(filter1);
         PreparedQuery pq = datastore.prepare(q);
 
         ArrayList<Long> unwantedGroups = new ArrayList<>();
-        HashMap<Long,Integer> groupMemberSize = new  HashMap<Long,Integer>();
-        Long groupId;
-        int nrMembers = 0;
+        ArrayList<Long> wantedGroups = new ArrayList<>();
+        HashMap<Long, GroupBean> groupBeans = new HashMap<>();
 
         for (Entity r : pq.asIterable()) {
-            checkin = _getCheckinBean(r);
-            groupId = checkin.getGroupId();
-            if(!unwantedGroups.contains(checkin.getGroupId())) {
-                //calculate groupSize
-                if(groupMemberSize.keySet().contains(groupId)) {
-                    nrMembers = groupMemberSize.get(groupId);
-                } else{
-                    //save fetched number of groups member
-                    nrMembers = countMembersOfGroup(checkin.getGroupId());
-                    groupMemberSize.put(groupId,nrMembers);
-                }
+            CheckinBean checkin = _getCheckinBean(r);
+            long groupId = checkin.getGroupId();
 
-                if ((min==-1 || min <= nrMembers)
-                        && (max==-1 || max >= nrMembers)) {
-                    if (!(groupPoints.containsKey(checkin.getGroupId()))) {
-                        groupPoints.put(checkin.getGroupId(), checkin.getPoints());
-                    } else {
-                        int currentPoints = groupPoints.get(checkin.getGroupId());
-                        int newPoints = currentPoints + checkin.getPoints();
+            // Do we already know to skip this group?
+            if(unwantedGroups.contains(groupId))
+                continue;
 
-                        groupPoints.put(checkin.getGroupId(), newPoints);
+            // We do not know yet, so check
+            if(!wantedGroups.contains(groupId)) {
+                String currentGroupType = getGroupType(groupId);
+
+                if(currentGroupType.equals(groupType) || groupType.equals(GroupBean.GROUP_TYPE_ALL)){
+                    // Correct group type, now check size
+                    try {
+                        GroupBean currentGB = _getGroupBean(groupId);
+                        groupBeans.put(groupId, currentGB);
+
+                        if(isCorrectGroupSize(currentGB.getNumMembers(), minGroupSize, maxGroupSize))
+                            wantedGroups.add(groupId);
+                        else
+                            unwantedGroups.add(groupId);
+                    } catch (EntityNotFoundException e) {
+                        e.printStackTrace();
                     }
-                } else {
+                }else{
+                    // Wrong group type, ignore group
                     unwantedGroups.add(checkin.getGroupId());
+                }
+            }
+
+            // We are interested in this group, so update points
+            if(wantedGroups.contains(groupId)){
+                if (!groupPoints.containsKey(groupId)) {
+                    groupPoints.put(groupId, checkin.getPoints());
+                } else {
+                    int currentPoints = groupPoints.get(groupId);
+                    int newPoints = currentPoints + checkin.getPoints();
+
+                    groupPoints.put(groupId, newPoints);
                 }
             }
         }
 
+        // Create ranking beans
         for (long groupId2 : groupPoints.keySet()) {
             RankingBean groupRanking = new RankingBean();
-            try {
-                groupRanking.setGroupBean(_getGroupBean(groupId2));
-            } catch (EntityNotFoundException e) {
-                e.printStackTrace();
-            }
 
+            groupRanking.setGroupBean(groupBeans.get(groupId2));
             groupRanking.setPoints(groupPoints.get(groupId2));
 
             ranking.add(groupRanking);
@@ -789,8 +819,13 @@ public class MyEndpoint {
                         groupId);
         Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
         PreparedQuery pq = datastore.prepare(q);
-      //  return pq.countEntities(FetchOptions.Builder.withDefaults());
+        //  return pq.countEntities(FetchOptions.Builder.withDefaults());
         return pq.countEntities();
+    }
+
+    private boolean isCorrectGroupSize(long size, int min, int max){
+        return ((min == -1 || min <= size)
+                && (max == -1 || max >= size));
     }
 
     private String getGroupType(long groupId){
@@ -841,19 +876,14 @@ public class MyEndpoint {
         eventbean.setReward((String) event.getProperty(EVENT_REWARD));
         eventbean.setEnd((Date) event.getProperty(EVENT_END));
         eventbean.setStart((Date) event.getProperty(EVENT_START));
-
         eventbean.setMinParticipants((long) event.getProperty(EVENT_MIN_PARTICIPANTS));
         eventbean.setMaxParticipants((long) event.getProperty(EVENT_MAX_PARTICIPANTS));
-
         eventbean.setVerified(((long)event.getProperty(EVENT_VERIFIED)==(long)1)?(long)1:(long)0);
-
         eventbean.setOrganizer(_getUserBeanForId((String) event.getProperty(EVENT_USER_ID)));
         eventbean.setVenue(_getVenueBean((String) event.getProperty(EVENT_VENUE_ID)));
-
         //TODO: set groups for event!!
         return eventbean;
     }
-
 
     private void sortRankingList(List<RankingBean> l){
         RankingBean temp;

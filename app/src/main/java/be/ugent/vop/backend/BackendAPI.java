@@ -100,21 +100,23 @@ public class BackendAPI {
         return myApiService.getGroupInfo(token, groupId).execute();
     }
 
-    public List<RankingBean> checkIn(String venueId ,int min, int max) throws IOException{
+
+    public List<RankingBean> checkIn(String venueId, int minGroupSize, int maxGroupSize, String groupType) throws IOException{
         Log.d("BackendAPI",token);
-        return myApiService.checkInVenue(token, venueId, min,  max).execute().getItems();
+        return myApiService.checkInVenue(token, venueId, minGroupSize, maxGroupSize, groupType).execute().getItems();
     }
 
     public OverviewBean getOverview(ArrayList<String> venues) throws IOException{
         return myApiService.getOverview(token).setVenueIds(venues).execute();
     }
 
-    public List<RankingBean> getLeaderboard(int min, int max) throws IOException{
-        return myApiService.getLeaderboard(token,min,max).execute().getItems();
+
+    public List<RankingBean> getLeaderboard(int minGroupSize, int maxGroupSize, String groupType) throws IOException{
+        return myApiService.getLeaderboard(token, minGroupSize, maxGroupSize, groupType).execute().getItems();
     }
 
-    public List<RankingBean> getRankings(String venueId, int min, int max) throws IOException{
-        return myApiService.getRankings(max,min,token,venueId).execute().getItems();
+    public List<RankingBean> getRankings(String venueId, int minGroupSize, int maxGroupSize, String groupType) throws IOException{
+        return myApiService.getRankings(groupType, maxGroupSize, minGroupSize, token, venueId).execute().getItems();
     }
 
     public GroupBean createGroup(String name, String description, String type) throws IOException{
@@ -131,7 +133,7 @@ public class BackendAPI {
     }
 
     public List<EventBean> getEventsForUser() throws IOException{
-        return myApiService.getEventsforUser(token).execute().getItems();
+        return myApiService.getEventsForUser(token).execute().getItems();
     }
 
     public List<EventBean> getEventsForVenue(String venueId) throws IOException{

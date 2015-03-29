@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Make your own event"
+        android:text="@string/make_own_event"
         android:id="@+id/textView"
         android:paddingBottom="25dp"
         android:paddingTop="10dp" />

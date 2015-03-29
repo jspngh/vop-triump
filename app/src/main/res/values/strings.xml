@@ -1,15 +1,11 @@
 <resources>
     <string name="app_name">Triump</string>
-
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Sign out</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_example">Example action</string>
-
     <string name="action_settings">Settings</string>
     <string name="sharedprefs">VOPSharedPrefs</string>
     <string name="foursquaretoken">FoursquareToken</string>
@@ -17,16 +13,14 @@
     <string name="first_launch">Welcome to Triump</string>
     <string name="profile">Profile</string>
     <string name="profile_picture">Profile Picture</string>
-
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_event">Events</string>
     <string name="title_activity_profile">Profile</string>
     <string name="logOutButton">Sign out</string>
-	<string name="signin_with_foursquare">Sign in with your Foursquare account!</string>
+    <string name="signin_with_foursquare">Sign in with your Foursquare account!</string>
     <string name="app_not_installed_message">To do this, you’ll need the latest version of Foursquare installed.</string>
     <string name="backendtoken">backendToken</string>
     <string name="placeholder_lorem_ipsum">Lorem ipsum</string>
-
     <string name="navdrawer_item_leaderboards">Leaderboards</string>
     <string name="navdrawer_item_main">Main</string>
     <string name="navdrawer_item_settings">Settings</string>
@@ -35,15 +29,12 @@
     <string name="navdrawer_item_profile">Profile</string>
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
-
     <string name="title_activity_leaderboards">Leaderboards</string>
-
     <string name="welcome_triump">Welcome to Triump</string>
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
     <string name="no_ranking">Currently there aren\'t any groups competing for this venue. Click check-in to be the first to conquer it!</string>
     <string name="loading_data">Crunching the latest data for you…</string>
     <string name="retrieving_data">Retrieving data</string>
-
     <string name="group_title">Updates from your groups</string>
     <string name="venue_title">Places nearby</string>
     <string name="event_title">Trending events</string>
@@ -53,18 +44,14 @@
     <string name="group_info">Loading group description</string>
     <string name="venue_info">Loading venue description</string>
     <string name="event_info">Loading event description</string>
-
     <string name="lost_connection">The device lost his connection</string>
     <string name="connection">The device is connected</string>
-
     <string name="locationLongitude">locationLongitude</string>
     <string name="locationLatitude">locationLatitude</string>
     <string name="locationAvailable">locationAvailable</string>
     <string name="waiting_for_location">Waiting for location…</string>
-
     <string name="group_banner_description">banner of your group</string>
     <string name="go_to_group">View this group</string>
-
     <string name="group_id">id of group</string>
     <string-array name="main_tabs">
         <item>Overview</item>
@@ -73,7 +60,6 @@
     </string-array>
     <string name="title_activity_group">GroupActivity</string>
     <string name="hello_world">Hello world!</string>
-
     <!-- <string name="app_id">462840373863146</string> -->
     <string name="facebook_app_id">1388764728108146</string>
     <string name="ready">ready</string>
@@ -83,8 +69,6 @@
     <string name="search_hint">Enter group</string>
     <string name="action_add">Add group</string>
     <string name="navdrawer_item_events">Events</string>
-
-
     <!-- Event -->
     <string name="no_event">No events available for you.</string>
     <string name="button_text_set">Set</string>
@@ -92,5 +76,8 @@
     <string name="event_select_groups_dialog_title">Select groups for event</string>
     <string name="navdrawer_item_groups">Groups</string>
     <string name="title_activity_grouplist">Groups</string>
-
+    <string name="search">Search</string>
+    <string name="welcome_to_triump">Welcome to Triump</string>
+    <string name="tutorial_thank_you">Thank you for this helpful tutorial</string>
+    <string name="make_own_event">Make your own event</string>
 </resources>

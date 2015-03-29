@@ -9,15 +9,12 @@ import java.io.IOException;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 
-/**
- * Created by jonas on 3/3/15.
- */
 public class JoinGroupLoader extends AsyncTaskLoader<GroupBean> {
 
-    private Context context;
-    private long groupId;
+    private final Context context;
+    private final long groupId;
 
-    public JoinGroupLoader(Context context, long groupId, String token) {
+    public JoinGroupLoader(Context context, long groupId) {
         super(context);
         this.context = context.getApplicationContext();
         this.groupId = groupId;

@@ -1,6 +1,3 @@
-/**
- * Created by vincent on 19/03/15.
- */
 package be.ugent.vop.backend.loaders;
 
 import android.content.AsyncTaskLoader;
@@ -10,11 +7,6 @@ import android.util.Log;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
-
-/**
- * Created by vincent on 03/03/15.
- */
-
 /**
  * A custom Loader that loads all of the installed applications.
  */
@@ -22,8 +14,8 @@ public class VenueInfoLoader extends AsyncTaskLoader<FoursquareVenue> {
     private final String TAG = "VenueInfoLoader";
 
     private FoursquareVenue venue;
-    private Context context;
-    private String fsVenueId;
+    private final Context context;
+    private final String fsVenueId;
 
     public VenueInfoLoader(Context context, String fsVenueId) {
         super(context);
@@ -39,9 +31,8 @@ public class VenueInfoLoader extends AsyncTaskLoader<FoursquareVenue> {
     @Override
     public FoursquareVenue loadInBackground() {
         Log.d(TAG, "loadInBackground");
-        FoursquareVenue result = null;
 
-        result = FoursquareAPI.get(context).getVenueInfo(fsVenueId);
+        FoursquareVenue result = FoursquareAPI.get(context).getVenueInfo(fsVenueId);
 
         // Done!
         return result;
