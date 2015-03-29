@@ -130,11 +130,11 @@ public class BackendAPI {
 
     }
 
-    public List<EventBean> getEvents() throws IOException{
+    public List<EventBean> getEventsForUser() throws IOException{
         return myApiService.getEventsforUser(token).execute().getItems();
     }
 
-
-
-
+    public List<EventBean> getEventsForVenue(String venueId) throws IOException{
+        return myApiService.getEventsForVenue(token, venueId).execute().getItems();
     }
+}

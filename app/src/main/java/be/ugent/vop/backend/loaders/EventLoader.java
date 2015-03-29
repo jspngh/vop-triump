@@ -37,7 +37,7 @@ public class EventLoader extends AsyncTaskLoader<List<EventBean>> {
         Log.d("EventLoader", "");
         List<EventBean> result = null;
         try{
-            result = (BackendAPI.get(context).getEvents());
+            result = (BackendAPI.get(context).getEventsForUser());
         } catch(IOException e){
             Log.d("EventLoader", e.getMessage());
         }
