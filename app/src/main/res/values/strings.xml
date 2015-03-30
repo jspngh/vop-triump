@@ -81,4 +81,5 @@
     <string name="tutorial_thank_you">Thank you for this helpful tutorial</string>
     <string name="make_own_event">Make your own event</string>
     <string name="no_events_available">No events available</string>
+    <string name="title_activity_accept_members">AcceptMembers</string>
 </resources>

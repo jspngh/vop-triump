@@ -3,6 +3,7 @@ package be.ugent.vop.ui.group;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -60,6 +64,8 @@ public class GroupFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_group, container, false);
         context = getActivity();
 
+        setHasOptionsMenu(true);
+
         bannerImage = (ImageView) rootView.findViewById(R.id.bannerImage);
         description = (TextView) rootView.findViewById(R.id.group_description);
         name = (TextView) rootView.findViewById(R.id.group_name);
@@ -94,6 +100,24 @@ public class GroupFragment extends Fragment {
     public void onStart() {
         super.onStart();
         getLoaderManager().initLoader(0, null, mGroupBeanLoaderListener);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.groups_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                Intent intent = new Intent(this.getActivity(), AcceptMembersActivity.class);
+                this.getActivity().startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /***********
