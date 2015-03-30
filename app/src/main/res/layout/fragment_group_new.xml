@@ -11,14 +11,9 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_height="match_parent">
-        <LinearLayout style="@style/HeaderBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/linearLayout">
-            <include layout="@layout/toolbar_actionbar" />
-        </LinearLayout>
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,11 +51,12 @@
             android:id="@+id/group_type"
             android:layout_gravity="center_horizontal" />
 
-        <EditText
-            android:layout_width="match_parent"
+        <Spinner
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/group_type_edit"
-            android:layout_gravity="center_horizontal" />
+            android:id="@+id/spinnerGroupType"
+            android:spinnerMode="dropdown" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -124,6 +124,9 @@
         <activity
             android:name=".ui.group.GroupActivity"
             android:label="@string/title_activity_group" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity" />
         </activity>
         <activity
             android:name=".ui.profile.ProfileActivity"

@@ -16,14 +16,24 @@ public class EventBean {
     private long minParticipants;
     private long maxParticipants;
     private List<GroupBean> groups;
-    private long verified;
+    private boolean verified;
+    private long requirement;
 
-    public long isVerified(){
+    public long getRequirement() {
+        return requirement;
+    }
+
+    public void setRequirement(long requirement) {
+        this.requirement = requirement;
+    }
+
+    public boolean isVerified(){
         return verified;
     }
 
     public void setVerified(long flag){
-        verified = flag;
+        if(flag==(long)0) verified=false;
+        else verified = true;
     }
 
     public long getMaxParticipants() {

@@ -33,10 +33,9 @@ import be.ugent.vop.backend.loaders.JoinGroupLoader;
 public class GroupNewFragment extends Fragment {
     private EditText name;
     private EditText description;
-    private EditText type;
     private Button btn;
     private TextView result;
-
+    private Spinner groupTypeSpinner;
 
     private String token;
     private Context context = null;
@@ -58,10 +57,15 @@ public class GroupNewFragment extends Fragment {
         description = (EditText) rootView.findViewById(R.id.group_description_edit);
         name = (EditText) rootView.findViewById(R.id.group_name_edit);
         result = (TextView) rootView.findViewById(R.id.result);
-        type = (EditText) rootView.findViewById(R.id.group_type_edit);
         btn = (Button) rootView.findViewById(R.id.add_button);
         result.setVisibility(View.GONE);
         btn.setFocusable(false);
+
+        groupTypeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupType);
+        ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(context,
+                R.array.groupType_spinner_options, android.R.layout.simple_spinner_item);
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupTypeSpinner.setAdapter(adapterType);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +89,8 @@ public class GroupNewFragment extends Fragment {
 
         @Override
         public Loader<GroupBean> onCreateLoader (int id, Bundle args){
-            return new CreateGroupLoader(context, name.getText().toString(), description.getText().toString(), type.getText().toString());
+            String groupType = groupTypeSpinner.getSelectedItem().toString();
+            return new CreateGroupLoader(context, name.getText().toString(), description.getText().toString(), groupType);
         }
 
         @Override

@@ -156,7 +156,7 @@ public class VenueRankingFragment extends Fragment {
                 Log.d("VenueFragment", "selected group size: "+selected);
                 if(!currentGroupType.equals(selected)){
                     currentGroupType = selected;
-                    getLoaderManager().restartLoader(0,null,mRankingLoaderListener);
+                    getLoaderManager().restartLoader(0,null, mRankingLoaderListener);
                 }
             }
 
