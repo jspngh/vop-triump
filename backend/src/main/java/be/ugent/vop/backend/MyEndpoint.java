@@ -837,7 +837,7 @@ public class MyEndpoint {
     private UserBean _getUserBean(Entity user) throws EntityNotFoundException{
         UserBean bean = new UserBean();
 
-        bean.setUserId(user.getKey().toString());
+        bean.setUserId(user.getKey().getName());
         bean.setEmail((String) user.getProperty(USER_EMAIL));
         bean.setFirstName((String) user.getProperty(USER_FIRST_NAME));
         bean.setLastName((String) user.getProperty(USER_LAST_NAME));
