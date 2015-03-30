@@ -1,6 +1,6 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:triump="http://schemas.android.com/apk/res-auto"
-    triump:theme="@style/ActionBarThemeOverlay"
+    triump:theme="@style/ToolbarTheme"
     triump:popupTheme="@style/ActionBarPopupThemeOverlay"
     android:id="@+id/toolbar_actionbar"
     android:background="@null"

@@ -14,37 +14,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.koushikdutta.ion.Ion;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.List;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
-import be.ugent.vop.backend.loaders.VenueInfoLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.ui.event.NewEventActivity;
 import be.ugent.vop.ui.group.GroupActivity;
 
-
-public class VenueFragment extends Fragment {
+public class VenueRankingFragment extends Fragment {
 
     private VenueBean venueBean;
     private FoursquareVenue fsVenue;
     //   private TextView noRankingTextView;
-    private TextView titleTextView;
     private ImageView venueImageView;
-    private Button checkinButton;
-    private Button newEventButton;
+    private FloatingActionButton checkinButton;
     private RankingAdapter adapter;
     private List<RankingBean> ranking;
     private ListView rankingListView;
@@ -64,16 +57,13 @@ public class VenueFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_venue, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_venue_ranking, container, false);
 
         context = getActivity();
 
-        titleTextView = (TextView)rootView.findViewById(R.id.textViewVenueName);
         //    noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
-        checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
-        venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
-        newEventButton = (Button) rootView.findViewById(R.id.buttonNewEvent);
+        checkinButton = (FloatingActionButton)rootView.findViewById(R.id.buttonCheckin);
 
         /**
          *
@@ -87,6 +77,9 @@ public class VenueFragment extends Fragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
+
+
+        checkinButton.attachToListView(rankingListView);
 
 
         /**
@@ -125,11 +118,8 @@ public class VenueFragment extends Fragment {
          *
          * Initialize loaders
          */
-        //loader for venueInfo (to foursquare)
-        getLoaderManager().initLoader(2, null, mVenueInfoLoaderListener);
         //loader for ranking (to backend)
         getLoaderManager().initLoader(0, null, mRankingLoaderListener);
-        //loader for loading updated ranking after checkin
 
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,29 +167,11 @@ public class VenueFragment extends Fragment {
 
         });
 
-        newEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            /*    EventFragment fragment = new EventFragment();
-                getActivity().getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .commit();*/
-
-                Intent intent = new Intent(getActivity(),NewEventActivity.class);
-                intent.putExtra(VenueActivity.VENUE_ID, fsVenueId);
-
-                getActivity().startActivity(intent);
-            }
-        });
-
         return rootView;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
     }
 
     @Override
@@ -256,20 +228,27 @@ public class VenueFragment extends Fragment {
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
             String groupType = groupTypeSpinner.getSelectedItem().toString();
+
+            if(groupTypeSpinner.getSelectedItemPosition() == 0)
+                groupType = "All";
+
             int groupSize = groupSizeSpinner.getSelectedItemPosition();
 
             int minSize = 1, maxSize = 1;
 
             switch(groupSize){
-                case 0: // Individual
+                case 0: // All
+                    maxSize = Integer.MAX_VALUE;
                     break;
-                case 1: // Small
+                case 1: // Individual
+                    break;
+                case 2: // Small
                     maxSize = 10;
                     break;
-                case 2: // Medium
+                case 3: // Medium
                     maxSize = 50;
                     break;
-                case 3: // Large
+                case 4: // Large
                     maxSize = Integer.MAX_VALUE;
                     break;
             }
@@ -331,20 +310,27 @@ public class VenueFragment extends Fragment {
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
             String groupType = groupTypeSpinner.getSelectedItem().toString();
+
+            if(groupTypeSpinner.getSelectedItemPosition() == 0)
+                groupType = "All";
+
             int groupSize = groupSizeSpinner.getSelectedItemPosition();
 
             int minSize = 1, maxSize = 1;
 
             switch(groupSize){
-                case 0: // Individual
+                case 0: // All
+                    maxSize = Integer.MAX_VALUE;
                     break;
-                case 1: // Small
+                case 1: // Individual
+                    break;
+                case 2: // Small
                     maxSize = 10;
                     break;
-                case 2: // Medium
+                case 3: // Medium
                     maxSize = 50;
                     break;
-                case 3: // Large
+                case 4: // Large
                     maxSize = Integer.MAX_VALUE;
                     break;
             }
@@ -361,42 +347,4 @@ public class VenueFragment extends Fragment {
 
     };
 
-    /**
-     *
-     * Loader 3: VenueInfo
-     *
-     */
-
-    private LoaderManager.LoaderCallbacks<FoursquareVenue> mVenueInfoLoaderListener
-            = new LoaderManager.LoaderCallbacks<FoursquareVenue>() {
-        @Override
-        public void onLoadFinished(Loader<FoursquareVenue> loader, FoursquareVenue venue) {
-            Log.d("VenueFragment", "onLoadFinished of venueInfoLoader");
-            if(venue!=null) {
-                titleTextView.setText(venue.getName());
-                //placeholder image
-                String photoUrl;
-                if(venue.getPhotos().size()>0) {
-                    photoUrl = venue.getPhotos().get(0).getPrefix() + "500x500" + venue.getPhotos().get(0).getSuffix();
-                }
-                else photoUrl =
-                        "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
-                Ion.with(venueImageView)
-                        .placeholder(R.drawable.fantastic_background)
-                        .error(R.drawable.ic_drawer_logout)
-                        .load(photoUrl);
-            }
-        }
-
-        @Override
-        public Loader<FoursquareVenue> onCreateLoader(int id, Bundle args) {
-            Log.d("venueFragment", "onCreateLoader");
-            VenueInfoLoader loader = new VenueInfoLoader(context, fsVenueId);
-            return loader;
-        }
-
-        @Override
-        public void onLoaderReset(Loader<FoursquareVenue> loader) {}
-
-    };
 }

@@ -2,18 +2,29 @@
 <resources>
 
     <string-array name="groupType_spinner_options">
-        <item>All</item>
+        <item>All types</item>
         <item>Studentgroup</item>
         <item>Friends</item>
         <item>Club</item>
     </string-array>
 
     <string-array name="groupSize_spinner_options">
-        <item>All</item>
+        <item>All sizes</item>
         <item>Individual</item>
         <item>Small</item>
         <item>Medium</item>
         <item>Big</item>
+    </string-array>
+
+    <string-array name="main_tabs">
+        <item>Overview</item>
+        <item>Checkin</item>
+        <item>Group</item>
+    </string-array>
+
+    <string-array name="venue_tabs">
+        <item>Ranking</item>
+        <item>Events</item>
     </string-array>
 
 </resources>

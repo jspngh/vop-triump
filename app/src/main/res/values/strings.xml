@@ -53,11 +53,6 @@
     <string name="group_banner_description">banner of your group</string>
     <string name="go_to_group">View this group</string>
     <string name="group_id">id of group</string>
-    <string-array name="main_tabs">
-        <item>Overview</item>
-        <item>Checkin</item>
-        <item>Group</item>
-    </string-array>
     <string name="title_activity_group">GroupActivity</string>
     <string name="hello_world">Hello world!</string>
     <!-- <string name="app_id">462840373863146</string> -->
@@ -81,4 +76,6 @@
     <string name="tutorial_thank_you">Thank you for this helpful tutorial</string>
     <string name="make_own_event">Make your own event</string>
     <string name="no_events_available">No events available</string>
+    <string name="venue_image">image of the venue</string>
+    <string name="new_event">New Event</string>
 </resources>

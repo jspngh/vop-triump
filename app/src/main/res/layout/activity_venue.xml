@@ -12,17 +12,36 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent">
-        <LinearLayout style="@style/HeaderBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <include layout="@layout/toolbar_actionbar" />
-        </LinearLayout>
-        <!-- Sessions fragments showing each day of the conference -->
+
         <FrameLayout
-            android:layout_height="fill_parent"
             android:layout_width="match_parent"
-            android:id="@+id/fragment_container"/>
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageView"
+                android:contentDescription="@string/venue_image"
+                android:adjustViewBounds="false"
+                android:scaleType="centerCrop" />
+
+            <include layout="@layout/toolbar_actionbar" />
+
+            <be.ugent.vop.ui.widget.SlidingTabLayout
+                android:id="@+id/sliding_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="8dp"/>
+        </FrameLayout>
+
+        <!-- Sessions fragments showing each day of the conference -->
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
 
     </LinearLayout>
     <!-- Nav drawer -->
