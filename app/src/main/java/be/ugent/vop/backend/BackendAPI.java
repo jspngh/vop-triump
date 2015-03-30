@@ -133,10 +133,22 @@ public class BackendAPI {
     }
 
     public List<EventBean> getEventsForUser() throws IOException{
-        return myApiService.getEventsForUser(token).execute().getItems();
+        return myApiService.getEventsForUser(token).execute().getRewards();
     }
 
     public List<EventBean> getEventsForVenue(String venueId) throws IOException{
-        return myApiService.getEventsForVenue(token, venueId).execute().getItems();
+            return myApiService.getEventsForVenue(token, venueId).execute().getItems();
+    }
+
+    public List<UserBean> getPendingRequests(long groupId) throws IOException{
+        return myApiService.getPendingRequests(groupId, token).execute().getItems();
+    }
+
+    public void denyUserInGroup(String userId, long groupId) throws IOException{
+        myApiService.denyUserInGroup(groupId, token, userId).execute();
+    }
+
+    public void acceptUserInGroup(String userId, long groupId) throws IOException{
+        myApiService.acceptUserInGroup(groupId, token, userId).execute();
     }
 }

@@ -82,4 +82,7 @@
     <string name="make_own_event">Make your own event</string>
     <string name="no_events_available">No events available</string>
     <string name="title_activity_accept_members">AcceptMembers</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

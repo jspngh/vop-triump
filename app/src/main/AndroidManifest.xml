@@ -124,14 +124,13 @@
         <activity
             android:name=".ui.group.GroupActivity"
             android:label="@string/title_activity_group" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity" />
         </activity>
         <activity
             android:name=".ui.profile.ProfileActivity"
             android:label="@string/title_activity_profile" >
-        </activity>
-        <activity
-            android:name=".ui.group.AcceptMembersActivity"
-            android:label="@string/title_activity_accept_members" >
         </activity>
     </application>
 

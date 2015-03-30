@@ -592,7 +592,7 @@ public class MyEndpoint {
         result.setVenues(venues);
         return result;
     }
-
+    @ApiMethod(name = "acceptUserInGroup", path = "acceptUserInGroup")
     public void acceptUserInGroup(@Named("token") String token,
                                   @Named("userId") String userId,
                                   @Named("groupId") long groupId) throws UnauthorizedException, EntityNotFoundException {
@@ -600,7 +600,7 @@ public class MyEndpoint {
         _getUserIdForToken(token); // Try to authenticate the user
         _acceptUserInGroup(userId, groupId, false);
     }
-
+    @ApiMethod(name = "denyUserInGroup", path = "denyUserInGroup")
     public void denyUserInGroup(@Named("token") String token,
                                 @Named("userId") String userId,
                                 @Named("groupId") long groupId) throws UnauthorizedException {
@@ -608,7 +608,7 @@ public class MyEndpoint {
         _getUserIdForToken(token); // Try to authenticate the user
         _denyUserInGroup(userId, groupId);
     }
-
+    @ApiMethod(name = "getPendingRequests", path = "getPendingRequests")
     public List<UserBean> getPendingRequests(@Named("token") String token,
                                              @Named("groupId") long groupId) throws UnauthorizedException, EntityNotFoundException {
         // TODO: check admin

@@ -1,5 +1,6 @@
 package be.ugent.vop.ui.group;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -32,6 +33,7 @@ import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
 
 public class GroupFragment extends Fragment {
+    public static final String GROUP_ID = "groupId";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private GridLayoutManager mLayoutManager;
@@ -43,7 +45,7 @@ public class GroupFragment extends Fragment {
     private TextView created;
     private Button btn;
 
-
+    private OnFragmentInteractionListener mListener;
     private String token;
     private long groupId;
     private Context context = null;
@@ -51,11 +53,23 @@ public class GroupFragment extends Fragment {
     public GroupFragment() {
         // Required empty public constructor
     }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        groupId = bundle.getLong("groupId", 0);
+        groupId = bundle.getLong(GROUP_ID, 0);
     }
 
     @Override
@@ -73,7 +87,7 @@ public class GroupFragment extends Fragment {
         created = (TextView) rootView.findViewById(R.id.group_created);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.members_list);
-        mLayoutManager = new GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL, false);
+        mLayoutManager = new GridLayoutManager(context, 1, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MemberListAdapter(null, null);
         mRecyclerView.setAdapter(mAdapter);
@@ -104,7 +118,7 @@ public class GroupFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.groups_menu, menu);
+        inflater.inflate(R.menu.group_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -112,12 +126,15 @@ public class GroupFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                Intent intent = new Intent(this.getActivity(), AcceptMembersActivity.class);
-                this.getActivity().startActivity(intent);
+                mListener.onGroupFragmentInteraction(groupId);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public interface OnFragmentInteractionListener {
+        public void onGroupFragmentInteraction(long groupId);
     }
 
     /***********
