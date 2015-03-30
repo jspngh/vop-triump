@@ -72,6 +72,8 @@ public class GroupActivity extends BaseActivity implements GroupFragment.OnFragm
         fragmentTransaction.replace(R.id.fragment_container, acceptMembersFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+
+        setTitle(getString(R.string.pending_requests));
     }
 
 

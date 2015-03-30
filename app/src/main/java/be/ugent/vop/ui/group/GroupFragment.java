@@ -125,7 +125,7 @@ public class GroupFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add:
+            case R.id.action_pending_requests:
                 mListener.onGroupFragmentInteraction(groupId);
                 return true;
             default:
