@@ -646,7 +646,7 @@ public class MyEndpoint {
         ArrayList<UserBean> requests = new ArrayList<>();
 
         for (Entity r : pq.asIterable()) {
-            requests.add(_getUserBean(r));
+            requests.add(_getUserBeanForId((String) r.getProperty(USERGROUP_USER_ID)));
         }
 
         return requests;
@@ -703,7 +703,6 @@ public class MyEndpoint {
             } catch (EntityNotFoundException e) {
                 e.printStackTrace();
             }
-
         }
         groupsbean.setGroups(groups);
         groupsbean.setNumGroups(groups.size());
@@ -803,7 +802,7 @@ public class MyEndpoint {
 
         // Limit the number of returned members to save on datastore reads
         for (Entity r : pq.asList(FetchOptions.Builder.withLimit(5))){
-            members.add(_getUserBean(r));
+            members.add(_getUserBeanForId((String) r.getProperty(USERGROUP_USER_ID)));
         }
 
         groupBean.setMembers(members);
