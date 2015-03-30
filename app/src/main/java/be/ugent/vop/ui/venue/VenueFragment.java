@@ -40,7 +40,7 @@ public class VenueFragment extends Fragment {
 
     private VenueBean venueBean;
     private FoursquareVenue fsVenue;
- //   private TextView noRankingTextView;
+    //   private TextView noRankingTextView;
     private TextView titleTextView;
     private ImageView venueImageView;
     private Button checkinButton;
@@ -52,7 +52,6 @@ public class VenueFragment extends Fragment {
     private static final int MIN_PARTICIPANTS = 1;
     private static final int MAX_PARTICIPANTS = 1000;
     private Spinner groupTypeSpinner;
-
     private Spinner groupSizeSpinner;
 
     private String currentGroupType = "All";
@@ -70,7 +69,7 @@ public class VenueFragment extends Fragment {
         context = getActivity();
 
         titleTextView = (TextView)rootView.findViewById(R.id.textViewVenueName);
-    //    noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
+        //    noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
         rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
         checkinButton = (Button)rootView.findViewById(R.id.buttonCheckin);
         venueImageView = (ImageView) rootView.findViewById(R.id.imageView);
@@ -136,9 +135,9 @@ public class VenueFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(getLoaderManager().getLoader(1)==null)
-                getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
+                    getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
                 else
-                getLoaderManager().restartLoader(1, null, mCheckInLoaderListener);
+                    getLoaderManager().restartLoader(1, null, mCheckInLoaderListener);
             }
         });
 
@@ -230,7 +229,7 @@ public class VenueFragment extends Fragment {
                 for(RankingBean r:rankings){
                     Log.d("VenueFragment",r.getGroupBean().getName()+ " | "+r.getPoints());
                 }
-            //    noRankingTextView.setVisibility(View.INVISIBLE);
+                //    noRankingTextView.setVisibility(View.INVISIBLE);
                 adapter = new RankingAdapter(context, rankings);
 
                 rankingListView.setAdapter(adapter);
@@ -247,7 +246,7 @@ public class VenueFragment extends Fragment {
                 });
             }else{
                 rankingListView.setVisibility(View.INVISIBLE);
-             //   noRankingTextView.setText(R.string.no_ranking);
+                //   noRankingTextView.setText(R.string.no_ranking);
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
@@ -323,7 +322,7 @@ public class VenueFragment extends Fragment {
                     t.show();
                 }
             }else{
-             //   noRankingTextView.setText(R.string.no_ranking);
+                //   noRankingTextView.setText(R.string.no_ranking);
             }
 
         }
