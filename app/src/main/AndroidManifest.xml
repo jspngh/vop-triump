@@ -129,6 +129,10 @@
             android:name=".ui.profile.ProfileActivity"
             android:label="@string/title_activity_profile" >
         </activity>
+        <activity
+            android:name=".ui.group.AcceptMembersActivity"
+            android:label="@string/title_activity_accept_members" >
+        </activity>
     </application>
 
 </manifest>
