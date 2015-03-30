@@ -25,7 +25,7 @@ import be.ugent.vop.ui.profile.ProfileFragment;
  * Created by jonas on 30-3-2015.
  */
 public class PendingMembersAdapter extends RecyclerView.Adapter<PendingMembersAdapter.ViewHolder> {
-    private ArrayList<String> mDataset;
+
     private Context context;
     private ArrayList<UserBean> pendingUsers;
     private long groupId;
@@ -52,7 +52,7 @@ public class PendingMembersAdapter extends RecyclerView.Adapter<PendingMembersAd
     }
 
     public void removeAt(int position) {
-        mDataset.remove(position);
+        pendingUsers.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -108,8 +108,9 @@ public class PendingMembersAdapter extends RecyclerView.Adapter<PendingMembersAd
                                 e.printStackTrace();
                             }
                         }
-                    }).start();
 
+                    }).start();
+                    removeAt(pos);
                 }
             });
             holder.declineBtn.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +126,7 @@ public class PendingMembersAdapter extends RecyclerView.Adapter<PendingMembersAd
                             }
                         }
                     }).start();
+                    removeAt(pos);
                 }
             });
         }
