@@ -85,6 +85,7 @@ public class MyEndpoint {
     private static final String USERGROUP_GROUP_ID = "groupId";
     private static final String USERGROUP_JOINED = "joined";
     private static final String USERGROUP_ACCEPTED = "accepted";
+    private static final String USERGROUP_IS_ADMIN = "isAdmin";
 
     private static final String EVENT_ENTITY = "Event";
     private static final String EVENT_USER_ID = "userId";
@@ -156,6 +157,7 @@ public class MyEndpoint {
 
         try{
             _registerUserInGroup(userId, groupId);
+            _acceptUserInGroup(userId, groupId, true);
             groupBean = _getGroupBean(groupId);
         }
         catch(EntityNotFoundException e){
@@ -498,6 +500,31 @@ public class MyEndpoint {
         return result;
     }
 
+    public void acceptUserInGroup(@Named("token") String token,
+                                  @Named("userId") String userId,
+                                  @Named("groupId") long groupId) throws UnauthorizedException, EntityNotFoundException {
+        // TODO: check admin
+        _getUserIdForToken(token); // Try to authenticate the user
+        _acceptUserInGroup(userId, groupId, false);
+    }
+
+    public void denyUserInGroup(@Named("token") String token,
+                                @Named("userId") String userId,
+                                @Named("groupId") long groupId) throws UnauthorizedException {
+        // TODO: check admin
+        _getUserIdForToken(token); // Try to authenticate the user
+        _denyUserInGroup(userId, groupId);
+    }
+
+    public List<UserBean> getPendingRequests(@Named("token") String token,
+                                             @Named("groupId") long groupId) throws UnauthorizedException, EntityNotFoundException {
+        // TODO: check admin
+        _getUserIdForToken(token); // Try to authenticate the user
+        return _getPendingRequests(groupId);
+    }
+
+
+
     /************************
      * Private helper methods
      **************************/
@@ -537,14 +564,95 @@ public class MyEndpoint {
         userGroup.setProperty(USERGROUP_USER_ID, userId);
         userGroup.setProperty(USERGROUP_GROUP_ID, groupId);
         userGroup.setProperty(USERGROUP_JOINED, new Date());
+        userGroup.setProperty(USERGROUP_ACCEPTED, false);
+        userGroup.setProperty(USERGROUP_IS_ADMIN, false);
         datastore.put(userGroup);
-
-        Entity groupEntity = datastore.get(KeyFactory.createKey(GROUP_ENTITY, groupId));
-        long numMembers = (long) groupEntity.getProperty(GROUP_NUM_MEMBERS);
-        long newNumMembers = numMembers + 1;
-        groupEntity.setProperty(GROUP_NUM_MEMBERS, newNumMembers);
-        datastore.put(groupEntity);
     }
+
+    private void _acceptUserInGroup(String userId, long groupId, boolean isAdmin) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        Query.Filter propertyFilter =
+                new Query.FilterPredicate(USERGROUP_GROUP_ID,
+                        Query.FilterOperator.EQUAL,
+                        groupId);
+
+        Query.Filter propertyFilter2 =
+                new Query.FilterPredicate(USERGROUP_USER_ID,
+                        Query.FilterOperator.EQUAL,
+                        userId);
+
+        Query.Filter filter = Query.CompositeFilterOperator.and(propertyFilter, propertyFilter2);
+
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+        Entity e = pq.asSingleEntity();
+
+        boolean alreadyAccepted = (boolean) e.getProperty(USERGROUP_ACCEPTED);
+
+        e.setProperty(USERGROUP_ACCEPTED, true);
+        e.setProperty(USERGROUP_IS_ADMIN, isAdmin);
+        datastore.put(e);
+
+        if(!alreadyAccepted){
+            Entity groupEntity = datastore.get(KeyFactory.createKey(GROUP_ENTITY, groupId));
+            long numMembers = (long) groupEntity.getProperty(GROUP_NUM_MEMBERS);
+            long newNumMembers = numMembers + 1;
+            groupEntity.setProperty(GROUP_NUM_MEMBERS, newNumMembers);
+            datastore.put(groupEntity);
+        }
+    }
+
+    private void _denyUserInGroup(String userId, long groupId){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        Query.Filter propertyFilter =
+                new Query.FilterPredicate(USERGROUP_GROUP_ID,
+                        Query.FilterOperator.EQUAL,
+                        groupId);
+
+        Query.Filter propertyFilter2 =
+                new Query.FilterPredicate(USERGROUP_USER_ID,
+                        Query.FilterOperator.EQUAL,
+                        userId);
+
+        Query.Filter filter = Query.CompositeFilterOperator.and(propertyFilter, propertyFilter2);
+
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+        Entity e = pq.asSingleEntity();
+
+        datastore.delete(e.getKey());
+    }
+
+    private List<UserBean> _getPendingRequests(long groupId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        Query.Filter propertyFilter =
+                new Query.FilterPredicate(USERGROUP_GROUP_ID,
+                        Query.FilterOperator.EQUAL,
+                        groupId);
+
+        Query.Filter propertyFilter2 =
+                new Query.FilterPredicate(USERGROUP_ACCEPTED,
+                        Query.FilterOperator.EQUAL,
+                        false);
+
+        Query.Filter filter = Query.CompositeFilterOperator.and(propertyFilter, propertyFilter2);
+
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+
+        ArrayList<UserBean> requests = new ArrayList<>();
+
+        for (Entity r : pq.asIterable()) {
+            requests.add(_getUserBean(r));
+        }
+
+        return requests;
+    }
+
+
 
     private CheckinBean _checkInVenue(String userId, long groupId, String venueId){
 
@@ -577,8 +685,14 @@ public class MyEndpoint {
                 new Query.FilterPredicate(USERGROUP_USER_ID,
                         Query.FilterOperator.EQUAL,
                         userId);
+        Query.Filter propertyFilter2 =
+                new Query.FilterPredicate(USERGROUP_ACCEPTED,
+                        Query.FilterOperator.EQUAL,
+                        true);
+        Query.Filter filter = Query.CompositeFilterOperator.and(propertyFilter, propertyFilter2);
 
-        Query q = new Query(USERGROUP_ENTITY).setFilter(propertyFilter);
+
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
         PreparedQuery pq = datastore.prepare(q);
         for (Entity r : pq.asIterable()) {
             long groupId = ((long) r.getProperty(USERGROUP_GROUP_ID));
@@ -676,15 +790,20 @@ public class MyEndpoint {
                 new Query.FilterPredicate(USERGROUP_GROUP_ID,
                         Query.FilterOperator.EQUAL,
                         group.getKey().getId());
+        Query.Filter propertyFilter2 =
+                new Query.FilterPredicate(USERGROUP_ACCEPTED,
+                        Query.FilterOperator.EQUAL,
+                        true);
+        Query.Filter filter = Query.CompositeFilterOperator.and(propertyFilter, propertyFilter2);
 
-        Query q = new Query(USERGROUP_ENTITY).setFilter(propertyFilter);
+
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
 
         PreparedQuery pq = datastore.prepare(q);
 
         // Limit the number of returned members to save on datastore reads
         for (Entity r : pq.asList(FetchOptions.Builder.withLimit(5))){
-            String userId = ((String) r.getProperty(USERGROUP_USER_ID));
-            members.add(_getUserBeanForId(userId));
+            members.add(_getUserBean(r));
         }
 
         groupBean.setMembers(members);
@@ -713,7 +832,13 @@ public class MyEndpoint {
 
         Entity user = datastore.get(userKey);
 
-        bean.setUserId(userId);
+        return _getUserBean(user);
+    }
+
+    private UserBean _getUserBean(Entity user) throws EntityNotFoundException{
+        UserBean bean = new UserBean();
+
+        bean.setUserId(user.getKey().toString());
         bean.setEmail((String) user.getProperty(USER_EMAIL));
         bean.setFirstName((String) user.getProperty(USER_FIRST_NAME));
         bean.setLastName((String) user.getProperty(USER_LAST_NAME));
@@ -807,20 +932,6 @@ public class MyEndpoint {
 
         sortRankingList(ranking);
         return ranking;
-    }
-
-    private int countMembersOfGroup(long groupId){
-        //TODO: verify if user is accepted in group!
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query.Filter filter =
-                new Query.FilterPredicate(USERGROUP_GROUP_ID,
-                        Query.FilterOperator.EQUAL,
-                        groupId);
-        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
-        PreparedQuery pq = datastore.prepare(q);
-        //  return pq.countEntities(FetchOptions.Builder.withDefaults());
-        return pq.countEntities();
     }
 
     private boolean isCorrectGroupSize(long size, int min, int max){

@@ -80,4 +80,5 @@
     <string name="welcome_to_triump">Welcome to Triump</string>
     <string name="tutorial_thank_you">Thank you for this helpful tutorial</string>
     <string name="make_own_event">Make your own event</string>
+    <string name="no_events_available">No events available</string>
 </resources>

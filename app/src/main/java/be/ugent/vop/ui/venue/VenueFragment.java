@@ -52,6 +52,7 @@ public class VenueFragment extends Fragment {
     private static final int MIN_PARTICIPANTS = 1;
     private static final int MAX_PARTICIPANTS = 1000;
     private Spinner groupTypeSpinner;
+
     private Spinner groupSizeSpinner;
 
     private String currentGroupType = "All";
