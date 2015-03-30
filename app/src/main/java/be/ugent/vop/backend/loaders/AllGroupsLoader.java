@@ -35,8 +35,10 @@ public class AllGroupsLoader extends AsyncTaskLoader<GroupsBean> {
 
         try{
             List<GroupBean> temp =BackendAPI.get(context).getAllGroups();
-            result.setGroups(temp);
-            result.setNumGroups(temp.size());
+            if(temp!=null) {
+                result.setGroups(temp);
+                result.setNumGroups(temp.size());
+            }
         } catch(IOException e){
             Log.d(TAG, e.getMessage());
         }

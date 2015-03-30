@@ -1,4 +1,4 @@
-package be.ugent.vop.ui.event;
+package be.ugent.vop.backend.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;

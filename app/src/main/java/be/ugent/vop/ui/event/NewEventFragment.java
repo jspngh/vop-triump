@@ -5,52 +5,37 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.api.client.util.DateTime;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.BackendAPI;
-import be.ugent.vop.backend.loaders.EventLoader;
 import be.ugent.vop.backend.loaders.GroupsForUserLoader;
-import be.ugent.vop.backend.loaders.RankingLoader;
+import be.ugent.vop.backend.loaders.NewEventLoader;
 import be.ugent.vop.backend.myApi.model.EventBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.GroupsBean;
-import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.ui.group.GroupActivity;
-import be.ugent.vop.ui.venue.RankingAdapter;
 import be.ugent.vop.ui.venue.VenueActivity;
 import be.ugent.vop.utils.RangeSeekBar;
 
