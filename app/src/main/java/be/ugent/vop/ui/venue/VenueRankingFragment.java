@@ -6,15 +6,17 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -27,23 +29,15 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.backend.myApi.model.VenueBean;
-import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.group.GroupActivity;
 
 public class VenueRankingFragment extends Fragment {
 
-    private VenueBean venueBean;
-    private FoursquareVenue fsVenue;
-    //   private TextView noRankingTextView;
-    private ImageView venueImageView;
     private FloatingActionButton checkinButton;
     private RankingAdapter adapter;
     private List<RankingBean> ranking;
     private ListView rankingListView;
     private Context context;
-    private static final int MIN_PARTICIPANTS = 1;
-    private static final int MAX_PARTICIPANTS = 1000;
     private Spinner groupTypeSpinner;
     private Spinner groupSizeSpinner;
 
@@ -53,6 +47,12 @@ public class VenueRankingFragment extends Fragment {
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     private String fsVenueId;
+
+    private VenueRankingCallback mCallback;
+
+    public interface VenueRankingCallback{
+        public Palette getPalette();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -177,6 +177,8 @@ public class VenueRankingFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if(activity instanceof VenueRankingCallback)
+            mCallback = (VenueRankingCallback) activity;
     }
 
     /***********
@@ -201,8 +203,17 @@ public class VenueRankingFragment extends Fragment {
                 for(RankingBean r:rankings){
                     Log.d("VenueFragment",r.getGroupBean().getName()+ " | "+r.getPoints());
                 }
+
+                int ht = 40;
+                int wt = 40;
+
+                float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
+                float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
+
+                Palette p = mCallback.getPalette();
+
                 //    noRankingTextView.setVisibility(View.INVISIBLE);
-                adapter = new RankingAdapter(context, rankings);
+                adapter = new RankingAdapter(context, rankings, p.getDarkMutedColor(Color.BLACK), (int)wt_px, (int)ht_px);
 
                 rankingListView.setAdapter(adapter);
                 rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -280,7 +291,16 @@ public class VenueRankingFragment extends Fragment {
             Log.d("VenueFragment", "onLoadFinished after checkin loader");
             ranking=rankings;
             if(rankings!=null){
-                adapter = new RankingAdapter(context, rankings);
+                int ht = 40;
+                int wt = 40;
+
+                float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
+                float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
+
+                Palette p = mCallback.getPalette();
+
+                //    noRankingTextView.setVisibility(View.INVISIBLE);
+                adapter = new RankingAdapter(context, rankings, p.getVibrantColor(Color.BLACK), (int)wt_px, (int)ht_px);
                 rankingListView.setAdapter(adapter);
                 rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

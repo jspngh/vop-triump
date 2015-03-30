@@ -34,7 +34,7 @@ import be.ugent.vop.ui.widget.SlidingTabLayout;
 /**
  * Created by vincent on 03/03/15.
  */
-public class VenueActivity extends BaseActivity {
+public class VenueActivity extends BaseActivity implements VenueRankingFragment.VenueRankingCallback {
     private static final String TAG = "VenueActivity";
 
     public static final String VENUE_ID = "venueID";
@@ -42,11 +42,17 @@ public class VenueActivity extends BaseActivity {
     private ImageView venueImageView;
     private Context context;
     private String fsVenueId;
+    private Palette mPalette;
 
     // View pager and adapter (for narrow mode)
     ViewPager mViewPager = null;
     OurViewPagerAdapter mViewPagerAdapter = null;
     SlidingTabLayout mSlidingTabLayout = null;
+
+    @Override
+    public Palette getPalette() {
+        return mPalette;
+    }
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -172,6 +178,7 @@ public class VenueActivity extends BaseActivity {
                             @Override
                             public void onCompleted(Exception e, Bitmap result) {
                                 Palette p = Palette.generate(result);
+                                mPalette = p;
 
                                 venueImageView.setImageBitmap(result);
 

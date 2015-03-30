@@ -6,15 +6,15 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -24,7 +24,6 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.LeaderboardLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.ui.group.GroupActivity;
-
 import be.ugent.vop.ui.venue.RankingAdapter;
 import be.ugent.vop.utils.RangeSeekBar;
 
@@ -89,7 +88,14 @@ public class LeaderboardsFragment extends Fragment{
                     Log.d("LeaderboardsFragment", "size of data " + data.size());
                     ranking = new ArrayList<RankingBean>();
                     for (RankingBean r : data) ranking.add(r);
-                    adapter = new RankingAdapter(context, ranking);
+                    int ht = 40;
+                    int wt = 40;
+
+                    float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
+                    float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
+
+                    //    noRankingTextView.setVisibility(View.INVISIBLE);
+                    adapter = new RankingAdapter(context, ranking, Color.BLACK, (int)wt_px, (int)ht_px);
                     rankingListView.setAdapter(adapter);
 
                     rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
