@@ -44,6 +44,9 @@ public class VenueRankingFragment extends Fragment {
     private String currentGroupType = "All";
     private String currentGroupSize = "All";
 
+    private int customMin = 1;
+    private int customMax = Integer.MAX_VALUE;
+
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     private String fsVenueId;
@@ -204,16 +207,19 @@ public class VenueRankingFragment extends Fragment {
                     Log.d("VenueFragment",r.getGroupBean().getName()+ " | "+r.getPoints());
                 }
 
-                int ht = 40;
-                int wt = 40;
+                int ht = 200;
+                int wt = 200;
 
                 float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
                 float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
 
                 Palette p = mCallback.getPalette();
 
+                int backgroundColor = p.getVibrantSwatch().getRgb();
+                int textColor = p.getVibrantSwatch().getBodyTextColor();
+
                 //    noRankingTextView.setVisibility(View.INVISIBLE);
-                adapter = new RankingAdapter(context, rankings, p.getDarkMutedColor(Color.BLACK), (int)wt_px, (int)ht_px);
+                adapter = new RankingAdapter(context, rankings, backgroundColor, textColor, (int)wt_px, (int)ht_px);
 
                 rankingListView.setAdapter(adapter);
                 rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -251,16 +257,20 @@ public class VenueRankingFragment extends Fragment {
                 case 0: // All
                     maxSize = Integer.MAX_VALUE;
                     break;
-                case 1: // Individual
-                    break;
-                case 2: // Small
+                case 1: // Small
                     maxSize = 10;
                     break;
-                case 3: // Medium
+                case 2: // Medium
+                    minSize = 11;
                     maxSize = 50;
                     break;
-                case 4: // Large
+                case 3: // Large
+                    minSize = 51;
                     maxSize = Integer.MAX_VALUE;
+                    break;
+                case 4: // Custom
+                    minSize = customMin;
+                    maxSize = customMax;
                     break;
             }
 
@@ -291,16 +301,20 @@ public class VenueRankingFragment extends Fragment {
             Log.d("VenueFragment", "onLoadFinished after checkin loader");
             ranking=rankings;
             if(rankings!=null){
-                int ht = 40;
-                int wt = 40;
+                int ht = 200;
+                int wt = 200;
 
                 float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
                 float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
 
                 Palette p = mCallback.getPalette();
 
+                int backgroundColor = p.getVibrantSwatch().getRgb();
+                int textColor = p.getVibrantSwatch().getBodyTextColor();
+
+
                 //    noRankingTextView.setVisibility(View.INVISIBLE);
-                adapter = new RankingAdapter(context, rankings, p.getVibrantColor(Color.BLACK), (int)wt_px, (int)ht_px);
+                adapter = new RankingAdapter(context, rankings, backgroundColor, textColor, (int)wt_px, (int)ht_px);
                 rankingListView.setAdapter(adapter);
                 rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -342,16 +356,20 @@ public class VenueRankingFragment extends Fragment {
                 case 0: // All
                     maxSize = Integer.MAX_VALUE;
                     break;
-                case 1: // Individual
-                    break;
-                case 2: // Small
+                case 1: // Small
                     maxSize = 10;
                     break;
-                case 3: // Medium
+                case 2: // Medium
+                    minSize = 11;
                     maxSize = 50;
                     break;
-                case 4: // Large
+                case 3: // Large
+                    minSize = 51;
                     maxSize = Integer.MAX_VALUE;
+                    break;
+                case 4: // Custom
+                    minSize = customMin;
+                    maxSize = customMax;
                     break;
             }
 

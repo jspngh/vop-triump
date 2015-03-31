@@ -86,16 +86,16 @@ public class LeaderboardsFragment extends Fragment{
                     noRankingTextView.setVisibility(View.GONE);
                     rankingListView.setVisibility(View.VISIBLE);
                     Log.d("LeaderboardsFragment", "size of data " + data.size());
-                    ranking = new ArrayList<RankingBean>();
+                    ranking = new ArrayList<>();
                     for (RankingBean r : data) ranking.add(r);
-                    int ht = 40;
-                    int wt = 40;
+                    int ht = 200;
+                    int wt = 200;
 
                     float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
                     float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
 
                     //    noRankingTextView.setVisibility(View.INVISIBLE);
-                    adapter = new RankingAdapter(context, ranking, Color.BLACK, (int)wt_px, (int)ht_px);
+                    adapter = new RankingAdapter(context, ranking, Color.BLACK, Color.WHITE, (int)wt_px, (int)ht_px);
                     rankingListView.setAdapter(adapter);
 
                     rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -33,15 +33,17 @@ public class RankingAdapter extends ArrayAdapter<RankingBean> {
     private int imageWidth;
     private int imageHeight;
     private int backgroundColor;
+    private int textColor;
 
     public RankingAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
-    public RankingAdapter(Context context, List<RankingBean> items, int backgroundColor, int imageWidth, int imageHeight) {
+    public RankingAdapter(Context context, List<RankingBean> items, int backgroundColor, int textColor, int imageWidth, int imageHeight) {
         super(context, R.layout.ranking_list_item, items);
         this.resourceId = R.layout.ranking_list_item;
         this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
         this.imageHeight = imageHeight;
         this.imageWidth = imageWidth;
 
@@ -92,8 +94,9 @@ public class RankingAdapter extends ArrayAdapter<RankingBean> {
 
         // Set up the paint for use with our Canvas
         Paint imagePaint = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        imagePaint.setAntiAlias(true);
         imagePaint.setTextAlign(Paint.Align.CENTER);
-        imagePaint.setColor(Color.WHITE);
+        imagePaint.setColor(textColor);
 
         imagePaint.setTextSize((int)(imageHeight * 0.6));
 
