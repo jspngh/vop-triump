@@ -318,7 +318,7 @@ public class MyEndpoint {
             event.setProperty(EVENT_MAX_PARTICIPANTS,(long)maxParticipants);
             DatastoreServiceFactory.getDatastoreService().put(event);
         }else{
-//when event is not verified the min and max participants is not importent
+//when event is not verified the min and max number of participants is not importent
             event.setProperty(EVENT_MIN_PARTICIPANTS,(long)-1);
             event.setProperty(EVENT_MAX_PARTICIPANTS,(long)-1);
 //insert event to retrieve key in "groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());"
@@ -546,8 +546,9 @@ public class MyEndpoint {
     }
 
 
-    @ApiMethod(name = "getRankingforEvent", path = "getRankingforEvent")
-    public List<RankingBean> getRankingforEvent(@Named("token") String token,
+ //   @ApiMethod(name = "getRankingForEvent2", path = "getRankingForEvent")
+    @ApiMethod(name = "getRankingsForEvent")
+    public List<RankingBean> getRankingsForEvent(@Named("token") String token,
                                          @Named("eventId") long eventId) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
         return _getRankingsforEvent(eventId);
@@ -1076,7 +1077,7 @@ public class MyEndpoint {
        Query.Filter venueFilter =
                new Query.FilterPredicate(CHECKIN_VENUE_ID,
                         Query.FilterOperator.EQUAL,
-                       event.getVenue().getVenueId());
+                       event.getVenueId());
 /*
         Query.Filter beforeFilter =
                 new Query.FilterPredicate(CHECKIN_DATE,
@@ -1212,6 +1213,7 @@ public class MyEndpoint {
         eventbean.setVerified(((long)event.getProperty(EVENT_VERIFIED)==(long)1)?(long)1:(long)0);
         eventbean.setOrganizer(_getUserBeanForId((String) event.getProperty(EVENT_USER_ID)));
         eventbean.setVenue(_getVenueBean((String) event.getProperty(EVENT_VENUE_ID)));
+        eventbean.setVenueId((String)event.getProperty(EVENT_VENUE_ID));
         eventbean.setRequirement((long) 1);
         Query.Filter filter =
                 new Query.FilterPredicate(GROUPEVENT_EVENT_ID,

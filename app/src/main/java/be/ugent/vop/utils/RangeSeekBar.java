@@ -210,6 +210,9 @@ public class RangeSeekBar<T extends Number> extends ImageView {
 
         int pointerIndex;
 
+        if(pressedThumb == null)
+            pressedThumb = getClosestThumb(mDownMotionX);
+
         final int action = event.getAction();
         switch (action & MotionEvent.ACTION_MASK) {
 
@@ -564,6 +567,13 @@ public class RangeSeekBar<T extends Number> extends ImageView {
     private static enum Thumb {
         MIN, MAX
     };
+
+    private final Thumb getClosestThumb(float touchX)
+
+    {
+        double xValue = screenToNormalized(touchX);
+        return (Math.abs(xValue - normalizedMinValue) < Math.abs(xValue - normalizedMaxValue)) ? Thumb.MIN : Thumb.MAX;
+    }
 
     /**
      * Utility enumaration used to convert between Numbers and doubles.

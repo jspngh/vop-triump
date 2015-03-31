@@ -18,6 +18,15 @@ public class EventBean {
     private List<GroupBean> groups;
     private boolean verified;
     private long requirement;
+    private String venueId;
+
+    public String getVenueId(){
+        return this.venueId;
+    }
+
+    public void setVenueId(String id){
+        this.venueId = id;
+    }
 
     public long getRequirement() {
         return requirement;

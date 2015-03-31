@@ -11,10 +11,41 @@
         android:id="@+id/noEventTextView"
         android:layout_gravity="center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/events"
+        android:id="@+id/eventsTitleTextView"
+        android:layout_gravity="center_horizontal" />
+
     <ListView
         android:id="@+id/event_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_weight="0.4"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="#CCCCCC"
+        android:dividerHeight="1dp"
+        android:paddingLeft="2dp" >
+    </ListView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/rewards"
+        android:id="@+id/rewardsTitleTextView"
+        android:layout_gravity="center_horizontal" />
+
+    <ListView
+        android:id="@+id/reward_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.4"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/transparent"

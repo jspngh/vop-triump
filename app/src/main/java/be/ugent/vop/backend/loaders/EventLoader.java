@@ -10,6 +10,7 @@ import java.util.List;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.EventBean;
+import be.ugent.vop.backend.myApi.model.EventRewardBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.backend.myApi.model.RankingBeanCollection;
@@ -18,7 +19,7 @@ import be.ugent.vop.backend.myApi.model.VenueBean;
 /**
  * Created by jonas on 3/3/15.
  */
-public class EventLoader extends AsyncTaskLoader<List<EventBean>> {
+public class EventLoader extends AsyncTaskLoader<EventRewardBean> {
 
     private Context context;
 
@@ -33,9 +34,9 @@ public class EventLoader extends AsyncTaskLoader<List<EventBean>> {
      * data to be published by the loader.
      */
     @Override
-    public List<EventBean> loadInBackground() {
+    public EventRewardBean loadInBackground() {
         Log.d("EventLoader", "");
-        List<EventBean> result = null;
+        EventRewardBean result = null;
         try{
             result = (BackendAPI.get(context).getEventsForUser());
         } catch(IOException e){
@@ -51,7 +52,7 @@ public class EventLoader extends AsyncTaskLoader<List<EventBean>> {
      * here just adds a little more logic.
      */
     @Override
-    public void deliverResult(List<EventBean> response) {
+    public void deliverResult(EventRewardBean response) {
         if (isReset()) {
             onReleaseResources(response);
         }
@@ -80,7 +81,7 @@ public class EventLoader extends AsyncTaskLoader<List<EventBean>> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(List<EventBean> response) {
+    @Override public void onCanceled(EventRewardBean response) {
         super.onCanceled(response);
 
         // At this point we can release the resources associated with 'apps'
@@ -102,6 +103,6 @@ public class EventLoader extends AsyncTaskLoader<List<EventBean>> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<EventBean> response) {}
+    protected void onReleaseResources(EventRewardBean response) {}
 
 }
