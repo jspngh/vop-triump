@@ -6,6 +6,21 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test"/>
+        android:text="Events for venue"/>
+
+    <ListView
+        android:id="@+id/ListViewEvents"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.8"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="#CCCCCC"
+        android:dividerHeight="1dp"
+        android:paddingLeft="2dp" >
+
+    </ListView>
 
 </LinearLayout>

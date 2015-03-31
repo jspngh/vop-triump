@@ -52,6 +52,8 @@ public class EventFragment extends Fragment{
         context = getActivity();
         activity = getActivity();
 
+        getLoaderManager().initLoader(0, null, mEventLoaderListener);
+
         return rootView;
     }
 
