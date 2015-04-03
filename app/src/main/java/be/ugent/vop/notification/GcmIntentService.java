@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
@@ -55,18 +57,20 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
-                for (int i=0; i<5; i++) {
-                    Log.i(TAG, "Working... " + (i + 1)
-                            + "/5 @ " + SystemClock.elapsedRealtime());
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                    }
+                String message = "no message";
+                //TODO: add different pending intents for different types of notifications!
+                PendingIntent x;
+                switch(extras.getString("type")){
+                    case "WonEvent":
+                        message = extras.getString("message","no message in bundle");
+                        break;
+                    default:
+                        break;
                 }
-                Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
+
                 // Post notification of received message.
-                sendNotification("Received: " + extras.toString());
-                Log.i(TAG, "Received: " + extras.toString());
+                sendNotification(message);
+                Log.i(TAG, "Received: " + message);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -86,7 +90,7 @@ public class GcmIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.checkin_image)
-                        .setContentTitle("GCM Notification")
+                        .setContentTitle("Triump Notification")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg);

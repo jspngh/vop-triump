@@ -55,6 +55,9 @@ public class MyEndpoint {
     private static final String GCM_USER_ID = "userId";
     private static final String GCM_GCM_ID = "gcmId";
 
+    private static final String GCM_API_KEY = "AIzaSyBRyeAM5-ozbgltDeJebQEHvVoX42YVY10";
+    private static final Sender sender = new Sender(GCM_API_KEY);
+
     private static final String USER_ENTITY = "User";
     private static final String USER_ID = "fsUserId";
     private static final String USER_FIRST_NAME = "firstName";
@@ -378,11 +381,6 @@ public class MyEndpoint {
         _registerGcmId(userId,gcmId);
     }
 
-    @ApiMethod(name = "sendNotification")
-    public void sendNotification(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
-        String userId = _getUserIdForToken(token); // Try to authenticate the user
-
-    }
 
     @ApiMethod(name = "getAllGroups")
     public List<GroupBean> getAllGroups(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
@@ -411,15 +409,21 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "sendToUser")
-    public void sendToUser(@Named("token") String token,
-                           @Named("userGcmId") String userGcmId) throws UnauthorizedException, InternalServerErrorException, IOException {
+    public void sendToUser(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException, IOException {
         String userId = _getUserIdForToken(token);
-        Sender sender = new Sender("AIzaSyBRyeAM5-ozbgltDeJebQEHvVoX42YVY10");
+        String gcmId = _getGcmIdForUserId(userId);
+
         Message message = new Message.Builder()
                 .addData("message", "this is the message")
                 .addData("other-parameter", "some value")
                 .build();
-        Result result = sender.send(message, userGcmId, 1);
+
+        sender.send(message, gcmId, 1);
+    }
+
+    @ApiMethod(name = "test")
+    public void test(@Named("groupId") long groupId,@Named("eventId") long eventId ) throws UnauthorizedException, InternalServerErrorException, IOException {
+        notifyGroupOfEventVictory(groupId,eventId,1);
     }
 
     @ApiMethod(name = "checkInVenue")
@@ -1108,18 +1112,18 @@ public class MyEndpoint {
                new Query.FilterPredicate(CHECKIN_VENUE_ID,
                         Query.FilterOperator.EQUAL,
                        event.getVenueId());
-/*
-        Query.Filter beforeFilter =
+
+      /*  Query.Filter beforeFilter =
                 new Query.FilterPredicate(CHECKIN_DATE,
                         Query.FilterOperator.LESS_THAN_OR_EQUAL,
                         event.getEnd());
         Query.Filter afterFilter =
                 new Query.FilterPredicate(CHECKIN_DATE,
                         Query.FilterOperator.GREATER_THAN_OR_EQUAL,
-                        event.getStart());
-*/
+                        event.getStart());*/
 
-        //Query.Filter filter = Query.CompositeFilterOperator.and(beforeFilter,afterFilter,venueFilter);
+
+    //    Query.Filter filter = Query.CompositeFilterOperator.and(beforeFilter,afterFilter,venueFilter);
         Query q = new Query(CHECKIN_ENTITY).setFilter(venueFilter);
         PreparedQuery pq = datastore.prepare(q);
 
@@ -1297,8 +1301,50 @@ public class MyEndpoint {
      *
      ******************************************************/
 
+    //note: position is place of group. eg. first pace, second, etc...
+    private void notifyGroupOfEventVictory(long groupId, long eventId, int position){
+        List<String> membersGcmIds = new ArrayList<>();
+        try {
+            GroupBean group = _getGroupBean(groupId);
+            EventBean event = _getEventBean(eventId);
+            for(UserBean user:group.getMembers()) {
+                String gcmId=_getGcmIdForUserId(user.getUserId());
+                if(gcmId!=null){
+                    membersGcmIds.add(gcmId);
+                }
+            }
+            String msg = "Congratulations! Your group "+group.getName()+" ended "+position+((position==1)?"st":"nd")+"place on event";
+            Message message = new Message.Builder()
+                    .addData("type", "WonEvent")
+                    .addData("message", msg)
+                    .build();
+            sender.send(message, membersGcmIds, 3);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
     private void _registerGcmId(String userId, String gcmId ){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query.Filter filter =
+                new Query.FilterPredicate(GCM_USER_ID,
+                        Query.FilterOperator.EQUAL,
+                        userId);
+        Query q = new Query(GCM_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+        try{
+            Entity e = pq.asSingleEntity();
+            if(e!=null){
+                datastore.delete(e.getKey());
+            }
+        }catch(PreparedQuery.TooManyResultsException e){}
+
+
         Entity e = new Entity(GCM_ENTITY);
         e.setProperty(GCM_USER_ID,  userId);
         e.setProperty(GCM_GCM_ID, gcmId);
@@ -1306,7 +1352,8 @@ public class MyEndpoint {
     }
 
     /*
-        !! Opgelet geeft null terug indien er meer dan 1 entities bestaan met zelfde userId.
+        !! Opgelet geeft null terug indien er meer dan 1 entities bestaan met zelfde userId
+            of indien userId niet in db zit.
             (Mag normaal niet voorkomen)
      */
     private String _getGcmIdForUserId(String userId){
@@ -1319,11 +1366,12 @@ public class MyEndpoint {
         PreparedQuery pq = datastore.prepare(q);
         try{
             Entity e = pq.asSingleEntity();
-            return (String) e.getProperty(GCM_GCM_ID);
+            if(e!=null)
+                return (String) e.getProperty(GCM_GCM_ID);
         }catch(PreparedQuery.TooManyResultsException e){
             return null;
         }
-
+        return null;
     }
 
 }

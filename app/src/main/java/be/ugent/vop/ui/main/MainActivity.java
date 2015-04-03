@@ -356,7 +356,7 @@ public class MainActivity extends BaseActivity {
                     while((prefs.getString(context.getString(R.string.backendtoken), "No token")).
                             equals("No token")){
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(5000);
                         } catch (InterruptedException e) {
                             Log.d(TAG, "Thread woken from sleep in sendRegistrationIdToBackend");
                             e.printStackTrace();
