@@ -151,4 +151,8 @@ public class BackendAPI {
     public void acceptUserInGroup(String userId, long groupId) throws IOException{
         myApiService.acceptUserInGroup(groupId, token, userId).execute();
     }
+
+    public void registerGcmId(String gcmId) throws IOException{
+        myApiService.registerGcmId(token, gcmId).execute();
+    }
 }

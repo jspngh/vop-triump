@@ -51,6 +51,10 @@ public class MyEndpoint {
     private static final String SESSION_USER_ID = "userId";
     private static final String SESSION_TOKEN = "sessionToken";
 
+    private static final String GCM_ENTITY = "Gcm";
+    private static final String GCM_USER_ID = "userId";
+    private static final String GCM_GCM_ID = "gcmId";
+
     private static final String USER_ENTITY = "User";
     private static final String USER_ID = "fsUserId";
     private static final String USER_FIRST_NAME = "firstName";
@@ -367,6 +371,19 @@ public class MyEndpoint {
 
     }
 
+    @ApiMethod(name = "registerGcmId")
+    public void registerGcmId(@Named("token") String token,
+                              @Named("gcmId") String gcmId) throws UnauthorizedException, InternalServerErrorException {
+        String userId = _getUserIdForToken(token); // Try to authenticate the user
+        _registerGcmId(userId,gcmId);
+    }
+
+    @ApiMethod(name = "sendNotification")
+    public void sendNotification(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
+        String userId = _getUserIdForToken(token); // Try to authenticate the user
+
+    }
+
     @ApiMethod(name = "getAllGroups")
     public List<GroupBean> getAllGroups(@Named("token") String token) throws UnauthorizedException, InternalServerErrorException {
         _getUserIdForToken(token); // Try to authenticate the user
@@ -391,6 +408,18 @@ public class MyEndpoint {
         }
 
         return response;
+    }
+
+    @ApiMethod(name = "sendToUser")
+    public void sendToUser(@Named("token") String token,
+                           @Named("userGcmId") String userGcmId) throws UnauthorizedException, InternalServerErrorException, IOException {
+        String userId = _getUserIdForToken(token);
+        Sender sender = new Sender("AIzaSyBRyeAM5-ozbgltDeJebQEHvVoX42YVY10");
+        Message message = new Message.Builder()
+                .addData("message", "this is the message")
+                .addData("other-parameter", "some value")
+                .build();
+        Result result = sender.send(message, userGcmId, 1);
     }
 
     @ApiMethod(name = "checkInVenue")
@@ -565,7 +594,7 @@ public class MyEndpoint {
                                          @Named("groupType") String groupType) throws UnauthorizedException, EntityNotFoundException {
         _getUserIdForToken(token); // Try to authenticate the user
 
-        return _getRankings(venueId, (long)minGroupSize, (long)maxGroupSize, groupType);
+        return _getRankings(venueId, (long) minGroupSize, (long) maxGroupSize, groupType);
     }
 
     @ApiMethod(name = "getOverview", path = "getOverview")
@@ -662,6 +691,7 @@ public class MyEndpoint {
         userGroup.setProperty(USERGROUP_IS_ADMIN, false);
         datastore.put(userGroup);
     }
+
 
     private void _acceptUserInGroup(String userId, long groupId, boolean isAdmin) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -1260,84 +1290,40 @@ public class MyEndpoint {
         return venue2;
     }
 
-    // Calculates distance between 2 coordinates
-    // param latitude and longitude in degrees
-    // output distance in meters
-    private double distance(double lat1, double lon1, double lat2, double lon2) {
 
-        final int R = 6371; // Radius of the earth
+    /******************************************************
+     *
+     *                      GCM
+     *
+     ******************************************************/
 
-        Double latDistance = deg2rad(lat2 - lat1);
-        Double lonDistance = deg2rad(lon2 - lon1);
-        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return (R * c * 1000.0);
-
-
+    private void _registerGcmId(String userId, String gcmId ){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity e = new Entity(GCM_ENTITY);
+        e.setProperty(GCM_USER_ID,  userId);
+        e.setProperty(GCM_GCM_ID, gcmId);
+        datastore.put(e);
     }
 
     /*
-        Sorting en selecting in the venues ArrayList in a generic way.
-        This will allow us to adjust and improve the search results on the go.
+        !! Opgelet geeft null terug indien er meer dan 1 entities bestaan met zelfde userId.
+            (Mag normaal niet voorkomen)
      */
+    private String _getGcmIdForUserId(String userId){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query.Filter filter =
+                new Query.FilterPredicate(GCM_USER_ID,
+                        Query.FilterOperator.EQUAL,
+                       userId);
+        Query q = new Query(GCM_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+        try{
+            Entity e = pq.asSingleEntity();
+            return (String) e.getProperty(GCM_GCM_ID);
+        }catch(PreparedQuery.TooManyResultsException e){
+            return null;
+        }
 
-    private double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
     }
 
-    private class VenueArrayList extends ArrayList<VenueBean>{
-        ArrayList<VenueBean> venues;
-
-        public VenueArrayList(ArrayList<VenueBean> venues){
-            this.venues = venues;
-        }
-
-        public ArrayList<VenueBean> getVenues(){
-            return venues;
-        }
-
-        public void setVenues(ArrayList<VenueBean> venues){
-            this.venues = venues;
-        }
-
-        // simple bubblesort
-        public synchronized void sort(MyComparator f){
-            VenueBean temp;
-            int length = venues.size();
-            if (length>1) // check if the number of orders is larger than 1
-            {
-                for (int x=0; x<length; x++) // bubble sort outer loop
-                {
-                    for (int i=0; i < length-x-1; i++) {
-                        if (!f.compare(venues.get(i),venues.get(i+1)))
-                        {
-                            temp = venues.get(i);
-                            venues.set(i,venues.get(i+1) );
-                            venues.set(i+1, temp);
-                        }
-                    }
-                }
-            }
-        }
-
-
-        public synchronized void select(MySelector f){
-            ArrayList<VenueBean> newVenues = new ArrayList<>();
-            for(VenueBean v:venues){
-                if(f.select(v)) newVenues.add(v);
-            }
-            venues = newVenues;
-        }
-    }
-
-    private interface MyComparator<T>{
-        // returns true if t1 > t2
-        public boolean compare(T t1, T t2);
-    }
-
-    private interface MySelector<T>{
-        public boolean select(T t);
-    }
 }

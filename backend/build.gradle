@@ -27,6 +27,7 @@ dependencies {
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.14'
     compile 'javax.servlet:servlet-api:2.5'
     compile files('src/main/webapp/WEB-INF/lib/org.json-chargebee-1.0.jar')
+    compile files('libs/json-simple-1.1.jar')
 }
 
 appengine {

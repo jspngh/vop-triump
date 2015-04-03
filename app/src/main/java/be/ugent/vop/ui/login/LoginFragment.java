@@ -466,4 +466,6 @@ public class LoginFragment extends Fragment {
         public void onLoaderReset(Loader<CloseSessionResponse> loader) {
         }
     };
+
+
 }
