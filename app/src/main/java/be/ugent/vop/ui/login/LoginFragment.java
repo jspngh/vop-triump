@@ -1,23 +1,22 @@
 package be.ugent.vop.ui.login;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.Loader;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.foursquare.android.nativeoauth.FoursquareCancelException;
 import com.foursquare.android.nativeoauth.FoursquareDenyException;
 import com.foursquare.android.nativeoauth.FoursquareInvalidRequestException;
@@ -42,12 +41,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.loaders.AuthTokenLoader;
+import be.ugent.vop.backend.loaders.EndSessionLoader;
 import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
 import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
 import be.ugent.vop.foursquare.TokenStore;
-import be.ugent.vop.backend.loaders.EndSessionLoader;
+import be.ugent.vop.utils.PrefUtils;
 
 public class LoginFragment extends Fragment {
     private static final String CLIENT_ID = "PZTHHDGA3DTEDWTKRFCRXF5KOXXQN5RCIAM3GYAWKFTMXPLE";
@@ -63,7 +62,6 @@ public class LoginFragment extends Fragment {
     private Button btnLogin;
     private Button btnLogout;
     private TextView logInMessage;
-    private SharedPreferences prefs;
 
     private Context context = null;
     private static final int AUTH_TOKEN_LOADER = 1;
@@ -128,7 +126,6 @@ public class LoginFragment extends Fragment {
     public void onStart(){
         super.onStart();
         context = getActivity();
-        prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
         connectionDialog = new ProgressDialog(context);
         connectionDialog.setMessage("Talking to the Triump servers...");
 
@@ -162,8 +159,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void getUserId (){
-        SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        String token = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
+        String token = PrefUtils.getFoursquareToken(context);
         String base = "https://api.foursquare.com/v2/users/self?oauth_token=";
         String version = "&v=20150221";
         final String address = base.concat(token).concat(version);
@@ -204,11 +200,22 @@ public class LoginFragment extends Fragment {
                 String userInfo = builder.toString();
                 try {
                     JSONObject jsonObject = new JSONObject(userInfo);
-                    String userId = jsonObject.getJSONObject("response").getJSONObject("user").getString("id");
-                    SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString(getString(R.string.userid), userId);
-                    editor.commit();
+                    JSONObject user = jsonObject.getJSONObject("response").getJSONObject("user");
+                    String userId = user.getString("id");
+
+                    PrefUtils.setUserId(context, userId);
+
+                    if(user.has("firstName"))
+                        PrefUtils.setUserFirstName(getActivity(), user.getString("firstName"));
+                    if(user.has("lastName"))
+                        PrefUtils.setUserLastName(getActivity(), user.getString("lastName"));
+                    if(user.has("photo")){
+                        PrefUtils.setProfilePicPrefix(getActivity(), user.getJSONObject("photo").getString("prefix"));
+                        PrefUtils.setProfilePicSuffix(getActivity(), user.getJSONObject("photo").getString("suffix"));
+                    }
+                    if(user.has("contact") && user.getJSONObject("contact").has("email"))
+                        PrefUtils.setUserEmail(getActivity(), user.getJSONObject("contact").getString("email"));
+
                     h.sendEmptyMessage(1);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -225,16 +232,12 @@ public class LoginFragment extends Fragment {
 
     private void startFoursquareLogin(){
 
-        SharedPreferences.Editor editor = prefs.edit();
-
         // Close sessions that might still be open
-        if(prefs.contains(getString(R.string.backendtoken)))
+        if(PrefUtils.getBackendToken(context) != null)
             closeBackendSession();
 
         // Make sure to remove all tokens in SharedPreferences
-        editor.remove(getString(R.string.backendtoken));
-        editor.remove(getString(R.string.foursquaretoken));
-        editor.commit();
+        PrefUtils.clearCredentials(context);
 
         btnLogin.setVisibility(View.VISIBLE);
         //logInMessage.setVisibility(View.VISIBLE);
@@ -260,15 +263,15 @@ public class LoginFragment extends Fragment {
 
     private void startBackendLogin(){
         // Close sessions that might still be open
-        if(prefs.contains(getString(R.string.backendtoken)))
+        if(PrefUtils.getBackendToken(context) != null)
             closeBackendSession();
 
         performBackendTokenExchange();
     }
 
     private void performBackendTokenExchange(){
-        String fsToken = prefs.getString(getString(R.string.foursquaretoken), "N.A.");
-        String userId = prefs.getString(getString(R.string.userid), "N.A.");
+        String fsToken = PrefUtils.getFoursquareToken(context);
+        String userId = PrefUtils.getUserId(context);
 
         Bundle args = new Bundle(2);
         args.putString("userId", userId);
@@ -296,11 +299,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 closeBackendSession();
 
-                // Start the native logout flow.
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.remove(getString(R.string.userid));
-                editor.remove(getString(R.string.foursquaretoken));
-                editor.commit();
+                PrefUtils.clearCredentials(context);
                 startFoursquareLogin();
             }
         });
@@ -309,11 +308,7 @@ public class LoginFragment extends Fragment {
     public void logOutNow(){
         closeBackendSession();
 
-        // Start the native logout flow.
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(getString(R.string.userid));
-        editor.remove(getString(R.string.foursquaretoken));
-        editor.commit();
+        PrefUtils.clearCredentials(context);
         startFoursquareLogin();
     }
 
@@ -383,11 +378,8 @@ public class LoginFragment extends Fragment {
             // Persist the token for later use. In this example, we save
             // it to shared prefs.
             TokenStore.get().setToken(accessToken);
-            SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
 
-            editor.putString(getString(R.string.foursquaretoken), accessToken);
-            editor.commit();
+            PrefUtils.setFoursquareToken(context, accessToken);
 
             connectionDialog.show();
 
@@ -427,12 +419,10 @@ public class LoginFragment extends Fragment {
             = new LoaderManager.LoaderCallbacks<AuthTokenResponse>() {
         @Override
         public void onLoadFinished(Loader<AuthTokenResponse> loader, AuthTokenResponse token) {
-            SharedPreferences.Editor editor = prefs.edit();
             Log.d("Login, BACKENDTOKEN", token.getAuthToken());
-            editor.putString(getString(R.string.backendtoken), token.getAuthToken());
-            editor.commit();
 
-            BackendAPI.get(context).setToken(token.getAuthToken());
+            PrefUtils.setBackendToken(context, token.getAuthToken());
+
             connectionDialog.dismiss();
             onLoggedIn();
         }

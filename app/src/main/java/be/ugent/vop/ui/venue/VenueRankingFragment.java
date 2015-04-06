@@ -15,6 +15,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -31,7 +32,7 @@ import be.ugent.vop.backend.loaders.RankingLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.ui.group.GroupActivity;
 
-public class VenueRankingFragment extends Fragment {
+public class VenueRankingFragment extends Fragment implements AbsListView.OnScrollListener {
 
     private FloatingActionButton checkinButton;
     private RankingAdapter adapter;
@@ -53,8 +54,10 @@ public class VenueRankingFragment extends Fragment {
 
     private VenueRankingCallback mCallback;
 
+
     public interface VenueRankingCallback{
         public Palette getPalette();
+        public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
     }
 
     @Override
@@ -175,6 +178,20 @@ public class VenueRankingFragment extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        //rankingListView.setOnScrollListener(this);
+    }
+
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (mCallback != null)
+            mCallback.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
     }
 
     @Override

@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.util.Log;
+import android.net.Uri;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,17 +17,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import android.net.Uri;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
 import be.ugent.vop.R;
-import be.ugent.vop.database.MySQLiteHelper;
+import be.ugent.vop.database.VenueImageTable;
 import be.ugent.vop.database.VenueTable;
 import be.ugent.vop.database.contentproviders.VenueContentProvider;
 import be.ugent.vop.database.contentproviders.VenueImageContentProvider;
-import be.ugent.vop.database.VenueImageTable;
+import be.ugent.vop.utils.PrefUtils;
 
 public class FoursquareAPI {
 
@@ -47,8 +45,7 @@ public class FoursquareAPI {
     private boolean DEBUG = false;
 
     private FoursquareAPI(Context context){
-        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        this.FSQToken = prefs.getString(context.getString(R.string.foursquaretoken), "N.A.");
+        this.FSQToken = PrefUtils.getFoursquareToken(context);
         this.context = context;
     }
 
@@ -135,7 +132,6 @@ public class FoursquareAPI {
                     v.getInt(v.getColumnIndexOrThrow(VenueTable.COLUMN_VERIFIED))==0? false:true;
             lat= v.getDouble(v.getColumnIndexOrThrow(VenueTable.COLUMN_LATITUDE));
             lon=v.getDouble(v.getColumnIndexOrThrow(VenueTable.COLUMN_LONGITUDE));
-            v.close();
             //Log.d(TAG, "getVenueInfo: loaded venue from local db");
 
         }else{
@@ -361,13 +357,13 @@ public class FoursquareAPI {
                 photos.add(new Photo(prefix, suffix, width, height));
             }
 
-            images.close();
         } else {
             //Log.d(TAG, "no images found for venue " + venue.getId() + " in database, retrieving from Foursquare");
             photos = getPhotosFromFS(venue);
             savePhotos(photos, venue.getId());
         }
 
+        images.close();
         return photos;
     }
 

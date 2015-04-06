@@ -16,6 +16,8 @@
 
 package be.ugent.vop;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
@@ -47,7 +49,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.koushikdutta.ion.Ion;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
@@ -58,6 +65,7 @@ import be.ugent.vop.ui.profile.ProfileActivity;
 import be.ugent.vop.ui.profile.ProfileFragment;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.LUtils;
+import be.ugent.vop.utils.PrefUtils;
 
 import static be.ugent.vop.utils.LogUtils.makeLogTag;
 
@@ -91,21 +99,19 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected static final int NAVDRAWER_ITEM_GROUPS = 3;
     protected static final int NAVDRAWER_ITEM_SETTINGS = 4;
     protected static final int NAVDRAWER_ITEM_LOGOUT = 5;
-    protected static final int NAVDRAWER_ITEM_PROFILE = 6;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
     protected static final int NAVDRAWER_ITEM_OTHER = -4;
 
-    // titles for navdrawer items (indices must correspond to the above)
+    // titles for navdrawers items (indices must correspond to the above)
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
             R.string.navdrawer_item_main,
             R.string.navdrawer_item_leaderboards,
             R.string.navdrawer_item_event,
             R.string.navdrawer_item_groups,
             R.string.navdrawer_item_settings,
-            R.string.navdrawer_item_logout,
-            R.string.navdrawer_item_profile
+            R.string.navdrawer_item_logout
     };
 
     // icons for navdrawer items (indices must correspond to above array)
@@ -115,8 +121,7 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.drawable.ic_drawer_event,
             R.drawable.ic_drawer_people_met,
             R.drawable.ic_drawer_settings,
-            R.drawable.ic_drawer_logout,
-            R.drawable.ic_drawer_user
+            R.drawable.ic_drawer_logout
     };
 
     // delay to launch nav drawer item, to allow close animation to play
@@ -273,8 +278,69 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
 
+        setupAccountBox();
         // populate the nav drawer with the correct items
         populateNavDrawer();
+    }
+
+    private void setupAccountBox() {
+
+        final View chosenAccountView = findViewById(R.id.chosen_account_view);
+
+        ImageView coverImageView = (ImageView) chosenAccountView.findViewById(R.id.profile_cover_image);
+        ImageView profileImageView = (ImageView) chosenAccountView.findViewById(R.id.profile_image);
+        TextView nameTextView = (TextView) chosenAccountView.findViewById(R.id.profile_name_text);
+        TextView emailTextView = (TextView) chosenAccountView.findViewById(R.id.profile_email_text);
+
+        String firstName = PrefUtils.getUserFirstName(this);
+        String lastName = PrefUtils.getUserLastName(this);
+        if (firstName == null) {
+            nameTextView.setVisibility(View.GONE);
+        } else {
+            nameTextView.setVisibility(View.VISIBLE);
+            StringBuilder builder = new StringBuilder(firstName);
+            if(lastName != null)
+                builder.append(" ").append(lastName);
+            nameTextView.setText(builder.toString());
+        }
+
+        String profilePicPrefix = PrefUtils.getProfilePicPrefix(this);
+        String profilePicSuffix = PrefUtils.getProfilePicSuffix(this);
+        if (profilePicPrefix != null) {
+            String profilePic = profilePicPrefix + "300x300" + profilePicSuffix;
+
+            Ion.with(profileImageView)
+                    .placeholder(R.drawable.person_image_empty)
+                    .load(profilePic);
+        }
+
+        String coverImageUrl = null;
+        if (coverImageUrl != null) {
+           // mImageLoader.loadImage(coverImageUrl, coverImageView);
+        } else {
+            coverImageView.setImageResource(R.drawable.default_cover);
+        }
+
+        String email = PrefUtils.getUserEmail(this);
+        if(email == null){
+            emailTextView.setVisibility(View.GONE);
+        }else{
+            emailTextView.setVisibility(View.VISIBLE);
+            emailTextView.setText(email);
+        }
+
+        chosenAccountView.setEnabled(true);
+
+        String userId = PrefUtils.getUserId(this);
+        final Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra(ProfileFragment.USER_ID, userId);
+
+        chosenAccountView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -313,7 +379,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LOGOUT);
-        mNavDrawerItems.add(NAVDRAWER_ITEM_PROFILE);
 
         createNavDrawerItems();
     }
@@ -419,14 +484,6 @@ public abstract class BaseActivity extends ActionBarActivity {
                 startActivity(intent);
                 finish();
                 break;
-            case NAVDRAWER_ITEM_PROFILE:
-                intent = new Intent(this, ProfileActivity.class);
-                SharedPreferences prefs = this.getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-                String userId = prefs.getString(getString(R.string.userid), "N.A.");
-                intent.putExtra(ProfileFragment.USER_ID, userId);
-                startActivity(intent);
-                finish();
-                break;
         }
     }
 
@@ -523,17 +580,15 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 
     private void startLoginProcess() {
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-        boolean FStoken = prefs.contains(getString(R.string.foursquaretoken));
-        boolean backendToken = prefs.contains(getString(R.string.backendtoken));
-        Log.d("", "test");
-        Log.d("", prefs.getString(getString(R.string.backendtoken), "N.A."));
-        if(!FStoken){
+        String FStoken = PrefUtils.getBackendToken(this);
+        String backendToken = PrefUtils.getBackendToken(this);
+
+        if(FStoken == null){
             Intent loginIntent = new Intent(this, LoginActivity.class);
             loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_FS);
             startActivity(loginIntent);
             finish();
-        }else if(!backendToken) {
+        }else if(backendToken == null) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             loginIntent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGIN_BACKEND);
             startActivity(loginIntent);

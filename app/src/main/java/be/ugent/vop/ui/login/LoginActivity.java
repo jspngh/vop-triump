@@ -2,11 +2,11 @@ package be.ugent.vop.ui.login;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import be.ugent.vop.R;
 import be.ugent.vop.ui.main.MainActivity;
+import be.ugent.vop.utils.PrefUtils;
 
 public class LoginActivity extends Activity implements LoginFragment.OnFragmentInteractionListener{
     @Override
@@ -42,8 +42,7 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
     }
 
     public void onLoginFragmentInteraction(){
-        SharedPreferences settings = getSharedPreferences(getString(R.string.sharedprefs), 0);
-        if(settings.getBoolean(getString(R.string.first_launch), true)) {
+        if(PrefUtils.isFirstLaunch(this)) {
             FirstLaunchFragment firstLaunchFragment = new FirstLaunchFragment();
             getFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, firstLaunchFragment).commitAllowingStateLoss();

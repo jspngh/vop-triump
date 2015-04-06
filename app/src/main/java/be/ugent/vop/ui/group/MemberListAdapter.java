@@ -1,10 +1,7 @@
 package be.ugent.vop.ui.group;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +12,10 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
+import java.util.ArrayList;
+
 import be.ugent.vop.R;
-import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
-import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.profile.ProfileActivity;
 import be.ugent.vop.ui.profile.ProfileFragment;
 

@@ -31,5 +31,6 @@
     <color name="tab_selected_strip">@color/theme_accent_1</color>
 
     <color name="venue_tab_selected_strip">#ffffff</color>
+    <color name="session_photo_scrim">#6000</color>
 
 </resources>

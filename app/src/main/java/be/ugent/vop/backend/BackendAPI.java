@@ -14,24 +14,43 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
-import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.MyApi;
-import be.ugent.vop.backend.myApi.model.*;
+import be.ugent.vop.backend.myApi.model.AuthTokenResponse;
+import be.ugent.vop.backend.myApi.model.CloseSessionResponse;
+import be.ugent.vop.backend.myApi.model.EventBean;
+import be.ugent.vop.backend.myApi.model.EventRewardBean;
+import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.backend.myApi.model.GroupsBean;
+import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.backend.myApi.model.RankingBean;
+import be.ugent.vop.backend.myApi.model.UserBean;
+import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.utils.PrefUtils;
 
 public class BackendAPI {
     public static BackendAPI instance;
 
     private static String token;
+    private Context context;
     private MyApi myApiService = null;
+
+    private SharedPreferences.OnSharedPreferenceChangeListener listener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if(PrefUtils.BACKEND_TOKEN.equals(key))
+                        setToken(PrefUtils.getBackendToken(context));
+                }
+            };
 
     public static BackendAPI get(Context context){
         if(instance == null){
-            SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-            token = prefs.getString(context.getString(R.string.backendtoken), "N.A.");
-            Log.d("BACKEND TOKEN", token);
+            token = PrefUtils.getBackendToken(context);
+            if(token != null)
+                Log.d("BACKEND TOKEN", token);
             instance = new BackendAPI();
+            instance.context = context.getApplicationContext();
+            PrefUtils.registerOnSharedPreferenceChangeListener(instance.context, instance.listener);
         }
         return instance;
     }

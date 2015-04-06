@@ -28,7 +28,7 @@ public class ProfileActivity extends BaseActivity implements ProfileFragment.OnF
 
     @Override
     protected int getSelfNavDrawerItem() {
-        return NAVDRAWER_ITEM_PROFILE;
+        return NAVDRAWER_ITEM_OTHER;
     }
 
     public void onProfileFragmentInteraction(){

@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +29,7 @@ import be.ugent.vop.backend.loaders.GroupBeanLoader;
 import be.ugent.vop.backend.loaders.JoinGroupLoader;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.UserBean;
+import be.ugent.vop.utils.PrefUtils;
 
 public class GroupFragment extends Fragment {
     public static final String GROUP_ID = "groupId";
@@ -153,8 +152,7 @@ public class GroupFragment extends Fragment {
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType() + " group");
                 ArrayList<UserBean> members = new ArrayList<>();
-                SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), Context.MODE_PRIVATE);
-                String userId = prefs.getString(getString(R.string.userid), "N.A.");
+                String userId = PrefUtils.getUserId(getActivity());
                 for (UserBean user : response.getMembers()) {
                     if(user.getUserId().equals(userId)){
                         btn.setVisibility(View. GONE);

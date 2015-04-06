@@ -1,5 +1,6 @@
 package be.ugent.vop.ui.venue;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
@@ -10,18 +11,23 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.nineoldandroids.view.ViewHelper;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
@@ -43,23 +49,74 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
     private Context context;
     private String fsVenueId;
     private Palette mPalette;
+    private View mHeader;
 
     // View pager and adapter (for narrow mode)
     ViewPager mViewPager = null;
     OurViewPagerAdapter mViewPagerAdapter = null;
     SlidingTabLayout mSlidingTabLayout = null;
+    private int mActionBarHeight;
+    private int mMinHeaderHeight;
+    private int mHeaderHeight;
+    private int mMinHeaderTranslation;
+
+    private TypedValue mTypedValue = new TypedValue();
 
     @Override
     public Palette getPalette() {
         return mPalette;
     }
 
+    @Override
+    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (mViewPager.getCurrentItem() == 0) {
+            int scrollY = getScrollY(absListView);
+            ViewHelper.setTranslationY(mHeader, Math.max(-scrollY, mMinHeaderTranslation));
+            //float ratio = clamp(ViewHelper.getTranslationY(mHeader) / mMinHeaderTranslation, 0.0f, 1.0f);
+            //interpolate(mHeaderLogo, getActionBarIconView(), sSmoothInterpolator.getInterpolation(ratio));
+            //setTitleAlpha(clamp(5.0F * ratio - 4.0F, 0.0F, 1.0F));
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public int getActionBarHeight() {
+        if (mActionBarHeight != 0) {
+            return mActionBarHeight;
+        }
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB){
+            getTheme().resolveAttribute(android.R.attr.actionBarSize, mTypedValue, true);
+        }else{
+            getTheme().resolveAttribute(R.attr.actionBarSize, mTypedValue, true);
+        }
+        mActionBarHeight = TypedValue.complexToDimensionPixelSize(mTypedValue.data, getResources().getDisplayMetrics());
+        return mActionBarHeight;
+    }
+
+    public int getScrollY(AbsListView view) {
+        View c = view.getChildAt(0);
+        if (c == null) {
+            return 0;
+        }
+        int firstVisiblePosition = view.getFirstVisiblePosition();
+        int top = c.getTop();
+        int headerHeight = 0;
+        if (firstVisiblePosition >= 1) {
+            headerHeight = mHeaderHeight;
+        }
+        return -top + firstVisiblePosition * c.getHeight() + headerHeight;
+    }
+
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_venue);
 
+        mMinHeaderHeight = getResources().getDimensionPixelSize(R.dimen.min_header_height);
+        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.header_height);
+        mMinHeaderTranslation = -mMinHeaderHeight + getActionBarHeight();
+
         context = getApplicationContext();
 
+        mHeader = findViewById(R.id.header);
         venueImageView = (ImageView) findViewById(R.id.imageView);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);

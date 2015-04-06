@@ -32,4 +32,9 @@
     <dimen name="action_bar_auto_hide_sensivity">48dp</dimen>
 
     <dimen name="navdrawer_width">260dp</dimen>
+
+    <dimen name="header_height">298dp</dimen>
+    <dimen name="min_header_height">250dp</dimen>
+    <dimen name="navdrawer_chosen_account_height">140dp</dimen>
+    <dimen name="navdrawer_profile_image_size">40dp</dimen>
 </resources>
