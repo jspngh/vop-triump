@@ -263,8 +263,9 @@ public class LoginFragment extends Fragment {
 
     private void startBackendLogin(){
         // Close sessions that might still be open
-        if(PrefUtils.getBackendToken(context) != null)
+        if(PrefUtils.getBackendToken(context) != null){
             closeBackendSession();
+        }
 
         performBackendTokenExchange();
     }
@@ -298,7 +299,6 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 closeBackendSession();
-
                 PrefUtils.clearCredentials(context);
                 startFoursquareLogin();
             }
@@ -307,7 +307,6 @@ public class LoginFragment extends Fragment {
 
     public void logOutNow(){
         closeBackendSession();
-
         PrefUtils.clearCredentials(context);
         startFoursquareLogin();
     }

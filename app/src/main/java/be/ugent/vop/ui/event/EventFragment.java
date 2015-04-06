@@ -32,13 +32,9 @@ public class EventFragment extends Fragment{
     private Context context;
     private static Activity activity;
     private ListView eventListView;
-    private ListView rewardsListView;
     private TextView noEventTextView;
-    private EventAdapter adapterEvents;
-    private EventAdapter adapterRewards;
+    private EventAdapter adapter;
     private ArrayList<EventBean> events;
-    private ArrayList<EventBean> rewards;
-
     public EventFragment(){}
 
 
@@ -47,12 +43,9 @@ public class EventFragment extends Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
         eventListView = (ListView) rootView.findViewById(R.id.event_list);
-        rewardsListView = (ListView) rootView.findViewById(R.id.reward_list);
         noEventTextView = (TextView) rootView.findViewById(R.id.noEventTextView);
         context = getActivity();
         activity = getActivity();
-
-        getLoaderManager().initLoader(0, null, mEventLoaderListener);
 
         return rootView;
     }
@@ -78,26 +71,18 @@ public class EventFragment extends Fragment{
         @Override
         public void onLoadFinished(Loader<EventRewardBean> loader, EventRewardBean data) {
             Log.d("EventFragment", "onLoadFinished");
-            if (data != null){
-                if (data.getEvents() != null && data.getEvents().size() > 0) {
-                    noEventTextView.setVisibility(View.GONE);
-                    eventListView.setVisibility(View.VISIBLE);
-                    Log.d("EventFragment", "size of events " + data.getEvents());
-                    events = new ArrayList<EventBean>();
-                    for (EventBean r : data.getEvents()) events.add(r);
-                    adapterEvents = new EventAdapter(context, events);
-                    eventListView.setAdapter(adapterEvents);
-                } else {
-                    noEventTextView.setText(R.string.no_event);
-                }
-            }   if (data.getRewards() != null && data.getRewards().size() > 0) {
-                    rewardsListView.setVisibility(View.VISIBLE);
-                    Log.d("EventFragment", "size of rewards " + data.getRewards());
-                    rewards = new ArrayList<EventBean>();
-                    for (EventBean r : data.getRewards()) rewards.add(r);
-                    adapterRewards = new EventAdapter(context, rewards);
-                    rewardsListView.setAdapter(adapterRewards);
+            if (data!=null &&data.size() != 0) {
+                noEventTextView.setVisibility(View.GONE);
+                eventListView.setVisibility(View.VISIBLE);
+                Log.d("EventFragment", "size of data " + data.size());
+                events = new ArrayList<EventBean>();
+                for (EventBean r : data.getEvents()) events.add(r);
+                adapter = new EventAdapter(context, events);
+                eventListView.setAdapter(adapter);
+            } else {
+                noEventTextView.setText(R.string.no_event);
             }
+
         }
 
 

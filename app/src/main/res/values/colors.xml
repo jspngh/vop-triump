@@ -13,6 +13,10 @@
     <color name="theme_accent_1">@color/primary_accent</color>
     <color name="theme_accent_2">#3F51B5</color>
 
+    <color name="tutorial_slide_1">#9600bcd4</color>
+    <color name="tutorial_slide_2">#af24b583</color>
+    <color name="tutorial_slide_3">#960097a7</color>
+
 
     <color name="body_text_1">#de000000</color>
     <color name="body_text_2">#8a000000</color>

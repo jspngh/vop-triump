@@ -89,4 +89,5 @@
 
     <string name="events">events</string>
     <string name="rewards">rewards</string>
+    <string name="title_activity_first_launch">FirstLaunchActivity</string>
 </resources>

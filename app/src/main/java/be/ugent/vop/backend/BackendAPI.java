@@ -38,8 +38,10 @@ public class BackendAPI {
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    if(PrefUtils.BACKEND_TOKEN.equals(key))
-                        setToken(PrefUtils.getBackendToken(context));
+                    if(PrefUtils.BACKEND_TOKEN.equals(key)) {
+                        String token = PrefUtils.getBackendToken(context);
+                        if (token != null) setToken(PrefUtils.getBackendToken(context));
+                    }
                 }
             };
 

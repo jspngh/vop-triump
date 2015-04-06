@@ -32,6 +32,7 @@ public class EndSessionLoader extends  AsyncTaskLoader<CloseSessionResponse> {
         try{
             result = BackendAPI.get(context).close();
             Log.d("Endsessionloader", "Connection closed");
+            Log.d("Endsessionloader", result.getMessage());
         } catch(IOException e){
             Log.d("Endsessionloader", e.getMessage());
         }

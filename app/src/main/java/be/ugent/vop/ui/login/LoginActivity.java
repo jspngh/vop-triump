@@ -43,23 +43,15 @@ public class LoginActivity extends Activity implements LoginFragment.OnFragmentI
 
     public void onLoginFragmentInteraction(){
         if(PrefUtils.isFirstLaunch(this)) {
-            FirstLaunchFragment firstLaunchFragment = new FirstLaunchFragment();
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, firstLaunchFragment).commitAllowingStateLoss();
+            Intent main = new Intent(this, FirstLaunchActivity.class);
+            startActivity(main);
+            this.finish();
         } else {
             Intent main = new Intent(this, MainActivity.class);
             startActivity(main);
             finish();
         }
     }
-/*    public void onProfileFragmentInteraction(){
-        Bundle mBundle = new Bundle();
-        mBundle.putInt(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT_NOW);
-        LoginFragment loginFragment= new LoginFragment();
-        loginFragment.setArguments(mBundle);
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, loginFragment).commit();
-    }*/
 }
 
 
