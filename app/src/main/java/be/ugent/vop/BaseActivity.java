@@ -16,16 +16,12 @@
 
 package be.ugent.vop;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -49,13 +45,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import be.ugent.vop.ui.reward.RewardsActicity;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
@@ -95,10 +89,11 @@ public abstract class BaseActivity extends ActionBarActivity {
     // it's a list of all possible items.
     protected static final int NAVDRAWER_ITEM_MAIN = 0;
     protected static final int NAVDRAWER_ITEM_LEADERBOARDS = 1;
-    protected static final int NAVDRAWER_ITEM_EVENT = 2;
-    protected static final int NAVDRAWER_ITEM_GROUPS = 3;
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 4;
-    protected static final int NAVDRAWER_ITEM_LOGOUT = 5;
+    protected static final int NAVDRAWER_ITEM_REWARD = 2;
+    protected static final int NAVDRAWER_ITEM_EVENT = 3;
+    protected static final int NAVDRAWER_ITEM_GROUPS = 4;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 5;
+    protected static final int NAVDRAWER_ITEM_LOGOUT = 6;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -108,6 +103,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
             R.string.navdrawer_item_main,
             R.string.navdrawer_item_leaderboards,
+            R.string.navdrawer_item_reward,
             R.string.navdrawer_item_event,
             R.string.navdrawer_item_groups,
             R.string.navdrawer_item_settings,
@@ -118,6 +114,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static final int[] NAVDRAWER_ICON_RES_ID = new int[] {
             R.drawable.ic_drawer_people_met,  // My Schedule
             R.drawable.ic_drawer_leaderboard,
+            R.drawable.ic_drawer_people_met,
             R.drawable.ic_drawer_event,
             R.drawable.ic_drawer_people_met,
             R.drawable.ic_drawer_settings,
@@ -374,6 +371,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         mNavDrawerItems.add(NAVDRAWER_ITEM_MAIN);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LEADERBOARDS);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_REWARD);
         mNavDrawerItems.add(NAVDRAWER_ITEM_EVENT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_GROUPS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
@@ -465,6 +463,11 @@ public abstract class BaseActivity extends ActionBarActivity {
                 break;
             case NAVDRAWER_ITEM_LEADERBOARDS:
                 intent = new Intent(this, LeaderboardsActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case NAVDRAWER_ITEM_REWARD:
+                intent = new Intent(this, RewardsActicity.class);
                 startActivity(intent);
                 finish();
                 break;
