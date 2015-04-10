@@ -66,6 +66,11 @@
     <string name="search_hint">Enter group</string>
     <string name="action_add">Add group</string>
     <string name="navdrawer_item_events">Events</string>
+
+    <string name="app_info">Here comes some nice explanation of what our app does</string>
+    <string name="app_info_title">Information about Triump</string>
+    <string name="tutorial_finish">Got it</string>
+
     <!-- Event -->
     <string name="no_event">No events available for you.</string>
     <string name="button_text_set">Set</string>
@@ -75,7 +80,6 @@
     <string name="title_activity_grouplist">Groups</string>
     <string name="search">Search</string>
     <string name="welcome_to_triump">Welcome to Triump</string>
-    <string name="tutorial_thank_you">Thank you for this helpful tutorial</string>
     <string name="make_own_event">Make your own event</string>
     <string name="no_events_available">No events available</string>
 

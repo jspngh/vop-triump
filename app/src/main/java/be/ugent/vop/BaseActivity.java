@@ -59,6 +59,7 @@ import java.util.List;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
+import be.ugent.vop.ui.login.FirstLaunchActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
 import be.ugent.vop.ui.profile.ProfileActivity;
@@ -470,6 +471,11 @@ public abstract class BaseActivity extends ActionBarActivity {
                 break;
             case NAVDRAWER_ITEM_EVENT:
                 intent = new Intent(this, EventActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case NAVDRAWER_ITEM_SETTINGS:
+                intent = new Intent(this, FirstLaunchActivity.class);
                 startActivity(intent);
                 finish();
                 break;
