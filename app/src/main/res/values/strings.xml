@@ -90,4 +90,9 @@
     <string name="events">events</string>
     <string name="rewards">rewards</string>
     <string name="title_activity_first_launch">FirstLaunchActivity</string>
+
+
+    <!-- Notification Messages -->
+    <string name="notification_top_ranking_event">Congrats, Top ranking in event!</string>
+
 </resources>

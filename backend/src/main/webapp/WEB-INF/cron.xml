@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
+  <!--  <cron>
+        <url>/generateRewards</url>
+        <description>Generate rewards, calculate the winners of events</description>
+        <schedule>every 5 minutes synchronized</schedule>
+    </cron>-->
 
 </cronentries>
