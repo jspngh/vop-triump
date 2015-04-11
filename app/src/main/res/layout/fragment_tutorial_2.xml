@@ -3,27 +3,52 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/tutorial_slide_2" >
-
     <ImageView
         android:id="@+id/background"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/team"
+        android:alpha="0.30"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/reference_point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/fantastic_background"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true" />
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_launcher"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="47dp" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
     <TextView
-        android:id="@+id/welcome"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="@string/welcome_to_triump"
-        android:layout_below="@id/image"
-        android:layout_centerHorizontal="true"/>
+        android:id="@+id/team_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Team up with friends!"
+        style="@style/TutorialTitleTextLarge"
+        android:layout_alignTop="@+id/background"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/team_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Triump is all about grouping up with friends to conquer locations\nGet started now and pick your first group! "
+        style="@style/TutorialText"
+        android:layout_below="@+id/reference_point"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="75dp" />
+    <Button
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.Material.Button.Borderless"
+        android:text="Search Group"
+        android:layout_marginBottom="50dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"  />
 
 </RelativeLayout>

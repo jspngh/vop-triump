@@ -81,7 +81,7 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
             }
         }
         fsVenues = venuesInOverview;
-        return new OverviewAdapter(overview, fsVenues, context);
+        return new OverviewAdapter(overview, fsVenues, context, false);
     }
 
     @Override public void deliverResult(OverviewAdapter result) {

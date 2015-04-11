@@ -34,6 +34,7 @@ import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.group.GroupActivity;
 import be.ugent.vop.ui.venue.VenueActivity;
+import be.ugent.vop.utils.PrefUtils;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
@@ -46,12 +47,14 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private OverviewBean overview;
     private ArrayList<FoursquareVenue> fsVenues;
     private Context context;
+    private boolean displayWelcome;
 
-    public OverviewAdapter(OverviewBean overview, ArrayList<FoursquareVenue> fsVenues, Context context){
+    public OverviewAdapter(OverviewBean overview, ArrayList<FoursquareVenue> fsVenues, Context context, boolean displayWelcome){
         super();
         this.overview = overview;
         this.fsVenues = fsVenues;
         this.context = context;
+        this.displayWelcome = displayWelcome;
     }
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
@@ -118,12 +121,19 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view.
+        if(displayWelcome) viewType = -1;
         View v;
+        boolean darkTheme = false;
+        if(context != null) darkTheme = PrefUtils.getDarkTheme(context);
         switch(viewType){
             case GROUP_CARD:
-                v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.layout_card_group, viewGroup, false);
+                if(darkTheme){
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_group_dark, viewGroup, false);
+                } else {
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_group, viewGroup, false);
+                }
                 GroupViewHolder mGroupViewHolder = new GroupViewHolder(v);
                 if(overview != null && overview.getGroup() != null) {
                     mGroupViewHolder.group_name.setText(overview.getGroup().getName());
@@ -142,8 +152,13 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return mGroupViewHolder;
 
             case VENUE_CARD:
-                v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.layout_card_venue, viewGroup, false);
+                if(darkTheme){
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_venue_dark, viewGroup, false);
+                } else {
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_venue, viewGroup, false);
+                }
 
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
                 if(fsVenues != null && fsVenues.size() > 2){
@@ -182,30 +197,36 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return mVenueViewHolder;
 
             case EVENT_CARD:
-                v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.layout_card_event, viewGroup, false);
+                if(darkTheme){
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_event_dark, viewGroup, false);
+                } else {
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_event, viewGroup, false);
+                }
 
                 return new EventViewHolder(v);
 
             default:
-                v = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.layout_card_welcome, viewGroup, false);
+                if(darkTheme){
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_welcome_dark, viewGroup, false);
+                } else {
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_welcome, viewGroup, false);
+                }
                 return new WelcomeViewHolder(v);
         }
     }
-    // END_INCLUDE(recyclerViewOnCreateViewHolder)
 
-    // BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
     }
-    // END_INCLUDE(recyclerViewOnBindViewHolder)
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return 4;
+        if(displayWelcome) return 1;
+        return 3;
     }
 }

@@ -58,7 +58,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/members_list"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="100dp"
                     android:scrollbars="horizontal"
                     android:layout_below="@id/members_text" />
 

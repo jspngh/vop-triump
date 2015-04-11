@@ -22,7 +22,11 @@ import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -54,11 +58,13 @@ import be.ugent.vop.ui.reward.RewardsActicity;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
+import be.ugent.vop.ui.login.FirstLaunchActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
 import be.ugent.vop.ui.profile.ProfileActivity;
 import be.ugent.vop.ui.profile.ProfileFragment;
 import be.ugent.vop.ui.main.MainActivity;
+import be.ugent.vop.ui.settings.SettingsActivity;
 import be.ugent.vop.utils.LUtils;
 import be.ugent.vop.utils.PrefUtils;
 
@@ -480,6 +486,10 @@ public abstract class BaseActivity extends ActionBarActivity {
                 intent = new Intent(this, EventActivity.class);
                 startActivity(intent);
                 finish();
+                break;
+            case NAVDRAWER_ITEM_SETTINGS:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 break;
             case NAVDRAWER_ITEM_GROUPS:
                 intent = new Intent(this, GroupListActivity.class);

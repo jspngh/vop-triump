@@ -3,27 +3,44 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/tutorial_slide_1" >
-
-    <ImageView
-        android:id="@+id/background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/fantastic_background"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true" />
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_launcher"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="47dp" />
     <TextView
         android:id="@+id/welcome"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:text="@string/welcome_to_triump"
-        android:layout_below="@id/image"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="50dp"
+        style="@style/TutorialTitleTextLarge"/>
+    <ImageView
+        android:id="@+id/AppImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/ic_launcher"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/welcome"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_info_title"
+        android:id="@+id/app_info_title"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/welcome"
+        style="@style/TutorialTitleTextSmall" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_info"
+        android:id="@+id/app_info"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_below="@+id/app_info_title"
+        style="@style/TutorialText" />
 
 </RelativeLayout>

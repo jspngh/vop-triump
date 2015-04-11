@@ -1,2 +1,1 @@
-include ':app', ':backend'
-include ':foursquareoauthlibrary'
+include ':app', ':backend', ':foursquareoauthlibrary'
