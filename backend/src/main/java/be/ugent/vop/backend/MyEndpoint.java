@@ -170,6 +170,11 @@ public class MyEndpoint {
         DatastoreServiceFactory.getDatastoreService().put(rewards);
     }
 
+    @ApiMethod(name = "askForUserFeedback")
+    public void askForUserFeedback() {
+        _askForUserFeedback();
+    }
+
     @ApiMethod(name = "claimReward")
     public void claimReward(@Named("token") String token,
                             @Named("eventId") long eventId,
@@ -1326,10 +1331,34 @@ public class MyEndpoint {
                     }
                 }
             }
-            Message message = new Message.Builder()
-                    .addData(NotificationConstants.NOTIFICATION_TYPE, NotificationConstants.TYPE_END_EVENT_TOP_RANKING)
-                    .build();
-            sender.send(message, membersGcmIds, 3);
+            if(!membersGcmIds.isEmpty()) {
+                Message message = new Message.Builder()
+                        .addData(NotificationConstants.NOTIFICATION_TYPE, NotificationConstants.TYPE_END_EVENT_TOP_RANKING)
+                        .build();
+                sender.send(message, membersGcmIds, 3);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void _askForUserFeedback(){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<String> membersGcmIds = new ArrayList<>();
+        try {
+            Query q = new Query(GCM_ENTITY);
+            PreparedQuery pq = datastore.prepare(q);
+            for(Entity r: pq.asIterable()){
+                membersGcmIds.add( (String) r.getProperty(GCM_GCM_ID));
+            }
+            if(!membersGcmIds.isEmpty()) {
+                Message message = new Message.Builder()
+                        .addData(NotificationConstants.NOTIFICATION_TYPE, NotificationConstants.TYPE_FEEDBACK)
+                        .build();
+                sender.send(message, membersGcmIds, 3);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

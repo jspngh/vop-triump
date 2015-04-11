@@ -142,7 +142,12 @@
         </activity>
         <activity
             android:name=".ui.reward.RewardsActicity"
-            android:label="@string/title_activity_rewards" >
+            android:label="@string/title_activity_rewards">
+        </activity>
+
+        <activity
+            android:name=".feedback.FeedbackActivity"
+            android:label="@string/title_activity_feedback">
         </activity>
 
         <!-- GCM -->

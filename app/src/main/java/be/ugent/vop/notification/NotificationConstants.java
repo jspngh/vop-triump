@@ -11,7 +11,7 @@ public class NotificationConstants {
 
 
     public static final String TYPE_END_EVENT_TOP_RANKING = "EndEventTopRanking";
-
+    public static final String TYPE_FEEDBACK = "Feedback";
 
 
 }

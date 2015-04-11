@@ -30,6 +30,7 @@ import be.ugent.vop.BaseActivity;
 import be.ugent.vop.LocationService;
 import be.ugent.vop.NetworkController;
 import be.ugent.vop.R;
+import be.ugent.vop.feedback.Feedback;
 import be.ugent.vop.ui.group.GroupListFragment;
 import be.ugent.vop.ui.venue.CheckinFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
@@ -128,6 +129,9 @@ public class MainActivity extends BaseActivity {
 
         registerHideableHeaderView(findViewById(R.id.toolbar_actionbar));
         overridePendingTransition(0, 0);
+
+
+
     }
 
     @Override
@@ -135,6 +139,7 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         Intent intent = new Intent(this, LocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -160,6 +165,14 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         this.registerReceiver(NetworkController.get(this), NetworkController.make());
         checkPlayServices();
+
+        //start feedback
+        if(getIntent() != null && getIntent().getExtras()!=null) {
+            if (getIntent().getExtras().containsKey(Feedback.GIVE_FEEDBACK)
+                    && getIntent().getExtras().getBoolean(Feedback.GIVE_FEEDBACK)) {
+                (new Feedback(this)).show();
+            }
+        }
     }
 
     @Override
