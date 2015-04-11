@@ -35,7 +35,7 @@ import be.ugent.vop.ui.widget.SlidingTabLayout;
 import be.ugent.vop.backend.BackendAPI;
 
 public class MainActivity extends BaseActivity {
-    // -------------------- GCM ------------------------
+    // ---------------------- GCM --------------------------
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity {
     String regid;
     GoogleCloudMessaging gcm;
     Context context;
-    //--------------------------------------------------
+    //-------------------------------------------------------
 
     private static final String TAG = "MainActivity";
 

@@ -1,6 +1,7 @@
 package be.ugent.vop.ui.event;
 
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
@@ -42,7 +43,7 @@ import be.ugent.vop.utils.RangeSeekBar;
 /**
  * Created by vincent on 23/03/15.
  */
-public class NewEventFragment extends Fragment implements View.OnClickListener{
+public class NewEventFragment extends Fragment implements View.OnClickListener, SelectGroupsDialog.SelectGroupsDialogListener {
     private static final String TAG = "EventFragment";
     private static final int MIN_PARTICIPANTS = 1;
     private static final int MAX_PARTICIPANTS = 1000;
@@ -108,7 +109,8 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
         rewardEditText = (EditText) rootView.findViewById(R.id.editTextReward);
 
         dialog = new SelectGroupsDialog();
-        dialog.setContext(getActivity());
+        dialog.setSelectGroupsDialogListener(this);
+
         fm = getFragmentManager();
 
         //init loader
@@ -345,10 +347,24 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
      */
 
     private void showSelectGroupDialog() {
-        selectedGroups = new ArrayList<>();
-        dialog.setSelectedGroups(selectedGroups);
+     //   selectedGroups = new ArrayList<>();
+     //   dialog.setSelectedGroups(selectedGroups);
         dialog.show(fm, "dialog");
     }
+
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+            selectedGroups = ((SelectGroupsDialog) dialog).getSelectedGroups();
+            for(GroupBean gb: selectedGroups){
+                Log.d(TAG,gb.getName());
+            }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) { /* Do Nothing */ }
+
+
 
     private void createButtonPressed(){
         boolean correctDatesInput = true;
@@ -526,4 +542,5 @@ public class NewEventFragment extends Fragment implements View.OnClickListener{
             }
         });
     }
+
 }

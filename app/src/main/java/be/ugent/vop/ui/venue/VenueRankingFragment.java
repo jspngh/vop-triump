@@ -329,9 +329,10 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
 
                 Palette p = mCallback.getPalette();
 
-                int backgroundColor = p.getVibrantSwatch().getRgb();
-                int textColor = p.getVibrantSwatch().getBodyTextColor();
-
+              //  int backgroundColor = p.getVibrantSwatch().getRgb();
+              //  int textColor = p.getVibrantSwatch().getBodyTextColor();
+                int backgroundColor = 10;
+                int textColor = 10;
 
                 //    noRankingTextView.setVisibility(View.INVISIBLE);
                 adapter = new RankingAdapter(context, rankings, backgroundColor, textColor, (int)wt_px, (int)ht_px);
