@@ -49,6 +49,7 @@ import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 
+import be.ugent.vop.feedback.FeedbackActivity;
 import be.ugent.vop.ui.reward.RewardsActicity;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
@@ -92,8 +93,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected static final int NAVDRAWER_ITEM_REWARD = 2;
     protected static final int NAVDRAWER_ITEM_EVENT = 3;
     protected static final int NAVDRAWER_ITEM_GROUPS = 4;
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 5;
-    protected static final int NAVDRAWER_ITEM_LOGOUT = 6;
+    protected static final int NAVDRAWER_ITEM_FEEDBACK = 5;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 6;
+    protected static final int NAVDRAWER_ITEM_LOGOUT = 7;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -106,6 +108,7 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.string.navdrawer_item_reward,
             R.string.navdrawer_item_event,
             R.string.navdrawer_item_groups,
+            R.string.navdrawer_item_feedback,
             R.string.navdrawer_item_settings,
             R.string.navdrawer_item_logout
     };
@@ -117,6 +120,7 @@ public abstract class BaseActivity extends ActionBarActivity {
             R.drawable.ic_drawer_people_met,
             R.drawable.ic_drawer_event,
             R.drawable.ic_drawer_people_met,
+            R.drawable.ic_drawer_feedback,
             R.drawable.ic_drawer_settings,
             R.drawable.ic_drawer_logout
     };
@@ -375,6 +379,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         mNavDrawerItems.add(NAVDRAWER_ITEM_EVENT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_GROUPS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_FEEDBACK);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LOGOUT);
 
@@ -484,6 +489,11 @@ public abstract class BaseActivity extends ActionBarActivity {
             case NAVDRAWER_ITEM_LOGOUT:
                 intent = new Intent(this, LoginActivity.class);
                 intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
+                startActivity(intent);
+                finish();
+                break;
+            case NAVDRAWER_ITEM_FEEDBACK:
+                intent = new Intent(this, FeedbackActivity.class);
                 startActivity(intent);
                 finish();
                 break;

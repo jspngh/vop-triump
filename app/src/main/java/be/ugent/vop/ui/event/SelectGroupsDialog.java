@@ -1,9 +1,13 @@
 package be.ugent.vop.ui.event;
 
+
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +53,36 @@ public class SelectGroupsDialog extends DialogFragment implements AdapterView.On
     public void setSelectedGroups(List<GroupBean> s){
         this.selectedGroups = s;
     }
+/*
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        builder.setView(inflater.inflate(R.layout.dialog_select_groups, null))
+                .setMessage(getString(R.string.new_event_select_groups_dialog_title))
+                .setPositiveButton(R.string.button_text_set, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        fillSelectedGroups();
+                        previouslySelectedGroups = new ArrayList<Long>();
+                        for(GroupBean g:selectedGroups){
+                            previouslySelectedGroups.add(g.getGroupId());
+                        }
+                        dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.button_text_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        dismiss();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        return builder.create();
+    }
+*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,6 +95,8 @@ public class SelectGroupsDialog extends DialogFragment implements AdapterView.On
         setButton = (Button) view.findViewById(R.id.buttonSet);
         cancelButton = (Button) view.findViewById(R.id.buttonCancel);
         initButtons();
+
+
 
         if(userGroups!=null && context!=null){
             adapter = new NewEventGroupListAdapter(context,userGroups);

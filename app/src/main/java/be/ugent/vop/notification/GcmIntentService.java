@@ -15,6 +15,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import be.ugent.vop.R;
+import be.ugent.vop.feedback.Feedback;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.main.MainActivity;
 
@@ -35,20 +36,19 @@ public class GcmIntentService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        Bundle extras = intent.getExtras();
+    protected void onHandleIntent(Intent in) {
+        Bundle extras = in.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         // The getMessageType() intent parameter must be the intent you received
         // in your BroadcastReceiver.
-        String messageType = gcm.getMessageType(intent);
+        String messageType = gcm.getMessageType(in);
 
         if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
             /*
              * Filter messages based on message type.
              */
             String message = "no message";
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, MainActivity.class), 0);
+            Intent intent= new Intent(this, MainActivity.class);
 
             switch(messageType){
                 case GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR:
@@ -62,23 +62,34 @@ public class GcmIntentService extends IntentService {
                     switch(extras.getString(NotificationConstants.NOTIFICATION_TYPE)){
                         case NotificationConstants.TYPE_END_EVENT_TOP_RANKING:
                             message = extras.getString(getString(R.string.notification_top_ranking_event));
-                            contentIntent = PendingIntent.getActivity(this, 0,
-                                    new Intent(this, EventActivity.class), 0);
+                            intent= new Intent(this, MainActivity.class);
                             break;
+                        case NotificationConstants.TYPE_FEEDBACK:
+                            message = getString(R.string.notification_feedback);
+                            intent= new Intent(this, MainActivity.class);
+                            intent.putExtra(Feedback.GIVE_FEEDBACK, true);
+                            break;
+
                         default:
+                            intent= new Intent(this, MainActivity.class);
                             break;
                     }
                     break;
+                default:
+                    intent= new Intent(this, MainActivity.class);
+                    break;
+
             }
 
-
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                    intent, 0);
             // Post notification
-            sendNotification(message, contentIntent);
+            sendNotification(message, pendingIntent);
 
             Log.i(TAG, "Send notification: " + message);
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
-        GcmBroadcastReceiver.completeWakefulIntent(intent);
+        GcmBroadcastReceiver.completeWakefulIntent(in);
     }
 
     // Put the message into a notification and post it.
@@ -91,10 +102,11 @@ public class GcmIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.checkin_image)
-                        .setContentTitle("Triump Notification")
+                        .setContentTitle(getString(R.string.notification_title))
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
-                        .setContentText(msg);
+                        .setContentText(msg)
+                        .setAutoCancel(true);
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

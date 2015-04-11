@@ -1,10 +1,12 @@
 package be.ugent.vop.ui.reward;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
+import be.ugent.vop.feedback.Feedback;
 
 /**
  * Created by vincent on 10/04/15.
@@ -28,4 +30,6 @@ public class RewardsActicity extends BaseActivity {
     protected int getSelfNavDrawerItem() {
         return NAVDRAWER_ITEM_REWARD;
     }
+
+
 }
