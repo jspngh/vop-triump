@@ -1,0 +1,42 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_catergory_general">General</string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">Triump</string>
+
+    <string name="pref_share_user_profile">Share profile</string>
+    <string name="pref_share_user_profile_info">Disable if you only want to share your profile with friends</string>
+
+    <string name="pref_theme_dark">Dark theme</string>
+    <string name="pref_theme_dark_info">Enables the dark theme</string>
+
+    <string name="pref_catergory_notifications">Notifications</string>
+
+    <string name="pref_enable_notifications">Notifications</string>
+    <string name="pref_enable_notifications_info">Enables notifications from Triump</string>
+
+<!--
+    <string name="pref_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+-->
+
+</resources>

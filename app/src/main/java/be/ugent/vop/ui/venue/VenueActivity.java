@@ -36,6 +36,7 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.event.NewEventActivity;
 import be.ugent.vop.ui.main.OverviewFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
+import be.ugent.vop.utils.PrefUtils;
 
 /**
  * Created by vincent on 03/03/15.
@@ -107,6 +108,8 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
     }
 
     public void onCreate(Bundle savedInstanceState){
+        boolean darkTheme = PrefUtils.getDarkTheme(this);
+        if(darkTheme) setTheme(R.style.AppTheme_Dark);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_venue);
 

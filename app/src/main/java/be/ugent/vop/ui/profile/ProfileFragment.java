@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,6 @@ import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.ApiUtils;
 import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.koushikdutta.ion.Ion;
@@ -22,6 +23,7 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.UserInfoLoader;
 import be.ugent.vop.backend.myApi.model.UserBean;
 import be.ugent.vop.ui.widget.CircularImageView;
+import be.ugent.vop.utils.PrefUtils;
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<UserBean>, View.OnClickListener {
     public final static String USER_ID = "userId";
@@ -139,6 +141,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             lastname.setText(userInfo.getLastName());
             email.setText(userInfo.getEmail());
             date_joined.setText(userInfo.getJoined().toString());
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            firstname.setText(sharedPref.getString(PrefUtils.DISPLAY_NAME, ""));
         }
     }
     @Override

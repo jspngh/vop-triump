@@ -64,6 +64,9 @@ public class TutorialFragment extends Fragment {
                     public void onClick(View v) {
                         PrefUtils.setFirstLaunch(getActivity(), false);
                         Intent main = new Intent(getActivity(), MainActivity.class);
+                        Bundle args = new Bundle();
+                        args.putBoolean(MainActivity.WELCOME_MSG, true);
+                        main.putExtras(args);
                         startActivity(main);
                         getActivity().finish();
                     }

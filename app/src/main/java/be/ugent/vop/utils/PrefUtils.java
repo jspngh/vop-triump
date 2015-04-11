@@ -47,12 +47,16 @@ public class PrefUtils {
      * String value storing the user's profile picture suffix
      */
     public static final String PROFILE_PIC_SUFFIX = "profilePicSuffix";
-
-
     /**
      * Boolean value storing whether this is the first launch of the app
      */
     public static final String FIRST_LAUNCH = "firstLaunch";
+
+    public final static String DISPLAY_NAME = "user_display_name";
+
+    public final static String RECEIVE_NOTIFICATIONS = "notifications_new_message";
+    public final static String DISABLE_SHARE_PROFILE = "disable_share_user_profile";
+    public final static String THEME_DARK = "theme_dark";
 
     public static String getFoursquareToken(final Context context){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
@@ -163,6 +167,40 @@ public class PrefUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         sp.edit().putString(PROFILE_PIC_SUFFIX, suffix).commit();
     }
+
+    public static boolean getDarkTheme(final Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(THEME_DARK, false);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    public static void setDarkTheme(final Context context, boolean darkTheme){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putBoolean(THEME_DARK, darkTheme).commit();
+    }
+
+    public static boolean getReceiveNotifications(final Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(RECEIVE_NOTIFICATIONS, true);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    public static void setReceiveNotifications(final Context context, boolean notifications){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putBoolean(RECEIVE_NOTIFICATIONS, notifications).commit();
+    }
+
+    public static boolean getShareProfileDisabled(final Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(DISABLE_SHARE_PROFILE, false);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    public static void setShareProfileDisabled(final Context context, boolean share){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putBoolean(DISABLE_SHARE_PROFILE, share).commit();
+    }
+
 
     public static void registerOnSharedPreferenceChangeListener(final Context context,
                                                                 SharedPreferences.OnSharedPreferenceChangeListener listener) {

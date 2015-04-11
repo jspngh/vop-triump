@@ -30,7 +30,9 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_overview, container, false);
+
         rootView.setTag(TAG);
         SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), MainActivity.MODE_PRIVATE);
         context = getActivity();
@@ -46,9 +48,13 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
         // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(new OverviewAdapter(null, null, null));
-
-        getLoaderManager().initLoader(0, null, this);
+        boolean displayWelcome = ((MainActivity)context).displayWelcome;
+        if(displayWelcome){
+            mRecyclerView.setAdapter(new OverviewAdapter(null, null, context, displayWelcome));
+        } else{
+            mRecyclerView.setAdapter(new OverviewAdapter(null, null, context, displayWelcome));
+            getLoaderManager().initLoader(0, null, this);
+        }
         return rootView;
     }
 

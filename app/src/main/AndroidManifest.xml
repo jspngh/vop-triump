@@ -140,7 +140,6 @@
             android:name=".ui.profile.ProfileActivity"
             android:label="@string/title_activity_profile" >
         </activity>
-
         <activity
             android:name=".ui.reward.RewardsActicity"
             android:label="@string/title_activity_rewards" >
@@ -162,6 +161,10 @@
         <activity
             android:name=".ui.login.FirstLaunchActivity"
             android:label="@string/title_activity_first_launch" >
+        </activity>
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

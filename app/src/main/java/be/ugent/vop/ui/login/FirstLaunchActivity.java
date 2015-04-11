@@ -54,6 +54,5 @@ public class FirstLaunchActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             return TutorialFragment.newInstance(position);
         }
-
     }
 }

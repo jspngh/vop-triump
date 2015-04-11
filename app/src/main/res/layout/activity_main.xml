@@ -12,7 +12,9 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent">
-        <LinearLayout style="@style/HeaderBar"
+        <LinearLayout
+            android:id="@id/action_bar"
+            style="@style/HeaderBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
