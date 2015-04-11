@@ -79,7 +79,7 @@ public class SelectGroupsDialog extends DialogFragment {
                 })
                 .setNegativeButton(R.string.button_text_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onDialogPositiveClick(SelectGroupsDialog.this);
+                        listener.onDialogNegativeClick(SelectGroupsDialog.this);
 
                     }
                 });
