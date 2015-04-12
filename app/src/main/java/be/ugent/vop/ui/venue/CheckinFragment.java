@@ -13,9 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,7 +35,6 @@ import java.util.HashMap;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.ui.group.GroupActivity;
 import be.ugent.vop.ui.widget.CustomSwipeRefreshLayout;
 
 /**
@@ -101,24 +97,6 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            int state;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                state = newState;
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                //if(state == RecyclerView.SCROLL_STATE_DRAGGING){
-                //Log.d(TAG, "Vertical scroll: " + dy);
-                    mRecyclerView.animate().translationY(dy);
-                //}
-            }
-        });
-
 
         return rootView;
     }

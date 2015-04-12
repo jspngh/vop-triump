@@ -16,18 +16,14 @@
 
 package be.ugent.vop;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,21 +45,24 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Date;
 
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
+import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.ui.profile.ProfileActivity;
 import be.ugent.vop.ui.profile.ProfileFragment;
-import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.LUtils;
 import be.ugent.vop.utils.PrefUtils;
 
@@ -73,7 +72,7 @@ import static be.ugent.vop.utils.LogUtils.makeLogTag;
  * A base activity that handles common functionality in the app. This includes the
  * navigation drawer, login and authentication, Action Bar tweaks, amongst others.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final String TAG = makeLogTag(BaseActivity.class);
 
     // Navigation drawer:
@@ -81,6 +80,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     private ObjectAnimator mStatusBarColorAnimator;
     private ViewGroup mDrawerItemsListContainer;
+
+
 
     // When set, these components will be shown/hidden in sync with the action bar
     // to implement the "quick recall" effect (the Action Bar and the header views disappear
@@ -103,6 +104,14 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
     protected static final int NAVDRAWER_ITEM_OTHER = -4;
+
+    protected static final int LOCATION_NOT_UPDATING = 0;
+    protected static final int LOCATION_UPDATING_FAST = 1;
+    protected static final int LOCATION_UPDATING_SLOW = 2;
+
+    public static final int MIN_LOCATION_ACCURACY = 20;
+    protected static final int HOUR_MILLIS = 3600000;
+
 
     // titles for navdrawers items (indices must correspond to the above)
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
@@ -167,10 +176,25 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static final TypeEvaluator ARGB_EVALUATOR = new ArgbEvaluator();
     private ActionBarDrawerToggle mDrawerToggle;
     private Handler mHandler;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private int mRequestingLocationUpdates = LOCATION_NOT_UPDATING;
+
+
+    private ArrayList<LocationUpdateListener> locationUpdateListeners = new ArrayList<>();
+    private LocationRequest mLocationRequest;
+    private Date mLastUpdated;
+
+
+    public interface LocationUpdateListener{
+        public void locationUpdated(Location newLocation, Date lastUpdated);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //buildGoogleApiClient();
 
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -516,60 +540,140 @@ public abstract class BaseActivity extends ActionBarActivity {
         mDrawerLayout.closeDrawer(Gravity.START);
     }
 
+
+    /**
+     * Location services
+     */
+
+    protected synchronized void buildGoogleApiClient() {
+        Log.d(TAG, "Build API client");
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.d(TAG, "Google API connected");
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null){
+            notifyLocationUpdateListeners();
+            mLastUpdated = new Date();
+        }
+
+        // Continuous location updates
+        startLocationUpdates(true);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "Connection to Google play services failed");
+    }
+
+    @Override
+    public void onLocationChanged(Location location){
+
+        Log.d(TAG, "Location changed");
+        mLastLocation = location;
+        mLastUpdated = new Date();
+
+        notifyLocationUpdateListeners();
+
+        if(mLastLocation.getAccuracy() < MIN_LOCATION_ACCURACY)
+            startLocationUpdates(false);
+    }
+
+    protected void createFastLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void createSlowLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(60000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+    }
+
+    protected synchronized void startLocationUpdates(boolean fast) {
+        Log.d(TAG, "Start location updates, " + (fast?"Fast" : "slow"));
+        if(mRequestingLocationUpdates != LOCATION_NOT_UPDATING)
+            stopLocationUpdates();
+
+        if(fast){
+            mRequestingLocationUpdates = LOCATION_UPDATING_FAST;
+            createFastLocationRequest();
+        }else{
+            mRequestingLocationUpdates = LOCATION_UPDATING_SLOW;
+            createSlowLocationRequest();
+        }
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    protected synchronized void stopLocationUpdates() {
+        Log.d(TAG, "Stop location updates");
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+        mRequestingLocationUpdates = LOCATION_NOT_UPDATING;
+    }
+
+    private void notifyLocationUpdateListeners(){
+        for(LocationUpdateListener l : locationUpdateListeners)
+            l.locationUpdated(mLastLocation, mLastUpdated);
+    }
+
+    public void addLocationUpdateListener(LocationUpdateListener listener){
+        locationUpdateListeners.add(listener);
+        if(mLastLocation != null)
+            listener.locationUpdated(mLastLocation, mLastUpdated);
+    }
+
+    public void removeLocationUpdateListener(LocationUpdateListener listener){
+        locationUpdateListeners.remove(listener);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+            buildGoogleApiClient();
+            mGoogleApiClient.connect();
+        }
+        else {
+
+            if (mLastUpdated != null && mLastUpdated.getTime() < new Date().getTime() - HOUR_MILLIS)
+                startLocationUpdates(true); // Too long ago, get new accurate location
+            else if (mLastLocation != null && mLastLocation.getAccuracy() < MIN_LOCATION_ACCURACY)
+                startLocationUpdates(false); // Not too long ago and good accuracy
+            else
+                startLocationUpdates(true); // No good accuracy
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+            stopLocationUpdates();
+
         if (mSyncObserverHandle != null) {
             ContentResolver.removeStatusChangeListener(mSyncObserverHandle);
             mSyncObserverHandle = null;
         }
-    }
-
-    /**
-     * Converts an intent into a {@link Bundle} suitable for use as fragment arguments.
-     */
-    public static Bundle intentToFragmentArguments(Intent intent) {
-        Bundle arguments = new Bundle();
-        if (intent == null) {
-            return arguments;
-        }
-
-        final Uri data = intent.getData();
-        if (data != null) {
-            arguments.putParcelable("_uri", data);
-        }
-
-        final Bundle extras = intent.getExtras();
-        if (extras != null) {
-            arguments.putAll(intent.getExtras());
-        }
-
-        return arguments;
-    }
-
-    /**
-     * Converts a fragment arguments bundle into an intent.
-     */
-    public static Intent fragmentArgumentsToIntent(Bundle arguments) {
-        Intent intent = new Intent();
-        if (arguments == null) {
-            return intent;
-        }
-
-        final Uri data = arguments.getParcelable("_uri");
-        if (data != null) {
-            intent.setData(data);
-        }
-
-        intent.putExtras(arguments);
-        intent.removeExtra("_uri");
-        return intent;
     }
 
     @Override
@@ -833,4 +937,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     public void setTitle(String title){
         getSupportActionBar().setTitle(title);
     }
+
+
 }

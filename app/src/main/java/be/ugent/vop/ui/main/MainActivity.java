@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
 
-        this.startService(new Intent(this, LocationService.class));
+       // this.startService(new Intent(this, LocationService.class));
         if (mSlidingTabLayout != null) {
             mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override

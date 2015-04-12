@@ -1,18 +1,20 @@
 package be.ugent.vop.ui.main;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Date;
+
+import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.OverviewLoader;
 
@@ -20,9 +22,17 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String TAG = "OverviewFragment";
 
     private Location mLastLocation;
-    private Activity context;
+    private BaseActivity mActivity;
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
+
+
+    private BaseActivity.LocationUpdateListener mListener = new BaseActivity.LocationUpdateListener() {
+        @Override
+        public void locationUpdated(Location newLocation, Date lastUpdated) {
+           newLocationAvailable(newLocation, lastUpdated);
+        }
+    };
 
     public OverviewFragment(){
     }
@@ -32,12 +42,8 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_overview, container, false);
         rootView.setTag(TAG);
-        SharedPreferences prefs = getActivity().getSharedPreferences(getString(R.string.sharedprefs), MainActivity.MODE_PRIVATE);
-        context = getActivity();
 
-        mLastLocation = new Location("");
-        mLastLocation.setLatitude(prefs.getFloat(getString(R.string.locationLatitude), (float)51.046127));
-        mLastLocation.setLongitude(prefs.getFloat(getString(R.string.locationLongitude), (float)3.727251));
+        mActivity = (BaseActivity) getActivity();
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_overview);
 
@@ -48,76 +54,36 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(new OverviewAdapter(null, null, null));
 
-        getLoaderManager().initLoader(0, null, this);
         return rootView;
     }
 
     @Override
+    public void onActivityCreated(Bundle bundle){
+        super.onActivityCreated(bundle);
+        mActivity.addLocationUpdateListener(mListener);
+    }
+
+    private void newLocationAvailable(Location newLocation, Date lastUpdated){
+        Log.d(TAG, "new Location available in fragment");
+        if(newLocation.getAccuracy() < BaseActivity.MIN_LOCATION_ACCURACY){
+            mLastLocation = newLocation;
+            getLoaderManager().restartLoader(0, null, this);
+        }
+    }
+
+    @Override
     public Loader<OverviewAdapter> onCreateLoader(int i, Bundle bundle) {
-        return new OverviewLoader(context, mLastLocation);
+        return new OverviewLoader(mActivity, mLastLocation);
     }
 
     @Override
     public void onLoadFinished(Loader<OverviewAdapter> overviewLoader, final OverviewAdapter overviewAdapter) {
         mRecyclerView.setAdapter(overviewAdapter);
     }
+
     @Override
     public void onLoaderReset(Loader<OverviewAdapter> overviewLoader) {
+
     }
 
-/*    public void setOverview(){
-
-        if(mLocationService != null) {
-            location = mLocationService.getLocation();
-        }
-        if(location == null){
-            location = mLastLocation;
-        }
-
-        new AsyncTask<Location, Void, OverviewBean>() {
-            private Location mLocation;
-            private ArrayList<FoursquareVenue> fsVenues;
-
-            @Override
-            protected OverviewBean doInBackground(Location... params) {
-                mLocation = params[0];
-                fsVenues = FoursquareAPI.get(getActivity()).getNearbyVenues(mLocation);
-                ArrayList<String> venues = new ArrayList<>();
-                for(FoursquareVenue v : fsVenues){
-                    venues.add(v.getId());
-                }
-                OverviewBean overview = null;
-                try {
-                    overview = BackendAPI.get(getActivity()).getOverview(venues);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ArrayList<FoursquareVenue> venuesInOverview = new ArrayList<>();
-                if(overview != null && overview.getVenues() != null) {
-                    for (VenueBean venue : overview.getVenues()) {
-                        for(FoursquareVenue fsVenue : fsVenues) {
-                            if (venue.getVenueId().equals(fsVenue.getId())) {
-                                venuesInOverview.add(fsVenue);
-                            }
-                        }
-                    }
-                }
-                if(venuesInOverview.size() < 3){
-                    for(int i = 0; i < fsVenues.size() && venuesInOverview.size() < 3; i++){
-                        if(!venuesInOverview.contains(fsVenues.get(i)))
-                            venuesInOverview.add(fsVenues.get(i));
-                    }
-                }
-                fsVenues = venuesInOverview;
-                return overview;
-            }
-
-            @Override
-            protected void onPostExecute(OverviewBean result) {
-                Log.d("overview", "" + result);
-                mRecyclerView.setAdapter(new OverviewAdapter(result, fsVenues, getActivity()));
-                super.onPostExecute(result);
-            }
-        }.execute(location);
-    }*/
 }

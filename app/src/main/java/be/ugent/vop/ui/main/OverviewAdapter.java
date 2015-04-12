@@ -27,11 +27,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.foursquare.Photo;
 import be.ugent.vop.ui.group.GroupActivity;
 import be.ugent.vop.ui.venue.VenueActivity;
 
@@ -148,7 +151,18 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
                 if(fsVenues != null && fsVenues.size() > 2){
                     mVenueViewHolder.venue_1_name.setText(fsVenues.get(0).getName());
-                    mVenueViewHolder.venue_1_name.setOnClickListener(new View.OnClickListener() {
+                    mVenueViewHolder.venue_1_info.setText(fsVenues.get(0).getAddress());
+
+                    if(fsVenues.get(0).getPhotos().size() > 0){
+                        Photo p = fsVenues.get(0).getPhotos().get(0);
+                        String url = p.getPrefix() + "200x200" + p.getSuffix();
+                        Ion.with(mVenueViewHolder.icon1)
+                                .placeholder(R.drawable.ic_launcher)
+                                .error(R.drawable.ic_drawer_logout)
+                                .load(url);
+                    }
+
+                    mVenueViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, VenueActivity.class);
@@ -157,8 +171,19 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             context.startActivity(intent);
                         }
                     });
+
                     mVenueViewHolder.venue_2_name.setText(fsVenues.get(1).getName());
-                    mVenueViewHolder.venue_2_name.setOnClickListener(new View.OnClickListener() {
+                    mVenueViewHolder.venue_2_info.setText(fsVenues.get(1).getAddress());
+
+                    if(fsVenues.get(1).getPhotos().size() > 0){
+                        Photo p = fsVenues.get(1).getPhotos().get(0);
+                        String url = p.getPrefix() + "200x200" + p.getSuffix();
+                        Ion.with(mVenueViewHolder.icon2)
+                                .placeholder(R.drawable.ic_launcher)
+                                .error(R.drawable.ic_drawer_logout)
+                                .load(url);
+                    }
+                    mVenueViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, VenueActivity.class);
@@ -167,8 +192,21 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             context.startActivity(intent);
                         }
                     });
+
                     mVenueViewHolder.venue_3_name.setText(fsVenues.get(2).getName());
-                    mVenueViewHolder.venue_3_name.setOnClickListener(new View.OnClickListener() {
+
+                    mVenueViewHolder.venue_3_info.setText(fsVenues.get(2).getAddress());
+
+                    if(fsVenues.get(2).getPhotos().size() > 0){
+                        Photo p = fsVenues.get(2).getPhotos().get(0);
+                        String url = p.getPrefix() + "200x200" + p.getSuffix();
+                        Ion.with(mVenueViewHolder.icon3)
+                                .placeholder(R.drawable.ic_launcher)
+                                .error(R.drawable.ic_drawer_logout)
+                                .load(url);
+                    }
+
+                    mVenueViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, VenueActivity.class);
