@@ -62,9 +62,14 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onActivityCreated(Bundle bundle){
-        super.onActivityCreated(bundle);
+    public void onResume(){
+        super.onResume();
         mActivity.addLocationUpdateListener(mListener);
+    }
+
+    public void onPause(){
+        super.onPause();
+        mActivity.removeLocationUpdateListener(mListener);
     }
 
     private void newLocationAvailable(Location newLocation, Date lastUpdated){

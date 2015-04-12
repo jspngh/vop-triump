@@ -17,9 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -30,17 +27,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
+import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.widget.CustomSwipeRefreshLayout;
 
-/**
- * Created by siebe on 28/02/15.
- */
-public class CheckinFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
+
+public class CheckinFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
     private static final String TAG = "CheckinFragment";
 
     protected CheckinFragment mFragment;
@@ -51,23 +48,22 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     protected RecyclerView.LayoutManager mLayoutManager;
     private GoogleMap map;
     private MapFragment fragment;
-    private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
 
+    private BaseActivity mActivity;
+
+    private BaseActivity.LocationUpdateListener mListener = new BaseActivity.LocationUpdateListener() {
+        @Override
+        public void locationUpdated(Location newLocation, Date lastUpdated) {
+            newLocationAvailable(newLocation, lastUpdated);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //buildGoogleApiClient();
-    }
 
-    private void buildGoogleApiClient() {
-        Log.d(TAG, "buildGoogleApiClient");
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mActivity = (BaseActivity) getActivity();
     }
 
     @Override
@@ -111,32 +107,26 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onResume() {
         super.onResume();
+
+        mActivity.addLocationUpdateListener(mListener);
+
         if (fragment == null) {
             fragment = getMapFragment();
         }
-        buildGoogleApiClient();
-
-        mGoogleApiClient.connect();
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "Google API onConnected");
-
-        // Indien er geen locatie gevonden is zal er nooit een loader aangemaakt worden,
-        // hierdoor zullen er ook geen venues geladen worden wanneer er later wel een locatie gevonden wordt.
-
-        getLoaderManager().initLoader(0, null, this);
+    public void onPause(){
+        super.onPause();
+        mActivity.removeLocationUpdateListener(mListener);
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
+    private void newLocationAvailable(Location newLocation, Date lastUpdated){
+        Log.d(TAG, "new Location available in fragment");
+        if(newLocation.getAccuracy() < BaseActivity.MIN_LOCATION_ACCURACY){
+            mLastLocation = newLocation;
+            getLoaderManager().restartLoader(0, null, this);
+        }
     }
 
     private MapFragment getMapFragment() {
@@ -159,17 +149,8 @@ public class CheckinFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
         Log.d(TAG, "onCreateLoader");
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            return new VenueLoader(getActivity(), mLastLocation);
-        } else {
-            Location defaultLocation = new Location("");
-            //default location: rectoriaat sint pietersnieuwstraat Ghent
-            defaultLocation.setLatitude(51.046127);
-            defaultLocation.setLongitude(3.727251);
-            return new VenueLoader(getActivity(),defaultLocation );
-        }
+
+        return new VenueLoader(getActivity(), mLastLocation);
     }
 
     @Override
