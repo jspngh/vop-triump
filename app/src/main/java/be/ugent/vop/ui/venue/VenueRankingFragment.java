@@ -4,21 +4,21 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,17 +30,20 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
-import be.ugent.vop.ui.group.GroupActivity;
 
-public class VenueRankingFragment extends Fragment implements AbsListView.OnScrollListener {
+public class VenueRankingFragment extends Fragment implements VenueActivity.VenueActivityCallback {
 
     private FloatingActionButton checkinButton;
-    private RankingAdapter adapter;
     private List<RankingBean> ranking;
-    private ListView rankingListView;
+    private RecyclerView rankingView;
     private Context context;
     private Spinner groupTypeSpinner;
     private Spinner groupSizeSpinner;
+    private View mSpinners;
+    protected RecyclerView.LayoutManager mLayoutManager;
+    protected RankingAdapter mAdapter;
+
+    private Palette mPalette;
 
     private String currentGroupType = "All";
     private String currentGroupSize = "All";
@@ -52,13 +55,17 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
 
     private String fsVenueId;
 
-    private VenueRankingCallback mCallback;
+    private VenueActivity mActivity;
 
+    @Override
+    public void setColorPalette(Palette p) {
+        mPalette = p;
 
-    public interface VenueRankingCallback{
-        public Palette getPalette();
-        public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+        mAdapter.setBackgroundColor(p.getVibrantSwatch().getRgb());
+        mAdapter.setTextColor(p.getVibrantSwatch().getBodyTextColor());
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,8 +75,41 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
         context = getActivity();
 
         //    noRankingTextView = (TextView) rootView.findViewById(R.id.textViewNoRanking);
-        rankingListView = (ListView) rootView.findViewById(R.id.listViewRanking);
+        rankingView = (RecyclerView) rootView.findViewById(R.id.ranking_list);
         checkinButton = (FloatingActionButton)rootView.findViewById(R.id.buttonCheckin);
+        mSpinners = rootView.findViewById(R.id.spinners);
+
+        /**
+         * setup recycler view
+         */
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        rankingView.setLayoutManager(mLayoutManager);
+        rankingView.setItemAnimator(new DefaultItemAnimator());
+        checkinButton.attachToRecyclerView(rankingView, null, new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // TODO: this still needs some fixing
+                //if(mActivity != null)
+                    //mActivity.onScroll(dx, dy, mSpinners);
+            }
+        });
+
+        int ht = 200;
+        int wt = 200;
+
+        float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
+        float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
+
+        mAdapter = new RankingAdapter(getActivity(), null, Color.BLACK, Color.WHITE, (int)wt_px, (int)ht_px, true);
+        rankingView.setAdapter(mAdapter);
+
 
         /**
          *
@@ -85,7 +125,7 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
 
 
-        checkinButton.attachToListView(rankingListView);
+        //checkinButton.attachToRecyclerView(rankingView);
 
 
         /**
@@ -182,23 +222,11 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
         //rankingListView.setOnScrollListener(this);
     }
 
-
-    @Override
-    public void onScrollStateChanged(AbsListView absListView, int i) {
-
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (mCallback != null)
-            mCallback.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(activity instanceof VenueRankingCallback)
-            mCallback = (VenueRankingCallback) activity;
+        if(activity instanceof VenueActivity)
+            mActivity = (VenueActivity) activity;
     }
 
     /***********
@@ -219,27 +247,15 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
             Log.d("VenueFragment", "onLoadFinished rankingloader");
             ranking=rankings;
             if(rankings!=null){
-                rankingListView.setVisibility(View.VISIBLE);
+                rankingView.setVisibility(View.VISIBLE);
                 for(RankingBean r:rankings){
                     Log.d("VenueFragment",r.getGroupBean().getName()+ " | "+r.getPoints());
                 }
 
-                int ht = 200;
-                int wt = 200;
+                mAdapter.setRankings(rankings);
+                mAdapter.notifyDataSetChanged();
 
-                float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
-                float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
-
-                Palette p = mCallback.getPalette();
-
-                int backgroundColor = p.getVibrantSwatch().getRgb();
-                int textColor = p.getVibrantSwatch().getBodyTextColor();
-
-                //    noRankingTextView.setVisibility(View.INVISIBLE);
-                adapter = new RankingAdapter(context, rankings, backgroundColor, textColor, (int)wt_px, (int)ht_px);
-
-                rankingListView.setAdapter(adapter);
-                rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                /*rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
@@ -249,9 +265,9 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
                         intent.putExtras(bundle);
                         context.startActivity(intent);
                     }
-                });
+                });*/
             }else{
-                rankingListView.setVisibility(View.INVISIBLE);
+                rankingView.setVisibility(View.INVISIBLE);
                 //   noRankingTextView.setText(R.string.no_ranking);
             }
 
@@ -318,22 +334,9 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
             Log.d("VenueFragment", "onLoadFinished after checkin loader");
             ranking=rankings;
             if(rankings!=null){
-                int ht = 200;
-                int wt = 200;
-
-                float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
-                float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
-
-                Palette p = mCallback.getPalette();
-
-                int backgroundColor = p.getVibrantSwatch().getRgb();
-                int textColor = p.getVibrantSwatch().getBodyTextColor();
-
-
-                //    noRankingTextView.setVisibility(View.INVISIBLE);
-                adapter = new RankingAdapter(context, rankings, backgroundColor, textColor, (int)wt_px, (int)ht_px);
-                rankingListView.setAdapter(adapter);
-                rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                mAdapter.setRankings(rankings);
+                mAdapter.notifyDataSetChanged();
+                /*rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
@@ -343,11 +346,10 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
                         intent.putExtras(bundle);
                         context.startActivity(intent);
                     }
-                });
+                });*/
 
-                adapter.notifyDataSetChanged();
-                if( rankingListView.getVisibility()==View.INVISIBLE){
-                    rankingListView.setVisibility(View.VISIBLE);
+                if( rankingView.getVisibility()==View.INVISIBLE){
+                    rankingView.setVisibility(View.VISIBLE);
                     Toast t = Toast.makeText(getActivity(),"Congrats! You just scored the first points at this venue.",Toast.LENGTH_SHORT);
                     t.show();
                 }
@@ -401,5 +403,4 @@ public class VenueRankingFragment extends Fragment implements AbsListView.OnScro
 
 
     };
-
 }

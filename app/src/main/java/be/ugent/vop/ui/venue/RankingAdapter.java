@@ -1,85 +1,149 @@
 package be.ugent.vop.ui.venue;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.util.Log;
+import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.RankingBean;
+import be.ugent.vop.ui.group.GroupActivity;
 
-/**
- * Created by vincent on 03/03/15.
- */
 
-public class RankingAdapter extends ArrayAdapter<RankingBean> {
+public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private Context context;
     private int resourceId;
     private int imageWidth;
     private int imageHeight;
     private int backgroundColor;
     private int textColor;
+    private boolean headerPlaceholder;
 
-    public RankingAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
+    private static final int TYPE_PLACEHOLDER = 1;
+    private static final int TYPE_RANKING_ROW = 2;
+
+    private List<RankingBean> rankings;
+
+    /**
+     * Provide a reference to the type of views that you are using (custom ViewHolder)
+     */
+    public static class RankingViewHolder extends RecyclerView.ViewHolder {
+
+        private final ImageView nrImageView;
+        private final TextView nameTextView;
+        private final TextView pointsTextView;
+
+        public RankingViewHolder(View v) {
+            super(v);
+            nrImageView = (ImageView) v.findViewById(R.id.imageViewRanking);
+            nameTextView = (TextView) v.findViewById(R.id.textViewName);
+            pointsTextView = (TextView) v.findViewById(R.id.textViewPoints);
+        }
     }
 
-    public RankingAdapter(Context context, List<RankingBean> items, int backgroundColor, int textColor, int imageWidth, int imageHeight) {
-        super(context, R.layout.ranking_list_item, items);
+    public static class PlaceholderViewHolder extends RecyclerView.ViewHolder {
+
+        public PlaceholderViewHolder(View v) {
+            super(v);
+        }
+    }
+
+    public RankingAdapter(Context context, List<RankingBean> items, int backgroundColor, int textColor, int imageWidth, int imageHeight, boolean headerPlaceholder) {
+        super();
+        this.context = context;
         this.resourceId = R.layout.ranking_list_item;
         this.backgroundColor = backgroundColor;
         this.textColor = textColor;
         this.imageHeight = imageHeight;
         this.imageWidth = imageWidth;
+        this.rankings = items;
+        this.headerPlaceholder = headerPlaceholder;
+    }
 
-        Log.d("RANKINGADAPTER", ""+imageHeight);
+    public void setBackgroundColor(int bgColor){
+        this.backgroundColor = bgColor;
+    }
+
+    public void setTextColor(int textColor){
+        this.textColor = textColor;
+    }
+
+    public void setRankings(List<RankingBean> rankings){
+        this.rankings = rankings;
+        notifyItemRangeInserted(0, rankings.size());
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder vh = null;
+        View v;
 
-        View v = convertView;
-
-        if (v == null) {
-             v = LayoutInflater.from(getContext()).inflate(R.layout.ranking_list_item, parent, false);
+        switch(viewType) {
+            case TYPE_PLACEHOLDER:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.view_header_placeholder, parent, false);
+                vh = new PlaceholderViewHolder(v);
+                break;
+            case TYPE_RANKING_ROW:
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.ranking_list_item, parent, false);
+                vh = new RankingViewHolder(v);
+                break;
         }
 
-        RankingBean r = getItem(position);
+        return vh;
+    }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if(position == TYPE_RANKING_ROW) {
+            int pos = (headerPlaceholder)? (position - 1) : position;
+            final RankingBean r = rankings.get(pos);
 
-        if (r != null) {
-            ImageView nrImageView = (ImageView) v.findViewById(R.id.imageViewRanking);
-            TextView nameTextView = (TextView) v.findViewById(R.id.textViewName);
-            TextView pointsTextView = (TextView) v.findViewById(R.id.textViewPoints);
+            RankingViewHolder h = (RankingViewHolder) holder;
 
-            if (nameTextView != null) {
-                nameTextView.setText(r.getGroupBean().getName());
-            }
-            if(nrImageView!=null){
-                nrImageView.setImageDrawable(getItemDrawable("" + (position + 1)));
-            }
+            h.nameTextView.setText(r.getGroupBean().getName());
+            h.nrImageView.setImageDrawable(getItemDrawable("" + (pos + 1)));
+            h.pointsTextView.setText(r.getPoints().toString());
 
-            if (pointsTextView != null) {
-
-                pointsTextView.setText("" + r.getPoints());
-            }
+            h.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, GroupActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putLong("groupId", r.getGroupBean().getGroupId());
+                    intent.putExtras(bundle);
+                    context.startActivity(intent);
+                }
+            });
         }
-        return v;
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (headerPlaceholder && position == 0)? TYPE_PLACEHOLDER : TYPE_RANKING_ROW;
+    }
+
+    @Override
+    public int getItemCount() {
+        return (rankings == null)? 0 : rankings.size();
     }
 
     public Drawable getItemDrawable(String text){
@@ -109,21 +173,5 @@ public class RankingAdapter extends ArrayAdapter<RankingBean> {
         LayerDrawable layerDrawable = new LayerDrawable(
                 new Drawable[]{shapeDrawable, new BitmapDrawable(canvasBitmap)});
         return layerDrawable;
-    }
-
-
-    public BitmapDrawable writeOnDrawable(int drawableId, String text){
-
-        Bitmap bm = BitmapFactory.decodeResource(getContext().getResources(), drawableId).copy(Bitmap.Config.ARGB_8888, true);
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(100);
-
-        Canvas canvas = new Canvas(bm);
-        canvas.drawText(text, 3*bm.getWidth()/8, 7*bm.getHeight()/10, paint);
-
-        return new BitmapDrawable(bm);
     }
 }

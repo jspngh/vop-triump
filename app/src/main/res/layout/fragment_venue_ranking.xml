@@ -1,29 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinnerGroupType"
-            android:spinnerMode="dropdown" />
-
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinnerGroupSize"
-            android:spinnerMode="dropdown" />
-    </LinearLayout>
-
+    android:layout_height="fill_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -32,13 +11,11 @@
             android:id="@+id/fragment_venue_swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ListView
-                android:layout_height="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ranking_list"
                 android:layout_width="match_parent"
-                android:id="@+id/listViewRanking"
-                android:layout_margin="0dp"
-                android:visibility="invisible" />
-
+                android:layout_height="match_parent"
+                android:layout_margin="0dp" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
 
@@ -56,5 +33,27 @@
             fab:fab_colorPressed="@color/theme_primary"
             fab:fab_colorRipple="@color/theme_accent_1" />
     </FrameLayout>
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/spinners"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:translationY="@dimen/image_header_height"
+        android:background="@android:color/white"
+        android:padding="16dp">
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerGroupType"
+            android:spinnerMode="dropdown" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerGroupSize"
+            android:spinnerMode="dropdown" />
+    </LinearLayout>
+</FrameLayout>
 
