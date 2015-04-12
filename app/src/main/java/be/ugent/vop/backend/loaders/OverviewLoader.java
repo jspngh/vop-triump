@@ -15,9 +15,6 @@ import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.ui.main.OverviewAdapter;
 
-/**
- * Created by jonas on 3/27/15.
- */
 public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
     private final String TAG = "OverviewLoader";
 

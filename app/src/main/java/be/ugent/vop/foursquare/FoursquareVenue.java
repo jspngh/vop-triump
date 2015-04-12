@@ -18,7 +18,7 @@ public class FoursquareVenue implements Parcelable {
     private double longitude;
     private double latitude;
     private ArrayList<Photo> photos;
-    private boolean verified =false;
+    private boolean verified = false;
 
     public FoursquareVenue(String id, String name, String address,
                            String city, String country, double longitude,
