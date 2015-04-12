@@ -18,6 +18,7 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.utils.PrefUtils;
 
 /**
  * Created by siebe on 02/03/15.
@@ -82,15 +83,17 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         }
 
     }
-    // END_INCLUDE(recyclerViewSampleViewHolder)
 
-    // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
-    // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view.
-        View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.group_list_item, viewGroup, false);
+        View v;
+        if(context != null && PrefUtils.getDarkTheme(context)){
+            v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.group_list_item_dark, viewGroup, false);
+        } else {
+            v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.group_list_item, viewGroup, false);
+        }
 
         ViewHolder vh = new ViewHolder(v, new ViewHolder.IMyViewHolderClicks() {
             @Override

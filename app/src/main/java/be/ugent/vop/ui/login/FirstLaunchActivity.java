@@ -32,10 +32,10 @@ public class FirstLaunchActivity extends ActionBarActivity {
                 .addViewToParallax(new ParallaxPageTransformer.ParallaxTransformInformation(R.id.background, 2, 2))
                 .addViewToParallax(new ParallaxPageTransformer.ParallaxTransformInformation(R.id.image, -0.65f,
                         ParallaxPageTransformer.ParallaxTransformInformation.PARALLAX_EFFECT_DEFAULT))
+                .addViewToParallax(new ParallaxPageTransformer.ParallaxTransformInformation(R.id.bannerImage, 2, 2))
                 .addViewToParallax(new ParallaxPageTransformer.ParallaxTransformInformation(R.id.back, -0.65f,
                         ParallaxPageTransformer.ParallaxTransformInformation.PARALLAX_EFFECT_DEFAULT));
         mViewPager.setPageTransformer(true, pageTransformer);
-
         Indicator.setViewPager(mViewPager);
     }
 
@@ -54,6 +54,5 @@ public class FirstLaunchActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             return TutorialFragment.newInstance(position);
         }
-
     }
 }

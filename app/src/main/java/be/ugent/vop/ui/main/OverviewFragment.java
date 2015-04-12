@@ -22,7 +22,7 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String TAG = "OverviewFragment";
 
     private Location mLastLocation;
-    private BaseActivity mActivity;
+    private MainActivity mActivity;
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
 
@@ -40,10 +40,12 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_overview, container, false);
+
         rootView.setTag(TAG);
 
-        mActivity = (BaseActivity) getActivity();
+        mActivity = (MainActivity) getActivity();
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_overview);
 
@@ -52,7 +54,9 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
         // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(new OverviewAdapter(null, null, null));
+
+        boolean displayWelcome = mActivity.displayWelcome;
+        mRecyclerView.setAdapter(new OverviewAdapter(null, null, mActivity, displayWelcome));
 
         return rootView;
     }

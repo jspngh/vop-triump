@@ -11,6 +11,8 @@ import be.ugent.vop.utils.PrefUtils;
 public class LoginActivity extends Activity implements LoginFragment.OnFragmentInteractionListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        boolean darkTheme = PrefUtils.getDarkTheme(this);
+        if(darkTheme) setTheme(R.style.AppTheme_Dark);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 

@@ -26,6 +26,8 @@
     <string name="navdrawer_item_settings">Settings</string>
     <string name="navdrawer_item_logout">Sign out</string>
     <string name="navdrawer_item_event">Events</string>
+    <string name="navdrawer_item_feedback">Feedback</string>
+    <string name="navdrawer_item_reward">Rewards</string>
     <string name="navdrawer_item_profile">Profile</string>
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
@@ -66,6 +68,11 @@
     <string name="search_hint">Enter group</string>
     <string name="action_add">Add group</string>
     <string name="navdrawer_item_events">Events</string>
+
+    <string name="app_info">Here comes some nice explanation of what our app does</string>
+    <string name="app_info_title">Information about Triump</string>
+    <string name="tutorial_finish">Got it</string>
+
     <!-- Event -->
     <string name="no_event">No events available for you.</string>
     <string name="button_text_set">Set</string>
@@ -75,7 +82,6 @@
     <string name="title_activity_grouplist">Groups</string>
     <string name="search">Search</string>
     <string name="welcome_to_triump">Welcome to Triump</string>
-    <string name="tutorial_thank_you">Thank you for this helpful tutorial</string>
     <string name="make_own_event">Make your own event</string>
     <string name="no_events_available">No events available</string>
 
@@ -90,4 +96,28 @@
     <string name="events">events</string>
     <string name="rewards">rewards</string>
     <string name="title_activity_first_launch">FirstLaunchActivity</string>
+
+    <!-- feedback -->
+    <string name="feedback_dialog_radio_button_bug">Bug</string>
+    <string name="feedback_dialog_radio_button_idea">Idea</string>
+    <string name="feedback_dialog_radio_button_other">Other</string>
+    <string name="feedback_dialog_no_comment_toast">You did not enter a comment</string>
+    <string name="title_activity_feedback">Feedback Activity</string>
+    <string name="feedback_dialog_title">Feedback</string>
+    <string name="feedback_dialog_message">Love it? Hate it? Would you like to suggest a new feature or report a bug? We would love to hear from you:</string>
+    <string name="feedback_dialog_send_mail">Send mail...</string>
+    <string name="feedback_dialog_no_mail_clients">There are no email clients installed</string>
+
+    <!-- Notification Messages -->
+    <string name="notification_top_ranking_event">Congrats, Top ranking in event!</string>
+    <string name="notification_feedback">Give us your opinion</string>
+
+
+
+
+    <string name="title_activity_rewards">Rewards Activity</string>
+    <string name="new_event_select_groups_dialog_title">Choose groups</string>
+     <string name="button_text_send">Send</string>
+    <string name="notification_title">Triump Notification</string>
+
 </resources>

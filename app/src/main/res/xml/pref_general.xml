@@ -1,0 +1,27 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="user_display_name"
+        android:title="@string/pref_title_display_name"
+        android:defaultValue="@string/pref_default_display_name"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:maxLines="1" />
+    <CheckBoxPreference
+        android:key="notifications_new_message"
+        android:title="@string/pref_enable_notifications"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="disable_share_user_profile"
+        android:title="@string/pref_share_user_profile"
+        android:summary="@string/pref_share_user_profile_info"
+        android:defaultValue="false" />
+    <SwitchPreference
+        android:key="theme_dark"
+        android:title="@string/pref_theme_dark"
+        android:summary="@string/pref_theme_dark_info"
+        android:defaultValue="false" />
+
+</PreferenceScreen>

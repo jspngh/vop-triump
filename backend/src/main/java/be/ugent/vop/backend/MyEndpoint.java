@@ -122,6 +122,10 @@ public class MyEndpoint {
 
     private SecureRandom random = new SecureRandom();
 
+    /**
+       Cron jobs
+     */
+
     @ApiMethod(name = "generateRewards")
     public void generateRewards() {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -139,24 +143,36 @@ public class MyEndpoint {
         Query q_event = new Query(EVENT_ENTITY).setFilter(filter);
         PreparedQuery pq_event = datastore.prepare(q_event);
         List<Entity> rewards = new ArrayList<>();
+
+        List<String> userIds = new ArrayList<>();
         for (Entity r : pq_event.asIterable()){
             r.setProperty(EVENT_PROCESSED,1);
+            DatastoreServiceFactory.getDatastoreService().put(r);
+
             List<RankingBean> ranking = _getRankingsforEvent(r.getKey().getId());
-            for(int i=0;i<(long)r.getProperty(EVENT_REQUIREMENT);i++){
+            for(int i=0;i<Math.min((long)ranking.size(),(long)r.getProperty(EVENT_REQUIREMENT));i++){
                 RankingBean winner = ranking.get(i);
                 for(UserBean b :winner.getGroupBean().getMembers()){
+                    String userId = b.getUserId();
+                    userIds.add(userId);
+
                     Entity reward = new Entity(USEREVENT_ENTITY);
                     reward.setProperty(USEREVENT_EVENT_ID, r.getKey().getId());
                     reward.setProperty(USEREVENT_GROUP_ID, winner.getGroupBean().getGroupId());
-                    reward.setProperty(USEREVENT_USER_ID, b.getUserId());
+                    reward.setProperty(USEREVENT_USER_ID, userId);
                     reward.setProperty(USEREVENT_RECEIVED, 0);
                     rewards.add(reward);
                 }
             }
+    }
 
-
-        }
+        _notifyUsersOfEventEndingInTopRanking(userIds);
         DatastoreServiceFactory.getDatastoreService().put(rewards);
+    }
+
+    @ApiMethod(name = "askForUserFeedback")
+    public void askForUserFeedback() {
+        _askForUserFeedback();
     }
 
     @ApiMethod(name = "claimReward")
@@ -421,9 +437,9 @@ public class MyEndpoint {
         sender.send(message, gcmId, 1);
     }
 
-    @ApiMethod(name = "test")
-    public void test(@Named("groupId") long groupId,@Named("eventId") long eventId ) throws UnauthorizedException, InternalServerErrorException, IOException {
-        notifyGroupOfEventVictory(groupId,eventId,1);
+    @ApiMethod(name = "notifyUsersOfEventEndingInTopRanking")
+    public void notifyUsersOfEventEndingInTopRanking(@Named("userId") List<String> userIds ) throws UnauthorizedException, InternalServerErrorException, IOException {
+        _notifyUsersOfEventEndingInTopRanking(userIds);
     }
 
     @ApiMethod(name = "checkInVenue")
@@ -1113,18 +1129,18 @@ public class MyEndpoint {
                         Query.FilterOperator.EQUAL,
                        event.getVenueId());
 
-      /*  Query.Filter beforeFilter =
+      Query.Filter beforeFilter =
                 new Query.FilterPredicate(CHECKIN_DATE,
                         Query.FilterOperator.LESS_THAN_OR_EQUAL,
                         event.getEnd());
         Query.Filter afterFilter =
                 new Query.FilterPredicate(CHECKIN_DATE,
                         Query.FilterOperator.GREATER_THAN_OR_EQUAL,
-                        event.getStart());*/
+                        event.getStart());
 
 
-    //    Query.Filter filter = Query.CompositeFilterOperator.and(beforeFilter,afterFilter,venueFilter);
-        Query q = new Query(CHECKIN_ENTITY).setFilter(venueFilter);
+        Query.Filter filter = Query.CompositeFilterOperator.and(beforeFilter,venueFilter,afterFilter);
+        Query q = new Query(CHECKIN_ENTITY).setFilter(filter);
         PreparedQuery pq = datastore.prepare(q);
 
         HashMap<Long, GroupBean> groupBeans = new HashMap<>();
@@ -1301,26 +1317,48 @@ public class MyEndpoint {
      *
      ******************************************************/
 
-    //note: position is place of group. eg. first pace, second, etc...
-    private void notifyGroupOfEventVictory(long groupId, long eventId, int position){
+    //note: userIds may contain multiple same ids
+    private void _notifyUsersOfEventEndingInTopRanking(List<String> userIds){
         List<String> membersGcmIds = new ArrayList<>();
+        List<String> evaluated_ids = new ArrayList<>();
         try {
-            GroupBean group = _getGroupBean(groupId);
-            EventBean event = _getEventBean(eventId);
-            for(UserBean user:group.getMembers()) {
-                String gcmId=_getGcmIdForUserId(user.getUserId());
-                if(gcmId!=null){
-                    membersGcmIds.add(gcmId);
+            for(String id:userIds) {
+                if(!evaluated_ids.contains(id)){
+                    evaluated_ids.add(id);
+                    String gcmId=_getGcmIdForUserId(id);
+                    if(gcmId!=null){
+                        membersGcmIds.add(gcmId);
+                    }
                 }
             }
-            String msg = "Congratulations! Your group "+group.getName()+" ended "+position+((position==1)?"st":"nd")+"place on event";
-            Message message = new Message.Builder()
-                    .addData("type", "WonEvent")
-                    .addData("message", msg)
-                    .build();
-            sender.send(message, membersGcmIds, 3);
-        } catch (EntityNotFoundException e) {
+            if(!membersGcmIds.isEmpty()) {
+                Message message = new Message.Builder()
+                        .addData(NotificationConstants.NOTIFICATION_TYPE, NotificationConstants.TYPE_END_EVENT_TOP_RANKING)
+                        .build();
+                sender.send(message, membersGcmIds, 3);
+            }
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+
+
+    }
+
+    private void _askForUserFeedback(){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<String> membersGcmIds = new ArrayList<>();
+        try {
+            Query q = new Query(GCM_ENTITY);
+            PreparedQuery pq = datastore.prepare(q);
+            for(Entity r: pq.asIterable()){
+                membersGcmIds.add( (String) r.getProperty(GCM_GCM_ID));
+            }
+            if(!membersGcmIds.isEmpty()) {
+                Message message = new Message.Builder()
+                        .addData(NotificationConstants.NOTIFICATION_TYPE, NotificationConstants.TYPE_FEEDBACK)
+                        .build();
+                sender.send(message, membersGcmIds, 3);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

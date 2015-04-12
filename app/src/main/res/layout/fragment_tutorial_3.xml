@@ -6,33 +6,50 @@
 
     <ImageView
         android:id="@+id/background"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/fantastic_background"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true" />
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_launcher"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="47dp" />
+        android:src="@drawable/prize_cup"
+        android:alpha="0.30"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
     <TextView
-        android:id="@+id/welcome"
+        android:id="@+id/reference_point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_to_triump"
-        android:layout_below="@id/image"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/win_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help your team to win!"
+        style="@style/TutorialTitleTextLarge"
+        android:layout_alignTop="@+id/background"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/win_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get points by checking in on a location\nCollect enough points and your group will conquer that location!"
+        style="@style/TutorialText"
+        android:layout_below="@+id/reference_point"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="75dp" />
     <Button
         android:id="@+id/back"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/tutorial_thank_you"
+        android:layout_height="wrap_content"
+        android:text="@string/tutorial_finish"
+        style="@android:style/Widget.Material.Button.Borderless"
+        android:layout_marginBottom="50dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="106dp" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

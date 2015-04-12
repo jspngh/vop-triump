@@ -22,8 +22,17 @@ import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.ContentResolver;
 import android.content.Intent;
+
 import android.graphics.Color;
 import android.location.Location;
+
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,14 +64,26 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.koushikdutta.ion.Ion;
+
+import java.util.ArrayList;
+
+
+import be.ugent.vop.feedback.FeedbackActivity;
+import be.ugent.vop.ui.reward.RewardsActicity;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
+import be.ugent.vop.ui.login.FirstLaunchActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.ui.profile.ProfileActivity;
 import be.ugent.vop.ui.profile.ProfileFragment;
+
+import be.ugent.vop.ui.main.MainActivity;
+import be.ugent.vop.ui.settings.SettingsActivity;
+
 import be.ugent.vop.utils.LUtils;
 import be.ugent.vop.utils.PrefUtils;
 
@@ -96,10 +117,12 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     // it's a list of all possible items.
     protected static final int NAVDRAWER_ITEM_MAIN = 0;
     protected static final int NAVDRAWER_ITEM_LEADERBOARDS = 1;
-    protected static final int NAVDRAWER_ITEM_EVENT = 2;
-    protected static final int NAVDRAWER_ITEM_GROUPS = 3;
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 4;
-    protected static final int NAVDRAWER_ITEM_LOGOUT = 5;
+    protected static final int NAVDRAWER_ITEM_REWARD = 2;
+    protected static final int NAVDRAWER_ITEM_EVENT = 3;
+    protected static final int NAVDRAWER_ITEM_GROUPS = 4;
+    protected static final int NAVDRAWER_ITEM_FEEDBACK = 5;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 6;
+    protected static final int NAVDRAWER_ITEM_LOGOUT = 7;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -117,8 +140,10 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
             R.string.navdrawer_item_main,
             R.string.navdrawer_item_leaderboards,
+            R.string.navdrawer_item_reward,
             R.string.navdrawer_item_event,
             R.string.navdrawer_item_groups,
+            R.string.navdrawer_item_feedback,
             R.string.navdrawer_item_settings,
             R.string.navdrawer_item_logout
     };
@@ -127,8 +152,10 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     private static final int[] NAVDRAWER_ICON_RES_ID = new int[] {
             R.drawable.ic_drawer_people_met,  // My Schedule
             R.drawable.ic_drawer_leaderboard,
+            R.drawable.ic_drawer_people_met,
             R.drawable.ic_drawer_event,
             R.drawable.ic_drawer_people_met,
+            R.drawable.ic_drawer_feedback,
             R.drawable.ic_drawer_settings,
             R.drawable.ic_drawer_logout
     };
@@ -398,9 +425,11 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
 
         mNavDrawerItems.add(NAVDRAWER_ITEM_MAIN);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LEADERBOARDS);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_REWARD);
         mNavDrawerItems.add(NAVDRAWER_ITEM_EVENT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_GROUPS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_FEEDBACK);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_LOGOUT);
 
@@ -492,10 +521,19 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
                 startActivity(intent);
                 finish();
                 break;
+            case NAVDRAWER_ITEM_REWARD:
+                intent = new Intent(this, RewardsActicity.class);
+                startActivity(intent);
+                finish();
+                break;
             case NAVDRAWER_ITEM_EVENT:
                 intent = new Intent(this, EventActivity.class);
                 startActivity(intent);
                 finish();
+                break;
+            case NAVDRAWER_ITEM_SETTINGS:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 break;
             case NAVDRAWER_ITEM_GROUPS:
                 intent = new Intent(this, GroupListActivity.class);
@@ -505,6 +543,11 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
             case NAVDRAWER_ITEM_LOGOUT:
                 intent = new Intent(this, LoginActivity.class);
                 intent.putExtra(LoginFragment.LOGIN_ACTION, LoginFragment.LOGOUT);
+                startActivity(intent);
+                finish();
+                break;
+            case NAVDRAWER_ITEM_FEEDBACK:
+                intent = new Intent(this, FeedbackActivity.class);
                 startActivity(intent);
                 finish();
                 break;

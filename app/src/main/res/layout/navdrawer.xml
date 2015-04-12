@@ -69,6 +69,10 @@
 
     </FrameLayout>
     <!-- Drawer items -->
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView2">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/navdrawer_items_list"
@@ -79,4 +83,10 @@
         android:orientation="vertical">
 
     </LinearLayout>
+
+    </ScrollView>
+
+
+
+
 </LinearLayout>

@@ -17,6 +17,7 @@ import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.R;
@@ -32,9 +33,14 @@ import be.ugent.vop.backend.myApi.model.RankingBean;
 public class NewEventGroupListAdapter extends ArrayAdapter<GroupBean> {
     private int resourceId;
 
-    public NewEventGroupListAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
+    // in order to make checks persistant
+    private List<Long> checkedGroupBeanIds = null;
 
+    public void setCheckedGroupBeans(List<GroupBean> list){
+        checkedGroupBeanIds = new ArrayList<>();
+        for(GroupBean b:list){
+            checkedGroupBeanIds.add(b.getGroupId());
+        }
     }
 
     public NewEventGroupListAdapter(Context context, List<GroupBean> items) {
@@ -54,6 +60,10 @@ public class NewEventGroupListAdapter extends ArrayAdapter<GroupBean> {
         GroupBean r = getItem(position);
 
         CheckedTextView ctw = (CheckedTextView) v.findViewById(R.id.checkedTextViewGroup);
+
+        if(checkedGroupBeanIds!=null &&
+                checkedGroupBeanIds.contains(r.getGroupId()))  ctw.setChecked(true);
+        else ctw.setChecked(false);
 
         if(r!=null){
             ctw.setText(r.getName());

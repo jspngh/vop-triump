@@ -254,18 +254,6 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
 
                 mAdapter.setRankings(rankings);
                 mAdapter.notifyDataSetChanged();
-
-                /*rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        Intent intent = new Intent(getActivity(), GroupActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
-                        intent.putExtras(bundle);
-                        context.startActivity(intent);
-                    }
-                });*/
             }else{
                 rankingView.setVisibility(View.INVISIBLE);
                 //   noRankingTextView.setText(R.string.no_ranking);
@@ -336,17 +324,6 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
             if(rankings!=null){
                 mAdapter.setRankings(rankings);
                 mAdapter.notifyDataSetChanged();
-                /*rankingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        Intent intent = new Intent(getActivity(), GroupActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putLong("groupId", ranking.get(position).getGroupBean().getGroupId());
-                        intent.putExtras(bundle);
-                        context.startActivity(intent);
-                    }
-                });*/
 
                 if( rankingView.getVisibility()==View.INVISIBLE){
                     rankingView.setVisibility(View.VISIBLE);

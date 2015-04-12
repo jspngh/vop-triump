@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.os.IBinder;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -28,12 +30,15 @@ import be.ugent.vop.BaseActivity;
 import be.ugent.vop.LocationService;
 import be.ugent.vop.NetworkController;
 import be.ugent.vop.R;
+import be.ugent.vop.feedback.Feedback;
 import be.ugent.vop.ui.group.GroupListFragment;
 import be.ugent.vop.ui.venue.CheckinFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
 import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.utils.PrefUtils;
 
 public class MainActivity extends BaseActivity {
+    public static final String WELCOME_MSG = "WelcomeMessage";
     // -------------------- GCM ------------------------
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -50,6 +55,7 @@ public class MainActivity extends BaseActivity {
 
     private LocationService mLocationService;
     private boolean isBound = false;
+    public boolean displayWelcome;
     public final Object syncToken = new Object();
 
     // View pager and adapter (for narrow mode)
@@ -59,8 +65,14 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boolean darkTheme = PrefUtils.getDarkTheme(this);
+        if(darkTheme) setTheme(R.style.AppTheme_Dark);
 
         super.onCreate(savedInstanceState);
+        Bundle args = getIntent().getExtras();
+        if(args != null) displayWelcome = args.getBoolean(WELCOME_MSG, false);
+        else displayWelcome = false;
+
         setContentView(R.layout.activity_main);
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -69,10 +81,13 @@ public class MainActivity extends BaseActivity {
         mViewPager.setAdapter(mViewPagerAdapter);
 
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         //setSlidingTabLayoutContentDescriptions();
         Resources res = getResources();
-        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.tab_selected_strip));
+        if(darkTheme) mSlidingTabLayout.setBackgroundColor(res.getColor(R.color.theme_dark_primary));
+        if(darkTheme) mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_dark_accent));
+        else mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.tab_selected_strip));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
 
@@ -114,6 +129,9 @@ public class MainActivity extends BaseActivity {
 
         registerHideableHeaderView(findViewById(R.id.toolbar_actionbar));
         overridePendingTransition(0, 0);
+
+
+
     }
 
     @Override
@@ -121,6 +139,7 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         Intent intent = new Intent(this, LocationService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -146,6 +165,14 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         this.registerReceiver(NetworkController.get(this), NetworkController.make());
         checkPlayServices();
+
+        //start feedback
+        if(getIntent() != null && getIntent().getExtras()!=null) {
+            if (getIntent().getExtras().containsKey(Feedback.GIVE_FEEDBACK)
+                    && getIntent().getExtras().getBoolean(Feedback.GIVE_FEEDBACK)) {
+                (new Feedback(this)).show();
+            }
+        }
     }
 
     @Override
