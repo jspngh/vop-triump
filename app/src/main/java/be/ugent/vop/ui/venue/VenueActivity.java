@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -29,6 +30,8 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.nineoldandroids.view.ViewHelper;
 
+import java.util.ArrayList;
+
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.VenueInfoLoader;
@@ -40,7 +43,7 @@ import be.ugent.vop.ui.widget.SlidingTabLayout;
 /**
  * Created by vincent on 03/03/15.
  */
-public class VenueActivity extends BaseActivity implements VenueRankingFragment.VenueRankingCallback {
+public class VenueActivity extends BaseActivity {
     private static final String TAG = "VenueActivity";
 
     public static final String VENUE_ID = "venueID";
@@ -50,6 +53,10 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
     private String fsVenueId;
     private Palette mPalette;
     private View mHeader;
+    private View mToolbar;
+
+    private Drawable mToolbarBackground;
+    private Drawable mSlidingTabsBackground;
 
     // View pager and adapter (for narrow mode)
     ViewPager mViewPager = null;
@@ -60,23 +67,42 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
     private int mHeaderHeight;
     private int mMinHeaderTranslation;
 
+    private int currentHeaderTranslation = 0;
+
+    private ArrayList<VenueActivityCallback> mFragmentsCalls = new ArrayList<>();
+
     private TypedValue mTypedValue = new TypedValue();
 
-    @Override
-    public Palette getPalette() {
-        return mPalette;
+    public interface VenueActivityCallback{
+        public void setColorPalette(Palette p);
     }
 
-    @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(int dx, int dy, View extraView) {
+
+        Log.d(TAG, "dx: " + dx + ", dy: " + dy);
+        currentHeaderTranslation -= dy;
+        Log.d(TAG, "current: " + currentHeaderTranslation + ", mMinHeader: " + mMinHeaderTranslation);
+        ViewHelper.setTranslationY(mHeader, Math.max(currentHeaderTranslation, mMinHeaderTranslation));
+        float currentTranslationExtra = ViewHelper.getTranslationY(extraView);
+        ViewHelper.setTranslationY(extraView,  Math.max(currentTranslationExtra - dy, mMinHeaderTranslation + extraView.getHeight()));
+
+        //float ratio = (float) Math.max(Math.min(currentHeaderTranslation, 0), mMinHeaderTranslation) / mMinHeaderTranslation;
+        //updateActionBarTransparency(ratio);
+
         if (mViewPager.getCurrentItem() == 0) {
-            int scrollY = getScrollY(absListView);
-            ViewHelper.setTranslationY(mHeader, Math.max(-scrollY, mMinHeaderTranslation));
+            //ViewHelper.setTranslationY(mHeader, Math.max(-scrollY, mMinHeaderTranslation));
             //float ratio = clamp(ViewHelper.getTranslationY(mHeader) / mMinHeaderTranslation, 0.0f, 1.0f);
             //interpolate(mHeaderLogo, getActionBarIconView(), sSmoothInterpolator.getInterpolation(ratio));
             //setTitleAlpha(clamp(5.0F * ratio - 4.0F, 0.0F, 1.0F));
         }
     }
+
+    private void updateActionBarTransparency(float scrollRatio) {
+        int newAlpha = (int) (scrollRatio * 255);
+        mToolbarBackground.setAlpha(newAlpha);
+        mSlidingTabsBackground.setAlpha(newAlpha);
+    }
+
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public int getActionBarHeight() {
@@ -110,16 +136,16 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_venue);
 
-        mMinHeaderHeight = getResources().getDimensionPixelSize(R.dimen.min_header_height);
-        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.header_height);
-        mMinHeaderTranslation = -mMinHeaderHeight + getActionBarHeight();
-
         context = getApplicationContext();
 
         mHeader = findViewById(R.id.header);
         venueImageView = (ImageView) findViewById(R.id.imageView);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+
+        mMinHeaderHeight = getResources().getDimensionPixelSize(R.dimen.min_header_height);
+        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.header_height);
+        mMinHeaderTranslation = -mMinHeaderHeight + 2 * getActionBarHeight();
 
         if(getIntent().getExtras().containsKey(VenueActivity.VENUE_ID))
             fsVenueId = getIntent().getExtras().getString(VenueActivity.VENUE_ID);
@@ -134,6 +160,15 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
 
+        mToolbarBackground = getResources().getDrawable(R.color.theme_primary);
+        mToolbarBackground.setAlpha(0);
+        mSlidingTabsBackground = getResources().getDrawable(R.color.theme_primary);
+        mSlidingTabsBackground.setAlpha(0);
+
+        mToolbar = findViewById(R.id.toolbar_actionbar);
+        mToolbar.setBackground(mToolbarBackground);
+        mHeader.setBackground(mSlidingTabsBackground);
+
         /**
          *
          * Initialize loaders
@@ -147,7 +182,7 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.venue_menu, menu);
 
-       return true;
+        return true;
     }
 
     @Override
@@ -163,6 +198,13 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected void setColorPalette(Palette p){
+        mPalette = p;
+        for(VenueActivityCallback v : mFragmentsCalls)
+            v.setColorPalette(p);
+
     }
 
     @Override
@@ -182,12 +224,14 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
                     Bundle bundle = new Bundle();
                     bundle.putString(VenueActivity.VENUE_ID, fsVenueId);
                     fragment.setArguments(bundle);
+                    mFragmentsCalls.add(fragment);
                     return fragment;
                 case 1:
                     VenueEventFragment fragment2 = new VenueEventFragment();
                     Bundle bundle2 = new Bundle();
                     bundle2.putString(VenueActivity.VENUE_ID, fsVenueId);
                     fragment2.setArguments(bundle2);
+                    mFragmentsCalls.add(fragment2);
                     return fragment2;
             }
             OverviewFragment frag = new OverviewFragment();
@@ -235,7 +279,7 @@ public class VenueActivity extends BaseActivity implements VenueRankingFragment.
                             @Override
                             public void onCompleted(Exception e, Bitmap result) {
                                 Palette p = Palette.generate(result);
-                                mPalette = p;
+                                setColorPalette(p);
 
                                 venueImageView.setImageBitmap(result);
 

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ import be.ugent.vop.backend.loaders.VenueEventsLoader;
 import be.ugent.vop.backend.myApi.model.EventBean;
 import be.ugent.vop.ui.event.EventAdapter;
 
-public class VenueEventFragment extends Fragment {
+public class VenueEventFragment extends Fragment implements VenueActivity.VenueActivityCallback {
     private static final String TAG = "VenueEventFragment";
     private String fsVenueId;
     private Activity context;
@@ -82,4 +83,9 @@ public class VenueEventFragment extends Fragment {
             //rankingListView.setAdapter(null);
         }
     };
+
+    @Override
+    public void setColorPalette(Palette p) {
+
+    }
 }
