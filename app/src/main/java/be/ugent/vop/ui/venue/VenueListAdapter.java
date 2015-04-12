@@ -10,10 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.foursquare.Photo;
 
 /**
  * Created by siebe on 02/03/15.
@@ -99,16 +102,15 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         viewHolder.venueName.setText(venue.getName());
         viewHolder.venueInfo.setText(venue.getAddress());
 
-        // No photos yet...
-        /*
+
         if(venue.getPhotos().size() > 0){
             Photo p = venue.getPhotos().get(0);
-            String url = p.getPrefix() + "original" + p.getSuffix();
+            String url = p.getPrefix() + "200x200" + p.getSuffix();
             Ion.with(viewHolder.venueImage)
                     .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_drawer_logout)
                     .load(url);
-        }*/
+        }
 
 
     }
