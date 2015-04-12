@@ -54,7 +54,7 @@ public class VenueActivity extends BaseActivity {
     private String fsVenueId;
     private Palette mPalette;
     private View mHeader;
-    private View mToolbar;
+    private View mColorOverlay;
 
     private Drawable mToolbarBackground;
     private Drawable mSlidingTabsBackground;
@@ -81,14 +81,14 @@ public class VenueActivity extends BaseActivity {
     public void onScroll(int dx, int dy, View extraView) {
 
         Log.d(TAG, "dx: " + dx + ", dy: " + dy);
+        Log.d(TAG, "Extra view height: " + extraView.getHeight());
         currentHeaderTranslation -= dy;
         Log.d(TAG, "current: " + currentHeaderTranslation + ", mMinHeader: " + mMinHeaderTranslation);
         ViewHelper.setTranslationY(mHeader, Math.max(currentHeaderTranslation, mMinHeaderTranslation));
-        float currentTranslationExtra = ViewHelper.getTranslationY(extraView);
-        ViewHelper.setTranslationY(extraView,  Math.max(currentTranslationExtra - dy, mMinHeaderTranslation + extraView.getHeight()));
+        ViewHelper.setTranslationY(extraView,  Math.max(currentHeaderTranslation + mHeaderHeight, mMinHeaderTranslation + mHeaderHeight));
 
-        //float ratio = (float) Math.max(Math.min(currentHeaderTranslation, 0), mMinHeaderTranslation) / mMinHeaderTranslation;
-        //updateActionBarTransparency(ratio);
+        float ratio = (float) Math.max(Math.min(currentHeaderTranslation, 0), mMinHeaderTranslation) / mMinHeaderTranslation;
+        updateActionBarTransparency(ratio);
 
         if (mViewPager.getCurrentItem() == 0) {
             //ViewHelper.setTranslationY(mHeader, Math.max(-scrollY, mMinHeaderTranslation));
@@ -101,7 +101,7 @@ public class VenueActivity extends BaseActivity {
     private void updateActionBarTransparency(float scrollRatio) {
         int newAlpha = (int) (scrollRatio * 255);
         mToolbarBackground.setAlpha(newAlpha);
-        mSlidingTabsBackground.setAlpha(newAlpha);
+        //mSlidingTabsBackground.setAlpha(newAlpha);
     }
 
 
@@ -147,7 +147,7 @@ public class VenueActivity extends BaseActivity {
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
 
         mMinHeaderHeight = getResources().getDimensionPixelSize(R.dimen.min_header_height);
-        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.header_height);
+        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.image_header_height);
         mMinHeaderTranslation = -mMinHeaderHeight + 2 * getActionBarHeight();
 
         if(getIntent().getExtras().containsKey(VenueActivity.VENUE_ID))
@@ -168,9 +168,8 @@ public class VenueActivity extends BaseActivity {
         mSlidingTabsBackground = getResources().getDrawable(R.color.theme_primary);
         mSlidingTabsBackground.setAlpha(0);
 
-        mToolbar = findViewById(R.id.toolbar_actionbar);
-        mToolbar.setBackground(mToolbarBackground);
-        mHeader.setBackground(mSlidingTabsBackground);
+        mColorOverlay = findViewById(R.id.header_color_overlay);
+        mColorOverlay.setBackground(mToolbarBackground);
 
         /**
          *

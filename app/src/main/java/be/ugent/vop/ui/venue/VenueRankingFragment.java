@@ -96,8 +96,8 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
                 super.onScrolled(recyclerView, dx, dy);
 
                 // TODO: this still needs some fixing
-                //if(mActivity != null)
-                    //mActivity.onScroll(dx, dy, mSpinners);
+                if(mActivity != null)
+                    mActivity.onScroll(dx, dy, mSpinners);
             }
         });
 
