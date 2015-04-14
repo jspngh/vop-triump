@@ -46,7 +46,8 @@ public class EventFragment extends Fragment{
         noEventTextView = (TextView) rootView.findViewById(R.id.noEventTextView);
         context = getActivity();
         activity = getActivity();
-
+        eventListView.setEmptyView(noEventTextView);
+        getLoaderManager().initLoader(1, null, mEventLoaderListener);
         return rootView;
     }
 

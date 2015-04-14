@@ -119,5 +119,7 @@
     <string name="new_event_select_groups_dialog_title">Choose groups</string>
      <string name="button_text_send">Send</string>
     <string name="notification_title">Triump Notification</string>
+    <string name="no_reward">No rewards available</string>
+    <string name="dialog_message_item_pinned">Message pinned</string>
 
 </resources>

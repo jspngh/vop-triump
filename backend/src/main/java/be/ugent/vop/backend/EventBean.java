@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class EventBean {
     private VenueBean venue;
+    private long eventId;
     private UserBean user;
     private Date start;
     private Date end;
@@ -19,6 +20,14 @@ public class EventBean {
     private boolean verified;
     private long requirement;
     private String venueId;
+
+    public long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
+    }
 
     public String getVenueId(){
         return this.venueId;

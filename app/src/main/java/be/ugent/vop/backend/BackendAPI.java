@@ -173,6 +173,11 @@ public class BackendAPI {
         myApiService.acceptUserInGroup(groupId, token, userId).execute();
     }
 
+    public void claimReward( long eventId,long groupId) throws IOException {
+        myApiService.claimReward(token,eventId,groupId).execute();
+    }
+
+
     public void registerGcmId(String gcmId) throws IOException{
         myApiService.registerGcmId(token, gcmId).execute();
     }

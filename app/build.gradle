@@ -36,6 +36,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
     compile 'com.koushikdutta.ion:ion:2.+'
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.6.2'
     compile 'com.melnykov:floatingactionbutton:1.2.0'
     compile 'com.android.support:palette-v7:21.0.3'
     compile 'com.github.amlcurran.showcaseview:library:5.0.0'

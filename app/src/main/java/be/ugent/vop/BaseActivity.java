@@ -26,13 +26,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,24 +57,18 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.koushikdutta.ion.Ion;
-
-import java.util.ArrayList;
-
 
 import be.ugent.vop.feedback.FeedbackActivity;
-import be.ugent.vop.ui.reward.RewardsActicity;
+import be.ugent.vop.ui.reward.RewardsActivity;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.leaderboard.LeaderboardsActivity;
-import be.ugent.vop.ui.login.FirstLaunchActivity;
 import be.ugent.vop.ui.login.LoginActivity;
 import be.ugent.vop.ui.login.LoginFragment;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.ui.profile.ProfileActivity;
 import be.ugent.vop.ui.profile.ProfileFragment;
 
-import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.ui.settings.SettingsActivity;
 
 import be.ugent.vop.utils.LUtils;
@@ -132,7 +119,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     protected static final int LOCATION_UPDATING_FAST = 1;
     protected static final int LOCATION_UPDATING_SLOW = 2;
 
-    public static final int MIN_LOCATION_ACCURACY = 20;
+    public static final int MIN_LOCATION_ACCURACY = 200;
     protected static final int HOUR_MILLIS = 3600000;
 
 
@@ -522,7 +509,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
                 finish();
                 break;
             case NAVDRAWER_ITEM_REWARD:
-                intent = new Intent(this, RewardsActicity.class);
+                intent = new Intent(this, RewardsActivity.class);
                 startActivity(intent);
                 finish();
                 break;

@@ -1265,6 +1265,7 @@ public class MyEndpoint {
         eventbean.setVenue(_getVenueBean((String) event.getProperty(EVENT_VENUE_ID)));
         eventbean.setVenueId((String)event.getProperty(EVENT_VENUE_ID));
         eventbean.setRequirement((long) 1);
+        eventbean.setEventId((long) event.getKey().getId());
         Query.Filter filter =
                 new Query.FilterPredicate(GROUPEVENT_EVENT_ID,
                         Query.FilterOperator.EQUAL,
