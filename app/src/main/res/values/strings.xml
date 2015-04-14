@@ -120,6 +120,6 @@
      <string name="button_text_send">Send</string>
     <string name="notification_title">Triump Notification</string>
     <string name="no_reward">No rewards available</string>
-    <string name="dialog_message_item_pinned">Message pinned</string>
+    <string name="dialog_message_item_pinned">Show this message to the owner and claim your reward!</string>
 
 </resources>

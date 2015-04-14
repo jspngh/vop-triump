@@ -1,25 +1,18 @@
 package be.ugent.vop.ui.event;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.view.Gravity;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-
+import android.support.v4.app.Fragment;
 
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 import be.ugent.vop.utils.PrefUtils;
-import be.ugent.vop.feedback.Feedback;
-import be.ugent.vop.feedback.FeedbackDialog;
 
 /**
  * Created by siebe on 25/02/15.
  */
 public class EventActivity extends BaseActivity {
-
+    private static final String FRAGMENT_LIST_VIEW = "list view";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +22,11 @@ public class EventActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        EventFragment fragment = new EventFragment();
-        Bundle venueBundle = getIntent().getExtras();
-
-        fragment.setArguments(venueBundle);
-
-        this.getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, new EventListViewFragment(), FRAGMENT_LIST_VIEW)
+                    .commit();
+        }
     }
 
     @Override
@@ -48,6 +37,11 @@ public class EventActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    public AbstractDataProvider getDataProvider() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_LIST_VIEW);
+        return ((EventListViewFragment) fragment).getDataProvider();
     }
 
 

@@ -31,7 +31,7 @@
 
         <View
             android:id="@+id/drag_handle"
-            android:layout_width="50dp"
+            android:layout_width="32dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
@@ -39,7 +39,6 @@
 
         <TextView
             android:id="@android:id/text1"
-            android:textSize="24dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/drag_handle"

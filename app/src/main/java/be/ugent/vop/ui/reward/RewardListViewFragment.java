@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.EventLoader;
@@ -58,6 +59,7 @@ public class RewardListViewFragment extends Fragment {
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
+    private TextView mEmpty;
     private Activity activity;
     public RewardListViewFragment() {
         super();
@@ -69,6 +71,7 @@ public class RewardListViewFragment extends Fragment {
         activity=this.getActivity();
         mProvider = new RewardDataProvider(); // true: example test data
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
+        mEmpty = (TextView)rootView.findViewById(R.id.empty);
         return rootView;
     }
 
@@ -83,10 +86,8 @@ public class RewardListViewFragment extends Fragment {
         mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
         mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
         mRecyclerViewTouchActionGuardManager.setEnabled(true);
-
         // swipe manager
         mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
         //adapter
         final MySwipeableItemAdapter myItemAdapter = new MySwipeableItemAdapter(getDataProvider());
         myItemAdapter.setEventListener(new MySwipeableItemAdapter.EventListener() {
@@ -139,6 +140,8 @@ public class RewardListViewFragment extends Fragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
+        mEmpty.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -351,7 +354,9 @@ public class RewardListViewFragment extends Fragment {
             public void onLoadFinished(Loader<EventRewardBean> loader, EventRewardBean data) {
                 Log.d("RewardFragment", "onLoadFinished");
                 if (data != null) {
+
                     mRewards = data.getRewards();
+
                     if(mRewards!=null){
                     Log.d("RewardFragment", "size " + mRewards.size() );
                         mData = new LinkedList<>();
@@ -363,10 +368,18 @@ public class RewardListViewFragment extends Fragment {
                         mData.add(new ConcreteData(id, viewType, bean, swipeReaction));
                         Log.d("RewardFragment", "added data ");
 
-                    }}
+                    }
+                        mEmpty.setVisibility(View.INVISIBLE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        mAdapter.notifyDataSetChanged();
+                    }else{
+                        mEmpty.setVisibility(View.VISIBLE);
+                        mRecyclerView.setVisibility(View.INVISIBLE);
+                    }
 
-                    mAdapter.notifyDataSetChanged();
-
+                }else {
+                    mEmpty.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.INVISIBLE);
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
 

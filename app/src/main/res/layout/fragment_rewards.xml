@@ -1,6 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/no_reward"
+        android:layout_centerInParent="true"
+        android:textSize="32dp"
+        android:textColor="@color/material_blue_grey_900" />
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_group_swipe_refresh"
         android:layout_width="match_parent"
