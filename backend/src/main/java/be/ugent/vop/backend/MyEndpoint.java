@@ -572,22 +572,24 @@ public class MyEndpoint {
             int points = 0;
             GroupBean group = _getGroupBean(groupId);
             //TODO: check for groupsize
-            if(group.getType().equals(groupType)||groupType.equals(GroupBean.GROUP_TYPE_ALL)) {
-                rank.setGroupBean(group);
-                Query.Filter propertyFilter =
-                        new Query.FilterPredicate(CHECKIN_GROUP_ID,
-                                Query.FilterOperator.EQUAL,
-                                groupId);
-                q_checkins = new Query(CHECKIN_ENTITY).setFilter(propertyFilter);
-                pq_checkins = datastore.prepare(q_checkins);
+            if(isCorrectGroupSize(group.getNumMembers(), minGroupSize, maxGroupSize)) {
+                if (group.getType().equals(groupType) || groupType.equals(GroupBean.GROUP_TYPE_ALL)) {
+                    rank.setGroupBean(group);
+                    Query.Filter propertyFilter =
+                            new Query.FilterPredicate(CHECKIN_GROUP_ID,
+                                    Query.FilterOperator.EQUAL,
+                                    groupId);
+                    q_checkins = new Query(CHECKIN_ENTITY).setFilter(propertyFilter);
+                    pq_checkins = datastore.prepare(q_checkins);
 
-                for (Entity s : pq_checkins.asIterable()) {
-                    checkin = _getCheckinBean(s);
-                    points += checkin.getPoints();
+                    for (Entity s : pq_checkins.asIterable()) {
+                        checkin = _getCheckinBean(s);
+                        points += checkin.getPoints();
 
+                    }
+                    rank.setPoints(points);
+                    leaderboard.add(rank);
                 }
-                rank.setPoints(points);
-                leaderboard.add(rank);
             }
         }
         sortRankingList(leaderboard);

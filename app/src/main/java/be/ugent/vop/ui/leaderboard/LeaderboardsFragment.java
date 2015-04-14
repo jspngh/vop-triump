@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,9 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,13 +44,13 @@ public class LeaderboardsFragment extends Fragment{
     private RankingAdapter adapter;
     private ArrayList<RankingBean> ranking;
     private LinearLayoutManager mLayoutManager;
-
+    private Spinner groupTypeSpinner;
+    private Spinner groupSizeSpinner;
+    private View mSpinners;
+    private String currentGroupType = "All";
+    private String currentGroupSize = "All";
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
     public LeaderboardsFragment(){}
-    RangeSeekBar<Integer> seekBar;
-    int minMembers = -1;
-    int maxMembers = -1;
-    private static final int MIN_PARTICIPANTS = 1;
-    private static final int MAX_PARTICIPANTS = 1000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,6 +58,7 @@ public class LeaderboardsFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_leaderboard, container, false);
         rankingView = (RecyclerView) rootView.findViewById(R.id.ranking_list);
         noRankingTextView = (TextView) rootView.findViewById(R.id.noRankingTextView);
+        mSpinners = rootView.findViewById(R.id.spinners);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         rankingView.setLayoutManager(mLayoutManager);
@@ -62,6 +67,71 @@ public class LeaderboardsFragment extends Fragment{
         context = getActivity();
         activity = getActivity();
 
+
+
+        groupTypeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupType);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(context,
+                R.array.groupType_spinner_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        groupTypeSpinner.setAdapter(adapterType);
+
+        /**
+         * groupSize
+         */
+        groupSizeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupSize);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterSize = ArrayAdapter.createFromResource(context,
+                R.array.groupSize_spinner_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        groupSizeSpinner.setAdapter(adapterSize);
+        groupSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selected = (String) parentView.getSelectedItem();
+                Log.d("VenueFragment", "selected group size: "+selected);
+                if(!currentGroupSize.equals(selected)) {
+                    currentGroupSize = selected;
+                    getLoaderManager().restartLoader(0, null, mLeaderboardLoaderListener);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        groupTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selected = (String) parentView.getSelectedItem();
+                Log.d("VenueFragment", "selected group size: "+selected);
+                if(!currentGroupType.equals(selected)){
+                    currentGroupType = selected;
+                    getLoaderManager().restartLoader(0,null, mLeaderboardLoaderListener);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_venue_swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLoaderManager().restartLoader(1,null,mLeaderboardLoaderListener);
+            }
+        });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
         getLoaderManager().initLoader(1, null, mLeaderboardLoaderListener);
 
         return rootView;
@@ -81,7 +151,32 @@ public class LeaderboardsFragment extends Fragment{
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("LeaderboardsFragment", "onCreateLoader");
-            LeaderboardLoader loader = new LeaderboardLoader(context, MIN_PARTICIPANTS, MAX_PARTICIPANTS, "All");
+            String groupType = groupTypeSpinner.getSelectedItem().toString();
+
+            if(groupTypeSpinner.getSelectedItemPosition() == 0)
+                groupType = "All";
+
+            int groupSize = groupSizeSpinner.getSelectedItemPosition();
+
+            int minSize = 1, maxSize = 1;
+
+            switch(groupSize){
+                case 0: // All
+                    maxSize = Integer.MAX_VALUE;
+                    break;
+                case 1: // Small
+                    maxSize = 10;
+                    break;
+                case 2: // Medium
+                    minSize = 11;
+                    maxSize = 50;
+                    break;
+                case 3: // Large
+                    minSize = 51;
+                    maxSize = Integer.MAX_VALUE;
+                    break;
+            }
+            LeaderboardLoader loader = new LeaderboardLoader(context, minSize, maxSize, groupType);
             return loader;
         }
 
@@ -104,8 +199,11 @@ public class LeaderboardsFragment extends Fragment{
                     adapter = new RankingAdapter(getActivity(), ranking, Color.BLACK, Color.WHITE, (int)wt_px, (int)ht_px, false);
                     rankingView.setAdapter(adapter);
                 } else {
+                    noRankingTextView.setVisibility(View.VISIBLE);
+                    rankingView.setVisibility(View.GONE);
                     noRankingTextView.setText(R.string.no_ranking);
                 }
+            mSwipeRefreshLayout.setRefreshing(false);
 
         }
 
