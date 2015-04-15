@@ -16,4 +16,14 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <servlet>
+        <servlet-name>CronServlet</servlet-name>
+        <servlet-class>be.ugent.vop.backend.CronServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CronServlet</servlet-name>
+        <url-pattern>/cron/cronjob</url-pattern>
+    </servlet-mapping>
 </web-app>

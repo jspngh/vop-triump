@@ -126,7 +126,7 @@ public class MyEndpoint {
        Cron jobs
      */
 
-    @ApiMethod(name = "generateRewards")
+    @ApiMethod(name = "generateRewards", httpMethod = ApiMethod.HttpMethod.GET)
     public void generateRewards() {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query.Filter dateFilter =
