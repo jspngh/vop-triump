@@ -1,0 +1,45 @@
+{% extends 'base/base.html' %}
+{% block css %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}" />
+{% endblock %}
+
+{% block title %}My Profile{% endblock %}
+{% block sidebar %}
+<span class="pure-menu-heading">General</span>
+<ul class="pure-menu-list">
+    <li class="pure-menu-item"><a href="{% url 'base:index' %}" class="pure-menu-link">Home</a></li>
+    <li class="pure-menu-item"><a href="{% url 'base:about' %}" class="pure-menu-link">About</a></li>
+    <li class="pure-menu-item"><a href="{% url 'base:contact' %}" class="pure-menu-link">Contact Us</a></li>
+</ul>
+<span class="pure-menu-heading">Groups</span>
+<ul class="pure-menu-list">
+    <li class="pure-menu-item"><a href="{% url 'groups:index' %}" class="pure-menu-link">My groups</a></li>
+    <li class="pure-menu-item"><a href="{% url 'groups:all' %}" class="pure-menu-link">Search groups</a></li>
+</ul>
+<span class="pure-menu-heading">Events</span>
+<ul class="pure-menu-list">
+    <li class="pure-menu-item"><a href="{% url 'events:index' %}" class="pure-menu-link">My events</a></li>
+    <li class="pure-menu-item"><a href="{% url 'events:all' %}" class="pure-menu-link">Search events</a></li>
+</ul>
+{% endblock %}
+{% block content %}
+<div class="mainContent">
+    Hi {{username}}!
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+    var token = '{{ sessionToken }}'
+    function handleClientLoad() {
+
+    gapi.client.load('myApi', 'v1', callBack, 'https://mystic-impulse-87918.appspot.com/_ah/api/');
+    }
+
+    var callBack = function(){
+    }
+
+</script>
+<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+{% endblock %}

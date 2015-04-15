@@ -1,0 +1,16 @@
+<h1>Sample Form</h1>
+
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+
+<form action="{% url 'base:vote' %}" method="post">
+{% csrf_token %}
+    <input type="radio" name="choice" id="1" value="blue" />
+    <label for="choice1">Blue</label><br/>
+    <input type="radio" name="choice" id="2" value="red" />
+    <label for="choice2">Red</label><br/>
+    <input type="radio" name="choice" id="3" value="green" />
+    <label for="choice3">Green</label><br/>
+<input type="submit" value="Vote" />
+</form>

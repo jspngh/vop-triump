@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% block css %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}" />
+{% endblock %}
+{% block title %}My accounts{% endblock %}
+{% block content %}
+<div class="mainContent">
+    You have been logged out.
+    <a href="{% url 'accounts:index' %}">Index</a>
+</div>
+{% endblock %}

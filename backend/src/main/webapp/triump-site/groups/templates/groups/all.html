@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+{% block css %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}" />
+{% endblock %}
+
+{% block title %}My Profile{% endblock %}
+{% block sidebar %}
+<span class="pure-menu-heading">General</span>
+<ul class="pure-menu-list">
+    <li class="pure-menu-item"><a href="{% url 'base:index' %}" class="pure-menu-link">Home</a></li>
+    <li class="pure-menu-item"><a href="{% url 'base:about' %}" class="pure-menu-link">About</a></li>
+    <li class="pure-menu-item"><a href="{% url 'base:contact' %}" class="pure-menu-link">Contact Us</a></li>
+</ul>
+<span class="pure-menu-heading">Groups</span>
+<ul class="pure-menu-list">
+    <li class="pure-menu-item"><a href="{% url 'groups:index' %}" class="pure-menu-link">My groups</a></li>
+    <li class="pure-menu-item pure-menu-selected"><a href="{% url 'groups:all' %}" class="pure-menu-link">Search groups</a></li>
+</ul>
+<span class="pure-menu-heading">Events</span>
+<ul class="pure-menu-list">
+    <li class="pure-menu-item"><a href="{% url 'events:index' %}" class="pure-menu-link">My events</a></li>
+    <li class="pure-menu-item"><a href="{% url 'events:all' %}" class="pure-menu-link">Search events</a></li>
+</ul>
+{% endblock %}
+{% block content %}
+<table class="mainContent pure-table pure-table-horizontal" id="groups">
+    <thead id="groups-head" style="display: none;">
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+</table>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+    var token = '{{ sessionToken }}'
+    function handleClientLoad() {
+
+    gapi.client.load('myApi', 'v1', callBack, 'https://mystic-impulse-87918.appspot.com/_ah/api/');
+    }
+
+    var callBack = function(){
+        var data = {};
+        data.token = token;
+        gapi.client.myApi.getAllGroups(data).execute(function(result){
+            var groups = result.items
+            var groupTable = document.getElementById("groups")
+            var tableBody = document.createElement("TBODY")
+            groupTable.appendChild(tableBody)
+
+            for(var i = 0; i < groups.length; i++){
+                var tr = document.createElement("TR")
+                var td1 = document.createElement("TD")
+                var td2 = document.createElement("TD")
+                var td3 = document.createElement("TD")
+                td1.appendChild(document.createTextNode(groups[i].name))
+                td2.appendChild(document.createTextNode(groups[i].description))
+                td3.appendChild(document.createTextNode(groups[i].groupId))
+                tr.appendChild(td1)
+                tr.appendChild(td2)
+                tr.appendChild(td3)
+                tableBody.appendChild(tr)
+            }
+            $('#groups tr > *:nth-child(3)').hide();
+            $('#groups-head').show();
+        });
+    }
+
+</script>
+<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+{% endblock %}

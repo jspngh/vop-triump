@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    {% block css %}{% endblock %}
+    <title>{% block title %}My amazing site{% endblock %}</title>
+</head>
+
+<body>
+    <div id="sidebar" class="pure-menu custom-restricted-width">
+        {% load staticfiles %}
+        <img class="pure-img-responsive triump-logo-side" alt="Foursquare Logo" src="{% static 'home/images/triump-logo.png' %}" width="70">
+        {% block sidebar %}
+        <span class="pure-menu-heading">General</span>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="{% url 'base:index' %}" class="pure-menu-link">Home</a></li>
+            <li class="pure-menu-item"><a href="{% url 'base:about' %}" class="pure-menu-link">About</a></li>
+            <li class="pure-menu-item"><a href="{% url 'base:contact' %}" class="pure-menu-link">Contact Us</a></li>
+        </ul>
+        {% endblock %}
+    </div>
+    <div id="headerbar">
+        {% block headerbar %}
+        {% if user.is_authenticated %}
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="{% url 'accounts:profile' %}" class="pure-menu-link">Profile</a></li>
+        </ul>
+        {% else %}
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="{% url 'accounts:register' %}" class="pure-menu-link">Sign Up</a></li>
+            <li class="pure-menu-item"><a href="{% url 'accounts:login' %}" class="pure-menu-link">Sign In</a></li>
+        </ul>
+        {% endif %}
+        {% endblock %}
+    </div>
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+    {% block scripts%}{% endblock %}
+</body>
+</html>

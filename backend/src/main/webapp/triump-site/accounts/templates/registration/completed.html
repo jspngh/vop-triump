@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% block css %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}" />
+{% endblock %}
+
+{% block title %}Completed{% endblock %}
+
+{% block content %}
+<div class="mainContent">
+<h1>Registration completed</h1>
+    Your registration was succesful.
+    Now please <a href="{% url 'accounts:login' %}">log in</a>
+</div>
+{% endblock %}

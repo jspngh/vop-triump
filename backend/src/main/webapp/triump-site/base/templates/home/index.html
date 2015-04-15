@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+{% block css %}
+{% load staticfiles %}
+<link rel="shortcut icon" href="{% static 'home/images/triump-logo.png' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'home/marketing.css' %}" />
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+{% endblock %}
+
+{% block title %}Triump{% endblock %}
+{% block sidebar %}
+{% endblock %}
+{% block content %}
+<div class="header">
+    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+        {% load staticfiles %}
+        <img class="pure-img-responsive triump-logo" alt="Foursquare Logo" src="{% static 'home/images/triump-logo.png' %}" width="50">
+
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-selected"><a href="#" class="pure-menu-link">Home</a></li>
+            <li class="pure-menu-item"><a href="{% url 'base:about' %}" class="pure-menu-link">About</a></li>
+            <li class="pure-menu-item"><a href="{% url 'base:contact' %}" class="pure-menu-link">Contact Us</a></li>
+            <li class="pure-menu-item"><a href="{% url 'accounts:register' %}" class="pure-menu-link">Sign Up</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="splash-container">
+    <div class="splash">
+        <h1 class="splash-head">Welcome to Triump</h1>
+        <p class="splash-subhead">
+            The social game of the future
+        </p>
+        <p>
+            <a href="{% url 'base:about' %}" class="pure-button pure-button-primary">Learn more</a>
+        </p>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="content">
+        <h2 class="content-head is-center">VOPVOPVOPVOP</h2>
+        <div class="pure-g">
+            <div class="l-box-lrg pure-u-1 pure-u-md-3-5">
+                <h4>Contact Us</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+
+                <h4>More Information</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="footer l-box is-center">
+        <span>Powered by Foursquare</span>
+        {% load staticfiles %}
+        <img class="powered-by pure-img-responsive" alt="Foursquare Logo" src="{% static 'home/images/foursquare-logomark.png' %}" width="30">
+    </div>
+</div>
+{% endblock %}
