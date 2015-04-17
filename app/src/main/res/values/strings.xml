@@ -98,10 +98,11 @@
     <string name="title_activity_first_launch">FirstLaunchActivity</string>
 
     <!-- feedback -->
+    <string name="thanking_for_feedback">Thanks for giving us your feedback</string>
     <string name="feedback_dialog_radio_button_bug">Bug</string>
     <string name="feedback_dialog_radio_button_idea">Idea</string>
     <string name="feedback_dialog_radio_button_other">Other</string>
-    <string name="feedback_dialog_no_comment_toast">You did not enter a comment</string>
+    <string name="feedback_dialog_no_comment_toast">Please enter a comment or hit cancel</string>
     <string name="title_activity_feedback">Feedback Activity</string>
     <string name="feedback_dialog_title">Feedback</string>
     <string name="feedback_dialog_message">Love it? Hate it? Would you like to suggest a new feature or report a bug? We would love to hear from you:</string>
@@ -121,5 +122,6 @@
     <string name="notification_title">Triump Notification</string>
     <string name="no_reward">No rewards available</string>
     <string name="dialog_message_item_pinned">Show this message to the owner and claim your reward!</string>
+
 
 </resources>

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
+import be.ugent.vop.ui.main.MainActivity;
 
 /**
  * Created by vincent on 11/04/15.
@@ -21,6 +22,8 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
     public static final String GIVE_FEEDBACK = "Feedback";
 
     private FeedbackItem feedback;
+
+    private boolean mailSend = false;
 
     private static final String[] recipients = new String[]{
             "dutordoirv@gmail.com"
@@ -34,6 +37,9 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
         this.activity = activity;
     }
 
+    public boolean isFeedbackGiven(){
+        return mailSend;
+    }
 
     public void show(){
         FeedbackDialog newFragment = new FeedbackDialog();
@@ -63,6 +69,7 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
                 activity.startActivity(
                         Intent.createChooser(intent,
                                 activity.getString(R.string.feedback_dialog_send_mail)));
+                mailSend = true;
             } catch (android.content.ActivityNotFoundException ex) {
                 Toast.makeText(activity,
                         activity.getString(R.string.feedback_dialog_no_mail_clients),
@@ -70,10 +77,14 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
             }
         }
 
+
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {/* do nothing */ }
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        Intent intent= new Intent(activity, MainActivity.class);
+        activity.startActivity(intent);
+    }
 
 
 }
