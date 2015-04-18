@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
     android:orientation="horizontal"
-    style="@style/CardViewDark"
-    card_view:cardCornerRadius="2dp">
+    card_view:cardCornerRadius="2dp"
+    style="@style/CardViewDark" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@drawable/divider"
         android:orientation="vertical"
+        android:layout_margin="8dp"
         android:showDividers="none">
 
         <TextView
@@ -27,21 +29,20 @@
             android:layout_width="fill_parent"
             android:layout_height="?android:attr/listPreferredItemHeight">
 
-            <ImageView
+            <be.ugent.vop.ui.widget.CircularImageView
                 android:id="@+id/icon1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="16dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="6dip"
-                android:layout_marginEnd="6dip"
-                android:contentDescription="TODO"
-                android:src="@drawable/profile_default" />
+                android:src="@drawable/profile_default"
+                app:border="false"/>
 
             <TextView
                 android:id="@+id/venue_1_info"
                 android:layout_width="fill_parent"
-                android:layout_height="26dip"
+                android:layout_height="26dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
@@ -49,6 +50,7 @@
                 android:layout_toEndOf="@id/icon1"
                 android:ellipsize="marquee"
                 android:singleLine="true"
+                android:layout_marginBottom="8dp"
                 android:text="@string/venue_info"
                 android:textSize="12sp" />
 
@@ -63,6 +65,7 @@
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_toRightOf="@id/icon1"
                 android:layout_toEndOf="@id/icon1"
+                android:layout_marginTop="8dp"
                 android:text="@string/venue_name"
                 android:textSize="16sp" />
         </RelativeLayout>
@@ -71,16 +74,15 @@
             android:layout_width="fill_parent"
             android:layout_height="?android:attr/listPreferredItemHeight">
 
-            <ImageView
+            <be.ugent.vop.ui.widget.CircularImageView
                 android:id="@+id/icon2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="16dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="6dip"
-                android:layout_marginEnd="6dip"
-                android:contentDescription="TODO"
-                android:src="@drawable/profile_default" />
+                android:src="@drawable/profile_default"
+                app:border="false"/>
 
             <TextView
                 android:id="@+id/venue_2_info"
@@ -93,6 +95,7 @@
                 android:layout_toEndOf="@id/icon2"
                 android:ellipsize="marquee"
                 android:singleLine="true"
+                android:layout_marginBottom="8dp"
                 android:text="@string/venue_info"
                 android:textSize="12sp" />
 
@@ -107,6 +110,7 @@
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_toRightOf="@id/icon2"
                 android:layout_toEndOf="@id/icon2"
+                android:layout_marginTop="8dp"
                 android:text="@string/venue_name"
                 android:textSize="16sp" />
         </RelativeLayout>
@@ -115,16 +119,15 @@
             android:layout_width="fill_parent"
             android:layout_height="?android:attr/listPreferredItemHeight">
 
-            <ImageView
+            <be.ugent.vop.ui.widget.CircularImageView
                 android:id="@+id/icon3"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="16dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="6dip"
-                android:layout_marginEnd="6dip"
-                android:contentDescription="TODO"
-                android:src="@drawable/profile_default" />
+                android:src="@drawable/profile_default"
+                app:border="false"/>
 
             <TextView
                 android:id="@+id/venue_3_info"
@@ -137,6 +140,7 @@
                 android:layout_toEndOf="@id/icon3"
                 android:ellipsize="marquee"
                 android:singleLine="true"
+                android:layout_marginBottom="8dp"
                 android:text="@string/venue_info"
                 android:textSize="12sp" />
 
@@ -151,6 +155,7 @@
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_toRightOf="@id/icon3"
                 android:layout_toEndOf="@id/icon3"
+                android:layout_marginTop="8dp"
                 android:text="@string/venue_name"
                 android:textSize="16sp" />
         </RelativeLayout>

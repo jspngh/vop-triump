@@ -49,9 +49,6 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_overview);
 
-        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
-        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
-        // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 

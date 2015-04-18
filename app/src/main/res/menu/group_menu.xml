@@ -5,4 +5,8 @@
         android:title="@string/pending_requests"
         app:showAsAction="never" >
     </item>
+    <item android:id="@+id/action_set_banner"
+        android:title="@string/set_banner"
+        app:showAsAction="never" >
+    </item>
 </menu>

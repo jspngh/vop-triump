@@ -207,4 +207,10 @@ public class PrefUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         sp.registerOnSharedPreferenceChangeListener(listener);
     }
+
+    public static void unregisterOnSharedPreferenceChangeListener(final Context context,
+                                                                SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.unregisterOnSharedPreferenceChangeListener(listener);
+    }
 }

@@ -522,6 +522,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
             case NAVDRAWER_ITEM_SETTINGS:
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case NAVDRAWER_ITEM_GROUPS:
                 intent = new Intent(this, GroupListActivity.class);
@@ -970,6 +971,4 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     public void setTitle(String title){
         getSupportActionBar().setTitle(title);
     }
-
-
 }

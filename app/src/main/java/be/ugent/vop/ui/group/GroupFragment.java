@@ -4,8 +4,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -127,13 +133,36 @@ public class GroupFragment extends Fragment {
             case R.id.action_pending_requests:
                 mListener.onGroupFragmentInteraction(groupId);
                 return true;
+            case R.id.action_set_banner:
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = context.getContentResolver().query(
+                    selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String filePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            //now we need to SAVE this BITMAP aswell
+            Bitmap image = BitmapFactory.decodeFile(filePath);
+            bannerImage.setImageBitmap(image);
+        }
+    }
+
     public interface OnFragmentInteractionListener {
-        public void onGroupFragmentInteraction(long groupId);
+        void onGroupFragmentInteraction(long groupId);
     }
 
     /***********

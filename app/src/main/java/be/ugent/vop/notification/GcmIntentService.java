@@ -18,7 +18,7 @@ import be.ugent.vop.R;
 import be.ugent.vop.feedback.Feedback;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.main.MainActivity;
-
+import be.ugent.vop.utils.PrefUtils;
 
 
 /**
@@ -84,7 +84,7 @@ public class GcmIntentService extends IntentService {
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                     intent, 0);
             // Post notification
-            sendNotification(message, pendingIntent);
+            if(PrefUtils.getReceiveNotifications(this)) sendNotification(message, pendingIntent);
 
             Log.i(TAG, "Send notification: " + message);
         }

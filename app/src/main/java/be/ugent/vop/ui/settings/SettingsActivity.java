@@ -2,6 +2,7 @@ package be.ugent.vop.ui.settings;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
@@ -19,22 +20,12 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
 import be.ugent.vop.R;
+import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.PrefUtils;
 
 import java.util.List;
 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p/>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +37,18 @@ public class SettingsActivity extends PreferenceActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PrefUtils.registerOnSharedPreferenceChangeListener(this, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PrefUtils.unregisterOnSharedPreferenceChangeListener(this, this);
     }
 
     @Override
@@ -54,20 +56,27 @@ public class SettingsActivity extends PreferenceActivity {
         loadHeadersFromResource(R.xml.pref_headers, target);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(PrefUtils.THEME_DARK)) {
+            recreate();
+        }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        //Say fuck you to the user, it's the easiest way
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     public static class SettingsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            //bindPreferenceSummaryToValue(findPreference("example_text"));
-            //bindPreferenceSummaryToValue(findPreference("example_list"));
         }
     }
-
 }
