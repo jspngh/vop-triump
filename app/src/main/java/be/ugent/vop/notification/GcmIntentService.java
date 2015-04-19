@@ -16,6 +16,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import be.ugent.vop.R;
 import be.ugent.vop.feedback.Feedback;
+import be.ugent.vop.feedback.FeedbackActivity;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.PrefUtils;
@@ -50,6 +51,9 @@ public class GcmIntentService extends IntentService {
             String message = "no message";
             Intent intent= new Intent(this, MainActivity.class);
 
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP
+            | Intent.FLAG_ACTIVITY_NEW_TASK);
+
             switch(messageType){
                 case GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR:
                     message = "Send error: " + extras.toString();
@@ -66,8 +70,7 @@ public class GcmIntentService extends IntentService {
                             break;
                         case NotificationConstants.TYPE_FEEDBACK:
                             message = getString(R.string.notification_feedback);
-                            intent= new Intent(this, MainActivity.class);
-                            intent.putExtra(Feedback.GIVE_FEEDBACK, true);
+                            intent= new Intent(this, FeedbackActivity.class);
                             break;
 
                         default:
@@ -82,7 +85,7 @@ public class GcmIntentService extends IntentService {
             }
 
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                    intent, 0);
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
             // Post notification
             if(PrefUtils.getReceiveNotifications(this)) sendNotification(message, pendingIntent);
 

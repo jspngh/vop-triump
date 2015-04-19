@@ -61,8 +61,12 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
     public void setColorPalette(Palette p) {
         mPalette = p;
 
-        mAdapter.setBackgroundColor(p.getVibrantSwatch().getRgb());
-        mAdapter.setTextColor(p.getVibrantSwatch().getBodyTextColor());
+      // TODO: fix nullpointerexcption
+      //  mAdapter.setBackgroundColor(p.getVibrantSwatch().getRgb());
+      //  mAdapter.setTextColor(p.getVibrantSwatch().getBodyTextColor());
+
+       mAdapter.setBackgroundColor(10);
+       mAdapter.setTextColor(100);
     }
 
 
