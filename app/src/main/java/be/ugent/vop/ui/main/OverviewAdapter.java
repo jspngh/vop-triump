@@ -29,28 +29,34 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.myApi.model.CheckinBean;
+import be.ugent.vop.backend.myApi.model.NewMemberInGroup;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.backend.myApi.model.Reward;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
 import be.ugent.vop.ui.group.GroupActivity;
 import be.ugent.vop.ui.venue.VenueActivity;
 import be.ugent.vop.utils.PrefUtils;
 
-/**
- * Provide views to RecyclerView with data from mDataSet.
- */
 public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "CustomAdapter";
-    private static final int GROUP_CARD = 0;
-    private static final int VENUE_CARD = 1;
-    private static final int EVENT_CARD = 2;
+    private static final int GROUP_CARD_MEMBER = 0;
+    private static final int GROUP_CARD_CHECKIN = 1;
+    private static final int VENUE_CARD = 2;
+    private static final int REWARD_CARD = 3;
+    private static final int EVENT_CARD = 4;
     private OverviewBean overview;
     private ArrayList<FoursquareVenue> fsVenues;
     private Context context;
     private boolean displayWelcome;
+    private int newMembersLenght;
+    private int checkInLenght;
+    private int rewardsLenght;
 
     public OverviewAdapter(OverviewBean overview, ArrayList<FoursquareVenue> fsVenues, Context context, boolean displayWelcome){
         super();
@@ -58,13 +64,21 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.fsVenues = fsVenues;
         this.context = context;
         this.displayWelcome = displayWelcome;
+        if(overview != null){
+            newMembersLenght = (overview.getNewMembers() == null ? 0 : overview.getNewMembers().size());
+            checkInLenght = (overview.getCheckIns() == null ? 0 : overview.getCheckIns().size());
+            rewardsLenght = (overview.getRewards() == null ? 0 : overview.getRewards().size());
+        } else {
+            newMembersLenght = checkInLenght = rewardsLenght = 0;
+        }
+
     }
 
-    // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     public static class VenueViewHolder extends RecyclerView.ViewHolder {
+        protected TextView title;
         protected TextView venue_1_info;
         protected TextView venue_2_info;
         protected TextView venue_3_info;
@@ -77,6 +91,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public VenueViewHolder(View v) {
             super(v);
+            title = (TextView) v.findViewById(R.id.card_title);
             venue_1_info = (TextView) v.findViewById(R.id.venue_1_info);
             venue_2_info = (TextView) v.findViewById(R.id.venue_2_info);
             venue_3_info = (TextView) v.findViewById(R.id.venue_3_info);
@@ -89,47 +104,98 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
     public static class GroupViewHolder extends RecyclerView.ViewHolder {
-        protected TextView group_info;
+        protected TextView title;
+        protected TextView update_info;
         protected TextView group_name;
         protected ImageView icon;
+        protected View view;
 
         public GroupViewHolder(View v) {
             super(v);
-            group_info = (TextView) v.findViewById(R.id.group_info);
+            view = v;
+            title = (TextView) v.findViewById(R.id.card_title);
+            update_info = (TextView) v.findViewById(R.id.update_info);
             group_name = (TextView) v.findViewById(R.id.group_name);
-            icon = (ImageView) v.findViewById(R.id.icon);
+            icon = (ImageView) v.findViewById(R.id.user_icon);
         }
     }
-    public static class EventViewHolder extends RecyclerView.ViewHolder {
+    public static class RewardViewHolder extends RecyclerView.ViewHolder {
+        protected TextView title;
         protected TextView info;
+        protected TextView venue;
+        protected View view;
+
+        public RewardViewHolder(View v) {
+            super(v);
+            view = v;
+            title = (TextView) v.findViewById(R.id.card_title);
+            info = (TextView) v.findViewById(R.id.reward_info);
+            venue = (TextView) v.findViewById(R.id.reward_venue);
+        }
+    }
+
+    public static class EventViewHolder extends RecyclerView.ViewHolder {
+        protected TextView title;
+        protected TextView info;
+
         public EventViewHolder(View v) {
             super(v);
+            title = (TextView) v.findViewById(R.id.card_title);
             info = (TextView) v.findViewById(R.id.event_info);
         }
     }
+
     public static class WelcomeViewHolder extends RecyclerView.ViewHolder {
         public WelcomeViewHolder(View v) {
             super(v);
         }
     }
-    // END_INCLUDE(recyclerViewSampleViewHolder)
 
-    // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
-    // Create new views (invoked by the layout manager)
     @Override
     public int getItemViewType(int position) {
-
         return position;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        if(displayWelcome) viewType = -1;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
+        int viewType = -1;
         View v;
+
         boolean darkTheme = false;
         if(context != null) darkTheme = PrefUtils.getDarkTheme(context);
+
+        if(position == 0) {
+            viewType = VENUE_CARD;
+        } else {
+            boolean done = false;
+            while(!done) {
+                int updateType = (int) (Math.random() * 3);
+                switch (updateType) {
+                    case 0: // new member
+                        if(overview.getNewMembers() != null && overview.getNewMembers().size() > 0){
+                            viewType = GROUP_CARD_MEMBER;
+                            done = true;
+                        }
+                        break;
+                    case 1: // check in
+                        if(overview.getCheckIns() != null && overview.getCheckIns().size() > 0){
+                            viewType = GROUP_CARD_CHECKIN;
+                            done = true;
+                        }
+                        break;
+                    case 2: // reward
+                        if(overview.getRewards() != null && overview.getRewards().size() > 0){
+                            viewType = REWARD_CARD;
+                            done = true;
+                        }
+                }
+            }
+        }
+
+        if(displayWelcome) viewType = -1;
         switch(viewType){
-            case GROUP_CARD:
+            case GROUP_CARD_MEMBER:
+
                 if(darkTheme){
                     v = LayoutInflater.from(viewGroup.getContext())
                             .inflate(R.layout.layout_card_group_dark, viewGroup, false);
@@ -138,13 +204,24 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             .inflate(R.layout.layout_card_group, viewGroup, false);
                 }
                 GroupViewHolder mGroupViewHolder = new GroupViewHolder(v);
-                if(overview != null && overview.getGroup() != null) {
-                    mGroupViewHolder.group_name.setText(overview.getGroup().getName());
-                    mGroupViewHolder.group_name.setOnClickListener(new View.OnClickListener() {
+
+                if(overview != null && overview.getNewMembers() != null) {
+                    NewMemberInGroup member = overview.getNewMembers().get(0);
+                    final long groupId = member.getGroup().getGroupId();
+
+                    mGroupViewHolder.title.setText(member.getMember().getFirstName() + " just joined one of your groups!");
+                    Ion.with(mGroupViewHolder.icon)
+                            .placeholder(R.drawable.ic_launcher)
+                            .error(R.drawable.ic_drawer_logout)
+                            .load(member.getMember().getProfilePictureUrl());
+                    mGroupViewHolder.group_name.setText("Group in common:" + member.getGroup().getName());
+                    mGroupViewHolder.update_info.setText("Joined at " + member.getDate());
+                    overview.getNewMembers().remove(0);
+                    mGroupViewHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Bundle bundle = new Bundle();
-                            bundle.putLong("groupId", overview.getGroup().getGroupId());
+                            bundle.putLong("groupId", groupId);
                             Intent intent = new Intent(context, GroupActivity.class);
                             intent.putExtras(bundle);
                             context.startActivity(intent);
@@ -154,7 +231,41 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 return mGroupViewHolder;
 
+            case GROUP_CARD_CHECKIN:
+
+                if(darkTheme){
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_group_dark, viewGroup, false);
+                } else {
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_group, viewGroup, false);
+                }
+                GroupViewHolder mGroupViewHolder2 = new GroupViewHolder(v);
+
+                if(overview != null && overview.getCheckIns() != null) {
+                    CheckinBean checkinBean = overview.getCheckIns().get(0);
+                    final long groupId = checkinBean.getGroupId();
+
+                    mGroupViewHolder2.title.setText("Recent activity:");
+                    mGroupViewHolder2.group_name.setText("GroupId: " + checkinBean.getGroupId().toString());
+                    mGroupViewHolder2.update_info.setText("VenueId: " + checkinBean.getVenueId());
+                    overview.getCheckIns().remove(0);
+                    mGroupViewHolder2.view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Bundle bundle = new Bundle();
+                            bundle.putLong("groupId", groupId);
+                            Intent intent = new Intent(context, GroupActivity.class);
+                            intent.putExtras(bundle);
+                            context.startActivity(intent);
+                        }
+                    });
+                }
+
+                return mGroupViewHolder2;
+
             case VENUE_CARD:
+
                 if(darkTheme){
                     v = LayoutInflater.from(viewGroup.getContext())
                             .inflate(R.layout.layout_card_venue_dark, viewGroup, false);
@@ -164,6 +275,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
 
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
+
                 if(fsVenues != null && fsVenues.size() > 2){
                     mVenueViewHolder.venue_1_name.setText(fsVenues.get(0).getName());
                     mVenueViewHolder.venue_1_info.setText(fsVenues.get(0).getAddress());
@@ -234,7 +346,36 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 return mVenueViewHolder;
 
+            case REWARD_CARD:
+
+                if(darkTheme){
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_reward_dark, viewGroup, false);
+                } else {
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_reward, viewGroup, false);
+                }
+                RewardViewHolder mRewardViewHolder = new RewardViewHolder(v);
+
+                if(overview != null && overview.getRewards() != null) {
+                    Reward reward = overview.getRewards().get(0);
+
+                    mRewardViewHolder.title.setText("Reward received!");
+                    mRewardViewHolder.info.setText("Received at " + reward.getDate());
+                    mRewardViewHolder.venue.setText(reward.getEvent().getReward());
+                    overview.getRewards().remove(0);
+                    /*mRewardViewHolder.view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });*/
+                }
+
+                return mRewardViewHolder;
+
             case EVENT_CARD:
+
                 if(darkTheme){
                     v = LayoutInflater.from(viewGroup.getContext())
                             .inflate(R.layout.layout_card_event_dark, viewGroup, false);
@@ -246,6 +387,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return new EventViewHolder(v);
 
             default:
+
                 if(darkTheme){
                     v = LayoutInflater.from(viewGroup.getContext())
                             .inflate(R.layout.layout_card_welcome_dark, viewGroup, false);
@@ -265,6 +407,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemCount() {
         if(displayWelcome) return 1;
-        return 3;
+        if(overview != null) return 1 + newMembersLenght + checkInLenght + rewardsLenght;
+        return 0;
     }
 }

@@ -23,7 +23,6 @@ import com.google.appengine.api.datastore.Query;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -111,14 +110,20 @@ public class MyEndpoint {
     private static final String GROUPEVENT_GROUP_ID = "groupId";
     private static final String GROUPEVENT_EVENT_ID = "eventId";
 
-
     private static final String USEREVENT_ENTITY = "userEvent";
     private static final String USEREVENT_EVENT_ID = "eventId";
     private static final String USEREVENT_USER_ID = "userId";
     private static final String USEREVENT_GROUP_ID = "groupId";
     private static final String USEREVENT_RECEIVED = "received";
 
-    private static final String OVERVIEW_ENTITY = "Overview";
+    private static final String MAILBOX_ENTITY = "mailBox";
+    private static final String MAILBOX_USER_ID = "userId";
+    private static final String MAILBOX_KEY = "key";
+    private static final String MAILBOX_TYPE = "type";
+    private static final String MAILBOX_DATE = "date";
+    private static final String MAILBOX_TYPE_REWARD = "reward";
+    private static final String MAILBOX_TYPE_NEW_MEMBER = "newMember";
+    private static final String MAILBOX_TYPE_CHECKIN = "checkIn";
 
     private SecureRandom random = new SecureRandom();
 
@@ -144,6 +149,10 @@ public class MyEndpoint {
         PreparedQuery pq_event = datastore.prepare(q_event);
         List<Entity> rewards = new ArrayList<>();
 
+        // ---------------- MAILBOX -----------------
+        List<Entity> mailboxItems = new ArrayList<>();
+        // ------------------------------------------
+
         List<String> userIds = new ArrayList<>();
         for (Entity r : pq_event.asIterable()){
             r.setProperty(EVENT_PROCESSED,1);
@@ -162,12 +171,26 @@ public class MyEndpoint {
                     reward.setProperty(USEREVENT_USER_ID, userId);
                     reward.setProperty(USEREVENT_RECEIVED, 0);
                     rewards.add(reward);
+
+                    // ---------------- MAILBOX -----------------
+                    Entity item = new Entity(MAILBOX_ENTITY);
+                    item.setProperty(MAILBOX_USER_ID, userId);
+                    String rewardKey = KeyFactory.keyToString(reward.getKey());
+                    item.setProperty(MAILBOX_KEY, rewardKey);
+                    item.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_REWARD);
+                    item.setProperty(MAILBOX_DATE, new Date());
+                    mailboxItems.add(item);
+                    // ------------------------------------------
                 }
             }
     }
 
         _notifyUsersOfEventEndingInTopRanking(userIds);
         DatastoreServiceFactory.getDatastoreService().put(rewards);
+
+        // ---------------- MAILBOX -----------------
+        DatastoreServiceFactory.getDatastoreService().put(mailboxItems);
+        // ------------------------------------------
     }
 
     @ApiMethod(name = "askForUserFeedback")
@@ -585,8 +608,8 @@ public class MyEndpoint {
                     for (Entity s : pq_checkins.asIterable()) {
                         checkin = _getCheckinBean(s);
                         points += checkin.getPoints();
-
                     }
+
                     rank.setPoints(points);
                     leaderboard.add(rank);
                 }
@@ -622,26 +645,77 @@ public class MyEndpoint {
     @ApiMethod(name = "getOverview", path = "getOverview")
     public OverviewBean getOverview(@Named("token") String token,
                                     @Nullable @Named("venueIds") ArrayList<String> venueIds) throws UnauthorizedException, EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Date yesterday = new Date(System.currentTimeMillis() - 1000L * 60L * 60L * 36L);
+
         String userId = _getUserIdForToken(token);
         GroupsBean tmp = _getGroupsForUser(userId);
         ArrayList<VenueBean> venues = new ArrayList<>();
+        ArrayList<CheckinBean> checkIns = new ArrayList<>();
+        ArrayList<Reward> rewards = new ArrayList<>();
+        ArrayList<newMemberInGroup> newMembers = new ArrayList<>();
+
         VenueBean mVenueBean = null;
-        GroupBean group = null;
-        if(tmp.getGroups().size() != 0){
-            group = _getGroupsForUser(userId).getGroups().get(0);
+        for(GroupBean group : tmp.getGroups()){
+            Query.Filter propertyFilter = new Query.FilterPredicate(CHECKIN_GROUP_ID, Query.FilterOperator.EQUAL, group.getGroupId());
+            Query checkin = new Query(CHECKIN_ENTITY).setFilter(propertyFilter);
+            PreparedQuery pq_checkin = datastore.prepare(checkin);
+
+            for (Entity s : pq_checkin.asIterable()) {
+                CheckinBean checkinBean = _getCheckinBean(s);
+                try{
+                    if(checkinBean.getDate().compareTo(yesterday) >= 0) checkIns.add(checkinBean);
+                } catch(NullPointerException e){
+                    //Do Something
+                }
+            }
         }
+
         if(venueIds != null) {
             for (String venueId : venueIds) {
                 try {
                     mVenueBean = _getVenueBean(venueId);
                     venues.add(mVenueBean);
                 } catch (EntityNotFoundException e) {
+                    //Do Something
                 }
             }
         }
+
+        Query.Filter propertyFilter = new Query.FilterPredicate(MAILBOX_USER_ID, Query.FilterOperator.EQUAL, userId);
+        Query mailBox = new Query(MAILBOX_ENTITY).setFilter(propertyFilter);
+        PreparedQuery pq_mailBox = datastore.prepare(mailBox);
+
+        for (Entity item : pq_mailBox.asIterable()) {
+            String type = (String) item.getProperty(MAILBOX_TYPE);
+            Date date = (Date) item.getProperty(MAILBOX_DATE);
+            switch(type){
+                case MAILBOX_TYPE_REWARD:
+                    String rewardString = (String) item.getProperty(MAILBOX_KEY);
+                    Key rewardKey = KeyFactory.stringToKey(rewardString);
+                    Entity reward = datastore.get(rewardKey);
+                    long eventId = (long) reward.getProperty(USEREVENT_EVENT_ID);
+                    EventBean event = _getEventBean(eventId);
+                    rewards.add(new Reward(event, date));
+
+                    break;
+                case MAILBOX_TYPE_NEW_MEMBER:
+                    String newMemberString = (String) item.getProperty(MAILBOX_KEY);
+                    Key newMemberKey = KeyFactory.stringToKey(newMemberString);
+                    Entity newMember = datastore.get(newMemberKey);
+                    String newMemberId = (String) newMember.getProperty(USERGROUP_USER_ID);
+                    long groupId = (long) newMember.getProperty(USERGROUP_GROUP_ID);
+                    UserBean userBean = _getUserBeanForId(newMemberId);
+                    GroupBean groupBean = _getGroupBean(groupId);
+                    newMembers.add(new newMemberInGroup(userBean, groupBean, date));
+                    break;
+            }
+        }
         OverviewBean result = new OverviewBean();
-        result.setGroup(group);
+        result.setCheckIns(checkIns);
         result.setVenues(venues);
+        result.setRewards(rewards);
+        result.setNewMembers(newMembers);
         return result;
     }
     @ApiMethod(name = "acceptUserInGroup", path = "acceptUserInGroup")
@@ -746,6 +820,20 @@ public class MyEndpoint {
             long newNumMembers = numMembers + 1;
             groupEntity.setProperty(GROUP_NUM_MEMBERS, newNumMembers);
             datastore.put(groupEntity);
+
+            // -------------------- MAILBOX -----------------------
+            GroupBean groupBean = _getGroupBean(groupEntity);
+            for(UserBean member : groupBean.getMembers()) {
+
+                Entity mailBoxItem = new Entity(MAILBOX_ENTITY);
+                mailBoxItem.setProperty(MAILBOX_USER_ID, member.getUserId());
+                String userGroupKey = KeyFactory.keyToString(e.getKey());
+                mailBoxItem.setProperty(MAILBOX_KEY, userGroupKey);
+                mailBoxItem.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_NEW_MEMBER);
+                mailBoxItem.setProperty(MAILBOX_DATE, new Date());
+                datastore.put(mailBoxItem);
+            }
+            // ----------------------------------------------------
         }
     }
 

@@ -129,9 +129,6 @@ public class MainActivity extends BaseActivity {
 
         registerHideableHeaderView(findViewById(R.id.toolbar_actionbar));
         overridePendingTransition(0, 0);
-
-
-
     }
 
     @Override

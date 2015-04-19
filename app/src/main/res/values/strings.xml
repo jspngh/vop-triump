@@ -37,15 +37,17 @@
     <string name="no_ranking">Currently there aren\'t any groups competing for this venue. Click check-in to be the first to conquer it!</string>
     <string name="loading_data">Crunching the latest data for you…</string>
     <string name="retrieving_data">Retrieving data</string>
-    <string name="group_title">Updates from your groups</string>
+    <string name="group_title">Update from your group</string>
     <string name="venue_title">Places nearby</string>
     <string name="event_title">Trending events</string>
+    <string name="reward_title">Reward received!</string>
     <string name="group_name">Loading group</string>
     <string name="venue_name">Loading venue</string>
     <string name="event_name">Loading event</string>
     <string name="group_info">Loading group description</string>
     <string name="venue_info">Loading venue description</string>
     <string name="event_info">Loading event description</string>
+    <string name="reward_info">Your group won!</string>
     <string name="lost_connection">The device lost his connection</string>
     <string name="connection">The device is connected</string>
     <string name="locationLongitude">locationLongitude</string>
@@ -123,6 +125,5 @@
     <string name="notification_title">Triump Notification</string>
     <string name="no_reward">No rewards available</string>
     <string name="dialog_message_item_pinned">Show this message to the owner and claim your reward!</string>
-
 
 </resources>

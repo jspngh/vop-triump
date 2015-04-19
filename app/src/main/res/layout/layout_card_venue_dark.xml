@@ -31,8 +31,8 @@
 
             <be.ugent.vop.ui.widget.CircularImageView
                 android:id="@+id/icon1"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginRight="16dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
@@ -76,8 +76,8 @@
 
             <be.ugent.vop.ui.widget.CircularImageView
                 android:id="@+id/icon2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginRight="16dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
@@ -121,8 +121,8 @@
 
             <be.ugent.vop.ui.widget.CircularImageView
                 android:id="@+id/icon3"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginRight="16dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
