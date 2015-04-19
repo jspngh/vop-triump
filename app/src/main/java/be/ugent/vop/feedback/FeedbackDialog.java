@@ -3,17 +3,20 @@ package be.ugent.vop.feedback;
 
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 
 
 import android.support.v4.app.DialogFragment;
 import android.app.AlertDialog;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +30,7 @@ import be.ugent.vop.R;
  * Created by vincent on 11/04/15.
  */
 public class FeedbackDialog extends DialogFragment {
+    private static final String TAG = "FeedbackDialog";
 
     //views
     private EditText commentET;
@@ -80,16 +84,17 @@ public class FeedbackDialog extends DialogFragment {
 
         initRadioGroup();
 
+
        final  AlertDialog dialog = builder.setTitle(R.string.feedback_dialog_title)
                 .setMessage(getString(R.string.feedback_dialog_message))
                 .setView(rootView)
-                .setPositiveButton(R.string.button_text_send , null) //Set to null. We override the onclick
+                .setPositiveButton(R.string.button_text_send, null) //Set to null. We override the onclick
                 .setNegativeButton(R.string.button_text_cancel,
                         new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogNegativeClick(FeedbackDialog.this);
-                    }
-                })
+                            public void onClick(DialogInterface dialog, int id) {
+                                mListener.onDialogNegativeClick(FeedbackDialog.this);
+                            }
+                        })
                 .create();
 
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -99,7 +104,7 @@ public class FeedbackDialog extends DialogFragment {
                         b.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                // TODO Do something
+
                                 if (commentET.getText().toString().matches("")) {
                                     Toast.makeText(getActivity(),
                                             getString(R.string.feedback_dialog_no_comment_toast),
@@ -114,6 +119,8 @@ public class FeedbackDialog extends DialogFragment {
                         });
                     }
                 });
+                setCancelable(false);
+
 
         return dialog;
     }

@@ -163,16 +163,11 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume");
+
         this.registerReceiver(NetworkController.get(this), NetworkController.make());
         checkPlayServices();
 
-        //start feedback
-        if(getIntent() != null && getIntent().getExtras()!=null) {
-            if (getIntent().getExtras().containsKey(Feedback.GIVE_FEEDBACK)
-                    && getIntent().getExtras().getBoolean(Feedback.GIVE_FEEDBACK)) {
-                (new Feedback(this)).show();
-            }
-        }
     }
 
     @Override

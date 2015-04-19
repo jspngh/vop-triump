@@ -536,9 +536,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
                 finish();
                 break;
             case NAVDRAWER_ITEM_FEEDBACK:
-                intent= new Intent(this, MainActivity.class);
-                intent.putExtra(Feedback.GIVE_FEEDBACK, true);
-                intent = new Intent(this, FeedbackActivity.class);
+               intent = new Intent(this, FeedbackActivity.class);
                 startActivity(intent);
                 finish();
                 break;

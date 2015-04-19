@@ -34,6 +34,7 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
     private ActionBarActivity activity;
 
     public Feedback(BaseActivity activity){
+
         this.activity = activity;
     }
 
@@ -66,6 +67,8 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
             intent.putExtra(Intent.EXTRA_SUBJECT, feedback.getType());
             intent.putExtra(Intent.EXTRA_TEXT   , feedback.getMessage());
             try {
+                activity.startActivity(new Intent(activity, MainActivity.class)); // to create backstack
+
                 activity.startActivity(
                         Intent.createChooser(intent,
                                 activity.getString(R.string.feedback_dialog_send_mail)));
@@ -77,13 +80,15 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
             }
         }
 
-
+       // listener.onClose(this);
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         Intent intent= new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //listener.onClose(this);
     }
 
 

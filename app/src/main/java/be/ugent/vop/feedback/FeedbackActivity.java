@@ -16,8 +16,11 @@ public class FeedbackActivity extends BaseActivity {
     private static final String TAG = "FeedbackActivity";
 
     Feedback fb;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
@@ -29,17 +32,23 @@ public class FeedbackActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!fb.isFeedbackGiven())   fb.show();
+        Log.d(TAG, "onResume FeedbackActivity");
+        fb = new Feedback(this);
+        fb.show();
+        /*
+
+
+        if(!fb.isFeedbackGiven()) fb.show();
         else {
             Intent intent= new Intent(this, MainActivity.class);
             startActivity(intent);
-        }
+        }*/
 
     }
 
     @Override
     protected int getSelfNavDrawerItem() {
-        return NAVDRAWER_ITEM_EVENT;
+        return NAVDRAWER_ITEM_FEEDBACK;
     }
 
     @Override
