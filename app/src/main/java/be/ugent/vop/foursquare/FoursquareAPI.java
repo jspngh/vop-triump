@@ -128,8 +128,7 @@ public class FoursquareAPI {
             name=v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_NAME));
             address=v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_ADDRESS));
             country=v.getString(v.getColumnIndexOrThrow(VenueTable.COLUMN_COUNTRY));
-            verified =
-                    v.getInt(v.getColumnIndexOrThrow(VenueTable.COLUMN_VERIFIED))==0? false:true;
+            verified = v.getInt(v.getColumnIndexOrThrow(VenueTable.COLUMN_VERIFIED))==0? false:true;
             lat= v.getDouble(v.getColumnIndexOrThrow(VenueTable.COLUMN_LATITUDE));
             lon=v.getDouble(v.getColumnIndexOrThrow(VenueTable.COLUMN_LONGITUDE));
             //Log.d(TAG, "getVenueInfo: loaded venue from local db");
@@ -160,9 +159,7 @@ public class FoursquareAPI {
                         if(location.has("country"))  country = location.getString("country");
 
                 }
-            } catch(IOException e){
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch(IOException | JSONException e){
                 e.printStackTrace();
             }
             //Log.d(TAG, "getVenueInfo: loaded venue from foursquare");

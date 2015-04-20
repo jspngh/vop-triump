@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.backend.myApi.model.OverviewCheckin;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
@@ -78,6 +79,13 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
             }
         }
         fsVenues = venuesInOverview;
+
+        if(overview != null && overview.getCheckIns() != null) {
+            for (OverviewCheckin checkin : overview.getCheckIns()) {
+                FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getCheckin().getVenueId());
+                if(venue != null) checkin.setVenueName(venue.getName());
+            }
+        }
         return new OverviewAdapter(overview, fsVenues, context, false);
     }
 
