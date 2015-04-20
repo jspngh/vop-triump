@@ -8,9 +8,9 @@ import java.util.Date;
  */
 public class OverviewBean {
 
-    private ArrayList<CheckinBean> checkIns;
+    private ArrayList<OverviewCheckin> checkIns;
     private ArrayList<VenueBean> venues;
-    private ArrayList<Reward> rewards;
+    private ArrayList<OverviewReward> rewards;
     private ArrayList<newMemberInGroup> newMembers;
 
     public ArrayList<VenueBean> getVenues() {
@@ -21,19 +21,19 @@ public class OverviewBean {
         this.venues = venues;
     }
 
-    public ArrayList<CheckinBean> getCheckIns() {
+    public ArrayList<OverviewCheckin> getCheckIns() {
         return checkIns;
     }
 
-    public void setCheckIns(ArrayList<CheckinBean> checkIns) {
+    public void setCheckIns(ArrayList<OverviewCheckin> checkIns) {
         this.checkIns = checkIns;
     }
 
-    public ArrayList<Reward> getRewards() {
+    public ArrayList<OverviewReward> getRewards() {
         return rewards;
     }
 
-    public void setRewards(ArrayList<Reward> rewards) {
+    public void setRewards(ArrayList<OverviewReward> rewards) {
         this.rewards = rewards;
     }
 
@@ -81,10 +81,10 @@ class newMemberInGroup{
     }
 }
 
-class Reward{
+class OverviewReward{
     private EventBean event;
     private Date date;
-    public Reward(EventBean event, Date date){
+    public OverviewReward(EventBean event, Date date){
         this.event = event;
         this.date = date;
     }
@@ -103,5 +103,50 @@ class Reward{
 
     public void setDate(Date date) {
         this.date = date;
+    }
+}
+
+class OverviewCheckin{
+    private CheckinBean checkin;
+    private UserBean checkinUser;
+    private GroupBean checkinGroup;
+    private String venueName;
+
+    public OverviewCheckin(CheckinBean checkinBean, UserBean user, GroupBean group){
+        this.checkin = checkinBean;
+        this.checkinUser = user;
+        this.checkinGroup = group;
+    }
+
+    public CheckinBean getCheckin() {
+        return checkin;
+    }
+
+    public void setCheckin(CheckinBean checkin) {
+        this.checkin = checkin;
+    }
+
+    public UserBean getCheckinUser() {
+        return checkinUser;
+    }
+
+    public void setCheckinUser(UserBean checkinUser) {
+        this.checkinUser = checkinUser;
+    }
+
+    public GroupBean getCheckinGroup() {
+        return checkinGroup;
+    }
+
+    public void setCheckinGroup(GroupBean checkinGroup) {
+        this.checkinGroup = checkinGroup;
+    }
+
+    public String getVenueName() {
+        return venueName;
+    }
+
+    public void setVenueName(String venueName) {
+        this.venueName = venueName;
     }
 }

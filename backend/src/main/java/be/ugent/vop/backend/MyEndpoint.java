@@ -651,8 +651,8 @@ public class MyEndpoint {
         String userId = _getUserIdForToken(token);
         GroupsBean tmp = _getGroupsForUser(userId);
         ArrayList<VenueBean> venues = new ArrayList<>();
-        ArrayList<CheckinBean> checkIns = new ArrayList<>();
-        ArrayList<Reward> rewards = new ArrayList<>();
+        ArrayList<OverviewCheckin> checkIns = new ArrayList<>();
+        ArrayList<OverviewReward> rewards = new ArrayList<>();
         ArrayList<newMemberInGroup> newMembers = new ArrayList<>();
 
         VenueBean mVenueBean = null;
@@ -664,7 +664,10 @@ public class MyEndpoint {
             for (Entity s : pq_checkin.asIterable()) {
                 CheckinBean checkinBean = _getCheckinBean(s);
                 try{
-                    if(checkinBean.getDate().compareTo(yesterday) >= 0) checkIns.add(checkinBean);
+                    if(checkinBean.getDate().compareTo(yesterday) >= 0){
+                        UserBean user = _getUserBeanForId(checkinBean.getUserId());
+                        checkIns.add(new OverviewCheckin(checkinBean, user, group));
+                    }
                 } catch(NullPointerException e){
                     //Do Something
                 }
@@ -696,7 +699,7 @@ public class MyEndpoint {
                     Entity reward = datastore.get(rewardKey);
                     long eventId = (long) reward.getProperty(USEREVENT_EVENT_ID);
                     EventBean event = _getEventBean(eventId);
-                    rewards.add(new Reward(event, date));
+                    rewards.add(new OverviewReward(event, date));
 
                     break;
                 case MAILBOX_TYPE_NEW_MEMBER:
