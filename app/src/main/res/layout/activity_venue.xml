@@ -30,7 +30,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/imageView"
                     android:contentDescription="@string/venue_image"
-                    android:src="@drawable/team"
+                    android:src="@drawable/dummy_venue"
                     android:adjustViewBounds="false"
                     android:scaleType="centerCrop" />
 
