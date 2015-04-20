@@ -124,8 +124,10 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
     private void newLocationAvailable(Location newLocation, Date lastUpdated){
         Log.d(TAG, "new Location available in fragment");
         if(newLocation.getAccuracy() < BaseActivity.MIN_LOCATION_ACCURACY){
-            mLastLocation = newLocation;
-            getLoaderManager().restartLoader(0, null, this);
+            if(mLastLocation == null || mLastLocation.distanceTo(newLocation) > 100){
+                mLastLocation = newLocation;
+                getLoaderManager().restartLoader(0, null, this);
+            }
         }
     }
 

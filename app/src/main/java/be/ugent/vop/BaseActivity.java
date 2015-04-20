@@ -619,7 +619,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
 
         notifyLocationUpdateListeners();
 
-        if(mLastLocation.getAccuracy() < MIN_LOCATION_ACCURACY)
+        if(mLastLocation.getAccuracy() < MIN_LOCATION_ACCURACY && mRequestingLocationUpdates != LOCATION_UPDATING_SLOW)
             startLocationUpdates(false);
     }
 
@@ -633,7 +633,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     protected void createSlowLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(60000);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setFastestInterval(60000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
 
@@ -679,6 +679,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
 
         if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
             buildGoogleApiClient();
@@ -698,6 +699,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause");
 
         if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
             stopLocationUpdates();
