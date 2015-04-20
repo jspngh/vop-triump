@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -31,6 +32,7 @@ import com.koushikdutta.ion.Ion;
 import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
@@ -68,14 +70,47 @@ public class VenueActivity extends BaseActivity {
     private int mHeaderHeight;
     private int mMinHeaderTranslation;
 
+    private FoursquareVenue mVenue;
+
     private int currentHeaderTranslation = 0;
+    private boolean mCanCheckIn = false;
 
     private ArrayList<VenueActivityCallback> mFragmentsCalls = new ArrayList<>();
 
     private TypedValue mTypedValue = new TypedValue();
+    private VenueRankingFragment mVenueRankingFragment;
+    private VenueEventFragment mVenueEventFragment;
 
     public interface VenueActivityCallback{
         public void setColorPalette(Palette p);
+    }
+
+    private BaseActivity.LocationUpdateListener mListener = new BaseActivity.LocationUpdateListener() {
+        @Override
+        public void locationUpdated(Location newLocation, Date lastUpdated) {
+            newLocationAvailable(newLocation, lastUpdated);
+        }
+    };
+
+    private void newLocationAvailable(Location newLocation, Date lastUpdated){
+        Log.d(TAG, "new Location available");
+
+        if(mVenue != null && newLocation != null){
+            Location venueLoc = new Location("");
+            venueLoc.setLatitude(mVenue.getLatitude());
+            venueLoc.setLongitude(mVenue.getLongitude());
+
+            boolean checkinOK = newLocation.distanceTo(venueLoc) < 50;
+
+            mCanCheckIn = checkinOK;
+
+            if(mVenueRankingFragment != null)
+                mVenueRankingFragment.setCheckinAvailable(checkinOK);
+        }
+    }
+
+    public boolean canCheckIn(){
+        return mCanCheckIn;
     }
 
     public void onScroll(int dx, int dy, View extraView) {
@@ -133,6 +168,7 @@ public class VenueActivity extends BaseActivity {
         return -top + firstVisiblePosition * c.getHeight() + headerHeight;
     }
 
+    @Override
     public void onCreate(Bundle savedInstanceState){
         boolean darkTheme = PrefUtils.getDarkTheme(this);
         if(darkTheme) setTheme(R.style.AppTheme_Dark);
@@ -180,6 +216,20 @@ public class VenueActivity extends BaseActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        addLocationUpdateListener(mListener);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        removeLocationUpdateListener(mListener);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.venue_menu, menu);
@@ -222,19 +272,19 @@ public class VenueActivity extends BaseActivity {
         public Fragment getItem(int position) {
             switch(position){
                 case 0:
-                    VenueRankingFragment fragment = new VenueRankingFragment();
+                    mVenueRankingFragment = new VenueRankingFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString(VenueActivity.VENUE_ID, fsVenueId);
-                    fragment.setArguments(bundle);
-                    mFragmentsCalls.add(fragment);
-                    return fragment;
+                    mVenueRankingFragment.setArguments(bundle);
+                    mFragmentsCalls.add(mVenueRankingFragment);
+                    return mVenueRankingFragment;
                 case 1:
-                    VenueEventFragment fragment2 = new VenueEventFragment();
+                    mVenueEventFragment = new VenueEventFragment();
                     Bundle bundle2 = new Bundle();
                     bundle2.putString(VenueActivity.VENUE_ID, fsVenueId);
-                    fragment2.setArguments(bundle2);
-                    mFragmentsCalls.add(fragment2);
-                    return fragment2;
+                    mVenueEventFragment.setArguments(bundle2);
+                    mFragmentsCalls.add(mVenueEventFragment);
+                    return mVenueEventFragment;
             }
             OverviewFragment frag = new OverviewFragment();
             return frag;
@@ -264,6 +314,7 @@ public class VenueActivity extends BaseActivity {
         public void onLoadFinished(Loader<FoursquareVenue> loader, FoursquareVenue venue) {
             Log.d("VenueFragment", "onLoadFinished of venueInfoLoader");
             if(venue!=null) {
+                mVenue = venue;
                 setTitle(venue.getName());
                 //titleTextView.setText(venue.getName());
                 //placeholder image

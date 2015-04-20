@@ -30,8 +30,11 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
+import be.ugent.vop.utils.PrefUtils;
 
 public class VenueRankingFragment extends Fragment implements VenueActivity.VenueActivityCallback {
+
+    private String TAG = "VenueRankingF";
 
     private FloatingActionButton checkinButton;
     private List<RankingBean> ranking;
@@ -44,6 +47,7 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
     protected RankingAdapter mAdapter;
 
     private Palette mPalette;
+    private boolean mCanCheckIn = false;
 
     private String currentGroupType = "All";
     private String currentGroupSize = "All";
@@ -67,7 +71,13 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         }
     }
 
-
+    public void setCheckinAvailable(boolean canCheckIn){
+        mCanCheckIn = canCheckIn;
+        if(mCanCheckIn || PrefUtils.isGodeMode(getActivity()))
+            checkinButton.setVisibility(View.VISIBLE);
+        else
+            checkinButton.setVisibility(View.GONE);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,6 +112,8 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
                     mActivity.onScroll(dx, dy, mSpinners);
             }
         });
+
+        checkinButton.setVisibility(View.GONE);
 
         int ht = 200;
         int wt = 200;
@@ -220,7 +232,7 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        setCheckinAvailable(mActivity.canCheckIn());
         //rankingListView.setOnScrollListener(this);
     }
 
@@ -229,6 +241,7 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         super.onAttach(activity);
         if(activity instanceof VenueActivity)
             mActivity = (VenueActivity) activity;
+
     }
 
     /***********
