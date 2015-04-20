@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import be.ugent.vop.R;
@@ -112,7 +111,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(position == TYPE_RANKING_ROW) {
+        if(!headerPlaceholder || position > 0) {
             int pos = (headerPlaceholder)? (position - 1) : position;
             final RankingBean r = rankings.get(pos);
 
@@ -143,7 +142,8 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return (rankings == null)? 0 : rankings.size();
+        int rankingSize = (rankings == null)? 0 : rankings.size();
+        return (headerPlaceholder? rankingSize + 1 : rankingSize);
     }
 
     public Drawable getItemDrawable(String text){
