@@ -43,7 +43,7 @@ import be.ugent.vop.utils.RangeSeekBar;
 /**
  * Created by vincent on 23/03/15.
  */
-public class NewEventFragment extends Fragment implements View.OnClickListener, SelectGroupsDialog.SelectGroupsDialogListener {
+public class NewEventFragment extends Fragment implements SelectGroupsDialog.SelectGroupsDialogListener {
     private static final String TAG = "EventFragment";
     private static final int MIN_PARTICIPANTS = 1;
     private static final int MAX_PARTICIPANTS = 1000;
@@ -60,7 +60,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
     EditText descriptionEditText, rewardEditText;
     EditText startDateEditText, startTimeEditText;
     EditText endDateEditText, endTimeEditText;
-    EditText minEditText, maxEditText;
+   //  EditText minEditText, maxEditText;
 
     DatePickerDialog startDateDialog;
     DatePickerDialog endDateDialog;
@@ -76,12 +76,12 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
     DateTime start;
     DateTime end;
 
-    RangeSeekBar<Integer> seekBar;
-    int minMembers = -1;
-    int maxMembers = -1;
+    // RangeSeekBar<Integer> seekBar;
+    // int minMembers = 1;
+    // int maxMembers = 1000;
 
-    CheckBox verifiedCheckBox;
-    Boolean verified = true;
+    // CheckBox verifiedCheckBox;
+    // Boolean verified = false;
 
     SelectGroupsDialog dialog;
     FragmentManager fm;
@@ -123,35 +123,35 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
         endTimeEditText = (EditText) rootView.findViewById(R.id.editTextEndTime);
         initDateTimeDialog();
 
-        minEditText = (EditText) rootView.findViewById(R.id.editTextMin);
-        maxEditText = (EditText) rootView.findViewById(R.id.editTextMax);
+        // minEditText = (EditText) rootView.findViewById(R.id.editTextMin);
+        // maxEditText = (EditText) rootView.findViewById(R.id.editTextMax);
 
         //verified
-        verifiedCheckBox = (CheckBox) rootView.findViewById(R.id.checkBoxVerified);
-        verifiedCheckBox.setOnClickListener(this);
+        //verifiedCheckBox = (CheckBox) rootView.findViewById(R.id.checkBoxVerified);
+        //verifiedCheckBox.setOnClickListener(this);
 
         // create RangeSeekBar as Integer range between Min- and Max participants
-        seekBar = new RangeSeekBar<Integer>(MIN_PARTICIPANTS, MAX_PARTICIPANTS, getActivity());
+        // seekBar = new RangeSeekBar<Integer>(MIN_PARTICIPANTS, MAX_PARTICIPANTS, getActivity());
         // add RangeSeekBar to pre-defined layout
-        ViewGroup layout = (ViewGroup) rootView.findViewById(R.id.viewGroup);
-        layout.addView(seekBar);
+        // ViewGroup layout = (ViewGroup) rootView.findViewById(R.id.viewGroup);
+        // layout.addView(seekBar);
 
         initButtonPressedLogic();
 
         return rootView;
     }
 
-    @Override
+  /*  @Override
     public void onClick(View view) {
         boolean checked = ((CheckBox) view).isChecked();
-        // Check which checkbox was clicked
+
         switch(view.getId()) {
-            //verified venue
+
             case R.id.checkBoxVerified:
                 verified = !verified;
                 break;
         }
-    }
+    }*/
 
 
 
@@ -329,7 +329,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
         public Loader<EventBean> onCreateLoader(int id, Bundle args) {
             Log.d(TAG, "onCreateLoader");
             NewEventLoader loader = new NewEventLoader(getActivity());
-            loader.setParams(fsVenueId,groupIds,start,end,description,reward,minMembers,maxMembers,verified);
+            loader.setParams(fsVenueId,groupIds,start,end,description,reward,-1,-1,false);
             return loader;
         }
 
@@ -375,13 +375,13 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
         description = descriptionEditText.getText().toString();
         reward = rewardEditText.getText().toString();
 
-        try {
+     /*   try {
             minMembers = Integer.parseInt(minEditText.getText().toString());
             maxMembers = Integer.parseInt(maxEditText.getText().toString());
         }catch(NumberFormatException e){
             minMembers = -1;
             maxMembers = -1;
-        }
+        }*/
 
 
         procesDates();
@@ -390,10 +390,6 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
 
        if(!(correctDatesInput=correctDates())){
             Log.d(TAG, "Incorrect date and time");
-            //startDateEditText.setHintTextColor(some color);
-        }
-        if(!(correctSizeInput=correctGroupSize())){
-            Log.d(TAG, "Incorrect input in applicable groupsizes, min and max members");
             //startDateEditText.setHintTextColor(some color);
         }
         if(!(correctSelectedGroupsInput=correctSelectedGroups())){
@@ -411,8 +407,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
             Log.d(TAG, "des: "+description);
             Log.d(TAG, "reward: "+reward);
             Log.d(TAG, "venueId: "+fsVenueId);
-            Log.d(TAG, "min: "+minMembers);
-            Log.d(TAG, "max: "+maxMembers);
+
             for(GroupBean g:selectedGroups){
                 Log.d(TAG, "group: "+g.toString());
             }
@@ -432,16 +427,9 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
     private boolean correctDates(){
         return startDate.before(endDate);
     }
-    private boolean correctGroupSize(){
-        return minMembers>=MIN_PARTICIPANTS && minMembers<maxMembers && maxMembers<=MAX_PARTICIPANTS;
-    }
+
     private boolean correctSelectedGroups(){
-        if(!verified){
             return selectedGroups.size()>0;
-        }
-        //when the event is verified the selected groups don't matter.
-        //all the groups can participate
-        else return true;
     }
     private boolean correctTextInput(){
         //TODO: check user input for event description and event reward
@@ -480,7 +468,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
-        seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+      /*  seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
             @Override
             public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
                 // handle changed range values
@@ -540,7 +528,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
                 if(max<min) max=min;
                 seekBar.setSelectedMaxValue(max);
             }
-        });
+        });*/
     }
 
 }

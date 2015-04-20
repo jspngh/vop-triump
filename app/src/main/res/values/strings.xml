@@ -125,5 +125,6 @@
     <string name="notification_title">Triump Notification</string>
     <string name="no_reward">No rewards available</string>
     <string name="dialog_message_item_pinned">Show this message to the owner and claim your reward!</string>
+    <string name="new_event_title">Make your own event</string>
 
 </resources>

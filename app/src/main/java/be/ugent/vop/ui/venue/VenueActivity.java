@@ -229,9 +229,10 @@ public class VenueActivity extends BaseActivity {
                     mFragmentsCalls.add(fragment);
                     return fragment;
                 case 1:
-                    VenueEventFragment fragment2 = new VenueEventFragment();
+                    VenueEventFragment2 fragment2 = new VenueEventFragment2();
                     Bundle bundle2 = new Bundle();
                     bundle2.putString(VenueActivity.VENUE_ID, fsVenueId);
+                    Log.d(TAG, "venueId:"+fsVenueId);
                     fragment2.setArguments(bundle2);
                     mFragmentsCalls.add(fragment2);
                     return fragment2;

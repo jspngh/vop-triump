@@ -22,6 +22,8 @@ public class NewEventActivity extends BaseActivity {
         NewEventFragment fragment = new NewEventFragment();
         Bundle venueBundle = getIntent().getExtras();
 
+        setTitle(getString(R.string.new_event_title));
+
         fragment.setArguments(venueBundle);
 
         this.getFragmentManager()

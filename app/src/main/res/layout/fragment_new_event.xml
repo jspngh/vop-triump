@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:float="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/make_own_event"
-        android:id="@+id/textView"
-        android:paddingBottom="25dp"
-        android:paddingTop="10dp" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,7 +21,7 @@
             android:layout_height="fill_parent"
             android:weightSum="1">
 
-        <TextView
+    <!--    <TextView
             android:paddingTop="7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,213 +37,141 @@
             android:text="Verified"
             android:id="@+id/checkBoxVerified"
             android:checked="true"
-            android:buttonTint="@color/theme_accent_1" />
+            android:buttonTint="@color/theme_accent_1" />-->
 
+          <!--  <com.rengwuxian.materialedittext.MaterialEditText
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/editTextDescription"
+                 android:paddingTop="5dp"
+                 android:autoText="false"
+                 android:hint="Short Description"
+                 app:met_floatingLabel="highlight"
+                 app:met_minCharacters="5"
+                 app:met_maxCharacters="10"
+                 />-->
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextDescription"
-        android:paddingTop="5dp"
-        android:autoText="false"
-        android:hint="Short Description" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextReward"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="Reward" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextStartDate"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="start date" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextStartTime"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="start time" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextEndDate"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="end date" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextEndTime"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="end time" />
-    <!--
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:id="@+id/selectTypesAndSize">
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:id="@+id/checkboxSizeContainer"
-        android:layout_weight="0.5" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select applicable group sizes:"
-            android:id="@+id/textView2" />
-
-    <CheckBox android:id="@+id/checkboxSizeAll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="All"
-            android:buttonTint="@color/theme_primary_dark"
-            android:layout_margin="0dp" />
-        <CheckBox android:id="@+id/checkboxSizeIndividual"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Individual"
-            android:buttonTint="@color/theme_primary_dark"
-            />
-        <CheckBox android:id="@+id/checkboxSizeSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Small"
-            android:buttonTint="@color/theme_primary_dark"/>
-        <CheckBox android:id="@+id/checkboxSizeMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medium"
-            android:buttonTint="@color/theme_primary_dark"/>
-        <CheckBox android:id="@+id/checkboxSizeLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large"
-            android:buttonTint="@color/theme_primary_dark"/>
-</LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:id="@+id/checkboxTypeContainer"
-            android:layout_weight="0.5" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select applicable group types:"
-                android:id="@+id/textView3"
-                />
-
-           <CheckBox android:id="@+id/checkboxTypeAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="All"
-                android:buttonTint="@color/theme_primary_dark"/>
-            <CheckBox android:id="@+id/checkboxTypeFriends"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Friends"
-                android:buttonTint="@color/theme_primary_dark"/>
-            <CheckBox android:id="@+id/checkboxTypeClub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Club"
-                android:buttonTint="@color/theme_primary_dark"/>
-            <CheckBox android:id="@+id/checkboxTypeStudentGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Studentgroup"
-                android:buttonTint="@color/theme_primary_dark"/>
-    </LinearLayout>
-    </LinearLayout>-->
-
-            <TextView
-                android:paddingTop="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select groups:"
-                android:id="@+id/textView7"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select groups"
-                android:id="@+id/buttonSelectGroups"
-                android:layout_gravity="center_horizontal"/>
-
-
-            <!--          <TextView
-                          android:paddingTop="7dp"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="Select the groups:"
-                          and:id="@+id/textView7"
-                          />
-
-                    <ListView
-                          android:layout_width="wrap_content"
-                          android:layout_height="200dp"
-                          android:id="@+id/listViewSelectGroups"
-                          android:clickable="true"
-                          android:focusable="true"
-                         />-->
-
-            <TextView
-                android:paddingTop="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select groupsize"
-                android:id="@+id/textView8"
-                />
-
-            <EditText
+            <com.wrapp.floatlabelededittext.FloatLabeledEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editTextMin"
-                android:layout_gravity="center_horizontal"
-                android:paddingTop="5dp"
-                android:hint="Min members" />
+                float:fletPaddingBottom="10dp"
+                float:fletTextAppearance="@style/floatlabelededittext" >
 
-            <EditText
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editTextDescription"
+                    android:paddingTop="16dp"
+                    android:autoText="false"
+                    android:hint="Short Description"
+                    android:height="72dp"
+                    android:paddingBottom="16dp"
+                    android:textSize="20sp" />
+            </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+            <!-- <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editTextMax"
-                android:layout_gravity="center_horizontal"
+                android:id="@+id/editTextDescription"
                 android:paddingTop="5dp"
-                android:hint="Max members" />
+                android:autoText="false"
+                android:hint="Short Description" />-->
 
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:id="@+id/viewGroup"
-                android:layout_height="fill_parent">
+           <EditText
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:id="@+id/editTextReward"
+               android:layout_gravity="center_horizontal"
+               android:paddingTop="5dp"
+               android:hint="Reward" />
 
-            </LinearLayout>
+           <EditText
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:id="@+id/editTextStartDate"
+               android:layout_gravity="center_horizontal"
+               android:paddingTop="5dp"
+               android:hint="start date" />
+           <EditText
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:id="@+id/editTextStartTime"
+               android:layout_gravity="center_horizontal"
+               android:paddingTop="5dp"
+               android:hint="start time" />
+           <EditText
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:id="@+id/editTextEndDate"
+               android:layout_gravity="center_horizontal"
+               android:paddingTop="5dp"
+               android:hint="end date" />
+           <EditText
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:id="@+id/editTextEndTime"
+               android:layout_gravity="center_horizontal"
+               android:paddingTop="5dp"
+               android:hint="end time" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Create Event"
-                android:id="@+id/buttonCreateEvent"
-                android:layout_gravity="center_horizontal"/>
+                   <TextView
+                       android:paddingTop="7dp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Select groups:"
+                       android:id="@+id/textView7"
+                       />
 
-        </LinearLayout>
-        </ScrollView>
-</LinearLayout>
+                   <Button
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Select groups"
+                       android:id="@+id/buttonSelectGroups"
+                       android:layout_gravity="center_horizontal"/>
+
+                    <!--
+                   <TextView
+                       android:paddingTop="7dp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Select groupsize"
+                       android:id="@+id/textView8"
+                       />
+
+                   <EditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:id="@+id/editTextMin"
+                       android:layout_gravity="center_horizontal"
+                       android:paddingTop="5dp"
+                       android:hint="Min members" />
+
+                   <EditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:id="@+id/editTextMax"
+                       android:layout_gravity="center_horizontal"
+                       android:paddingTop="5dp"
+                       android:hint="Max members" />
+
+
+                   <LinearLayout
+                       android:orientation="horizontal"
+                       android:layout_width="fill_parent"
+                       android:id="@+id/viewGroup"
+                       android:layout_height="fill_parent">
+
+                   </LinearLayout>
+                    -->
+                   <Button
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Create Event"
+                       android:id="@+id/buttonCreateEvent"
+                       android:layout_gravity="center_horizontal"/>
+
+               </LinearLayout>
+               </ScrollView>
+       </LinearLayout>
 
