@@ -1,3 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    xmlns:float="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="-2dp"
+    android:paddingRight="-2dp"
+    android:paddingTop="-2dp">
+
+
+    <com.gc.materialdesign.views.ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal">
+
+        <!-- ******************************
+
+            Name in colored box
+
+        ************************************ -->
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:weightSum="1"
+            >
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.45"
+                android:background="@drawable/material_shadow_z1_mdpi"
+                android:paddingBottom="5dp"
+                >
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/theme_primary"
+                    android:paddingLeft="35dp"
+                    android:paddingRight="20dp"
+                    >
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        float:fletPaddingBottom="10dp"
+                        float:fletTextAppearance="@style/floatlabelededittext"
+                        android:paddingTop="25dp"  >
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/group_name_edit"
+                            android:paddingTop="16dp"
+                            android:autoText="false"
+                            android:hint="@string/new_group_name"
+                            android:height="72dp"
+                            android:paddingBottom="16dp"
+                            android:textSize="40sp"
+                            android:layout_marginBottom="30dp"
+                            android:textColorHint="@color/theme_accent_1" />
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ******************************
+
+                Group description
+
+            ************************************ -->
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.55"
+                android:weightSum="1"
+                android:paddingTop="20dp"
+                android:paddingLeft="35dp"
+                android:paddingRight="20dp"  >
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="10dp">
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        float:fletTextAppearance="@style/floatlabelededittext">
+
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/group_description_edit"
+                            android:layout_gravity="center_horizontal"
+                            android:hint="@string/new_group_description"
+                            android:paddingRight="15dp" />
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+
+                </LinearLayout>
+
+
+                <!-- ******************************
+
+                            Select type
+
+                ************************************ -->
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginBottom="35dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/new_group_select_type"
+                        android:id="@+id/textView"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="0dp"/>
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinnerGroupType"
+                        android:spinnerMode="dropdown" />
+
+                </LinearLayout>
+
+
+                <!-- ******************************
+
+                        Button create
+
+                ************************************ -->
+
+                <com.gc.materialdesign.views.ButtonRectangle
+                    android:layout_marginTop="30dp"
+                    android:id="@+id/add_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/theme_primary"
+                    android:text="Add group"
+                    android:layout_gravity="center_horizontal"/>
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </com.gc.materialdesign.views.ScrollView>
+    <!-- </ScrollView>-->
+</LinearLayout>
+
+
+
+    <!--
+
+    *************************************************************************
+
+
+
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,7 +188,11 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".ui.MyScheduleActivity">
-    <!-- Main layout -->
+
+
+
+
+
     <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
@@ -74,6 +260,8 @@
 
 
     </LinearLayout>
-    <!-- Nav drawer -->
+
     <include layout="@layout/navdrawer" />
 </android.support.v4.widget.DrawerLayout>
+
+    -->

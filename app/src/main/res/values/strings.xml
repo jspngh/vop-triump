@@ -134,5 +134,10 @@
     <string name="new_event_create_event_button_text">Save Event</string>
     <string name="new_event_succes">Success</string>
     <string name="new_event_failed">Making new event failed, please try again</string>
+    <string name="new_group_success">Success</string>
+    <string name="new_group_failed">Making new group failed, please try again</string>
+    <string name="new_group_description">Description</string>
+    <string name="new_group_name">Name</string>
+    <string name="new_group_select_type">Type</string>
 
 </resources>

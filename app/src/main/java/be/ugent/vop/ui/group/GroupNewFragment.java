@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.gc.materialdesign.views.ButtonRectangle;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.CreateGroupLoader;
@@ -22,8 +25,8 @@ import be.ugent.vop.backend.myApi.model.GroupBean;
 public class GroupNewFragment extends Fragment {
     private EditText name;
     private EditText description;
-    private Button btn;
-    private TextView result;
+    private ButtonRectangle btn;
+   // private TextView result;
     private Spinner groupTypeSpinner;
 
     private String token;
@@ -45,9 +48,9 @@ public class GroupNewFragment extends Fragment {
 
         description = (EditText) rootView.findViewById(R.id.group_description_edit);
         name = (EditText) rootView.findViewById(R.id.group_name_edit);
-        result = (TextView) rootView.findViewById(R.id.result);
-        btn = (Button) rootView.findViewById(R.id.add_button);
-        result.setVisibility(View.GONE);
+      //  result = (TextView) rootView.findViewById(R.id.result);
+        btn = (ButtonRectangle) rootView.findViewById(R.id.add_button);
+      //  result.setVisibility(View.GONE);
         btn.setFocusable(false);
 
         groupTypeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupType);
@@ -71,8 +74,12 @@ public class GroupNewFragment extends Fragment {
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null){
                 btn.setVisibility(View.GONE);
-                result.setVisibility(View.VISIBLE);
+           //     result.setVisibility(View.VISIBLE);
+                Toast.makeText(getActivity(), context.getString(R.string.new_group_success), Toast.LENGTH_SHORT).show();
+                getActivity().finish();
                 Log.d("GroupNewFragment", "group added successfully");
+            } else {
+                Toast.makeText(getActivity(), context.getString(R.string.new_group_failed), Toast.LENGTH_SHORT).show();
             }
         }
 

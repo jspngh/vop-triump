@@ -2,7 +2,7 @@
 <resources>
 
     <string-array name="groupType_spinner_options">
-        <item>All types</item>
+       <!-- <item>All types</item>-->
         <item>Studentgroup</item>
         <item>Friends</item>
         <item>Club</item>
