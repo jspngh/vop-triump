@@ -1,177 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     xmlns:float="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:layout_height="fill_parent"
+    android:paddingLeft="-2dp"
+    android:paddingRight="-2dp"
+    android:paddingTop="-2dp">
 
 
-    <ScrollView
+    <com.gc.materialdesign.views.ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal">
+
+
+   <!-- <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/scrollView"
-        android:layout_gravity="center_horizontal" >
+        android:layout_gravity="center_horizontal"
+        >-->
+
+        <!-- ******************************
+
+            Name and reward in colored box
+
+        ************************************ -->
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:weightSum="1">
-
-    <!--    <TextView
-            android:paddingTop="7dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Check this box if the event is verified:"
-            android:id="@+id/textView6"
+            android:weightSum="1"
             >
 
 
-        </TextView>
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Verified"
-            android:id="@+id/checkBoxVerified"
-            android:checked="true"
-            android:buttonTint="@color/theme_accent_1" />-->
-
-          <!--  <com.rengwuxian.materialedittext.MaterialEditText
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:id="@+id/editTextDescription"
-                 android:paddingTop="5dp"
-                 android:autoText="false"
-                 android:hint="Short Description"
-                 app:met_floatingLabel="highlight"
-                 app:met_minCharacters="5"
-                 app:met_maxCharacters="10"
-                 />-->
-
-            <com.wrapp.floatlabelededittext.FloatLabeledEditText
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                float:fletPaddingBottom="10dp"
-                float:fletTextAppearance="@style/floatlabelededittext" >
+                android:layout_height="0dp"
+                android:layout_weight="0.45"
+                android:background="@drawable/material_shadow_z1_mdpi"
+                android:paddingBottom="5dp"
+                >
 
-                <EditText
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/theme_primary"
+                    android:paddingLeft="35dp"
+                    android:paddingRight="20dp"
+                    >
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        float:fletPaddingBottom="10dp"
+                        float:fletTextAppearance="@style/floatlabelededittext"
+                        android:paddingTop="25dp"  >
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextDescription"
+                            android:paddingTop="16dp"
+                            android:autoText="false"
+                            android:hint="@string/new_event_name"
+                            android:height="72dp"
+                            android:paddingBottom="16dp"
+                            android:textSize="40sp"
+
+                            android:textColorHint="@color/theme_accent_1" />
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        float:fletPaddingBottom="10dp"
+                        float:fletTextAppearance="@style/floatlabelededittext"
+                        android:paddingBottom="15dp"
+                        android:paddingTop="20dp"
+                        >
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextReward"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingTop="5dp"
+                            android:hint="@string/new_event_reward" />
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ******************************
+
+                Start and end date and time
+
+            ************************************ -->
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.55"
+                android:weightSum="1"
+                android:paddingTop="20dp"
+                android:paddingLeft="35dp"
+                android:paddingRight="20dp"  >
+
+                <!-- From date and time -->
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/editTextDescription"
-                    android:paddingTop="16dp"
-                    android:autoText="false"
-                    android:hint="Short Description"
-                    android:height="72dp"
-                    android:paddingBottom="16dp"
-                    android:textSize="20sp" />
-            </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+                    android:paddingTop="5dp"
+                    android:paddingBottom="10dp">
 
-            <!-- <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editTextDescription"
-                android:paddingTop="5dp"
-                android:autoText="false"
-                android:hint="Short Description" />-->
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.6"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
 
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editTextStartDate"
+                        android:layout_gravity="center_horizontal"
+                        android:hint="@string/date_from"
+                        android:focusableInTouchMode="false"
+                        android:paddingRight="15dp"
+                        android:drawableRight="@drawable/icon_expand"
+                        android:inputType="date" />
 
-           <EditText
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:id="@+id/editTextReward"
-               android:layout_gravity="center_horizontal"
-               android:paddingTop="5dp"
-               android:hint="Reward" />
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
 
-           <EditText
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:id="@+id/editTextStartDate"
-               android:layout_gravity="center_horizontal"
-               android:paddingTop="5dp"
-               android:hint="start date" />
-           <EditText
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:id="@+id/editTextStartTime"
-               android:layout_gravity="center_horizontal"
-               android:paddingTop="5dp"
-               android:hint="start time" />
-           <EditText
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:id="@+id/editTextEndDate"
-               android:layout_gravity="center_horizontal"
-               android:paddingTop="5dp"
-               android:hint="end date" />
-           <EditText
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:id="@+id/editTextEndTime"
-               android:layout_gravity="center_horizontal"
-               android:paddingTop="5dp"
-               android:hint="end time" />
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
 
-                   <TextView
-                       android:paddingTop="7dp"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Select groups:"
-                       android:id="@+id/textView7"
-                       />
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextStartTime"
+                            android:layout_gravity="center_horizontal"
 
-                   <Button
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Select groups"
-                       android:id="@+id/buttonSelectGroups"
-                       android:layout_gravity="center_horizontal"/>
+                            android:hint=""
+                            android:focusableInTouchMode="false"
+                            android:paddingLeft="15dp"
+                            android:drawableRight="@drawable/icon_expand"/>
 
-                    <!--
-                   <TextView
-                       android:paddingTop="7dp"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Select groupsize"
-                       android:id="@+id/textView8"
-                       />
-
-                   <EditText
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:id="@+id/editTextMin"
-                       android:layout_gravity="center_horizontal"
-                       android:paddingTop="5dp"
-                       android:hint="Min members" />
-
-                   <EditText
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:id="@+id/editTextMax"
-                       android:layout_gravity="center_horizontal"
-                       android:paddingTop="5dp"
-                       android:hint="Max members" />
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+                </LinearLayout>
 
 
-                   <LinearLayout
-                       android:orientation="horizontal"
-                       android:layout_width="fill_parent"
-                       android:id="@+id/viewGroup"
-                       android:layout_height="fill_parent">
+                <!-- From date and time -->
 
-                   </LinearLayout>
-                    -->
-                   <Button
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Create Event"
-                       android:id="@+id/buttonCreateEvent"
-                       android:layout_gravity="center_horizontal"/>
 
-               </LinearLayout>
-               </ScrollView>
-       </LinearLayout>
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.6"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
+
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextEndDate"
+                            android:layout_gravity="center_horizontal"
+                            android:hint="@string/date_to"
+                            android:focusableInTouchMode="false"
+                            android:paddingRight="15dp"
+                            android:drawableRight="@drawable/icon_expand"
+                            android:inputType="date" />
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
+
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextEndTime"
+                            android:layout_gravity="center_horizontal"
+                            android:hint=""
+                            android:focusableInTouchMode="false"
+                            android:paddingLeft="15dp"
+                            android:drawableRight="@drawable/icon_expand"/>
+
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+
+                </LinearLayout>
+
+
+                <!-- ******************************
+
+                    Select applicable groups
+
+                ************************************ -->
+
+                <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    float:fletTextAppearance="@style/floatlabelededittext"
+                   >
+
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editTextSelectGroups"
+                        android:layout_gravity="center_horizontal"
+                        android:hint="@string/new_event_select_groups"
+                        android:focusableInTouchMode="false"
+                        android:drawableRight="@drawable/icon_expand"
+                        android:inputType="textMultiLine" />
+
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                <com.gc.materialdesign.views.ButtonRectangle
+                    android:layout_marginTop="30dp"
+                    android:id="@+id/buttonCreateEvent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/theme_primary"
+                    android:text="@string/new_event_create_event_button_text"
+                    android:layout_gravity="center_horizontal"/>
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </com.gc.materialdesign.views.ScrollView>
+   <!-- </ScrollView>-->
+</LinearLayout>
 

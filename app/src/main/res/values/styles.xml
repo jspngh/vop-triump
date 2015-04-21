@@ -2,6 +2,11 @@
 
     <style name="AppTheme" parent="AppTheme.Base"/>
 
+    <style name="floatlabelededittext">
+        <item name="android:textColor">@color/theme_accent_1</item>
+    </style>
+
+
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/theme_primary</item>
         <item name="colorPrimaryDark">@color/theme_primary_dark</item>

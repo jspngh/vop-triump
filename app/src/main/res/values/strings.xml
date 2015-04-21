@@ -126,5 +126,13 @@
     <string name="no_reward">No rewards available</string>
     <string name="dialog_message_item_pinned">Show this message to the owner and claim your reward!</string>
     <string name="new_event_title">Make your own event</string>
+    <string name="date_from">From</string>
+    <string name="date_to">To</string>
+    <string name="new_event_name">Name</string>
+    <string name="new_event_reward">Reward</string>
+    <string name="new_event_select_groups">Select groups</string>
+    <string name="new_event_create_event_button_text">Save Event</string>
+    <string name="new_event_succes">Success</string>
+    <string name="new_event_failed">Making new event failed, please try again</string>
 
 </resources>

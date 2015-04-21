@@ -22,6 +22,8 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.gc.materialdesign.views.ButtonFlat;
+import com.gc.materialdesign.views.ButtonRectangle;
 import com.google.api.client.util.DateTime;
 
 import java.text.ParseException;
@@ -50,17 +52,13 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
 
     String fsVenueId;
 
-    Button createButton;
-    Button selectGroupsButton;
-
-    /*
-     * TODO: Add hour and minute to start- and end date!
-     */
+    EditText selectGroupsEditText;
+    ButtonRectangle createButton;
 
     EditText descriptionEditText, rewardEditText;
     EditText startDateEditText, startTimeEditText;
     EditText endDateEditText, endTimeEditText;
-   //  EditText minEditText, maxEditText;
+    //  EditText minEditText, maxEditText;
 
     DatePickerDialog startDateDialog;
     DatePickerDialog endDateDialog;
@@ -102,8 +100,9 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
             fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
 
-        createButton = (Button) rootView.findViewById(R.id.buttonCreateEvent);
-        selectGroupsButton = (Button) rootView.findViewById(R.id.buttonSelectGroups);
+//        selectGroupsButton = (ButtonFlat) rootView.findViewById(R.id.buttonSelectGroups);
+        createButton = (ButtonRectangle) rootView.findViewById(R.id.buttonCreateEvent);
+        selectGroupsEditText = (EditText) rootView.findViewById(R.id.editTextSelectGroups);
 
         descriptionEditText = (EditText) rootView.findViewById(R.id.editTextDescription);
         rewardEditText = (EditText) rootView.findViewById(R.id.editTextReward);
@@ -319,9 +318,11 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
         @Override
         public void onLoadFinished(Loader<EventBean> loader, EventBean event) {
             Log.d(TAG, "onLoadFinished, NewEventLoader");
-
             if(event != null) {
-                   Toast.makeText(getActivity(),"Succes",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),getActivity().getString(R.string.new_event_succes),Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }else{
+                Toast.makeText(getActivity(),getActivity().getString(R.string.new_event_failed),Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -329,7 +330,7 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
         public Loader<EventBean> onCreateLoader(int id, Bundle args) {
             Log.d(TAG, "onCreateLoader");
             NewEventLoader loader = new NewEventLoader(getActivity());
-            loader.setParams(fsVenueId,groupIds,start,end,description,reward,-1,-1,false);
+            loader.setParams(fsVenueId, groupIds, start, end, description, reward, -1, -1, false);
             return loader;
         }
 
@@ -347,18 +348,21 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
      */
 
     private void showSelectGroupDialog() {
-     //   selectedGroups = new ArrayList<>();
-     //   dialog.setSelectedGroups(selectedGroups);
+        //   selectedGroups = new ArrayList<>();
+        //   dialog.setSelectedGroups(selectedGroups);
         dialog.show(fm, "dialog");
     }
 
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-            selectedGroups = ((SelectGroupsDialog) dialog).getSelectedGroups();
-            for(GroupBean gb: selectedGroups){
-                Log.d(TAG,gb.getName());
-            }
+        selectedGroups = ((SelectGroupsDialog) dialog).getSelectedGroups();
+        String s = "";
+        for(int i = 0;i<selectedGroups.size();i++){
+            if(i==selectedGroups.size()) s+=selectedGroups.get(i).getName();
+            else s+= selectedGroups.get(i).getName()+"\n";
+        }
+        selectGroupsEditText.setText(s);
     }
 
     @Override
@@ -388,7 +392,7 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
         start = new DateTime(startDate);
         end = new DateTime(endDate);
 
-       if(!(correctDatesInput=correctDates())){
+        if(!(correctDatesInput=correctDates())){
             Log.d(TAG, "Incorrect date and time");
             //startDateEditText.setHintTextColor(some color);
         }
@@ -429,7 +433,7 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
     }
 
     private boolean correctSelectedGroups(){
-            return selectedGroups.size()>0;
+        return selectedGroups.size()>0;
     }
     private boolean correctTextInput(){
         //TODO: check user input for event description and event reward
@@ -454,7 +458,14 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
     }
 
     public void initButtonPressedLogic(){
-        selectGroupsButton.setOnClickListener(new View.OnClickListener() {
+    /*    selectGroupsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelectGroupDialog();
+            }
+        });*/
+
+        selectGroupsEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showSelectGroupDialog();
