@@ -19,7 +19,7 @@
     <string-array name="main_tabs">
         <item>Overview</item>
         <item>Checkin</item>
-        <item>Group</item>
+        <item>My Groups</item>
     </string-array>
 
     <string-array name="venue_tabs">
