@@ -182,11 +182,13 @@ public class GroupFragment extends Fragment {
                 type.setText(response.getType() + " group");
                 ArrayList<UserBean> members = new ArrayList<>();
                 String userId = PrefUtils.getUserId(getActivity());
-                for (UserBean user : response.getMembers()) {
-                    if(user.getUserId().equals(userId)){
-                        btn.setVisibility(View. GONE);
+                if(response.getMembers() != null) {
+                    for (UserBean user : response.getMembers()) {
+                        if (user.getUserId().equals(userId)) {
+                            btn.setVisibility(View.GONE);
+                        }
+                        members.add(user);
                     }
-                    members.add(user);
                 }
                 mAdapter = new MemberListAdapter(context, members);
                 mRecyclerView.setAdapter(mAdapter);
@@ -215,8 +217,10 @@ public class GroupFragment extends Fragment {
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType().toString() + " group");
                 ArrayList<UserBean> members = new ArrayList<>();
-                for (UserBean user : response.getMembers()) {
-                    members.add(user);
+                if(response.getMembers() != null) {
+                    for (UserBean user : response.getMembers()) {
+                        members.add(user);
+                    }
                 }
                 mAdapter = new MemberListAdapter(context, members);
                 mRecyclerView.setAdapter(mAdapter);

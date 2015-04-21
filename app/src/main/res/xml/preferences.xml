@@ -22,6 +22,11 @@
             android:title="@string/pref_theme_dark"
             android:summary="@string/pref_theme_dark_info"
             android:defaultValue="false" />
+        <SwitchPreference
+            android:key="godmode"
+            android:title="@string/pref_enable_god_mode"
+            android:summary="@string/pref_enable_god_mode_info"
+            android:defaultValue="false" />
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -145,7 +145,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             int state;
 
             @Override
@@ -161,7 +161,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
                 mRecyclerView.animate().translationY(dy);
                 //}
             }
-        });
+        });*/
 
         return rootView;
     }

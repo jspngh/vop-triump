@@ -52,6 +52,11 @@ public class PrefUtils {
      */
     public static final String FIRST_LAUNCH = "firstLaunch";
 
+    /**
+     * Boolean value storing whether we are GOD!!!
+     */
+    public static final String GOD_MODE = "godmode";
+
     public final static String DISPLAY_NAME = "user_display_name";
 
     public final static String RECEIVE_NOTIFICATIONS = "notifications_new_message";
@@ -199,6 +204,17 @@ public class PrefUtils {
     public static void setShareProfileDisabled(final Context context, boolean share){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         sp.edit().putBoolean(DISABLE_SHARE_PROFILE, share).commit();
+    }
+
+    public static boolean isGodeMode(final Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(GOD_MODE, false);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    public static void setGodMode(final Context context, boolean amIGod){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putBoolean(GOD_MODE, amIGod).commit();
     }
 
 

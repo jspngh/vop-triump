@@ -63,6 +63,7 @@
                 android:layout_toEndOf="@id/user_icon"
                 android:layout_toRightOf="@id/user_icon"
                 android:text="@string/group_name"
+                android:gravity="center|start"
                 android:textSize="16sp" />
         </RelativeLayout>
     </LinearLayout>

@@ -9,10 +9,10 @@ import java.util.ArrayList;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
+import be.ugent.vop.backend.myApi.model.OverviewCheckin;
 import be.ugent.vop.backend.myApi.model.VenueBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
-import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.ui.main.OverviewAdapter;
 
 public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
@@ -21,7 +21,6 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
 
     OverviewAdapter mAdapter;
     private Context context;
-    private Location mLocation;
     private Location mLastLocation;
     private ArrayList<FoursquareVenue> fsVenues;
     private Object syncToken;
@@ -30,31 +29,17 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
         super(context);
         this.context = context;
         this.mLastLocation = lastLocation;
-        this.mLocation = ((MainActivity)context).getLocation();
-        this.syncToken = ((MainActivity)context).getSyncToken();
     }
 
     @Override public OverviewAdapter loadInBackground() {
         OverviewBean result = null;
-        if(syncToken != null && mLocation == null) {
-            synchronized (syncToken) {
-                try{
-                    syncToken.wait();
-                    mLocation = ((MainActivity)context).getLocation();
-                } catch(InterruptedException e){
-                    e.printStackTrace();
-                }
 
-            }
-        }
-        if(mLocation == null){
-            mLocation = mLastLocation;
-        }
-        fsVenues = FoursquareAPI.get(context).getNearbyVenues(mLocation);
+        fsVenues = FoursquareAPI.get(context).getNearbyVenues(mLastLocation);
         ArrayList<String> venues = new ArrayList<>();
         for(FoursquareVenue v : fsVenues){
             venues.add(v.getId());
         }
+
         OverviewBean overview = null;
         try {
             overview = BackendAPI.get(context).getOverview(venues);
@@ -78,6 +63,13 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
             }
         }
         fsVenues = venuesInOverview;
+
+        if(overview != null && overview.getCheckIns() != null) {
+            for (OverviewCheckin checkin : overview.getCheckIns()) {
+                FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getCheckin().getVenueId());
+                if(venue != null) checkin.setVenueName(venue.getName());
+            }
+        }
         return new OverviewAdapter(overview, fsVenues, context, false);
     }
 

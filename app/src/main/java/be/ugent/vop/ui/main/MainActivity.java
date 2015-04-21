@@ -2,23 +2,16 @@ package be.ugent.vop.ui.main;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -28,13 +21,11 @@ import java.io.IOException;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.LocationService;
-import be.ugent.vop.NetworkController;
 import be.ugent.vop.R;
-import be.ugent.vop.feedback.Feedback;
+import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.ui.group.GroupListFragment;
 import be.ugent.vop.ui.venue.CheckinFragment;
 import be.ugent.vop.ui.widget.SlidingTabLayout;
-import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.utils.PrefUtils;
 
 public class MainActivity extends BaseActivity {
@@ -56,7 +47,6 @@ public class MainActivity extends BaseActivity {
     private LocationService mLocationService;
     private boolean isBound = false;
     public boolean displayWelcome;
-    public final Object syncToken = new Object();
 
     // View pager and adapter (for narrow mode)
     ViewPager mViewPager = null;
@@ -132,37 +122,10 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        Intent intent = new Intent(this, LocationService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (isBound) {
-            unbindService(mConnection);
-            isBound = false;
-        }
-    }
-
-    public Location getLocation(){
-        if(isBound) return mLocationService.getLocation();
-        return null;
-    }
-
-    public final Object getSyncToken(){
-        return syncToken;
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG,"onResume");
 
-        this.registerReceiver(NetworkController.get(this), NetworkController.make());
         checkPlayServices();
 
     }
@@ -170,27 +133,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onPause() {
         super.onPause();
-        this.unregisterReceiver(NetworkController.get(this));
-
     }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            synchronized (syncToken){
-                LocationService.LocationBinder binder = (LocationService.LocationBinder) service;
-                mLocationService = binder.getService();
-                isBound = true;
-                syncToken.notifyAll();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            isBound = false;
-        }
-    };
 
     @Override
     protected int getSelfNavDrawerItem() {

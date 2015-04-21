@@ -29,14 +29,14 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.CheckinBean;
 import be.ugent.vop.backend.myApi.model.NewMemberInGroup;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
-import be.ugent.vop.backend.myApi.model.Reward;
+import be.ugent.vop.backend.myApi.model.OverviewReward;
+import be.ugent.vop.backend.myApi.model.OverviewCheckin;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
 import be.ugent.vop.ui.group.GroupActivity;
@@ -243,12 +243,16 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 GroupViewHolder mGroupViewHolder2 = new GroupViewHolder(v);
 
                 if(overview != null && overview.getCheckIns() != null) {
-                    CheckinBean checkinBean = overview.getCheckIns().get(0);
-                    final long groupId = checkinBean.getGroupId();
+                    OverviewCheckin checkin = overview.getCheckIns().get(0);
+                    final long groupId = checkin.getCheckin().getGroupId();
 
-                    mGroupViewHolder2.title.setText("Recent activity:");
-                    mGroupViewHolder2.group_name.setText("GroupId: " + checkinBean.getGroupId().toString());
-                    mGroupViewHolder2.update_info.setText("VenueId: " + checkinBean.getVenueId());
+                    mGroupViewHolder2.title.setText(checkin.getCheckinUser().getFirstName() + " " + checkin.getCheckinUser().getLastName() + " checked in");
+                    if(checkin.getVenueName() != null) {
+                        mGroupViewHolder2.group_name.setText("at " + checkin.getVenueName());
+                    } else {
+                        mGroupViewHolder2.group_name.setText("");
+                    }
+                    mGroupViewHolder2.update_info.setText("for " + checkin.getCheckinGroup().getName());
                     overview.getCheckIns().remove(0);
                     mGroupViewHolder2.view.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -358,7 +362,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 RewardViewHolder mRewardViewHolder = new RewardViewHolder(v);
 
                 if(overview != null && overview.getRewards() != null) {
-                    Reward reward = overview.getRewards().get(0);
+                    OverviewReward reward = overview.getRewards().get(0);
 
                     mRewardViewHolder.title.setText("Reward received!");
                     mRewardViewHolder.info.setText("Received at " + reward.getDate());
