@@ -167,28 +167,12 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if(position == 0) {
             viewType = VENUE_CARD;
         } else {
-            boolean done = false;
-            while(!done) {
-                int updateType = (int) (Math.random() * 3);
-                switch (updateType) {
-                    case 0: // new member
-                        if(overview.getNewMembers() != null && overview.getNewMembers().size() > 0){
-                            viewType = GROUP_CARD_MEMBER;
-                            done = true;
-                        }
-                        break;
-                    case 1: // check in
-                        if(overview.getCheckIns() != null && overview.getCheckIns().size() > 0){
-                            viewType = GROUP_CARD_CHECKIN;
-                            done = true;
-                        }
-                        break;
-                    case 2: // reward
-                        if(overview.getRewards() != null && overview.getRewards().size() > 0){
-                            viewType = REWARD_CARD;
-                            done = true;
-                        }
-                }
+            if(overview.getNewMembers() != null && overview.getNewMembers().size() > 0){
+                viewType = GROUP_CARD_MEMBER;
+            } else if(overview.getCheckIns() != null && overview.getCheckIns().size() > 0){
+                viewType = GROUP_CARD_CHECKIN;
+            } else if(overview.getRewards() != null && overview.getRewards().size() > 0){
+                viewType = REWARD_CARD;
             }
         }
 

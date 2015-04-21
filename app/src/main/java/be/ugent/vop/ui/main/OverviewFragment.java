@@ -54,7 +54,7 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
 
         boolean displayWelcome = mActivity.displayWelcome;
         mRecyclerView.setAdapter(new OverviewAdapter(null, null, mActivity, displayWelcome));
-
+        getLoaderManager().initLoader(0, null, this);
         return rootView;
     }
 
