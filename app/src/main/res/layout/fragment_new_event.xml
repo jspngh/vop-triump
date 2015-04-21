@@ -1,254 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    xmlns:float="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="-2dp"
+    android:paddingRight="-2dp"
+    android:paddingTop="-2dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/make_own_event"
-        android:id="@+id/textView"
-        android:paddingBottom="25dp"
-        android:paddingTop="10dp" />
 
-    <ScrollView
+    <com.gc.materialdesign.views.ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView"
-        android:layout_gravity="center_horizontal" >
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal">
+
+        <!-- ******************************
+
+            Name and reward in colored box
+
+        ************************************ -->
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:weightSum="1">
-
-        <TextView
-            android:paddingTop="7dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Check this box if the event is verified:"
-            android:id="@+id/textView6"
+            android:weightSum="1"
             >
 
 
-        </TextView>
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Verified"
-            android:id="@+id/checkBoxVerified"
-            android:checked="true"
-            android:buttonTint="@color/theme_accent_1" />
-
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextDescription"
-        android:paddingTop="5dp"
-        android:autoText="false"
-        android:hint="Short Description" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextReward"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="Reward" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextStartDate"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="start date" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextStartTime"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="start time" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextEndDate"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="end date" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextEndTime"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:hint="end time" />
-    <!--
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:id="@+id/selectTypesAndSize">
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:id="@+id/checkboxSizeContainer"
-        android:layout_weight="0.5" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select applicable group sizes:"
-            android:id="@+id/textView2" />
-
-    <CheckBox android:id="@+id/checkboxSizeAll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="All"
-            android:buttonTint="@color/theme_primary_dark"
-            android:layout_margin="0dp" />
-        <CheckBox android:id="@+id/checkboxSizeIndividual"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Individual"
-            android:buttonTint="@color/theme_primary_dark"
-            />
-        <CheckBox android:id="@+id/checkboxSizeSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Small"
-            android:buttonTint="@color/theme_primary_dark"/>
-        <CheckBox android:id="@+id/checkboxSizeMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medium"
-            android:buttonTint="@color/theme_primary_dark"/>
-        <CheckBox android:id="@+id/checkboxSizeLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large"
-            android:buttonTint="@color/theme_primary_dark"/>
-</LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:id="@+id/checkboxTypeContainer"
-            android:layout_weight="0.5" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select applicable group types:"
-                android:id="@+id/textView3"
-                />
-
-           <CheckBox android:id="@+id/checkboxTypeAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="All"
-                android:buttonTint="@color/theme_primary_dark"/>
-            <CheckBox android:id="@+id/checkboxTypeFriends"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Friends"
-                android:buttonTint="@color/theme_primary_dark"/>
-            <CheckBox android:id="@+id/checkboxTypeClub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Club"
-                android:buttonTint="@color/theme_primary_dark"/>
-            <CheckBox android:id="@+id/checkboxTypeStudentGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Studentgroup"
-                android:buttonTint="@color/theme_primary_dark"/>
-    </LinearLayout>
-    </LinearLayout>-->
-
-            <TextView
-                android:paddingTop="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select groups:"
-                android:id="@+id/textView7"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select groups"
-                android:id="@+id/buttonSelectGroups"
-                android:layout_gravity="center_horizontal"/>
-
-
-            <!--          <TextView
-                          android:paddingTop="7dp"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="Select the groups:"
-                          and:id="@+id/textView7"
-                          />
-
-                    <ListView
-                          android:layout_width="wrap_content"
-                          android:layout_height="200dp"
-                          android:id="@+id/listViewSelectGroups"
-                          android:clickable="true"
-                          android:focusable="true"
-                         />-->
-
-            <TextView
-                android:paddingTop="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select groupsize"
-                android:id="@+id/textView8"
-                />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editTextMin"
-                android:layout_gravity="center_horizontal"
-                android:paddingTop="5dp"
-                android:hint="Min members" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editTextMax"
-                android:layout_gravity="center_horizontal"
-                android:paddingTop="5dp"
-                android:hint="Max members" />
-
-
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:id="@+id/viewGroup"
-                android:layout_height="fill_parent">
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.45"
+                android:background="@drawable/material_shadow_z1_mdpi"
+                android:paddingBottom="5dp"
+                >
 
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/theme_primary"
+                    android:paddingLeft="35dp"
+                    android:paddingRight="20dp"
+                    >
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        float:fletPaddingBottom="10dp"
+                        float:fletTextAppearance="@style/floatlabelededittext"
+                        android:paddingTop="25dp"  >
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextDescription"
+                            android:paddingTop="16dp"
+                            android:autoText="false"
+                            android:hint="@string/new_event_name"
+                            android:height="72dp"
+                            android:paddingBottom="16dp"
+                            android:textSize="40sp"
+
+                            android:textColorHint="@color/theme_accent_1" />
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        float:fletPaddingBottom="10dp"
+                        float:fletTextAppearance="@style/floatlabelededittext"
+                        android:paddingBottom="15dp"
+                        android:paddingTop="20dp"
+                        >
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextReward"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingTop="5dp"
+                            android:hint="@string/new_event_reward" />
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                </LinearLayout>
             </LinearLayout>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Create Event"
-                android:id="@+id/buttonCreateEvent"
-                android:layout_gravity="center_horizontal"/>
+            <!-- ******************************
 
+                Start and end date and time
+
+            ************************************ -->
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.55"
+                android:weightSum="1"
+                android:paddingTop="20dp"
+                android:paddingLeft="35dp"
+                android:paddingRight="20dp"  >
+
+                <!-- From date and time -->
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="10dp">
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.6"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
+
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editTextStartDate"
+                        android:layout_gravity="center_horizontal"
+                        android:hint="@string/date_from"
+                        android:focusableInTouchMode="false"
+                        android:paddingRight="15dp"
+                        android:drawableRight="@drawable/icon_expand"
+                        android:inputType="date" />
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
+
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextStartTime"
+                            android:layout_gravity="center_horizontal"
+
+                            android:hint=""
+                            android:focusableInTouchMode="false"
+                            android:paddingLeft="15dp"
+                            android:drawableRight="@drawable/icon_expand"/>
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+                </LinearLayout>
+
+
+                <!-- From date and time -->
+
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.6"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
+
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextEndDate"
+                            android:layout_gravity="center_horizontal"
+                            android:hint="@string/date_to"
+                            android:focusableInTouchMode="false"
+                            android:paddingRight="15dp"
+                            android:drawableRight="@drawable/icon_expand"
+                            android:inputType="date" />
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"
+                        float:fletTextAppearance="@style/floatlabelededittext">
+
+                        <EditText
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextEndTime"
+                            android:layout_gravity="center_horizontal"
+                            android:hint=""
+                            android:focusableInTouchMode="false"
+                            android:paddingLeft="15dp"
+                            android:drawableRight="@drawable/icon_expand"/>
+
+
+                    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+
+                </LinearLayout>
+
+
+                <!-- ******************************
+
+                    Select applicable groups
+
+                ************************************ -->
+
+                <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    float:fletTextAppearance="@style/floatlabelededittext"
+                   >
+
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editTextSelectGroups"
+                        android:layout_gravity="center_horizontal"
+                        android:hint="@string/new_event_select_groups"
+                        android:focusableInTouchMode="false"
+                        android:drawableRight="@drawable/icon_expand"
+                        android:inputType="textMultiLine" />
+
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+                <com.gc.materialdesign.views.ButtonRectangle
+                    android:layout_marginTop="30dp"
+                    android:id="@+id/buttonCreateEvent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/theme_primary"
+                    android:text="@string/new_event_create_event_button_text"
+                    android:layout_gravity="center_horizontal"/>
+
+
+
+            </LinearLayout>
         </LinearLayout>
-        </ScrollView>
+    </com.gc.materialdesign.views.ScrollView>
+   <!-- </ScrollView>-->
 </LinearLayout>
 

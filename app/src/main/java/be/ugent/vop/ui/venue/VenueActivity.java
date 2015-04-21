@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -79,7 +78,7 @@ public class VenueActivity extends BaseActivity {
 
     private TypedValue mTypedValue = new TypedValue();
     private VenueRankingFragment mVenueRankingFragment;
-    private VenueEventFragment mVenueEventFragment;
+    private VenueEventFragment2 mVenueEventFragment;
 
     public interface VenueActivityCallback{
         public void setColorPalette(Palette p);
@@ -279,7 +278,7 @@ public class VenueActivity extends BaseActivity {
                     mFragmentsCalls.add(mVenueRankingFragment);
                     return mVenueRankingFragment;
                 case 1:
-                    mVenueEventFragment = new VenueEventFragment();
+                    mVenueEventFragment = new VenueEventFragment2();
                     Bundle bundle2 = new Bundle();
                     bundle2.putString(VenueActivity.VENUE_ID, fsVenueId);
                     mVenueEventFragment.setArguments(bundle2);
@@ -314,7 +313,6 @@ public class VenueActivity extends BaseActivity {
         public void onLoadFinished(Loader<FoursquareVenue> loader, FoursquareVenue venue) {
             Log.d("VenueFragment", "onLoadFinished of venueInfoLoader");
             if(venue!=null) {
-                mVenue = venue;
                 setTitle(venue.getName());
                 //titleTextView.setText(venue.getName());
                 //placeholder image

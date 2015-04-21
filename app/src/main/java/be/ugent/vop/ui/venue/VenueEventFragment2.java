@@ -1,22 +1,7 @@
-/*
- *    Copyright (C) 2015 Haruki Hasegawa
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
-package be.ugent.vop.ui.event;
+package be.ugent.vop.ui.venue;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.graphics.drawable.NinePatchDrawable;
@@ -24,8 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,12 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import be.ugent.vop.R;
-import be.ugent.vop.backend.loaders.EventLoader;
-import be.ugent.vop.backend.myApi.model.EventBean;
-import be.ugent.vop.backend.myApi.model.EventRewardBean;
-import be.ugent.vop.backend.myApi.model.GroupBean;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
@@ -53,7 +33,22 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EventListViewFragment extends Fragment {
+import be.ugent.vop.R;
+import be.ugent.vop.backend.loaders.EventLoader;
+import be.ugent.vop.backend.loaders.VenueEventsLoader;
+import be.ugent.vop.backend.myApi.model.EventBean;
+import be.ugent.vop.backend.myApi.model.EventRewardBean;
+import be.ugent.vop.backend.myApi.model.GroupBean;
+import be.ugent.vop.ui.event.AbstractDataProvider;
+import be.ugent.vop.ui.event.EventAdapter;
+import be.ugent.vop.ui.event.MyExpandableItemAdapter;
+
+/**
+ * Created by vincent on 20/04/15.
+ */
+
+public class VenueEventFragment2 extends Fragment implements VenueActivity.VenueActivityCallback {
+    private static final String TAG = "VenueEventFragment2";
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
     private RecyclerView mRecyclerView;
@@ -65,17 +60,28 @@ public class EventListViewFragment extends Fragment {
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mEmpty;
     private Activity activity;
-    public EventListViewFragment() {
+
+    private String fsVenueId;
+    public VenueEventFragment2() {
         super();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        if(getArguments().containsKey(VenueActivity.VENUE_ID))
+            fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
+        Log.d(TAG, "venueId:"+fsVenueId);
+
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
         activity=this.getActivity();
         mProvider = new EventDataProvider(); // true: example test data
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
         mEmpty = (TextView)rootView.findViewById(R.id.empty);
+
+
+
+
         return rootView;
     }
 
@@ -170,6 +176,12 @@ public class EventListViewFragment extends Fragment {
     }
 
 
+    @Override
+    public void setColorPalette(Palette p) {
+
+    }
+
+
     class EventDataProvider extends AbstractDataProvider {
         private List<Pair<GroupData, List<ChildData>>> mData;
         private List<EventBean> mEvents;
@@ -184,7 +196,7 @@ public class EventListViewFragment extends Fragment {
 
         public EventDataProvider() {
             mData = new LinkedList<>();
-            activity.getLoaderManager().initLoader(1, null, mEventLoaderListener);
+            activity.getLoaderManager().initLoader(1, null, eventForVenueLoader);
 
         }
 
@@ -194,7 +206,7 @@ public class EventListViewFragment extends Fragment {
         }
 
         public void restartLoader() {
-            activity.getLoaderManager().restartLoader(1, null, mEventLoaderListener);
+            activity.getLoaderManager().restartLoader(1, null, eventForVenueLoader);
         }
 
         @Override
@@ -432,24 +444,22 @@ public class EventListViewFragment extends Fragment {
             }
         }
 
-        private LoaderManager.LoaderCallbacks<EventRewardBean> mEventLoaderListener
-                = new LoaderManager.LoaderCallbacks<EventRewardBean>() {
-            @Override
-            public Loader<EventRewardBean> onCreateLoader(int id, Bundle args) {
-                Log.d("RewardFragment", "onCreateLoader");
-                EventLoader loader = new EventLoader(activity.getApplicationContext());
-                return loader;
-            }
+
+        private LoaderManager.LoaderCallbacks<List<EventBean>> eventForVenueLoader
+                = new LoaderManager.LoaderCallbacks<List<EventBean>>() {
 
             @Override
-            public void onLoadFinished(Loader<EventRewardBean> loader, EventRewardBean data) {
-                Log.d("RewardFragment", "onLoadFinished");
-                if (data != null) {
+            public void onLoadFinished(Loader<List<EventBean>> loader, List<EventBean> events) {
+                Log.d(TAG, "onLoadFinished, VenueEventLoader");
+                if(events==null)  Log.d(TAG, "Empty eventslist");
+                if (events != null) {
+                    Log.d(TAG, "Found events, size: "+events.size());
                     mData = new LinkedList<>();
-                    mEvents = data.getEvents();
+                    mEvents = events;
 
                     if (mEvents != null) {
                         for (int i = 0; i < mEvents.size(); i++) {
+                            Log.d(TAG, "EVENT descr: "+mEvents.get(i).getDescription());
                             final long groupId = i;
                             final EventBean bean = mEvents.get(i);
                             final String groupText = bean.getVenue().getVenueId() + " - " + bean.getDescription();
@@ -461,7 +471,7 @@ public class EventListViewFragment extends Fragment {
                                     bean.getVerified()?"verified event":"non-verified event" + " - " + bean.getMinParticipants()+"/"+bean.getMaxParticipants() + "participants"
                                     , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
                             children.add(new ConcreteChildData(1,
-                                   "Reward : " + bean.getReward()
+                                    "Reward : " + bean.getReward()
                                     , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
                             String groups = "";
                             for(GroupBean g:bean.getGroups()){
@@ -489,12 +499,22 @@ public class EventListViewFragment extends Fragment {
 
             }
 
+            @Override
+            public Loader<List<EventBean>> onCreateLoader(int id, Bundle args) {
+                Log.d(TAG, "onCreateLoader");
+                Log.d(TAG, "onCreateLoader venueId:"+fsVenueId);
+                VenueEventsLoader loader = new VenueEventsLoader(activity.getApplicationContext(),fsVenueId);
+                return loader;
+            }
 
             @Override
-            public void onLoaderReset(Loader<EventRewardBean> loader) {
-
+            public void onLoaderReset(Loader<List<EventBean>> loader) {
+                //rankingListView.setAdapter(null);
             }
         };
+
+
+
     }
 }
 
