@@ -136,8 +136,11 @@
     <string name="new_event_failed">Making new event failed, please try again</string>
     <string name="new_group_success">Success</string>
     <string name="new_group_failed">Making new group failed, please try again</string>
-    <string name="new_group_description">Description</string>
-    <string name="new_group_name">Name</string>
+    <string name="new_group_description">Group description</string>
+    <string name="new_group_name">Group name</string>
     <string name="new_group_select_type">Type</string>
+    <string name="title_activity_new_group">NewGroupActivity</string>
+    <string name="action_discard">Discard</string>
+    <string name="add_group">Add group</string>
 
 </resources>

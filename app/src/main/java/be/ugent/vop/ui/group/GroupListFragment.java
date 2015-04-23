@@ -83,7 +83,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_add:
-                Intent intent = new Intent(this.getActivity(), GroupActivity.class);
+                Intent intent = new Intent(this.getActivity(), NewGroupActivity.class);
                 this.getActivity().startActivity(intent);
                 //this.getActivity().finish();
                 Log.d("GroupListAdapter", "Adding a new group ");
