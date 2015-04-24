@@ -27,11 +27,11 @@ import be.ugent.vop.ui.reward.RewardListViewFragment;
 /**
  * Created by jonas on 3/3/15.
  */
-public class EventLoader extends AsyncTaskLoader<EventRewardBean> {
+public class RewardsLoader extends AsyncTaskLoader<HashMap<EventBean,FoursquareVenue>> {
 
     private Context context;
 
-    public EventLoader(Context context) {
+    public RewardsLoader(Context context) {
         super(context);
         this.context = context.getApplicationContext();
     }
@@ -42,29 +42,24 @@ public class EventLoader extends AsyncTaskLoader<EventRewardBean> {
      * data to be published by the loader.
      */
     @Override
-    public EventRewardBean loadInBackground() {
-        Log.d("EventLoader", "");
+    public HashMap<EventBean,FoursquareVenue> loadInBackground() {
+        Log.d("EventsLoader", "");
+        HashMap<EventBean,FoursquareVenue> event_venue = null;
         EventRewardBean result = null;
         try{
             result = (BackendAPI.get(context).getEventsForUser());
-            HashMap<EventBean,FoursquareVenue> event_venue = new HashMap<>();
+            event_venue = new HashMap<>();
             List<EventBean> mRewards = result.getRewards();
-            List<EventBean> mEvents = result.getEvents();
             if(mRewards!=null) {
                 for (int j = 0; j < mRewards.size(); j++) {
                     event_venue.put(mRewards.get(j),FoursquareAPI.get(context).getVenueInfo(mRewards.get(j).getVenueId()));
                 }
             }
-            if(mEvents!=null) {
-                for (int j = 0; j < mEvents.size(); j++) {
-                    event_venue.put(mEvents.get(j),FoursquareAPI.get(context).getVenueInfo(mEvents.get(j).getVenueId()));
-                }
-            }
         } catch(IOException e){
-            Log.d("EventLoader", e.getMessage());
+            Log.d("EventsLoader", e.getMessage());
         }
         // Done!
-        return result;
+        return event_venue;
     }
 
     /**
@@ -73,7 +68,7 @@ public class EventLoader extends AsyncTaskLoader<EventRewardBean> {
      * here just adds a little more logic.
      */
     @Override
-    public void deliverResult(EventRewardBean response) {
+    public void deliverResult(HashMap<EventBean,FoursquareVenue> response) {
         if (isReset()) {
             onReleaseResources(response);
         }
@@ -102,7 +97,7 @@ public class EventLoader extends AsyncTaskLoader<EventRewardBean> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(EventRewardBean response) {
+    @Override public void onCanceled(HashMap<EventBean,FoursquareVenue> response) {
         super.onCanceled(response);
 
         // At this point we can release the resources associated with 'apps'
@@ -124,6 +119,6 @@ public class EventLoader extends AsyncTaskLoader<EventRewardBean> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(EventRewardBean response) {}
+    protected void onReleaseResources(HashMap<EventBean,FoursquareVenue> response) {}
 
 }

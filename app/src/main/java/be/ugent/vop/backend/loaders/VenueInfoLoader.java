@@ -4,8 +4,14 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+
+import java.util.LinkedList;
+
+import be.ugent.vop.backend.myApi.model.EventBean;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.ui.reward.RewardListViewFragment;
 
 /**
  * A custom Loader that loads all of the installed applications.
