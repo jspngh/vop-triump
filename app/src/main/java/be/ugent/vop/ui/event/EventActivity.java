@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
+import be.ugent.vop.ui.venue.VenueEventFragment2;
 import be.ugent.vop.utils.PrefUtils;
 
 /**
@@ -27,6 +28,7 @@ public class EventActivity extends BaseActivity {
                     .add(R.id.fragment_container, new EventListViewFragment(), FRAGMENT_LIST_VIEW)
                     .commit();
         }
+
     }
 
     @Override

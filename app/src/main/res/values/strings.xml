@@ -125,5 +125,22 @@
     <string name="notification_title">Triump Notification</string>
     <string name="no_reward">No rewards available</string>
     <string name="dialog_message_item_pinned">Show this message to the owner and claim your reward!</string>
+    <string name="new_event_title">Make your own event</string>
+    <string name="date_from">From</string>
+    <string name="date_to">To</string>
+    <string name="new_event_name">Name</string>
+    <string name="new_event_reward">Reward</string>
+    <string name="new_event_select_groups">Select groups</string>
+    <string name="new_event_create_event_button_text">Save Event</string>
+    <string name="new_event_succes">Success</string>
+    <string name="new_event_failed">Making new event failed, please try again</string>
+    <string name="new_group_success">Success</string>
+    <string name="new_group_failed">Making new group failed, please try again</string>
+    <string name="new_group_description">Group description</string>
+    <string name="new_group_name">Group name</string>
+    <string name="new_group_select_type">Type</string>
+    <string name="title_activity_new_group">NewGroupActivity</string>
+    <string name="action_discard">Discard</string>
+    <string name="add_group">Add group</string>
 
 </resources>

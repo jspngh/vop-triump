@@ -83,7 +83,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_add:
-                Intent intent = new Intent(this.getActivity(), GroupActivity.class);
+                Intent intent = new Intent(this.getActivity(), NewGroupActivity.class);
                 this.getActivity().startActivity(intent);
                 //this.getActivity().finish();
                 Log.d("GroupListAdapter", "Adding a new group ");
@@ -145,7 +145,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             int state;
 
             @Override
@@ -161,7 +161,7 @@ public class GroupListFragment extends Fragment implements android.widget.Search
                 mRecyclerView.animate().translationY(dy);
                 //}
             }
-        });
+        });*/
 
         return rootView;
     }

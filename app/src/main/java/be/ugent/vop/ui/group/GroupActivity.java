@@ -37,9 +37,7 @@ public class GroupActivity extends BaseActivity implements GroupFragment.OnFragm
                 fragmentTransaction.replace(R.id.fragment_container, groupFragment);
                 fragmentTransaction.commit();
             }else{
-                GroupNewFragment groupNewFragment = new GroupNewFragment();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, groupNewFragment).commit();
+
             }
         }
     }
