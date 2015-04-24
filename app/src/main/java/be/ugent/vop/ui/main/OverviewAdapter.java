@@ -32,7 +32,6 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.myApi.model.CheckinBean;
 import be.ugent.vop.backend.myApi.model.NewMemberInGroup;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.OverviewReward;
@@ -74,9 +73,6 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
-    /**
-     * Provide a reference to the type of views that you are using (custom ViewHolder)
-     */
     public static class VenueViewHolder extends RecyclerView.ViewHolder {
         protected TextView title;
         protected TextView venue_1_info;
@@ -191,14 +187,14 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 if(overview != null && overview.getNewMembers() != null) {
                     NewMemberInGroup member = overview.getNewMembers().get(0);
-                    final long groupId = member.getGroup().getGroupId();
+                    final long groupId = member.getGroupId();
 
-                    mGroupViewHolder.title.setText(member.getMember().getFirstName() + " just joined one of your groups!");
+                    mGroupViewHolder.title.setText(member.getMemberName());
                     Ion.with(mGroupViewHolder.icon)
                             .placeholder(R.drawable.ic_launcher)
                             .error(R.drawable.ic_drawer_logout)
-                            .load(member.getMember().getProfilePictureUrl());
-                    mGroupViewHolder.group_name.setText("Group in common:" + member.getGroup().getName());
+                            .load(member.getMemberIconUrl());
+                    mGroupViewHolder.group_name.setText("Group in common:" + member.getGroupName());
                     mGroupViewHolder.update_info.setText("Joined at " + member.getDate());
                     overview.getNewMembers().remove(0);
                     mGroupViewHolder.view.setOnClickListener(new View.OnClickListener() {
@@ -228,15 +224,15 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 if(overview != null && overview.getCheckIns() != null) {
                     OverviewCheckin checkin = overview.getCheckIns().get(0);
-                    final long groupId = checkin.getCheckin().getGroupId();
+                    final long groupId = checkin.getGroupId();
 
-                    mGroupViewHolder2.title.setText(checkin.getCheckinUser().getFirstName() + " " + checkin.getCheckinUser().getLastName() + " checked in");
+                    mGroupViewHolder2.title.setText(checkin.getMemberName() + " checked in");
                     if(checkin.getVenueName() != null) {
                         mGroupViewHolder2.group_name.setText("at " + checkin.getVenueName());
                     } else {
                         mGroupViewHolder2.group_name.setText("");
                     }
-                    mGroupViewHolder2.update_info.setText("for " + checkin.getCheckinGroup().getName());
+                    mGroupViewHolder2.update_info.setText("for " + checkin.getGroupName());
                     overview.getCheckIns().remove(0);
                     mGroupViewHolder2.view.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -348,9 +344,9 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if(overview != null && overview.getRewards() != null) {
                     OverviewReward reward = overview.getRewards().get(0);
 
-                    mRewardViewHolder.title.setText("Reward received!");
+                    mRewardViewHolder.title.setText(reward.getEventDescription());
                     mRewardViewHolder.info.setText("Received at " + reward.getDate());
-                    mRewardViewHolder.venue.setText(reward.getEvent().getReward());
+                    mRewardViewHolder.venue.setText(reward.getEventReward());
                     overview.getRewards().remove(0);
                     /*mRewardViewHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override

@@ -47,29 +47,49 @@ public class OverviewBean {
 }
 
 class newMemberInGroup{
-    private UserBean member;
-    private GroupBean group;
+    private String memberName;
+    private String memberIconUrl;
+    private long groupId;
+    private String groupName;
     private Date date;
     public newMemberInGroup(UserBean newMember, GroupBean group, Date date){
-        member = newMember;
-        this.group = group;
+        memberName = newMember.getFirstName() + " " + newMember.getLastName();
+        memberIconUrl = newMember.getProfilePictureUrl();
+        groupId = group.getGroupId();
+        groupName = group.getName();
         this.date = date;
     }
 
-    public UserBean getMember() {
-        return member;
+    public String getMemberName() {
+        return memberName;
     }
 
-    public void setMember(UserBean member) {
-        this.member = member;
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 
-    public GroupBean getGroup() {
-        return group;
+    public String getMemberIconUrl() {
+        return memberIconUrl;
     }
 
-    public void setGroup(GroupBean group) {
-        this.group = group;
+    public void setMemberIconUrl(String memberIconUrl) {
+        this.memberIconUrl = memberIconUrl;
+    }
+
+    public long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public Date getDate() {
@@ -82,19 +102,29 @@ class newMemberInGroup{
 }
 
 class OverviewReward{
-    private EventBean event;
+    private String eventDescription;
+    private String eventReward;
     private Date date;
     public OverviewReward(EventBean event, Date date){
-        this.event = event;
+        eventDescription = event.getDescription();
+        eventReward = event.getReward();
         this.date = date;
     }
 
-    public EventBean getEvent() {
-        return event;
+    public String getEventReward() {
+        return eventReward;
     }
 
-    public void setEvent(EventBean event) {
-        this.event = event;
+    public void setEventReward(String eventReward) {
+        this.eventReward = eventReward;
+    }
+
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
     }
 
     public Date getDate() {
@@ -107,39 +137,59 @@ class OverviewReward{
 }
 
 class OverviewCheckin{
-    private CheckinBean checkin;
-    private UserBean checkinUser;
-    private GroupBean checkinGroup;
+    private String memberName;
+    private String memberIconUrl;
+    private long groupId;
+    private String groupName;
+    private String venueId;
     private String venueName;
 
     public OverviewCheckin(CheckinBean checkinBean, UserBean user, GroupBean group){
-        this.checkin = checkinBean;
-        this.checkinUser = user;
-        this.checkinGroup = group;
+        memberName = user.getFirstName() + " " + user.getLastName();
+        memberIconUrl = user.getProfilePictureUrl();
+        groupId = group.getGroupId();
+        groupName = group.getName();
+        venueId = checkinBean.getVenueId();
     }
 
-    public CheckinBean getCheckin() {
-        return checkin;
+    public String getMemberName() {
+        return memberName;
     }
 
-    public void setCheckin(CheckinBean checkin) {
-        this.checkin = checkin;
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 
-    public UserBean getCheckinUser() {
-        return checkinUser;
+    public String getMemberIconUrl() {
+        return memberIconUrl;
     }
 
-    public void setCheckinUser(UserBean checkinUser) {
-        this.checkinUser = checkinUser;
+    public void setMemberIconUrl(String memberIconUrl) {
+        this.memberIconUrl = memberIconUrl;
     }
 
-    public GroupBean getCheckinGroup() {
-        return checkinGroup;
+    public long getGroupId() {
+        return groupId;
     }
 
-    public void setCheckinGroup(GroupBean checkinGroup) {
-        this.checkinGroup = checkinGroup;
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getVenueId() {
+        return venueId;
+    }
+
+    public void setVenueId(String venueId) {
+        this.venueId = venueId;
     }
 
     public String getVenueName() {

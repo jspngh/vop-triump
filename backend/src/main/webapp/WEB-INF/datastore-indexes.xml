@@ -11,4 +11,15 @@
     <property name="end" direction="asc"/>
     </datastore-index>
 
+    <datastore-index kind="Checkin" ancestor="false" source="manual">
+        <property name="groupId" direction="asc"/>
+        <property name="date" direction="desc"/>
+    </datastore-index>
+
+
+    <datastore-index kind="mailBox" ancestor="false" source="manual">
+        <property name="userId" direction="asc"/>
+        <property name="date" direction="desc"/>
+    </datastore-index>
+
 </datastore-indexes>

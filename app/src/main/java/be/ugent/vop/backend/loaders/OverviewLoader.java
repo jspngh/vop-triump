@@ -66,7 +66,7 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
 
         if(overview != null && overview.getCheckIns() != null) {
             for (OverviewCheckin checkin : overview.getCheckIns()) {
-                FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getCheckin().getVenueId());
+                FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getVenueId());
                 if(venue != null) checkin.setVenueName(venue.getName());
             }
         }

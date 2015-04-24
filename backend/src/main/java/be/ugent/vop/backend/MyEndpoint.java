@@ -658,19 +658,15 @@ public class MyEndpoint {
         VenueBean mVenueBean = null;
         for(GroupBean group : tmp.getGroups()){
             Query.Filter propertyFilter = new Query.FilterPredicate(CHECKIN_GROUP_ID, Query.FilterOperator.EQUAL, group.getGroupId());
-            Query checkin = new Query(CHECKIN_ENTITY).setFilter(propertyFilter);
+            Query.Filter dateFilter = new Query.FilterPredicate(CHECKIN_DATE, Query.FilterOperator.GREATER_THAN_OR_EQUAL, yesterday);
+            Query.Filter compoFilter = Query.CompositeFilterOperator.and(propertyFilter, dateFilter);
+            Query checkin = new Query(CHECKIN_ENTITY).setFilter(compoFilter).addSort(CHECKIN_DATE, Query.SortDirection.DESCENDING);
             PreparedQuery pq_checkin = datastore.prepare(checkin);
 
-            for (Entity s : pq_checkin.asIterable()) {
+            for (Entity s : pq_checkin.asIterable(FetchOptions.Builder.withLimit(10))) {
                 CheckinBean checkinBean = _getCheckinBean(s);
-                try{
-                    if(checkinBean.getDate().compareTo(yesterday) >= 0){
-                        UserBean user = _getUserBeanForId(checkinBean.getUserId());
-                        checkIns.add(new OverviewCheckin(checkinBean, user, group));
-                    }
-                } catch(NullPointerException e){
-                    //Do Something
-                }
+                UserBean user = _getUserBeanForId(checkinBean.getUserId());
+                checkIns.add(new OverviewCheckin(checkinBean, user, group));
             }
         }
 
@@ -686,10 +682,12 @@ public class MyEndpoint {
         }
 
         Query.Filter propertyFilter = new Query.FilterPredicate(MAILBOX_USER_ID, Query.FilterOperator.EQUAL, userId);
-        Query mailBox = new Query(MAILBOX_ENTITY).setFilter(propertyFilter);
+        Query.Filter dateFilter = new Query.FilterPredicate(MAILBOX_DATE, Query.FilterOperator.GREATER_THAN_OR_EQUAL, yesterday);
+        Query.Filter compoFilter = Query.CompositeFilterOperator.and(propertyFilter, dateFilter);
+        Query mailBox = new Query(MAILBOX_ENTITY).setFilter(compoFilter).addSort(MAILBOX_DATE, Query.SortDirection.DESCENDING);
         PreparedQuery pq_mailBox = datastore.prepare(mailBox);
 
-        for (Entity item : pq_mailBox.asIterable()) {
+        for (Entity item : pq_mailBox.asIterable(FetchOptions.Builder.withLimit(10))) {
             String type = (String) item.getProperty(MAILBOX_TYPE);
             Date date = (Date) item.getProperty(MAILBOX_DATE);
             switch(type){
