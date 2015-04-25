@@ -6,11 +6,17 @@ import android.location.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import be.ugent.vop.backend.BackendAPI;
+import be.ugent.vop.backend.myApi.model.NewMemberInGroup;
 import be.ugent.vop.backend.myApi.model.OverviewBean;
 import be.ugent.vop.backend.myApi.model.OverviewCheckin;
+import be.ugent.vop.backend.myApi.model.OverviewReward;
 import be.ugent.vop.backend.myApi.model.VenueBean;
+import be.ugent.vop.database.contentproviders.CheckInContentProvider;
+import be.ugent.vop.database.contentproviders.NewMemberContentProvider;
+import be.ugent.vop.database.contentproviders.RewardContentProvider;
 import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.ui.main.OverviewAdapter;
@@ -23,17 +29,25 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
     private Context context;
     private Location mLastLocation;
     private ArrayList<FoursquareVenue> fsVenues;
-    private Object syncToken;
+    private NewMemberContentProvider memberDatabase;
+    private CheckInContentProvider checkinDatabase;
+    private RewardContentProvider rewardDatabase;
+    private boolean getNewOverview;
 
-    public OverviewLoader(Context context, Location lastLocation) {
+    public OverviewLoader(Context context, Location lastLocation, boolean getNewOverview) {
         super(context);
         this.context = context;
+        this.memberDatabase = new NewMemberContentProvider(context);
+        memberDatabase.open();
+        this.checkinDatabase = new CheckInContentProvider(context);
+        checkinDatabase.open();
+        this.rewardDatabase = new RewardContentProvider(context);
+        rewardDatabase.open();
         this.mLastLocation = lastLocation;
+        this.getNewOverview = getNewOverview;
     }
 
     @Override public OverviewAdapter loadInBackground() {
-        OverviewBean result = null;
-
         fsVenues = FoursquareAPI.get(context).getNearbyVenues(mLastLocation);
         ArrayList<String> venues = new ArrayList<>();
         for(FoursquareVenue v : fsVenues){
@@ -41,35 +55,65 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
         }
 
         OverviewBean overview = null;
-        try {
-            overview = BackendAPI.get(context).getOverview(venues);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ArrayList<FoursquareVenue> venuesInOverview = new ArrayList<>();
-        if(overview != null && overview.getVenues() != null) {
-            for (VenueBean venue : overview.getVenues()) {
-                for(FoursquareVenue fsVenue : fsVenues) {
-                    if (venue.getVenueId().equals(fsVenue.getId())) {
-                        venuesInOverview.add(fsVenue);
+
+        if(getNewOverview) {
+            try {
+                overview = BackendAPI.get(context).getOverview(venues);
+                if (overview.getNewMembers() != null) {
+                    memberDatabase.deleteAllMembers();
+                    for (NewMemberInGroup member : overview.getNewMembers()) {
+                        memberDatabase.createMember(member);
+                    }
+                }
+                if (overview.getCheckIns() != null) {
+                    checkinDatabase.deleteAllCheckIns();
+                    for (OverviewCheckin checkin : overview.getCheckIns()) {
+                        checkinDatabase.createCheckIn(checkin);
+                    }
+                }
+                if (overview.getRewards() != null) {
+                    rewardDatabase.deleteAllRewards();
+                    for (OverviewReward reward : overview.getRewards()) {
+                        rewardDatabase.createReward(reward);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ArrayList<FoursquareVenue> venuesInOverview = new ArrayList<>();
+            if (overview != null && overview.getVenues() != null) {
+                for (VenueBean venue : overview.getVenues()) {
+                    for (FoursquareVenue fsVenue : fsVenues) {
+                        if (venue.getVenueId().equals(fsVenue.getId())) {
+                            venuesInOverview.add(fsVenue);
+                        }
                     }
                 }
             }
-        }
-        if(venuesInOverview.size() < 3){
-            for(int i = 0; i < fsVenues.size() && venuesInOverview.size() < 3; i++){
-                if(!venuesInOverview.contains(fsVenues.get(i)))
-                    venuesInOverview.add(fsVenues.get(i));
+            if (venuesInOverview.size() < 3) {
+                for (int i = 0; i < fsVenues.size() && venuesInOverview.size() < 3; i++) {
+                    if (!venuesInOverview.contains(fsVenues.get(i)))
+                        venuesInOverview.add(fsVenues.get(i));
+                }
             }
-        }
-        fsVenues = venuesInOverview;
+            fsVenues = venuesInOverview;
 
-        if(overview != null && overview.getCheckIns() != null) {
-            for (OverviewCheckin checkin : overview.getCheckIns()) {
-                FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getVenueId());
-                if(venue != null) checkin.setVenueName(venue.getName());
+            if (overview != null && overview.getCheckIns() != null) {
+                for (OverviewCheckin checkin : overview.getCheckIns()) {
+                    FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getVenueId());
+                    if (venue != null) checkin.setVenueName(venue.getName());
+                }
             }
+        } else {
+            overview = new OverviewBean();
+            List<NewMemberInGroup> members = memberDatabase.getAllNewMembers();
+            List<OverviewCheckin> checkins = checkinDatabase.getAllCheckIns();
+            List<OverviewReward> rewards = rewardDatabase.getAllRewards();
+            overview.setNewMembers(members);
+            overview.setCheckIns(checkins);
+            overview.setRewards(rewards);
         }
+
         return new OverviewAdapter(overview, fsVenues, context, false);
     }
 

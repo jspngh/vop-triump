@@ -345,7 +345,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     OverviewReward reward = overview.getRewards().get(0);
 
                     mRewardViewHolder.title.setText(reward.getEventDescription());
-                    mRewardViewHolder.info.setText("Received at " + reward.getDate());
+                    //mRewardViewHolder.info.setText("Received at " + reward.getDate());
                     mRewardViewHolder.venue.setText(reward.getEventReward());
                     overview.getRewards().remove(0);
                     /*mRewardViewHolder.view.setOnClickListener(new View.OnClickListener() {
