@@ -4,10 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
+import com.google.api.client.util.DateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import be.ugent.vop.backend.myApi.model.OverviewCheckin;
 import be.ugent.vop.database.CheckInTable;
 import be.ugent.vop.database.MySQLiteHelper;
@@ -40,8 +39,9 @@ public class CheckInContentProvider {
         values.put(CheckInTable.COLUMN_GROUP_NAME, checkin.getGroupName());
         values.put(CheckInTable.COLUMN_MEMBER_NAME, checkin.getMemberName());
         values.put(CheckInTable.COLUMN_MEMBER_ICON, checkin.getMemberIconUrl());
-        values.put(CheckInTable.COLUMN_VENUE_NAME, checkin.getVenueId());
+        values.put(CheckInTable.COLUMN_VENUE_NAME, checkin.getVenueName());
         values.put(CheckInTable.COLUMN_VENUE_ID, checkin.getVenueId());
+        values.put(CheckInTable.COLUMN_DATE, checkin.getDate().toString());
 
 
         long insertId = database.insert(CheckInTable.TABLE_CHECKIN, null,
@@ -77,6 +77,8 @@ public class CheckInContentProvider {
         checkin.setMemberIconUrl(cursor.getString(4));
         checkin.setVenueName(cursor.getString(5));
         checkin.setVenueId(cursor.getString(6));
+        DateTime date = new DateTime(cursor.getString(7));
+        checkin.setDate(date);
         return checkin;
     }
 }

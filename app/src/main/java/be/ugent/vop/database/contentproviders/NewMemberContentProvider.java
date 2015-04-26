@@ -4,10 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
+import com.google.api.client.util.DateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import be.ugent.vop.backend.myApi.model.NewMemberInGroup;
 import be.ugent.vop.database.MySQLiteHelper;
 import be.ugent.vop.database.NewMemberTable;
@@ -72,6 +71,9 @@ public class NewMemberContentProvider {
         member.setGroupName(cursor.getString(2));
         member.setMemberName(cursor.getString(3));
         member.setMemberIconUrl(cursor.getString(4));
+        DateTime date = new DateTime(cursor.getString(5));
+        member.setDate(date);
+
         return member;
     }
 }

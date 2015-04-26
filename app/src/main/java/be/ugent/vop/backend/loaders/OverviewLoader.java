@@ -65,12 +65,6 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
                         memberDatabase.createMember(member);
                     }
                 }
-                if (overview.getCheckIns() != null) {
-                    checkinDatabase.deleteAllCheckIns();
-                    for (OverviewCheckin checkin : overview.getCheckIns()) {
-                        checkinDatabase.createCheckIn(checkin);
-                    }
-                }
                 if (overview.getRewards() != null) {
                     rewardDatabase.deleteAllRewards();
                     for (OverviewReward reward : overview.getRewards()) {
@@ -102,6 +96,10 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
                 for (OverviewCheckin checkin : overview.getCheckIns()) {
                     FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getVenueId());
                     if (venue != null) checkin.setVenueName(venue.getName());
+                }
+                checkinDatabase.deleteAllCheckIns();
+                for (OverviewCheckin checkin : overview.getCheckIns()) {
+                    checkinDatabase.createCheckIn(checkin);
                 }
             }
         } else {

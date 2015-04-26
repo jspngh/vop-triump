@@ -143,6 +143,7 @@ class OverviewCheckin{
     private String groupName;
     private String venueId;
     private String venueName;
+    private Date date;
 
     public OverviewCheckin(CheckinBean checkinBean, UserBean user, GroupBean group){
         memberName = user.getFirstName() + " " + user.getLastName();
@@ -150,6 +151,7 @@ class OverviewCheckin{
         groupId = group.getGroupId();
         groupName = group.getName();
         venueId = checkinBean.getVenueId();
+        this.date = checkinBean.getDate();
     }
 
     public String getMemberName() {
@@ -198,5 +200,13 @@ class OverviewCheckin{
 
     public void setVenueName(String venueName) {
         this.venueName = venueName;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

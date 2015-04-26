@@ -4,13 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
+import com.google.api.client.util.DateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import be.ugent.vop.backend.myApi.model.OverviewCheckin;
 import be.ugent.vop.backend.myApi.model.OverviewReward;
-import be.ugent.vop.database.CheckInTable;
 import be.ugent.vop.database.MySQLiteHelper;
 import be.ugent.vop.database.RewardTable;
 
@@ -71,7 +68,8 @@ public class RewardContentProvider {
         OverviewReward reward = new OverviewReward();
         reward.setEventDescription(cursor.getString(1));
         reward.setEventReward(cursor.getString(2));
-        //reward.setDate(cursor.getString(3));
+        DateTime date = new DateTime(cursor.getString(3));
+        reward.setDate(date);
         return reward;
     }
 }

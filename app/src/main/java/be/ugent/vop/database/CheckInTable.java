@@ -15,8 +15,9 @@ public class CheckInTable {
     public static final String COLUMN_MEMBER_ICON = "memberIconUrl";
     public static final String COLUMN_VENUE_NAME = "venueName";
     public static final String COLUMN_VENUE_ID = "venueId";
+    public static final String COLUMN_DATE = "date";
 
-    public final static String COLUMNS[] = {COLUMN_ID, COLUMN_GROUP_ID, COLUMN_GROUP_NAME, COLUMN_MEMBER_NAME, COLUMN_MEMBER_ICON, COLUMN_VENUE_NAME, COLUMN_VENUE_ID};
+    public final static String COLUMNS[] = {COLUMN_ID, COLUMN_GROUP_ID, COLUMN_GROUP_NAME, COLUMN_MEMBER_NAME, COLUMN_MEMBER_ICON, COLUMN_VENUE_NAME, COLUMN_VENUE_ID, COLUMN_DATE};
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "create table if not exists "
@@ -27,7 +28,8 @@ public class CheckInTable {
             + " text not null, " + COLUMN_MEMBER_ICON
             + " text not null, " + COLUMN_VENUE_NAME
             + " text not null, " + COLUMN_VENUE_ID
-            + " text not null); ";
+            + " text not null, " + COLUMN_DATE
+            + " date not null); ";
 
     public static void onCreate(SQLiteDatabase database) {
         System.err.println("creating table");

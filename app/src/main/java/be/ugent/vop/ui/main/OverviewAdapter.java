@@ -27,9 +27,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.api.client.util.DateTime;
 import com.koushikdutta.ion.Ion;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.NewMemberInGroup;
@@ -49,6 +52,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int VENUE_CARD = 2;
     private static final int REWARD_CARD = 3;
     private static final int EVENT_CARD = 4;
+    private static final int WELCOME_CARD = 5;
     private OverviewBean overview;
     private ArrayList<FoursquareVenue> fsVenues;
     private Context context;
@@ -160,15 +164,32 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         boolean darkTheme = false;
         if(context != null) darkTheme = PrefUtils.getDarkTheme(context);
 
-        if(position == 0) {
+        if (position == 0) {
             viewType = VENUE_CARD;
         } else {
-            if(overview.getNewMembers() != null && overview.getNewMembers().size() > 0){
+            Date mostRecent = null;
+            Date compare;
+            if (overview.getNewMembers() != null && overview.getNewMembers().size() > 0) {
+                mostRecent = new Date(overview.getNewMembers().get(0).getDate().getValue());
                 viewType = GROUP_CARD_MEMBER;
-            } else if(overview.getCheckIns() != null && overview.getCheckIns().size() > 0){
-                viewType = GROUP_CARD_CHECKIN;
-            } else if(overview.getRewards() != null && overview.getRewards().size() > 0){
-                viewType = REWARD_CARD;
+            }
+            if (overview.getCheckIns() != null && overview.getCheckIns().size() > 0) {
+                compare = new Date(overview.getCheckIns().get(0).getDate().getValue());
+                if (mostRecent != null && mostRecent.compareTo(compare) < 0) {
+                    mostRecent = compare;
+                    viewType = GROUP_CARD_CHECKIN;
+                } else if(mostRecent == null) {
+                    mostRecent = compare;
+                    viewType = GROUP_CARD_CHECKIN;
+                }
+            }
+            if (overview.getRewards() != null && overview.getRewards().size() > 0) {
+                compare = new Date(overview.getRewards().get(0).getDate().getValue());
+                if (mostRecent != null && mostRecent.compareTo(compare) < 0) {
+                    viewType = REWARD_CARD;
+                } else if(mostRecent == null) {
+                    viewType = REWARD_CARD;
+                }
             }
         }
 
@@ -195,8 +216,12 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             .error(R.drawable.ic_drawer_logout)
                             .load(member.getMemberIconUrl());
                     mGroupViewHolder.group_name.setText("Group in common:" + member.getGroupName());
-                    mGroupViewHolder.update_info.setText("Joined at " + member.getDate());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+                    mGroupViewHolder.update_info.setText("Joined at " + dateFormat.format(new Date(member.getDate().getValue())));
+
                     overview.getNewMembers().remove(0);
+                    //newMembersLenght--;
+
                     mGroupViewHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -228,12 +253,16 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                     mGroupViewHolder2.title.setText(checkin.getMemberName() + " checked in");
                     if(checkin.getVenueName() != null) {
-                        mGroupViewHolder2.group_name.setText("at " + checkin.getVenueName());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+                        mGroupViewHolder2.group_name.setText("at " + checkin.getVenueName() + " at " + dateFormat.format(new Date(checkin.getDate().getValue())));
                     } else {
                         mGroupViewHolder2.group_name.setText("");
                     }
                     mGroupViewHolder2.update_info.setText("for " + checkin.getGroupName());
+
                     overview.getCheckIns().remove(0);
+                    //checkInLenght--;
+
                     mGroupViewHolder2.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -261,6 +290,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 VenueViewHolder mVenueViewHolder =  new VenueViewHolder(v);
 
                 if(fsVenues != null && fsVenues.size() > 2){
+                    //venue 1
                     mVenueViewHolder.venue_1_name.setText(fsVenues.get(0).getName());
                     mVenueViewHolder.venue_1_info.setText(fsVenues.get(0).getAddress());
 
@@ -273,7 +303,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 .load(url);
                     }
 
-                    mVenueViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    View.OnClickListener listener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, VenueActivity.class);
@@ -281,8 +311,12 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             context.startActivity(intent);
                         }
-                    });
+                    };
+                    mVenueViewHolder.venue_1_name.setOnClickListener(listener);
+                    mVenueViewHolder.venue_1_info.setOnClickListener(listener);
+                    mVenueViewHolder.icon1.setOnClickListener(listener);
 
+                    //venue 2
                     mVenueViewHolder.venue_2_name.setText(fsVenues.get(1).getName());
                     mVenueViewHolder.venue_2_info.setText(fsVenues.get(1).getAddress());
 
@@ -294,7 +328,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 .error(R.drawable.ic_drawer_logout)
                                 .load(url);
                     }
-                    mVenueViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    listener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, VenueActivity.class);
@@ -302,10 +336,13 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             context.startActivity(intent);
                         }
-                    });
+                    };
+                    mVenueViewHolder.venue_2_name.setOnClickListener(listener);
+                    mVenueViewHolder.venue_2_info.setOnClickListener(listener);
+                    mVenueViewHolder.icon2.setOnClickListener(listener);
 
+                    //venue 3
                     mVenueViewHolder.venue_3_name.setText(fsVenues.get(2).getName());
-
                     mVenueViewHolder.venue_3_info.setText(fsVenues.get(2).getAddress());
 
                     if(fsVenues.get(2).getPhotos().size() > 0){
@@ -316,8 +353,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 .error(R.drawable.ic_drawer_logout)
                                 .load(url);
                     }
-
-                    mVenueViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    listener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, VenueActivity.class);
@@ -325,7 +361,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             context.startActivity(intent);
                         }
-                    });
+                    };
+                    mVenueViewHolder.venue_3_name.setOnClickListener(listener);
+                    mVenueViewHolder.venue_3_info.setOnClickListener(listener);
+                    mVenueViewHolder.icon3.setOnClickListener(listener);
                 }
 
                 return mVenueViewHolder;
@@ -345,9 +384,12 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     OverviewReward reward = overview.getRewards().get(0);
 
                     mRewardViewHolder.title.setText(reward.getEventDescription());
-                    //mRewardViewHolder.info.setText("Received at " + reward.getDate());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+                    mRewardViewHolder.info.setText("Received at " + dateFormat.format(new Date(reward.getDate().getValue())));
                     mRewardViewHolder.venue.setText(reward.getEventReward());
+
                     overview.getRewards().remove(0);
+                    rewardsLenght--;
                     /*mRewardViewHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
