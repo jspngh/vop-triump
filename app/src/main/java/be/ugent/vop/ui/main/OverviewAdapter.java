@@ -220,7 +220,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             .placeholder(R.drawable.ic_launcher)
                             .error(R.drawable.ic_drawer_logout)
                             .load(member.getMemberIconUrl());
-                    mGroupViewHolder.title.setText(member.getMemberName());
+                    mGroupViewHolder.title.setText(member.getMemberName() + " joined one of your groups");
                     mGroupViewHolder.group_name.setText("Joined " + member.getGroupName());
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
                     mGroupViewHolder.update_info.setText("at " + dateFormat.format(new Date(member.getDate().getValue())));
