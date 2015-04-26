@@ -151,6 +151,12 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public LoadingViewHolder(View v) {
+            super(v);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
         return position;
@@ -193,7 +199,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
 
-        if(displayWelcome) viewType = -1;
+        if(displayWelcome) viewType = WELCOME_CARD;
         switch(viewType){
             case GROUP_CARD_MEMBER:
 
@@ -210,14 +216,14 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     NewMemberInGroup member = overview.getNewMembers().get(0);
                     final long groupId = member.getGroupId();
 
-                    mGroupViewHolder.title.setText(member.getMemberName());
                     Ion.with(mGroupViewHolder.icon)
                             .placeholder(R.drawable.ic_launcher)
                             .error(R.drawable.ic_drawer_logout)
                             .load(member.getMemberIconUrl());
-                    mGroupViewHolder.group_name.setText("Group in common:" + member.getGroupName());
+                    mGroupViewHolder.title.setText(member.getMemberName());
+                    mGroupViewHolder.group_name.setText("Joined " + member.getGroupName());
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-                    mGroupViewHolder.update_info.setText("Joined at " + dateFormat.format(new Date(member.getDate().getValue())));
+                    mGroupViewHolder.update_info.setText("at " + dateFormat.format(new Date(member.getDate().getValue())));
 
                     overview.getNewMembers().remove(0);
                     //newMembersLenght--;
@@ -251,10 +257,14 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     OverviewCheckin checkin = overview.getCheckIns().get(0);
                     final long groupId = checkin.getGroupId();
 
-                    mGroupViewHolder2.title.setText(checkin.getMemberName() + " checked in");
+                    Ion.with(mGroupViewHolder2.icon)
+                            .placeholder(R.drawable.ic_launcher)
+                            .error(R.drawable.ic_drawer_logout)
+                            .load(checkin.getMemberIconUrl());
+                    mGroupViewHolder2.title.setText(checkin.getMemberName() + " is at " + checkin.getVenueName());
                     if(checkin.getVenueName() != null) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-                        mGroupViewHolder2.group_name.setText("at " + checkin.getVenueName() + " at " + dateFormat.format(new Date(checkin.getDate().getValue())));
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                        mGroupViewHolder2.group_name.setText("on " + dateFormat.format(new Date(checkin.getDate().getValue())));
                     } else {
                         mGroupViewHolder2.group_name.setText("");
                     }
@@ -412,8 +422,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 return new EventViewHolder(v);
 
-            default:
-
+            case WELCOME_CARD:
                 if(darkTheme){
                     v = LayoutInflater.from(viewGroup.getContext())
                             .inflate(R.layout.layout_card_welcome_dark, viewGroup, false);
@@ -422,6 +431,17 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             .inflate(R.layout.layout_card_welcome, viewGroup, false);
                 }
                 return new WelcomeViewHolder(v);
+
+            default:
+
+                if(darkTheme){
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_loading_dark, viewGroup, false);
+                } else {
+                    v = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_card_loading, viewGroup, false);
+                }
+                return new LoadingViewHolder(v);
         }
     }
 

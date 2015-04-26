@@ -35,16 +35,15 @@
     <string name="welcome_triump">Welcome to Triump</string>
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
     <string name="no_ranking">Currently there aren\'t any groups competing for this venue. Click check-in to be the first to conquer it!</string>
-    <string name="loading_data">Crunching the latest data for you…</string>
+    <string name="loading_data">loading…</string>
     <string name="retrieving_data">Retrieving data</string>
     <string name="group_title">Update from your group</string>
     <string name="venue_title">Places nearby</string>
     <string name="event_title">Trending events</string>
     <string name="reward_title">Reward received!</string>
-    <string name="group_name">Loading group</string>
     <string name="venue_name">Loading venue</string>
     <string name="event_name">Loading event</string>
-    <string name="group_info">Loading group description</string>
+    <string name="group_info">Loading…</string>
     <string name="venue_info">Loading venue description</string>
     <string name="event_info">Loading event description</string>
     <string name="reward_info">Your group won!</string>
@@ -91,8 +90,6 @@
     <string name="new_event">New Event</string>
     <string name="title_activity_accept_members">AcceptMembers</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pending_requests">Pending requests</string>
     <string name="set_banner">Change cover</string>
 
