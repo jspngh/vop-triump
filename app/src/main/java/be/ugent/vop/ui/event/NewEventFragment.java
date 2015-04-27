@@ -99,7 +99,7 @@ public class NewEventFragment extends Fragment implements SelectGroupsDialog.Sel
 
         if(getArguments().containsKey(VenueActivity.VENUE_ID))
             fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
-
+//FUCK U JONAS
 //        selectGroupsButton = (ButtonFlat) rootView.findViewById(R.id.buttonSelectGroups);
         createButton = (ButtonRectangle) rootView.findViewById(R.id.buttonCreateEvent);
         selectGroupsEditText = (EditText) rootView.findViewById(R.id.editTextSelectGroups);
