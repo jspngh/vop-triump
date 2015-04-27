@@ -18,6 +18,7 @@
     <facet type="java-gradle" name="Java-Gradle">
       <configuration>
         <option name="BUILD_FOLDER_PATH" value="$MODULE_DIR$/build" />
+        <option name="BUILDABLE" value="true" />
       </configuration>
     </facet>
   </component>
@@ -45,6 +46,6 @@
     <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.14" level="project" />
     <orderEntry type="library" exported="" name="org.json-chargebee-1.0" level="project" />
     <orderEntry type="library" exported="" name="json-simple-1.1" level="project" />
+    <orderEntry type="library" exported="" name="backend.backend-android-endpoints" level="project" />
   </component>
 </module>
-
