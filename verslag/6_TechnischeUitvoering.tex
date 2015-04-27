@@ -1,6 +1,66 @@
 
 \chapter{Technische uitvoering}
 
-Een beschrijving van de technische uitvoering van het project met de
-nodige figuren en een verantwoording van de ontwerpskeuzes.
+%Een beschrijving van de technische uitvoering van het project met de
+%nodige figuren en een verantwoording van de ontwerpskeuzes.
 
+
+\section{Frontend}
+\subsection{Android applicatie}
+\subsubsection{Inloggen via Foursquare}
+\section{Backend}
+\subsection{Google Endpoints}
+\subsubsection{Google Cloud messaging}
+\subsubsection{Cron jobs}
+\subsubsection{Datastore}
+\subsection{Foursquare API}
+
+%Korte inleiding gebruik API
+Zoals reeds eerder aangehaald maakt Triump gebruikt van locaties, deze locaties worden bekomen via de Foursquare API. De Foursquare API geeft de mogelijkheid aan ontwikkelaars om de enorme locatie databank van Foursquare te raadplegen. Naast locatie gegevens kan er ook gebruikerinformatie zoals naam, geboortedatum en profielfoto opgevraagd worden.
+
+% Overzicht voor en nadelen gebruik API
+Het werken met de API brengt echter wel enkele nadelen met zich mee.
+Allereerst wordt Triump hierdoor afhankelijk van een externe organisatie. Tentweede wordt de dataopslag verdeelt over twee databases. Enerzijds Google Cloud Datastore waar de data over groepen en checkins worden bijgehouden en anderzijds de Foursquare Datastore waar de locatie en gebruikergegevens zijn opgeslaan. Een laatste nadeel is dat locatie eigenaars verplicht geregisteerd moeten zijn bij Foursquare om zichtbaar te zijn in Triump. 
+
+Indien locaties intern zouden aangemaakt en opgeslaan worden zouden de eerste twee nadelen opgelost zijn. 
+%uitleg waarom het we niet geopteerd hebben om met eigen db te werken.
+Het laatste probleem wordt opgelost door het voorzien van een website. Deze website voorziet locatie eigenaars van de nodige informatie om hun café, zaak of restaurant zichtbaar te maken op Triump. Meer uitleg over de website volgt hieronder.
+
+
+%werking API
+Het mechanisme gebruik in de API is zeer vanzelfsprekend. Alle gegevens opgeslaan in de datastore corresponeren met een RESTful URL. De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Via deze connectie wordt er een XML-bestand teruggestuurd. In listing XXX wordt er een voorbeeld uitgewerkt.
+
+\begin{lstlisting}
+HTTPS connectie naar URL:
+https://api.foursquare.com/v2/venues/4d972f73af3d236ad0561cc7?
+oauth_token=OMUUX4BHXRTBNRLJ2QVQMC4UGRRR5TESI1XD02I4GCMV3G21
+&v=20150101
+&m=foursquare
+
+Antwoord:
+"venue":
+	{"id":"4d972f73af3d236ad0561cc7",
+	"name":"POM D' API BRUXELLES",
+	"contact":{},
+	"location":
+		{"address":"Koninginnegallerij",
+		"lat":50.0,"lng":4.0,
+		"postalCode":"1000",
+		"city":"Brussels",
+		"state":"Bruxelles-Capitale",
+		"country":"Belgium",
+		"formattedAddress":["Koninginnegallerij","1000 Brussels"]
+		}
+	}
+\end{lstlisting}
+
+%woordje uitleg ...
+
+
+
+
+
+ 
+\subsection{Website}
+\subsubsection{Doel}
+\subsubsection{Django-framework}
