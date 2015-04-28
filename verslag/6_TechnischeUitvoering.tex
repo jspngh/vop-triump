@@ -120,4 +120,18 @@ Antwoord:
 \subsection{Webinterface}
 \subsubsection{Doel}
 % De Waarom Vraag
+Voor een aantal taken is een smartphone niet helemaal geschikt. Deze heeft een klein scherm en de touchbediening is niet altijd handig. Zulke taken zijn het beheren van groepen en het aanmaken van promoties.
+Deze taken moeten redelijk vaak gebeuren en gebeuren gemakkelijker op een groter scherm. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten om zo klanten te lokken, zullen deze taken willen uitvoeren. Daarom is Triump uitgebreid met een webinterface.
+Onze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. Op de site staat informatie over wat het doel is van Triump en waarom gebruikers
+Op onze website kunnen gebruikers net als in de android-applicatie inloggen met Foursquare. Het is de bedoeling dat het registereren van een Foursquare-locatie steeds via de website gebeurd, net als het aanmaken van promoties door een eigenaar van een registreerde locatie.
 \subsubsection{Django-framework}
+Bij het maken van een website kan men verschillende keuzes maken.
+Eerst en vooral is er de keuze of er gebruik wordt gemaakt van een bestaand framework, zoals Ruby on Rails, ASP.NET en Django, of dat men zelf met bijvoorbeeld PHP de nodige functionaliteit implementeert.
+Omdat de webinterface slechts extra functionaliteit mogelijk maakt en dus niet het grootste deel van ons project is, werd besloten om deze voorlopig niet te uitgebreid te maken.
+Het helemaal zelf opbouwen van de site is daarom een slecht idee: bestaande frameworks bieden ruim voldoende functionaliteit aan om onze website te maken. De frameworks zijn daarboven reeds geoptimaliseerd en bevatten functies zoals een standaardmanier om gebruikers veilig in te loggen. Het inloggen helemaal zelf implementeren daarintegen zou veel tijd en werk vragen, terwijl de kwaliteit naar alle waarschijnlijkheid beneden die van bestaande oplossingen zou liggen. 
+Daarnaast moet men nog kiezen om ofwel de site bij een hosting-dienst te plaatsen, of zelfs de hosting te voorzien. De hosting zelf voorzien brengt vele moeilijkheden met zich mee: liefst wordt er gewerkt met een vast IP-adres, maar providers kennen aan gewone klanten slechts een tijdelijk IP-adres toe. Daarboven dient men dan ook de DNS-servers (minmaal 2) zelf te verzorgen.
+De andere oplossing, gebruik maken van een hosting-dienst, is veel eenvoudiger. Voor een vast bedrag, per maand of jaar, wordt de website geplaatst op de servers van de hosting-dienst. Deze neemt extra moeilijkheden, zoals het instellen en onderhouden van DNS-servers op zich.
+Het databasemanagment systeem moet ook nog worden gekozen indien dit van toepassing is. Hier was dit het geval: op de site worden gebruikers aangemaakt waarbij bepaalde informatie wordt opgeslaan, zoals hun Foursquare-identiteit, zodat de gebruiker maar 1 keer met Foursquare moet inloggen.
+Kozen voor Django: draait op python: eenvoudig, maar krachtig
+Webhosting: http://djangoeurope.com/ gespecialiseerd in django projecten, bieden all-in-one pakket aan voor een goede prijs
+PostgreSql: databank waar we mee hebben gewerkt tijdens het vak "Databanken"
