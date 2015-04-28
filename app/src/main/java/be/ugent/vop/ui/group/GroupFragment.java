@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,7 @@ import be.ugent.vop.utils.PrefUtils;
 
 public class GroupFragment extends Fragment {
     public static final String GROUP_ID = "groupId";
+    private static final String TAG = "GroupFragment";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private GridLayoutManager mLayoutManager;
@@ -50,10 +52,14 @@ public class GroupFragment extends Fragment {
     private TextView created;
     private Button btn;
 
+    private Menu mMenu;
+
     private OnFragmentInteractionListener mListener;
     private String token;
     private long groupId;
     private Context context = null;
+
+    private boolean mIsAdmin = false;
 
     public GroupFragment() {
         // Required empty public constructor
@@ -123,7 +129,12 @@ public class GroupFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.mMenu = menu;
         inflater.inflate(R.menu.group_menu, menu);
+
+        mMenu.findItem(R.id.action_pending_requests).setVisible(mIsAdmin);
+        mMenu.findItem(R.id.action_set_banner).setVisible(mIsAdmin);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -165,6 +176,7 @@ public class GroupFragment extends Fragment {
         void onGroupFragmentInteraction(long groupId);
     }
 
+
     /***********
        Loaders
      ***********/
@@ -192,6 +204,15 @@ public class GroupFragment extends Fragment {
                 }
                 mAdapter = new MemberListAdapter(context, members);
                 mRecyclerView.setAdapter(mAdapter);
+
+
+                Log.d(TAG, "Group admin id: " + response.getAdminId());
+
+                if(PrefUtils.getUserId(getActivity()).equals(response.getAdminId())) {
+                    Log.d(TAG, "User is admin of group");
+                    mIsAdmin = true;
+                    getActivity().invalidateOptionsMenu();
+                }
             }
         }
 
@@ -213,15 +234,16 @@ public class GroupFragment extends Fragment {
             if (response != null) {
                 btn.setVisibility(View.GONE);
                 name.setText(response.getName());
-                description.setText(response.getDescription().toString());
+                description.setText(response.getDescription());
                 created.setText("Created on: " + response.getCreated().toString());
-                type.setText(response.getType().toString() + " group");
+                type.setText(response.getType() + " group");
                 ArrayList<UserBean> members = new ArrayList<>();
                 if(response.getMembers() != null) {
                     for (UserBean user : response.getMembers()) {
                         members.add(user);
                     }
                 }
+
                 mAdapter = new MemberListAdapter(context, members);
                 mRecyclerView.setAdapter(mAdapter);
             }

@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import be.ugent.vop.R;
@@ -60,6 +61,7 @@ public class RewardListViewFragment extends Fragment {
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mEmpty;
+    private ProgressBar mLoading;
     private Activity activity;
     public RewardListViewFragment() {
         super();
@@ -69,6 +71,7 @@ public class RewardListViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_rewards, container, false);
         activity=this.getActivity();
+        mLoading = (ProgressBar)rootView.findViewById(R.id.loading);
         mProvider = new RewardDataProvider(); // true: example test data
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
         mEmpty = (TextView)rootView.findViewById(R.id.empty);
@@ -140,8 +143,9 @@ public class RewardListViewFragment extends Fragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
-        mEmpty.setVisibility(View.VISIBLE);
+        mEmpty.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.INVISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -370,15 +374,18 @@ public class RewardListViewFragment extends Fragment {
 
                     }
                         mEmpty.setVisibility(View.INVISIBLE);
+                        mLoading.setVisibility(View.INVISIBLE);
                         mRecyclerView.setVisibility(View.VISIBLE);
                         mAdapter.notifyDataSetChanged();
                     }else{
                         mEmpty.setVisibility(View.VISIBLE);
+                        mLoading.setVisibility(View.INVISIBLE);
                         mRecyclerView.setVisibility(View.INVISIBLE);
                     }
 
                 }else {
                     mEmpty.setVisibility(View.VISIBLE);
+                    mLoading.setVisibility(View.INVISIBLE);
                     mRecyclerView.setVisibility(View.INVISIBLE);
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
