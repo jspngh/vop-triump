@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.ButtonFlat;
 import com.google.api.client.util.DateTime;
 import com.koushikdutta.ion.Ion;
 
@@ -42,6 +43,7 @@ import be.ugent.vop.backend.myApi.model.OverviewCheckin;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
 import be.ugent.vop.ui.group.GroupActivity;
+import be.ugent.vop.ui.reward.RewardsActivity;
 import be.ugent.vop.ui.venue.VenueActivity;
 import be.ugent.vop.utils.PrefUtils;
 
@@ -122,7 +124,8 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static class RewardViewHolder extends RecyclerView.ViewHolder {
         protected TextView title;
         protected TextView info;
-        protected TextView venue;
+        protected TextView description;
+        protected ButtonFlat claimButton;
         protected View view;
 
         public RewardViewHolder(View v) {
@@ -130,7 +133,8 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             view = v;
             title = (TextView) v.findViewById(R.id.card_title);
             info = (TextView) v.findViewById(R.id.reward_info);
-            venue = (TextView) v.findViewById(R.id.reward_venue);
+            description = (TextView) v.findViewById(R.id.reward_description);
+            claimButton = (ButtonFlat) v.findViewById(R.id.button_claim);
         }
     }
 
@@ -393,19 +397,23 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if(overview != null && overview.getRewards() != null) {
                     OverviewReward reward = overview.getRewards().get(0);
 
-                    mRewardViewHolder.title.setText(reward.getEventDescription());
+                    mRewardViewHolder.title.setText("You won " + reward.getEventReward());
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-                    mRewardViewHolder.info.setText("Received at " + dateFormat.format(new Date(reward.getDate().getValue())));
-                    mRewardViewHolder.venue.setText(reward.getEventReward());
-
+                    if(reward.getVenueName() != null) {
+                        mRewardViewHolder.info.setText("Received at " + reward.getVenueName() + " on " + dateFormat.format(new Date(reward.getDate().getValue())));
+                    } else {
+                        mRewardViewHolder.info.setText("Received at " + dateFormat.format(new Date(reward.getDate().getValue())));
+                    }
+                    mRewardViewHolder.description.setText("for event: " + reward.getEventDescription());
                     overview.getRewards().remove(0);
-                    rewardsLenght--;
-                    /*mRewardViewHolder.view.setOnClickListener(new View.OnClickListener() {
+                    //rewardsLenght--;
+                    mRewardViewHolder.claimButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            Intent intent = new Intent(context, RewardsActivity.class);
+                            context.startActivity(intent);
                         }
-                    });*/
+                    });
                 }
 
                 return mRewardViewHolder;

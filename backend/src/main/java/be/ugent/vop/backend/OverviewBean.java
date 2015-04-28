@@ -104,9 +104,12 @@ class newMemberInGroup{
 class OverviewReward{
     private String eventDescription;
     private String eventReward;
+    private String venueId;
+    private String venueName;
     private Date date;
     public OverviewReward(EventBean event, Date date){
         eventDescription = event.getDescription();
+        this.venueId = event.getVenueId();
         eventReward = event.getReward();
         this.date = date;
     }
@@ -125,6 +128,22 @@ class OverviewReward{
 
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
+    }
+
+    public String getVenueId() {
+        return venueId;
+    }
+
+    public void setVenueId(String venueId) {
+        this.venueId = venueId;
+    }
+
+    public String getVenueName() {
+        return venueName;
+    }
+
+    public void setVenueName(String venueName) {
+        this.venueName = venueName;
     }
 
     public Date getDate() {

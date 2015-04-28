@@ -11,15 +11,19 @@ public class RewardTable {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_EVENT_DESCRIPTION = "eventDescription";
     public static final String COLUMN_EVENT_REWARD = "eventReward";
+    public static final String COLUMN_VENUE_ID = "venueId";
+    public static final String COLUMN_VENUE_NAME = "venueName";
     public static final String COLUMN_DATE = "date";
 
-    public final static String COLUMNS[] = {COLUMN_ID, COLUMN_EVENT_DESCRIPTION, COLUMN_EVENT_REWARD, COLUMN_DATE};
+    public final static String COLUMNS[] = {COLUMN_ID, COLUMN_EVENT_DESCRIPTION, COLUMN_EVENT_REWARD, COLUMN_VENUE_ID, COLUMN_VENUE_NAME, COLUMN_DATE};
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "create table if not exists "
             + TABLE_REWARD + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_EVENT_DESCRIPTION
             + " text not null, " + COLUMN_EVENT_REWARD
+            + " text not null, " + COLUMN_VENUE_NAME
+            + " text not null, " + COLUMN_VENUE_ID
             + " text not null, " + COLUMN_DATE
             + " date not null); ";
 

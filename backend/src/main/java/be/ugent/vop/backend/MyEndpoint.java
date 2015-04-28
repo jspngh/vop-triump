@@ -171,22 +171,23 @@ public class MyEndpoint {
                     reward.setProperty(USEREVENT_USER_ID, userId);
                     reward.setProperty(USEREVENT_RECEIVED, 0);
                     rewards.add(reward);
+                    DatastoreServiceFactory.getDatastoreService().put(reward); // done here to be able to perform .getKey()
 
                     // ---------------- MAILBOX -----------------
-                    //Entity item = new Entity(MAILBOX_ENTITY);
-                    //item.setProperty(MAILBOX_USER_ID, userId);
-                    //String rewardKey = KeyFactory.keyToString(reward.getKey());
-                    //item.setProperty(MAILBOX_KEY, rewardKey);
-                    //item.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_REWARD);
-                    //item.setProperty(MAILBOX_DATE, new Date());
-                    //mailboxItems.add(item);
+                    Entity item = new Entity(MAILBOX_ENTITY);
+                    item.setProperty(MAILBOX_USER_ID, userId);
+                    String rewardKey = KeyFactory.keyToString(reward.getKey());
+                    item.setProperty(MAILBOX_KEY, rewardKey);
+                    item.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_REWARD);
+                    item.setProperty(MAILBOX_DATE, new Date());
+                    mailboxItems.add(item);
                     // ------------------------------------------
                 }
             }
     }
 
         _notifyUsersOfEventEndingInTopRanking(userIds);
-        DatastoreServiceFactory.getDatastoreService().put(rewards);
+        //DatastoreServiceFactory.getDatastoreService().put(rewards);
 
         // ---------------- MAILBOX -----------------
         DatastoreServiceFactory.getDatastoreService().put(mailboxItems);

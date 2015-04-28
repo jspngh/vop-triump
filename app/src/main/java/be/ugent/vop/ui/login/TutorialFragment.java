@@ -8,11 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
-
 import be.ugent.vop.R;
-import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.main.MainActivity;
 import be.ugent.vop.utils.PrefUtils;
 
@@ -47,14 +43,6 @@ public class TutorialFragment extends Fragment {
         switch (position) {
             case 1:
                 rootView = inflater.inflate(R.layout.fragment_tutorial_2, container, false);
-                Button searchButton = (Button) rootView.findViewById(R.id.search);
-                searchButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent group = new Intent(getActivity(), GroupListActivity.class);
-                        startActivity(group);
-                    }
-                });
                 break;
             case 2:
                 rootView = inflater.inflate(R.layout.fragment_tutorial_3, container, false);

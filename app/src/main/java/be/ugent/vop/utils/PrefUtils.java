@@ -118,6 +118,17 @@ public class PrefUtils {
                 .remove(USER_EMAIL).commit();
     }
 
+    public static String getUserDisplayName(final Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(DISPLAY_NAME, null);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    public static void setUserDisplayName(final Context context, String displayName){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putString(DISPLAY_NAME, displayName).commit();
+    }
+
     public static String getUserFirstName(final Context context){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getString(USER_FIRST_NAME, null);

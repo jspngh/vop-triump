@@ -68,6 +68,8 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
                 if (overview.getRewards() != null) {
                     rewardDatabase.deleteAllRewards();
                     for (OverviewReward reward : overview.getRewards()) {
+                        FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(reward.getVenueId());
+                        if (venue != null) reward.setVenueName(venue.getName());
                         rewardDatabase.createReward(reward);
                     }
                 }

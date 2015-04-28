@@ -35,18 +35,10 @@
     <string name="welcome_triump">Welcome to Triump</string>
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
     <string name="no_ranking">Currently there aren\'t any groups competing for this venue. Click check-in to be the first to conquer it!</string>
+
     <string name="loading_data">loading…</string>
     <string name="retrieving_data">Retrieving data</string>
-    <string name="group_title">Update from your group</string>
-    <string name="venue_title">Places nearby</string>
-    <string name="event_title">Trending events</string>
-    <string name="reward_title">Reward received!</string>
-    <string name="venue_name">Loading venue</string>
-    <string name="event_name">Loading event</string>
-    <string name="group_info">Loading…</string>
-    <string name="venue_info">Loading venue description</string>
-    <string name="event_info">Loading event description</string>
-    <string name="reward_info">Your group won!</string>
+
     <string name="lost_connection">The device lost his connection</string>
     <string name="connection">The device is connected</string>
     <string name="locationLongitude">locationLongitude</string>
@@ -57,10 +49,19 @@
     <string name="go_to_group">View this group</string>
     <string name="group_id">id of group</string>
 
+    <string name="group_title">Update from your group</string>
+    <string name="group_info">Loading…</string>
+    <string name="reward_title">Reward received!</string>
+    <string name="reward_claim">Claim now!</string>
+    <string name="reward_info">Your group won!</string>
+    <string name="venue_title">Places nearby</string>
+    <string name="venue_name">Loading venue</string>
+    <string name="venue_info">Loading venue description</string>
+    <string name="event_title">Trending events</string>
+    <string name="event_name">Loading event</string>
+    <string name="event_info">Loading event description</string>
 
     <string name="title_activity_group">GroupActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <!-- <string name="app_id">462840373863146</string> -->
     <string name="facebook_app_id">1388764728108146</string>
     <string name="ready">ready</string>
     <string name="set">set</string>

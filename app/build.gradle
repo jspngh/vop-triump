@@ -41,7 +41,6 @@ dependencies {
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.6.2'
     compile 'com.melnykov:floatingactionbutton:1.2.0'
     compile 'com.android.support:palette-v7:21.0.3'
-    compile 'com.github.amlcurran.showcaseview:library:5.0.0'
     compile 'me.relex:circleindicator:1.1.2@aar'
     compile 'com.wrapp.floatlabelededittext:library:0.0.6'
     compile 'com.rengwuxian.materialedittext:library:2.0.3'
