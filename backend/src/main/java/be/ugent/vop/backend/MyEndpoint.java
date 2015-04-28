@@ -173,13 +173,13 @@ public class MyEndpoint {
                     rewards.add(reward);
 
                     // ---------------- MAILBOX -----------------
-                    Entity item = new Entity(MAILBOX_ENTITY);
-                    item.setProperty(MAILBOX_USER_ID, userId);
-                    String rewardKey = KeyFactory.keyToString(reward.getKey());
-                    item.setProperty(MAILBOX_KEY, rewardKey);
-                    item.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_REWARD);
-                    item.setProperty(MAILBOX_DATE, new Date());
-                    mailboxItems.add(item);
+                    //Entity item = new Entity(MAILBOX_ENTITY);
+                    //item.setProperty(MAILBOX_USER_ID, userId);
+                    //String rewardKey = KeyFactory.keyToString(reward.getKey());
+                    //item.setProperty(MAILBOX_KEY, rewardKey);
+                    //item.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_REWARD);
+                    //item.setProperty(MAILBOX_DATE, new Date());
+                    //mailboxItems.add(item);
                     // ------------------------------------------
                 }
             }

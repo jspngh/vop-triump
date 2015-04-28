@@ -33,6 +33,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import be.ugent.vop.R;
@@ -70,6 +71,7 @@ public class EventListViewFragment extends Fragment {
     private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mEmpty;
+    private ProgressBar mLoading;
     private Activity activity;
     public EventListViewFragment() {
         super();
@@ -78,7 +80,9 @@ public class EventListViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
+
         activity=this.getActivity();
+        mLoading = (ProgressBar)rootView.findViewById(R.id.loading);
         mProvider = new EventDataProvider(); // true: example test data
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
         mEmpty = (TextView)rootView.findViewById(R.id.empty);
@@ -128,8 +132,11 @@ public class EventListViewFragment extends Fragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
-        mEmpty.setVisibility(View.VISIBLE);
+        mEmpty.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.INVISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
+
+
     }
 
     @Override
@@ -444,6 +451,7 @@ public class EventListViewFragment extends Fragment {
             public Loader<HashMap<EventBean,FoursquareVenue>> onCreateLoader(int id, Bundle args) {
                 Log.d("EventListViewFragment", "onCreateLoader");
                 EventsLoader loader = new EventsLoader(activity.getApplicationContext());
+
                 return loader;
             }
 
@@ -454,6 +462,7 @@ public class EventListViewFragment extends Fragment {
                     mData = new LinkedList<>();
                     int i = 0;
                     if (data != null) {
+
                          Iterator it = data.entrySet().iterator();
                         while (it.hasNext()) {
                                 Map.Entry pair = (Map.Entry)it.next();
@@ -487,15 +496,18 @@ public class EventListViewFragment extends Fragment {
                             i++;
                         }
                         mEmpty.setVisibility(View.INVISIBLE);
+                        mLoading.setVisibility(View.INVISIBLE);
                         mRecyclerView.setVisibility(View.VISIBLE);
                         mAdapter.notifyDataSetChanged();
                     } else {
                         mEmpty.setVisibility(View.VISIBLE);
+                        mLoading.setVisibility(View.INVISIBLE);
                         mRecyclerView.setVisibility(View.INVISIBLE);
                     }
 
                 } else {
                     mEmpty.setVisibility(View.VISIBLE);
+                    mLoading.setVisibility(View.INVISIBLE);
                     mRecyclerView.setVisibility(View.INVISIBLE);
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
