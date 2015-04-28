@@ -8,6 +8,7 @@ import com.google.api.client.util.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 import be.ugent.vop.backend.myApi.model.OverviewReward;
+import be.ugent.vop.database.CheckInTable;
 import be.ugent.vop.database.MySQLiteHelper;
 import be.ugent.vop.database.RewardTable;
 
@@ -37,10 +38,11 @@ public class RewardContentProvider {
         ContentValues values = new ContentValues();
         values.put(RewardTable.COLUMN_EVENT_DESCRIPTION, reward.getEventDescription());
         values.put(RewardTable.COLUMN_EVENT_REWARD, reward.getEventReward());
+        values.put(CheckInTable.COLUMN_VENUE_ID, reward.getVenueId());
+        values.put(CheckInTable.COLUMN_VENUE_NAME, reward.getVenueName());
         values.put(RewardTable.COLUMN_DATE, reward.getDate().toString());
 
-        long insertId = database.insert(RewardTable.TABLE_REWARD, null,
-                values);
+        long insertId = database.insert(RewardTable.TABLE_REWARD, null, values);
     }
 
     public void deleteAllRewards() {
@@ -48,7 +50,7 @@ public class RewardContentProvider {
     }
 
     public List<OverviewReward> getAllRewards() {
-        List<OverviewReward> rewards = new ArrayList<OverviewReward>();
+        List<OverviewReward> rewards = new ArrayList<>();
 
         Cursor cursor = database.query(RewardTable.TABLE_REWARD,
                 RewardTable.COLUMNS, null, null, null, null, null);
@@ -68,7 +70,9 @@ public class RewardContentProvider {
         OverviewReward reward = new OverviewReward();
         reward.setEventDescription(cursor.getString(1));
         reward.setEventReward(cursor.getString(2));
-        DateTime date = new DateTime(cursor.getString(3));
+        reward.setVenueId(cursor.getString(3));
+        reward.setVenueName(cursor.getString(4));
+        DateTime date = new DateTime(cursor.getString(5));
         reward.setDate(date);
         return reward;
     }

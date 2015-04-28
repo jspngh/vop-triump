@@ -207,6 +207,7 @@ public class LoginFragment extends Fragment {
 
                     if(user.has("firstName"))
                         PrefUtils.setUserFirstName(getActivity(), user.getString("firstName"));
+                        PrefUtils.setUserDisplayName(getActivity(), user.getString("firstName"));
                     if(user.has("lastName"))
                         PrefUtils.setUserLastName(getActivity(), user.getString("lastName"));
                     if(user.has("photo")){

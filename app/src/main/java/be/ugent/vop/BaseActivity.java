@@ -331,15 +331,15 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
         TextView nameTextView = (TextView) chosenAccountView.findViewById(R.id.profile_name_text);
         TextView emailTextView = (TextView) chosenAccountView.findViewById(R.id.profile_email_text);
 
-        String firstName = PrefUtils.getUserFirstName(this);
-        String lastName = PrefUtils.getUserLastName(this);
-        if (firstName == null) {
+        String displayName = PrefUtils.getUserDisplayName(this);
+        //String lastName = PrefUtils.getUserLastName(this);
+        if (displayName == null) {
             nameTextView.setVisibility(View.GONE);
         } else {
             nameTextView.setVisibility(View.VISIBLE);
-            StringBuilder builder = new StringBuilder(firstName);
-            if(lastName != null)
-                builder.append(" ").append(lastName);
+            StringBuilder builder = new StringBuilder(displayName);
+//            if(lastName != null)
+//                builder.append(" ").append(lastName);
             nameTextView.setText(builder.toString());
         }
 
@@ -357,7 +357,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
         if (coverImageUrl != null) {
            // mImageLoader.loadImage(coverImageUrl, coverImageView);
         } else {
-            coverImageView.setImageResource(R.drawable.default_cover);
+            coverImageView.setImageResource(R.drawable.dummy_venue);
         }
 
         String email = PrefUtils.getUserEmail(this);

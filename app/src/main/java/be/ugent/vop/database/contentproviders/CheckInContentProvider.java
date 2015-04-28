@@ -44,8 +44,7 @@ public class CheckInContentProvider {
         values.put(CheckInTable.COLUMN_DATE, checkin.getDate().toString());
 
 
-        long insertId = database.insert(CheckInTable.TABLE_CHECKIN, null,
-                values);
+        long insertId = database.insert(CheckInTable.TABLE_CHECKIN, null, values);
     }
 
     public void deleteAllCheckIns() {

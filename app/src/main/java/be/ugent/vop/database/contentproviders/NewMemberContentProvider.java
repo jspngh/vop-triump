@@ -40,8 +40,7 @@ public class NewMemberContentProvider {
         values.put(NewMemberTable.COLUMN_MEMBER_ICON, member.getMemberIconUrl());
         values.put(NewMemberTable.COLUMN_DATE, member.getDate().toString());
 
-        long insertId = database.insert(NewMemberTable.TABLE_NEW_MEMBER, null,
-                values);
+        long insertId = database.insert(NewMemberTable.TABLE_NEW_MEMBER, null, values);
     }
 
     public void deleteAllMembers() {
