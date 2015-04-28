@@ -10,10 +10,18 @@
 % Werking
 
 \section{Backend}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{backend_algemene_structuur}
+	\caption{Structuur backend}
+	\label{fig:algemene structuur backend}
+
+\end{figure}
 \subsection{Google Endpoints}
 % restricities op aantal request
 
 \subsubsection{Datastore}
+
 \subsubsection{Eigen ontworpen Backend API}
 
 \subsubsection{Google Cloud messaging}
@@ -30,21 +38,25 @@
 \subsection{Foursquare API}
 
 %Korte inleiding gebruik API
-Zoals reeds eerder aangehaald maakt Triump gebruikt van locaties, deze locaties worden bekomen via de Foursquare API. De Foursquare API geeft de mogelijkheid aan ontwikkelaars om de enorme locatie databank van Foursquare te raadplegen. Naast locatie gegevens kan er ook gebruikerinformatie zoals naam, geboortedatum en profielfoto opgevraagd worden.
+Zoals reeds eerder aangehaald maakt Triump gebruikt van locaties, deze locaties worden bekomen via de Foursquare application programming interface (API). De Foursquare API geeft de mogelijkheid aan ontwikkelaars om de enorme gebruiker gegenereerde database van Foursquare te raadplegen. Naast locatie gegevens kan er ook informatie van gebruikers zoals namen geboortedata en profielfoto's opgevraagd worden. 
 
 % Overzicht voor en nadelen gebruik API
 Het werken met de API brengt echter wel enkele nadelen met zich mee.
-Allereerst wordt Triump hierdoor afhankelijk van een externe organisatie. Tentweede wordt de dataopslag verdeelt over twee databases. Enerzijds Google Cloud Datastore waar de data over groepen en checkins worden bijgehouden en anderzijds de Foursquare Datastore waar de locatie en gebruikergegevens zijn opgeslaan. Een laatste nadeel is dat locatie eigenaars verplicht geregisteerd moeten zijn bij Foursquare om zichtbaar te zijn in Triump. 
+Allereerst wordt Triump hierdoor afhankelijk van een externe organisatie. Indien Foursquare beslist zijn open database te sluiten moet het ontwerp van Triump volledig herzien worden. Daarnaast wordt van commerciële applicaties verwacht dat ze reclame maken voor Foursquare door bijvoorbeeld het Foursquare logo op op te nemen in de layout.  Een tweede nadeel is dat de dataopslag verdeeld wordt over twee databases. Enerzijds de Google Cloud Datastore waar de data over groepen en checkins worden bijgehouden en anderzijds de Foursquare Datastore waar de locatie en gebruikergegevens zijn opgeslaan. Een laatste nadeel is dat locaties verplicht geregisteerd moeten zijn bij Foursquare teneinde zichtbaar te zijn op Triump. 
 
-Indien locaties intern zouden aangemaakt en opgeslaan worden zouden de eerste twee nadelen opgelost zijn. 
-%uitleg waarom het we niet geopteerd hebben om met eigen db te werken.
-Het laatste probleem wordt opgelost door het voorzien van een website. Deze website voorziet locatie eigenaars van de nodige informatie om hun café, zaak of restaurant zichtbaar te maken op Triump. Meer uitleg over de website volgt hieronder.
+Indien locaties intern zouden aangemaakt en opgeslaan worden zouden de eerste twee nadelen verholpen zijn. 
+Deze voor de hand liggende oplossing wordt echter niet toegepast aangezien dit zou impliceren dat Triump vanaf nul zijn locatiedatabase zou moeten vullen. Hierdoor zouden gebruikers ontmoedigd worden Triump boven Foursquare te kiezen. Daarnaast biedt Triump de optie een checkin door te propageren naar Foursquare waardoor we de functionaliteiten ervan uitbreiden. 
+
+Het laatste probleem wordt opgelost door het voorzien van een webinterface. Deze interface voorziet de mogelijkheid aan eigenaars van locaties om de nodige informatie omtrent hun café, zaak of restaurant zichtbaar te maken op Triump. Meer uitleg over de website volgt hieronder.
+
+Er dient opgemerkt te worden dat Google met 'Google Places' gelijkaardige diensten biedt. Gebruik van deze API heeft dezelfde voor- en nadelen als de Foursquare API maar met het bijkomend beperking dat het aantal geregistreerde locaties veel kleiner is.
 
 
 %werking API
-Het mechanisme gebruik in de API is zeer vanzelfsprekend. Alle gegevens opgeslaan in de datastore corresponeren met een RESTful URL. De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Via deze connectie wordt er een XML-bestand teruggestuurd. In listing XXX wordt er een voorbeeld uitgewerkt.
+Het mechanisme gebruik in de Foursquare API is zeer vanzelfsprekend. Alle gegevens, opgeslaan in de database, corresponeren met een RESTf URL \cite{FS_API_website}. De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Vervolgens zal de API Endpoint de gevraagde informatie in JSON formaat terugzenden. In listing ~\ref{lst:vb_foursquare_api} wordt er een voorbeeld uitgewerkt.
 
-\begin{lstlisting}
+
+\begin{lstlisting}[caption={Voorbeeld: werking Foursquare API},label=lst:vb_foursquare_api]
 HTTPS connectie naar URL:
 https://api.foursquare.com/v2/venues/4d972f73af3d236ad0561cc7?
 oauth_token=OMUUX4BHXRTBNRLJ2QVQMC4UGRRR5TESI1XD02I4GCMV3G21
@@ -53,22 +65,23 @@ oauth_token=OMUUX4BHXRTBNRLJ2QVQMC4UGRRR5TESI1XD02I4GCMV3G21
 
 Antwoord:
 "venue":
-	{"id":"4d972f73af3d236ad0561cc7",
+	{
+	"id":"4d972f73af3d236ad0561cc7",
 	"name":"POM D' API BRUXELLES",
 	"contact":{},
 	"location":
-		{"address":"Koninginnegallerij",
+		{
+		"address":"Koninginnegallerij",
 		"lat":50.0,"lng":4.0,
 		"postalCode":"1000",
 		"city":"Brussels",
 		"state":"Bruxelles-Capitale",
 		"country":"Belgium",
-		"formattedAddress":["Koninginnegallerij","1000 Brussels"]
+		"formattedAddress":
+		["Koninginnegallerij","1000 Brussels"]
 		}
 	}
 \end{lstlisting}
-
-%woordje uitleg ...
  
 
 
