@@ -319,11 +319,12 @@ public class MyEndpoint {
         GroupBean response = null;
         try {
             response = _getGroupBean(groupId);
+            boolean userIsAdmin = userId.equals(response.getAdminId());
+            response.setUserAdmin(userIsAdmin);
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
         }
-        boolean userIsAdmin = response.getAdminId().equals(userId);
-        response.setUserAdmin(userIsAdmin);
+
         return response;
     }
 
