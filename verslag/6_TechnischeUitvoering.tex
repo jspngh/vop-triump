@@ -8,8 +8,7 @@
 % Waarom
 % Voornadelen / nadelen
 % Werking
-
-\section{Backend}
+Triump bestaat uit twee grote delen. Enerzijds is er de frontend, dit is het gedeelte van Triump waarmee de gebruikers rechtstreeks intrageren. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. Het tweede deel van de Triump infrastructuur is backend. Hiermee komen de gebruikers nooit rechtstreeks in contact. In onderstaande paragrafen wordt er dieper ingegaan op deze onderdelen. Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de infrastructuur.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.3]{backend_algemene_structuur}
@@ -17,8 +16,26 @@
 	\label{fig:algemene structuur backend}
 
 \end{figure}
-\subsection{Google Endpoints}
+
+\section{Backend}
+
+\subsection{Google Cloud Endpoints}
 % restricities op aantal request
+Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend "Platform as a Service" gemaakt om applicaties uit te voeren op de infrastructuur van Google. GCE biedt naast de functionaliteiten beschikbaar in GAE een extra infrastructuur om op een relatief eenvoudige manier een backend API te generen. 
+De extra infrastructuur aangeboden door GCE bestaat uit de endpoints. Deze endpoints verzorgen ondermeer de communicatie en authenticatie tussen mobiele gebruikers en de backendserver.
+Aangezien de backend API nog steeds gehost wordt door Googles App Engine blijven alle functionaliteiten zoals "Datastore", "Google Cloud Messaging" en "Cron jobs" beschikbaar. Figuur \ref{fig:Architectuur Google Cloud Endpoints} geeft de architectuur van de Enpoint weer~\cite{Google_endpoints}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{GCE}
+	\caption{Architectuur Google Cloud Endpoints}
+	\label{fig:Architectuur Google Cloud Endpoints}
+\end{figure}
+
+Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Problemen zoals schaalbaarheid en beschikbaarheid van de server worden doorgeschoven naar de App Engine. Zo voorziet GAE een dynamische allocatie van resources en rekenkracht waardoor % ... %
+
+Desalniettemin brengt het gebruik van GAE enkele nadelen met zich mee. De voornaamste zijn ...
+
 
 \subsubsection{Datastore}
 
@@ -53,15 +70,14 @@ Er dient opgemerkt te worden dat Google met 'Google Places' gelijkaardige dienst
 
 
 %werking API
-Het mechanisme gebruik in de Foursquare API is zeer vanzelfsprekend. Alle gegevens, opgeslaan in de database, corresponeren met een RESTf URL \cite{FS_API_website}. De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Vervolgens zal de API Endpoint de gevraagde informatie in JSON formaat terugzenden. In listing ~\ref{lst:vb_foursquare_api} wordt er een voorbeeld uitgewerkt.
+Het mechanisme gebruik in de Foursquare API is zeer vanzelfsprekend. Alle gegevens, opgeslaan in de database, corresponeren met een RESTf URL \cite{FS_API_website}. De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste Uniform Resource Locator (URL). Vervolgens zal de API Endpoint de gevraagde informatie in Javascript Object Notation (JSON) formaat terugzenden. JSON is een gestandaardiseerd gegevensformaat. JSON maakt gebruik van voor de mens leesbare tekst in de vorm van data-objecten die bestaan uit een of meer attributen met bijbehorende waarde. Het wordt hoofdzakelijk gebruikt voor uitwisseling van data tussen server en webapplicatie, als een alternatief voor xml. Het voordeel van JSON is de platformonafhankelijkheid \cite{JSON_def}. In listing ~\ref{lst:vb_foursquare_api} wordt een voorbeeld uitgewerkt waarbij de applicatie vanop de smartphone de informatie van een bepaalde locatie opvraagd.
 
 
 \begin{lstlisting}[caption={Voorbeeld: werking Foursquare API},label=lst:vb_foursquare_api]
+
 HTTPS connectie naar URL:
 https://api.foursquare.com/v2/venues/4d972f73af3d236ad0561cc7?
-oauth_token=OMUUX4BHXRTBNRLJ2QVQMC4UGRRR5TESI1XD02I4GCMV3G21
-&v=20150101
-&m=foursquare
+	oauth_token=OMUUXC42I4GCMV3G21&v=20150101&m=foursquare
 
 Antwoord:
 "venue":
