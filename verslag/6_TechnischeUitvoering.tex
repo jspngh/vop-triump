@@ -32,14 +32,27 @@ Aangezien de backend API nog steeds gehost wordt door Googles App Engine blijven
 	\label{fig:Architectuur Google Cloud Endpoints}
 \end{figure}
 
-Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Problemen zoals schaalbaarheid en beschikbaarheid van de server worden doorgeschoven naar de App Engine. Zo voorziet GAE een dynamische allocatie van resources en rekenkracht waardoor % ... %
+Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Problemen zoals schaalbaarheid worden via dynamische rekenkracht allocatie opgelost. Daarnaast verzekert de App Engine een permanente beschikbaarheid van de servers worden doorgeschoven.
 
-Desalniettemin brengt het gebruik van GAE enkele nadelen met zich mee. De voornaamste zijn ...
-
+Desalniettemin brengt het gebruik van GAE meerdere nadelen met zich mee. De voornaamste zijn de restrictie op het aantal lees- en schrijfoperaties per dag, de sterk variërende duratie van lees- en schrijfoperaties en de afhankelijkheid van een externe organistatie. Aangezien elke nieuwe ontwikkelaar \$ 300 cadeau krijgt kon het eerste nadeel opgelost worden door het aantal operaties per dag van 50.000 naar 1.000.000 te verhogen. De reden waarom 1.000.000 operaties per dag noodzakelijk is om Triump draaiende te houden is dat elke entiteit binnen een query als één leesoperatie wordt beschouwd. Hierdoor neemt het aantal leesoperaties bij het uitvoeren van enkele geneste queries zeer snel toe.
 
 \subsubsection{Datastore}
 
+Triump maakt gebruik van App Engine Datastore als backend databank.
+
+GAE Datastore verschillend van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat het automatisch meeschaalt met de toenmende hoeveelheid opgeslagen data. Een tweede verschil met relationele databanken is dat GAE Datastore schemaloos is. Hiermee wordt bedoeld dat objeten van een eenzelfde type verschillende eigenschappen kunnen hebben en dat eenzelfde eigenschap verschillende types kan hebben. 
+
+Objecten in de database worden entiteiten genoemd. Een entiteit heeft meerdere eigenschappen, elk van deze eigenschappen kan één of meerdere waarden hebben. 
+
+Aangezien de database schemaloos is en bijgevolg bijvoorbeeld geen types zal controleren of niet zal aangeven indien een vreemde sleutel niet bestaat ligt de verantwoordelijkheid van het correct houden van de database volledig bij de ontwikkelaar. Tijdens de ontwikkeling werd dit gezien als het grootste nadeel van de Datastore.
+
 \subsubsection{Eigen ontworpen Backend API}
+
+\begin{figure}[H]
+	\includegraphics[scale=0.45]{backend_EER}
+	\caption{Entity Relation diagram van de backend}
+	\label{fig:Backend ER}
+\end{figure}
 
 \subsubsection{Google Cloud messaging}
 % Notificaties
