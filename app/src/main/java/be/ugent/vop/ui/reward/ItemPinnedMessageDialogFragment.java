@@ -55,7 +55,7 @@ public class ItemPinnedMessageDialogFragment extends DialogFragment {
         final int itemPosition = getArguments().getInt(KEY_ITEM_POSITION, Integer.MIN_VALUE);
 
         builder.setMessage(getString(R.string.dialog_message_item_pinned, itemPosition));
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getActivity().getString(R.string.claim_reward), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 notifyItemPinnedDialogDismissed(true);

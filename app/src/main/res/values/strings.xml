@@ -140,5 +140,6 @@
     <string name="title_activity_new_group">NewGroupActivity</string>
     <string name="action_discard">Discard</string>
     <string name="add_group">Add group</string>
+    <string name="claim_reward">Claim reward!</string>
 
 </resources>
