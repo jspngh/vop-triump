@@ -35,16 +35,4 @@ public class EventActivity extends BaseActivity {
     protected int getSelfNavDrawerItem() {
         return NAVDRAWER_ITEM_EVENT;
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    public AbstractDataProvider getDataProvider() {
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_LIST_VIEW);
-        return ((EventListViewFragment) fragment).getDataProvider();
-    }
-
-
 }

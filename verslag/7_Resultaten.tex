@@ -7,6 +7,21 @@
 
 % Screenshots
 % extras
-% Setting
+% Overview
+Om gebruikers updates te kunnen geven van recente activiteit van hun groepen, events die aan de gang zijn, ontvangen beloningen,... is er een systeem nodig dat dit voor elke gebruiker apart bijhoudt.
+De manier waarop dit is aangepakt is licht gebaseerd op het "Observer-pattern". Bij dit patroon zijn er een reeks waarnemers die de toestand van een bepaald object volgen 
+en willen verwittigingen krijgen wanneer de toestand verandert. 
+Het object zelf moet bijhouden welke waarnemers zijn geïnteresseerd in zijn toestand en, indien dit object van toestand verandert, moet deze dit laten weten aan de waarnemers.
+In dit geval zijn de waarnemers eigenlijk de gebruikers van Triump. Deze willen graag weten wanneer er bijvoorbeeld een persoon lid wordt van een van hun groepen.
+Er is hier echter niet echt sprake van objecten waarvan de toestand verandert, maar eerder van acties die plaats vinden. Wanneer er zo een actie plaats vindt, zoals een gebruiker wordt lid van een bepaalde groep,
+dan moeten de waarnemers, hier de huidige leden van de groep, op de hoogte worden gebracht.
+Hiervoor wordt in de backend aparte data bijgehouden: per gebruiker is er een "boodschappenbus". Hierin komen alle updates voor deze gebruiker. Om het overzichtsscherm te vullen, worden eerst alle boodschappen uit de bus van de gebruiker opgehaald uit de backend. Hierdoor moet men geen andere entiteiten gaan overlopen en zoeken naar veranderingen in bijvoorbeeld de leden van een groep, maar komen alle updates per gebruiker op 1 centrale plaats terecht.
+% foto van structuur invoegen %
+
+% Settings
+Het is de gewoonte om in een applicatie een menu met instellingen te voorzien. Ook onze applicatie moet enigzins configureerbaar zijn, en daarom zijn er instellingen voorzien.
+Google schrijft een manier voor om instellingen in een applicatie te voorzien % http://developer.android.com/guide/topics/ui/settings.html 
+en deze hebben we dan ook gevolgd. Voorbeelden van instellingen in Triump zijn: het aan- en uitzetten van notificaties, het al dan niet delen van je profiel, het kleurenthema dat de applicatie gebruikt,...
+
 % feedback
 % Notificaties
