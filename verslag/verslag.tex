@@ -12,7 +12,16 @@
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{amsmath}
+\usepackage{titlesec}
 
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{10pt}
+\titleformat{\chapter}[hang] 
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter:}{1em}{} 
+\makeatletter
+\renewcommand{\@chapapp}{Hoofdstuk}
+\makeatother
 \graphicspath{ {afb/} }
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
@@ -95,6 +104,5 @@ dr.~ir. Bert \textsc{Vankeirsbilck}\\
 %													%
 %													%
 % % % % % % % % % % % % % % % % % % % % % % % % % % %
-
 
 \end{document}
