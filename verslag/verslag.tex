@@ -11,10 +11,7 @@
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{amsmath}
-<<<<<<< HEAD
 \usepackage[utf8]{inputenc}
-
-=======
 \usepackage{titlesec}
 
 \titleformat{\chapter}[display]
@@ -25,7 +22,6 @@
 \makeatletter
 \renewcommand{\@chapapp}{Hoofdstuk}
 \makeatother
->>>>>>> efa0fe250f7bd0756adf81203a9b355c07d2bd50
 \graphicspath{ {afb/} }
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
@@ -47,26 +43,32 @@
 
 % Upper part of the page. The '~' is needed because \\
 % only works if a paragraph has started.
-\includegraphics[width=\linewidth]{ugent}~\\[2.5cm]
+\includegraphics[width=\linewidth]{ugent}~\\[2.0cm]
 
-\textsc{Project in het kader van het Vakoverschrijdend Projectvak in de Bachelor Computerwetenschappen}\\[1.5cm]
+\textsc{Project in het kader van het Vakoverschrijdend Projectvak in de Bachelor Computerwetenschappen}\\[1.0cm]
 
 
 
 % Title
 
-{ \huge \bfseries Triump \\[0.4cm] }
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.25]{triump}
+	\label{fig:titelblad}
+	
+\end{figure}
+
 
 \HRule \\[1.5cm]
 
 % Author and supervisor
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{1\textwidth}
 \begin{center} \large
 \emph{Groep 2}\\
-Siebe \textsc{Claes}\\
+Siebe \textsc{Claes}
 Vincent \textsc{Dutordoir}\\
-Lars \textsc{Hulstaert}\\
-Jonas \textsc{Spanoghe}\\[2.5cm]
+Lars \textsc{Hulstaert}
+Jonas \textsc{Spanoghe}\\[0.2cm]
 \emph{Titularis}\\
 prof.~dr.~ir.~ Dirk \textsc{Stroobandt}\\[0.2cm]
 \emph{Promotor}\\
@@ -74,6 +76,7 @@ prof.~dr.~ir.~ Bart \textsc{dhoedt}\\[0.2cm]
 \emph{Begeleiders}\\
 dr.~ir. Tim \textsc{Verbelen}\\
 dr.~ir. Bert \textsc{Vankeirsbilck}\\
+
 \end{center}
 \end{minipage}
 
@@ -81,8 +84,8 @@ dr.~ir. Bert \textsc{Vankeirsbilck}\\
 
 % Bottom of the page
 {\large Academiejaar 2014 - 2015}
-
 \end{center}
+
 \end{titlepage}
 
 \tableofcontents
@@ -98,7 +101,7 @@ dr.~ir. Bert \textsc{Vankeirsbilck}\\
 \input{9_Samenwerking}
 \input{10_Tekortkomingen}		% Vin
 \input{11_Besluit}
-%\input{12_Bibliografie}
+\input{12_Bibliografie}
 
 
 

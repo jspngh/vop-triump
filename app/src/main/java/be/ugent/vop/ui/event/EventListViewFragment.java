@@ -72,16 +72,15 @@ public class EventListViewFragment extends Fragment {
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mEmpty;
     private ProgressBar mLoading;
-    private Activity activity;
-    public EventListViewFragment() {
-        super();
-    }
+    private Activity mActivity;
+
+    public EventListViewFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
 
-        activity=this.getActivity();
+        mActivity = this.getActivity();
         mLoading = (ProgressBar)rootView.findViewById(R.id.loading);
         mProvider = new EventDataProvider(); // true: example test data
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
@@ -95,7 +94,7 @@ public class EventListViewFragment extends Fragment {
 
         //noinspection ConstantConditions
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(mActivity);
 
         final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
         mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
@@ -182,8 +181,7 @@ public class EventListViewFragment extends Fragment {
         return mProvider;
     }
 
-
-    class EventDataProvider extends AbstractDataProvider {
+    class EventDataProvider extends AbstractEventDataProvider {
         private List<Pair<GroupData, List<ChildData>>> mData;
         private List<EventBean> mEvents;
         // for undo group item
@@ -197,8 +195,7 @@ public class EventListViewFragment extends Fragment {
 
         public EventDataProvider() {
             mData = new LinkedList<>();
-            activity.getLoaderManager().initLoader(1, null, mEventsLoaderListener);
-
+            mActivity.getLoaderManager().initLoader(1, null, mEventsLoaderListener);
         }
 
         @Override
@@ -207,7 +204,7 @@ public class EventListViewFragment extends Fragment {
         }
 
         public void restartLoader() {
-            activity.getLoaderManager().restartLoader(1, null, mEventsLoaderListener);
+            mActivity.getLoaderManager().restartLoader(1, null, mEventsLoaderListener);
         }
 
         @Override
@@ -353,14 +350,14 @@ public class EventListViewFragment extends Fragment {
         public final class ConcreteGroupData extends GroupData {
 
             private final long mId;
-            private final String mText;
+            private final String mEventTitle;
             private final int mSwipeReaction;
             private boolean mPinnedToSwipeLeft;
             private long mNextChildId;
 
-            ConcreteGroupData(long id, String text, int swipeReaction) {
+            ConcreteGroupData(long id, String title, int swipeReaction) {
                 mId = id;
-                mText = text;
+                mEventTitle = title;
                 mSwipeReaction = swipeReaction;
                 mNextChildId = 0;
             }
@@ -381,8 +378,8 @@ public class EventListViewFragment extends Fragment {
             }
 
             @Override
-            public String getText() {
-                return mText;
+            public String getTitle() {
+                return mEventTitle;
             }
 
             @Override
@@ -405,13 +402,17 @@ public class EventListViewFragment extends Fragment {
         public final class ConcreteChildData extends ChildData {
 
             private long mId;
-            private final String mText;
+            private final String mReward;
+            private final String mInfo;
+            private final String mGroups;
             private final int mSwipeReaction;
             private boolean mPinnedToSwipeLeft;
 
-            ConcreteChildData(long id, String text, int swipeReaction) {
+            ConcreteChildData(long id, String reward, String info, String groups, int swipeReaction) {
                 mId = id;
-                mText = text;
+                mReward = reward;
+                mInfo = info;
+                mGroups = groups;
                 mSwipeReaction = swipeReaction;
             }
 
@@ -426,8 +427,18 @@ public class EventListViewFragment extends Fragment {
             }
 
             @Override
-            public String getText() {
-                return mText;
+            public String getReward() {
+                return mReward;
+            }
+
+            @Override
+            public String getInfo() {
+                return mInfo;
+            }
+
+            @Override
+            public String getGroups() {
+                return mGroups;
             }
 
             @Override
@@ -450,7 +461,7 @@ public class EventListViewFragment extends Fragment {
             @Override
             public Loader<HashMap<EventBean,FoursquareVenue>> onCreateLoader(int id, Bundle args) {
                 Log.d("EventListViewFragment", "onCreateLoader");
-                EventsLoader loader = new EventsLoader(activity.getApplicationContext());
+                EventsLoader loader = new EventsLoader(mActivity.getApplicationContext());
 
                 return loader;
             }
@@ -461,49 +472,32 @@ public class EventListViewFragment extends Fragment {
                 if (data != null) {
                     mData = new LinkedList<>();
                     int i = 0;
-                    if (data != null) {
 
-                         Iterator it = data.entrySet().iterator();
-                        while (it.hasNext()) {
-                                Map.Entry pair = (Map.Entry)it.next();
-                            final EventBean bean = (EventBean)pair.getKey();
-                            final FoursquareVenue venue = (FoursquareVenue)pair.getValue();
-                            final String groupText = bean.getDescription() + "\n" + "@ " + venue.getName();
-                            final int groupSwipeReaction = RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT;
-                            final ConcreteGroupData group = new ConcreteGroupData(i, groupText, groupSwipeReaction);
-                            final List<ChildData> children = new ArrayList<>();
+                    Iterator it = data.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry)it.next();
+                        final EventBean bean = (EventBean)pair.getKey();
+                        final FoursquareVenue venue = (FoursquareVenue)pair.getValue();
+                        final String groupText = bean.getDescription() + "\n" + "@ " + venue.getName();
+                        final int groupSwipeReaction = RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT;
+                        final ConcreteGroupData group = new ConcreteGroupData(i, groupText, groupSwipeReaction);
+                        final List<ChildData> children = new ArrayList<>();
 
-                            children.add(new ConcreteChildData(1,
-                                    "Description: " + bean.getDescription() + "\n" + "Reward: " +  bean.getReward()
-                                    , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
-                            children.add(new ConcreteChildData(1,
-                                    "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity()
-                                    , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
-                            String groups = "";
-                            for(GroupBean g:bean.getGroups()){
-                                groups+= g.getName()+" , ";
-                            }
-                            groups = groups.substring(0,groups.length()-2);
-                            children.add(new ConcreteChildData(1,
-                                    "Participating groups : " + groups
-                                    , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
-
-                            children.add(new ConcreteChildData(1,
-                                    "Button to see ranking"
-                                    , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
-                            mData.add(new Pair<GroupData, List<ChildData>>(group, children));
-                            it.remove();
-                            i++;
+                        String groups = "";
+                        for(GroupBean g:bean.getGroups()){
+                            groups+= g.getName()+", ";
                         }
-                        mEmpty.setVisibility(View.INVISIBLE);
-                        mLoading.setVisibility(View.INVISIBLE);
-                        mRecyclerView.setVisibility(View.VISIBLE);
-                        mAdapter.notifyDataSetChanged();
-                    } else {
-                        mEmpty.setVisibility(View.VISIBLE);
-                        mLoading.setVisibility(View.INVISIBLE);
-                        mRecyclerView.setVisibility(View.INVISIBLE);
+                        groups = groups.substring(0,groups.length()-2);
+                        children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
+
+                        mData.add(new Pair<GroupData, List<ChildData>>(group, children));
+                        it.remove();
+                        i++;
                     }
+                    mEmpty.setVisibility(View.INVISIBLE);
+                    mLoading.setVisibility(View.INVISIBLE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mAdapter.notifyDataSetChanged();
 
                 } else {
                     mEmpty.setVisibility(View.VISIBLE);
@@ -511,14 +505,10 @@ public class EventListViewFragment extends Fragment {
                     mRecyclerView.setVisibility(View.INVISIBLE);
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
-
             }
-
 
             @Override
-            public void onLoaderReset(Loader<HashMap<EventBean,FoursquareVenue>> loader) {
-
-            }
+            public void onLoaderReset(Loader<HashMap<EventBean, FoursquareVenue>> loader) {}
         };
     }
 }

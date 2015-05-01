@@ -59,14 +59,15 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
         if(getNewOverview) {
             try {
                 overview = BackendAPI.get(context).getOverview(venues);
+                checkinDatabase.deleteAllCheckIns();
+                memberDatabase.deleteAllMembers();
+                rewardDatabase.deleteAllRewards();
                 if (overview.getNewMembers() != null) {
-                    memberDatabase.deleteAllMembers();
                     for (NewMemberInGroup member : overview.getNewMembers()) {
                         memberDatabase.createMember(member);
                     }
                 }
                 if (overview.getRewards() != null) {
-                    rewardDatabase.deleteAllRewards();
                     for (OverviewReward reward : overview.getRewards()) {
                         FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(reward.getVenueId());
                         if (venue != null) reward.setVenueName(venue.getName());
@@ -99,7 +100,6 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
                     FoursquareVenue venue = FoursquareAPI.get(context).getVenueInfo(checkin.getVenueId());
                     if (venue != null) checkin.setVenueName(venue.getName());
                 }
-                checkinDatabase.deleteAllCheckIns();
                 for (OverviewCheckin checkin : overview.getCheckIns()) {
                     checkinDatabase.createCheckIn(checkin);
                 }

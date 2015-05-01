@@ -1,20 +1,4 @@
-/*
- *    Copyright (C) 2015 Haruki Hasegawa
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
-package be.ugent.vop.ui.event;
+package be.ugent.vop.ui.venue;
 
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -23,50 +7,46 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import be.ugent.vop.R;
+import be.ugent.vop.ui.event.AbstractDataProvider;
 
-import com.gc.materialdesign.views.ButtonFlat;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 
-public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExpandableItemAdapter.MyGroupViewHolder, MyExpandableItemAdapter.MyChildViewHolder> {
+public class VenueEventItemAdapter extends AbstractExpandableItemAdapter<VenueEventItemAdapter.MyGroupViewHolder, VenueEventItemAdapter.MyChildViewHolder> {
     private static final String TAG = "MyExpandableItemAdapter";
 
-    private AbstractEventDataProvider mProvider;
+    private AbstractDataProvider mProvider;
 
-    public static class MyGroupViewHolder extends AbstractExpandableItemViewHolder {
+    public static abstract class MyBaseViewHolder extends AbstractExpandableItemViewHolder {
         public ViewGroup mContainer;
-        public TextView mTitle;
         public View mDragHandle;
-        public View cardLayout;
+        public TextView mTextView;
 
-        public MyGroupViewHolder(View v) {
+        public MyBaseViewHolder(View v) {
             super(v);
             mContainer = (ViewGroup) v.findViewById(R.id.container);
             mDragHandle = v.findViewById(R.id.drag_handle);
-            mTitle = (TextView) v.findViewById(R.id.event_title);
-            cardLayout = v.findViewById(R.id.card_layout);
+            mTextView = (TextView) v.findViewById(android.R.id.text1);
+
             // hide the drag handle
             mDragHandle.setVisibility(View.GONE);
         }
     }
 
-    public static class MyChildViewHolder extends AbstractExpandableItemViewHolder {
-        public TextView groups;
-        public TextView reward;
-        public TextView info;
-        public ButtonFlat toEvent;
-
-        public MyChildViewHolder(View v) {
+    public static class MyGroupViewHolder extends MyBaseViewHolder {
+        public MyGroupViewHolder(View v) {
             super(v);
-            groups = (TextView) v.findViewById(R.id.event_groups);
-            reward = (TextView) v.findViewById(R.id.event_reward);
-            info = (TextView) v.findViewById(R.id.event_info);
-            toEvent = (ButtonFlat) v.findViewById(R.id.button_to_event);
         }
     }
 
-    public MyExpandableItemAdapter(AbstractEventDataProvider dataProvider) {
+    public static class MyChildViewHolder extends MyBaseViewHolder {
+        public MyChildViewHolder(View v) {
+            super(v);
+        }
+    }
+
+    public VenueEventItemAdapter(AbstractDataProvider dataProvider) {
         mProvider = dataProvider;
 
         // ExpandableItemAdapter requires stable ID, and also
@@ -107,28 +87,29 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
     @Override
     public MyGroupViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final View v = inflater.inflate(R.layout.list_group_item, parent, false);
+        final View v = inflater.inflate(R.layout.event_list_item_venue, parent, false);
         return new MyGroupViewHolder(v);
     }
 
     @Override
     public MyChildViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final View v = inflater.inflate(R.layout.list_item, parent, false);
+        final View v = inflater.inflate(R.layout.event_list_group_item_venue, parent, false);
         return new MyChildViewHolder(v);
     }
 
     @Override
     public void onBindGroupViewHolder(MyGroupViewHolder holder, int groupPosition, int viewType) {
         // child item
-        final AbstractEventDataProvider.GroupData item = mProvider.getGroupItem(groupPosition);
+        final AbstractDataProvider.BaseData item = mProvider.getGroupItem(groupPosition);
 
         // set text
-        holder.mTitle.setText(item.getTitle());
+        holder.mTextView.setText(item.getText());
 
         // mark as clickable
         holder.itemView.setClickable(true);
 
+        // set background resource (target view ID: container)
         final int expandState = holder.getExpandStateFlags();
 
         if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_UPDATED) != 0) {
@@ -139,19 +120,23 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
             } else {
                 bgResId = R.drawable.bg_group_item_normal_state;
             }
-            holder.cardLayout.setBackgroundResource(bgResId);
+
+            holder.mContainer.setBackgroundResource(bgResId);
         }
     }
 
     @Override
     public void onBindChildViewHolder(MyChildViewHolder holder, int groupPosition, int childPosition, int viewType) {
         // group item
-        final AbstractEventDataProvider.ChildData item = mProvider.getChildItem(groupPosition, childPosition);
+        final AbstractDataProvider.ChildData item = mProvider.getChildItem(groupPosition, childPosition);
 
         // set text
-        holder.reward.setText(item.getReward());
-        holder.info.setText(item.getInfo());
-        holder.groups.setText(item.getGroups());
+        holder.mTextView.setText(item.getText());
+
+        // set background resource (target view ID: container)
+        int bgResId;
+        bgResId = R.drawable.bg_item_normal_state;
+        holder.mContainer.setBackgroundResource(bgResId);
     }
 
     @Override
