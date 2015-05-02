@@ -210,19 +210,43 @@ De voordelen van Android Studio waren dan ook overduidelijk. Betere code generat
 	\centering
 	\includegraphics[width=\linewidth]{android_studio}
 	\caption{Een typische workflow in Android Studio}
-	\label{fig:Backend ER 2}
+	\label{fig:Android Studio Workflow}
 \end{figure}
+
+\subsubsection{Ontwerpkeuzes}
+Tijdens de ontwikkeling van Triump is er voor gekozen om te werken met de laatste nieuwe technologieën. Dat wil zeggen dat Triump ontwikkelt is met als doel volledig compatibel te zijn met de laatste versie van Android: 5.1 Lollipop. Triump is daarnaast wel nog steeds compatibel met alle Android versies vanaf 4.1 Jelly Bean. Hierdoor bereikt de app 87,5\% van alle Android toestellen \cite{market_share}. Oudere versies zullen niet ondersteund worden vermits deze slechts 12,5\% marktaandeel hebben en het te veel moeite zou kosten om te zorgen dat Triump ook op deze versies correct werkt en uitvoerig getest is.
+Android development gebeurd in Java, maar er zijn enkele Android-specifieke ontwerppatronen waarvan we gebruik gemaakt hebben. Onder andere voor het asynchroon laden van informatie, het opslaan van data en het opbouwen van efficiënte UI lijsten zijn er speciale ontwerppatronen in Android. Deze zullen in de volgende secties verder uitgelegd worden.
+
+\subsubsection{Material Design}
+Triump is ontwikkeld voor Android Lollopop. Dit houdt in dat er gebruik gemaakt wordt van de Material Design Guidelines \cite{Material_Design}. Door de Material Design Guidelines te volgen is het makkelijker om een consistent look-and-feel te verkrijgen in de app die volledig in lijn ligt met de rest van het Android ecosysteem.
+Om de correcte implementatie van Material Design te garanderen, is er gebruik gemaakt van enkele externe bibliotheken. Deze bibliotheken bieden extra functionaliteit ten opzichte van de standaard Android API waardoor het makkelijker is het correcte design te verkrijgen. Deze bibliotheken zijn ook altijd backwards compatible met versies van Android lager dan Lollipop. Hierdoor wordt er een uniforme look verkregen op alle versies die de app ondersteunt.
+De gebruikt bibliotheken om Material Design te implementeren zijn:
+\begin{description}
+\item[Material Design Library \cite{navasmdc}] Een bibliotheek die verschillende UI componenten bevat die voldoen aan de Material Design Guidelines zoals de Flat Buttons, Progress Bar Indicators en Switches.
+\item[FloatingActionButton \cite{floatingactionbutton}] Een bibliotheek die de Floating Action Button van de Material Design Specification implementeert en toelaat om die toe te voegen aan een RecyclerView (zie verder).
+\item[MaterialEditText \cite{materialedittext}] Een bibliotheek die een consistent implementatie biedt voor tekstvelden in formulieren. De bibliotheek voorziet verschillende functies voor de tekstvelden zoals maximum lengte, hints, iconen en aangepaste kleuren.
+\end{description}
+
+\subsubsection{RecyclerView}
+Sinds Android 5.0 is er een nieuwe manier geïntroduceerd om lijsten weer te geven in de UI van de applicatie. Deze nieuwe widget (zo heten de UI componenten in Android) is de RecyclerView. De RecyclerView vervangt de oudere ListView widget. Om de voordelen van de RecyclerView uit te leggen moet men eerst de concepten van Android begrijpen.
+De ListView en RecyclerView geven beiden een lijst weer van data. Beide widgets worden aangestuurd door een zogenaamde Adapter. Die Adapter is een speciale klasse die de widgets oproepen om te rijen van de lijsten te vullen met data. Daarvoor moet de Adapter bepaalde methoden implementeren die dan door de ListView / RecyclerView opgeroepen worden. Bij zowel ListView als RecyclerView is 1 van die methodes verantwoordelijk voor het vullen dan de View van 1 rij met de correcte data.
+Voor elke rij in de lijst is de layout namelijk vastgelegd in een XML bestand. Aan de hand van dat XML bestand wordt dan voor elke rij een View object aangemaakt dat de correcte layout bevat voor die rij. Op dat moment is het View object voor die rij nog niet gevuld met de correcte data. Daarvoor wordt bij de Adapter een methode opgeroepen om die View te vullen met de correcte data.
+Het is in deze stap dat RecyclerView en ListView fundamenteel verschillen. In het geval van een ListView zal de Adapter voor elke rij verschillende findViewById(int id) operaties moeten doen om de correcte sub-View van de View van de rij te verkrijgen. Dat is nodig omdat de Adapter een referentie moet verkrijgen naar bijvoorbeeld een label View binnen de View van de rij. Deze findViewById(int id) operaties zijn echter zeer cpu-intensief. Hierdoor is scrollen in traditionele ListViews niet zo vloeiend.
+RecyclerView maakt het grootste deel van de findViewById(int id) operaties overbodig door standaard gebruik te maken het ViewHolder patroon.
+
+% Nog meer uitleg over ViewHolder bij schrijven...
+
+\subsubsection{Loaders}
+In Android gebeurd het tekenen en het interageren met de UI, net zoals bij de meeste andere GUI toolkits op de main thread. Dit betekent dat het inladen van data over bijvoorbeeld het netwerk of van de lokale opslag in een aparte thread moeten gebeuren. Is dit niet het geval, dan zal de volledige UI van de applicatie vast hangen tijdens het ophalen van de data. Dat is natuurlijk niet wenselijk vermits dit een slechte User Experience geeft.
+Daarom bevat Android het concept van Loaders. De bedoeling van Loaders is om data op een asynchrone manier in te laden (dus op een aparte thread) en de resultaten via een callback terug te sturen naar de main UI thread waar de resultaten dan getoond kunnen worden op het scherm. 
 
 \subsubsection{Inloggen en authenticatie via Foursquare}
 
-
-\subsubsection{Ontwerpkeuzes}
 % Recycler view, nieuwste trends
 % material design: welke lib. dat we gebruikt hebben
 % Loadermechanismen
 % Lokale SQLite DB
 % Cardmechanisme
-Tijdens de ontwikkeling van Triump is er voor gekozen om te werken met de laatste technologieën. Dat wil zeggen dat Triump ontwikkelt is met als doel volledig compatibel te zijn met de laatste nieuwe versie van Android, versie 5.1 Lollipop.
 
 \subsection{Webinterface}
 \subsubsection{Doel}
