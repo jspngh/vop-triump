@@ -156,7 +156,7 @@ Het werken met de API brengt echter wel nadelen met zich mee.
 Allereerst wordt Triump hierdoor afhankelijk van een externe organisatie. Indien Foursquare beslist zijn open database te sluiten moet het ontwerp van Triump volledig herzien worden. Daarnaast wordt van commerciële applicaties verwacht dat ze reclame maken voor Foursquare door bijvoorbeeld het Foursquare logo op op te nemen in de layout.  Een tweede nadeel is dat de dataopslag verdeeld wordt over twee databases. Enerzijds de Google Cloud Datastore waar de data over groepen en checkins worden bijgehouden en anderzijds de Foursquare Datastore waar de locatie en gebruikergegevens zijn opgeslaan. Een laatste nadeel is dat locaties verplicht geregisteerd moeten zijn bij Foursquare teneinde zichtbaar te zijn op Triump. 
 
 Indien locaties intern zouden aangemaakt en opgeslaan worden zouden de eerste twee nadelen verholpen zijn. 
-Deze voor de hand liggende oplossing wordt echter niet toegepast aangezien dit zou impliceren dat Triump vanaf nul zijn locatiedatabase zou moeten vullen. Hierdoor zouden gebruikers ontmoedigd worden Triump boven Foursquare te kiezen. Daarnaast biedt Triump de optie een checkin door te propageren naar Foursquare waardoor we de functionaliteiten ervan uitbreiden. 
+Deze voor de hand liggende oplossing wordt echter niet toegepast aangezien dit zou impliceren dat Triump vanaf nul zijn locatiedatabase zou moeten vullen. Hierdoor zouden gebruikers ontmoedigd worden Triump boven Foursquare te kiezen. Daarnaast biedt Triump de optie een checkin door te propageren naar Foursquare waardoor we de functionaliteiten ervan uitbreiden. %dit is geen optie, maar altijd zo
 
 Het laatste probleem wordt opgelost door het voorzien van een webinterface. Deze interface voorziet de mogelijkheid aan eigenaars van locaties om de nodige informatie omtrent hun café, zaak of restaurant zichtbaar te maken op Triump. Meer uitleg over de website volgt hieronder.
 
@@ -215,9 +215,10 @@ Antwoord:
 \subsubsection{Doel}
 % De Waarom Vraag => !! zou dit niet beter eerder in het verslag al worden gezegd? !!
 Voor een aantal taken is een smartphone niet helemaal geschikt. Deze heeft een klein scherm en de touchbediening is niet altijd handig. Zulke taken zijn het beheren van groepen en het aanmaken van promoties.
-Deze taken moeten redelijk vaak gebeuren en gebeuren gemakkelijker op een groter scherm. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten om zo klanten te lokken, zullen deze taken willen uitvoeren. Daarom is Triump uitgebreid met een webinterface.
-Onze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. Op de site staat informatie over wat het doel is van Triump en waarom gebruikers
-Op onze website kunnen gebruikers net als in de android-applicatie inloggen met Foursquare. Het is de bedoeling dat het registereren van een Foursquare-locatie steeds via de website gebeurd, net als het aanmaken van promoties door een eigenaar van een registreerde locatie.
+Deze taken worden met bepaalde regelmaat gebeuren en zijn gemakkelijker op een groter scherm uit te voeren. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten om zo klanten te lokken, zullen deze taken willen uitvoeren. Daarom is Triump uitgebreid met een webinterface.
+Onze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. Op de site staat informatie over het doel en de meerwaarde van Triump, en wordt er een link voorzien zodat toekomstige gebruikers de applicatie kunnen downloaden.\\
+Op onze website kunnen gebruikers net als in de android-applicatie inloggen met Foursquare. Het is de bedoeling dat het registereren van een Foursquare-locatie steeds via de website gebeurd, net als het aanmaken van promoties door een eigenaar van een registreerde locatie. Het opleggen van registratie van een locatie door de eigenaar ervan moet ervoor zorgen dat er geen valse promoties worden opgezet. Zonder registratie zou immers iemand een promotie kunnen aanmaken voor een bepaalde locatie zonder dat deze ook daadwerkelijk wordt gegeven. Dit zou Triump een stuk minder aantrekkelijk maken voor de gebruiker.
+
 \subsubsection{Django-framework}
 Bij het maken van een website kan men verschillende keuzes maken.
 Eerst en vooral is er de keuze of er gebruik wordt gemaakt van een bestaand framework, zoals Ruby on Rails, ASP.NET en Django, of dat men zelf de nodige functionaliteit implementeert met bijvoorbeeld PHP.
@@ -237,5 +238,17 @@ Een voordeel van het werken met Django is dat er hosting-diensten bestaan die zi
 Bij deze dienst was er de mogelijkheid te kiezen uit verschillende databasemanagment systemen. Er werd gekozen voor PostgreSQL: een open source DBMS waar wij reeds mee hebben gewerkt tijdens het vak "Databanken".
 De manier waarop er wordt gewerkt wordt weergegeven in \ref{fig:Webinterface}. Men kan zien dat de server die de website host geconnecteerd is met een PostgreSQL databank (pijl 1). Deze maakt het mogelijk om gebruikers te laten inloggen met een eigen account, waarbij men dan extra data kan opslaan. Er werd reeds aangehaald dat gebruikers ook hier met Foursquare dienen in te loggen, dit gebeurt na het registreren. Zoals te zien op de figuur gebeurt alle communicatie met de Foursquare API vanop de webserver (pijl 2), niet door de computer van de gebruiker. Deze communicatie omvat het ophalen van gegevens van de gebruiker en locaties uit de databank van Foursquare.
 Op de figuur kan men ook zien dat er vanop de computer van de gebruiker wordt gecommuniceerd met de centrale backend van Triump.
-Deze communicatie verloopt via Javascript en dient om bijvoorbeeld het organiseren van een evenement mogelijk te maken (TODO: alternatief: python modules). 
+Deze communicatie verloopt via Javascript en dient om bijvoorbeeld het organiseren van een evenement mogelijk te maken.
+De keuze voor Javascript is vooral gemotiveerd door de eenvoud van dit alternatief. Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken.
+Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript.
+Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. 
+Javascript is alomtegenwoordig, mmar toch zijn er computers waarop, bewust of onbewust, Javascript niet is geïnstalleerd of uitgeschakeld. 
+Deze computers kunnen dan weinig aanvangen met de webinterface, die afhangt van de Javascript-code. Dit probleem werd aangepakt door op de website te vermelden dat Javascript noodzakelijk is om een goede werking te verzekeren.
+Het 'client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf.
+Aangezien personen met slechte bedoelingen de code kunnen bestuderen en niet enkel het antwoord te zien krijgen, verhoogt de kans dat men de website kan saboteren, gegevens kan stelen,...
+Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Dit zou ten goede komen, aangezien de code 'server-side' wordt uitgevoerd.
+Het legt echter wel meer belasting op de server die de website host, deze neemt dan alle communicatie, voor alle gebruikers, met de Triump backend voor zijn rekening.
+Voorlopig, tijdens de testfase, kan men aannemen dat Triump geen doelwit zal worden van hackers en kan gewoon met Javascript worden gewerkt. Later, bij verdere uitwerking van Triump, kan de site nog altijd worden aangepast.
+(TODO: hoe gebeurt registratie
+	   andere mogelijkheden van de webinterface) 
 
