@@ -8,7 +8,7 @@
 % Waarom
 % Voornadelen / nadelen
 % Werking
-Triump bestaat uit twee grote delen. Enerzijds is er de frontend, dit is het gedeelte van Triump waarmee de gebruikers rechtstreeks intrageren. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. Het tweede deel van de Triump infrastructuur is backend. Hiermee komen de gebruikers nooit rechtstreeks in contact. In onderstaande paragrafen wordt er dieper ingegaan op deze onderdelen. Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de infrastructuur.
+Triump bestaat uit twee grote delen. Enerzijds is er de frontend, dit is het gedeelte van Triump waarmee de gebruikers rechtstreeks interageren. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. Het tweede deel van de Triump infrastructuur is backend. Hiermee komen de gebruikers nooit rechtstreeks in contact. In onderstaande paragrafen wordt er dieper ingegaan op deze onderdelen. Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de infrastructuur.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.3]{backend_algemene_structuur}
@@ -22,7 +22,7 @@ Triump bestaat uit twee grote delen. Enerzijds is er de frontend, dit is het ged
 \subsection{Google Cloud Endpoints}
 \label{sec: GCE}
 % restricities op aantal request
-Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend "Platform as a Service" gemaakt om applicaties uit te voeren op de infrastructuur van Google. GCE biedt naast de functionaliteiten beschikbaar in GAE een extra infrastructuur om op een relatief eenvoudige manier een backend API te generen. 
+Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend "Platform as a Service" gemaakt om applicaties uit te voeren op de infrastructuur van Google. GCE biedt naast de functionaliteiten beschikbaar in GAE een extra infrastructuur om op een relatief eenvoudige manier een backend API te genereren. 
 De extra infrastructuur aangeboden door GCE bestaat uit de endpoints. Deze endpoints verzorgen ondermeer de communicatie en authenticatie tussen mobiele gebruikers en de backendserver.
 Aangezien de backend API nog steeds gehost wordt door Googles App Engine blijven alle functionaliteiten zoals "Datastore", "Google Cloud Messaging" en "Cron jobs" beschikbaar. Figuur \ref{fig:Architectuur Google Cloud Endpoints} geeft de architectuur van de Enpoint weer~\cite{Google_endpoints}.
 
@@ -33,7 +33,8 @@ Aangezien de backend API nog steeds gehost wordt door Googles App Engine blijven
 	\label{fig:Architectuur Google Cloud Endpoints}
 \end{figure}
 
-Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Problemen zoals schaalbaarheid worden via dynamische rekenkracht allocatie opgelost. Daarnaast verzekert de App Engine een permanente beschikbaarheid van de servers worden doorgeschoven.
+Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Een probleem zoals schaalbaarheid wordt via dynamische rekenkrachtallocatie opgelost. Daarnaast is de backend van Triump ook altijd bereikbaar aangezien GAE een permanente beschikbaarheid van zijn servers verzekert. 
+
 
 Desalniettemin brengt het gebruik van GAE meerdere nadelen met zich mee. De voornaamste zijn de restrictie op het aantal lees- en schrijfoperaties per dag, de sterk variërende duratie van lees- en schrijfoperaties en de afhankelijkheid van een externe organistatie. Aangezien elke nieuwe ontwikkelaar \$ 300 cadeau krijgt kon het eerste nadeel opgelost worden door het aantal operaties per dag van 50.000 naar 1.000.000 te verhogen. De reden waarom 1.000.000 operaties per dag noodzakelijk is om Triump draaiende te houden is dat elke entiteit binnen een query als één leesoperatie wordt beschouwd. Hierdoor neemt het aantal leesoperaties bij het uitvoeren van enkele geneste queries zeer snel toe.
 
@@ -56,7 +57,7 @@ GCM wordt in Triump gebruikt als basis van het notificatie systeem. In de huidig
 \begin{enumerate}
   \item Een gebruiker heeft een prijs gewonnen.
   \item De backend construeert een korte boodschap. De boodschap en gebruiker die de boodschap dient te ontvangen wordt doorgegeven aan de GCM dienst. 
-  \item GCM dienst verstuurd de booschap naar het mobiele Android toestel.
+  \item GCM dienst verstuurt de booschap naar het mobiele Android toestel.
   \item Op het toestel draait een permanente service die luistert naar binnenkomende boodschappen. De ontvangen boodschappen worden omgevormd tot een notificatie.
   \item De notificaties worden weergegeven op het toestel.
 \end{enumerate}
@@ -64,7 +65,6 @@ Pijl (2) van figuur \ref{fig:algemene structuur backend} geeft aan dat er via GC
 \subsubsection{Cron jobs}
 
 Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend. In het geval van de backend van Triump is het noodzakelijk om beloningen (rewards) na het aflopen van evenementen voor gebruikers te laten generen. Hiervoor wordt gebruik gemaakt van een cron job, die geconfigureerd wordt in een java servlet.
-
 
 %-----------------------------------------------
 
