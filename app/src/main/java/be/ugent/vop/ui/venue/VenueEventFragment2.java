@@ -79,9 +79,6 @@ public class VenueEventFragment2 extends Fragment implements VenueActivity.Venue
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
         mEmpty = (TextView)rootView.findViewById(R.id.empty);
 
-
-
-
         return rootView;
     }
 
@@ -98,7 +95,7 @@ public class VenueEventFragment2 extends Fragment implements VenueActivity.Venue
 
         //adapter
         getDataProvider();
-        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getDataProvider());
+        final VenueEventItemAdapter myItemAdapter = new VenueEventItemAdapter(getDataProvider());
 
         mAdapter = myItemAdapter;
 
@@ -517,7 +514,3 @@ public class VenueEventFragment2 extends Fragment implements VenueActivity.Venue
 
     }
 }
-
-
-
-
