@@ -4,18 +4,30 @@ In deze sectie worden enkel de resultaten met betrekking tot de frontend besprok
 \section{Android applicatie}
 % Verschillende schermen tonen van applicatie en functionaliteit
 % Linken aan doelstelling
+%Packagediagram	%Lars
+\subsection{Login en tutorial} %Lars
+\subsection{Overview en notificaties} %Lars
+Om gebruikers op de hoogte te houden van recente activiteit van hun groepen, events die aan de gang zijn, promoties, checkins,... worden in de applicatie hiervoor 2 mechanismen voorzien. Enerzijds is er het Overviewscherm, het eerste scherm dat de gebruiker ziet in de applicatie, anderzijds zijn er de notificaties.
+Het Overview wordt dynamisch gegenereerd op basis van activiteit van gebruikers. Hiervoor wordt met 'CardViews' in een RecyclerView gewerkt, waardoor ze efficïent kunnen voorgesteld worden in een lijst en interactief zijn. Het Overviewscherm toont de checkins van groepsleden , evenementen in de buurt en gewonnen promoties. Op deze manier kan de gebruiker vanuit het Overviewscherm navigeren naar andere onderdelen binnen de applicatie (evenementen, ranglijsten, groepen,...).
+Naast het Overviewscherm, wordt de gebruiker van updates voorzien via notificaties. Deze notificaties hebben betrekking op evenementen en promoties (voor checkins worden geen notificaties verstuurd om de gebruiker niet te overspoelen met notificaties). Bovendien heeft de gebruiker de mogelijkheid om notificaties uit te schakelen.
 
-% Screenshots
-% extras
-% Overview
-Om gebruikers updates te kunnen geven van recente activiteit van hun groepen, events die aan de gang zijn, ontvangen beloningen,... is er een systeem nodig dat dit voor elke gebruiker apart bijhoudt.
-De manier waarop dit is aangepakt is licht gebaseerd op het "Observer-pattern". Bij dit patroon zijn er een reeks waarnemers die de toestand van een bepaald object volgen 
+De manier waarop dit is aangepakt is gebaseerd op het "Observer-pattern". Bij dit patroon zijn er een reeks waarnemers die de toestand van een bepaald object volgen 
 en willen verwittigingen krijgen wanneer de toestand verandert. 
 Het object zelf moet bijhouden welke waarnemers zijn geïnteresseerd in zijn toestand en, indien dit object van toestand verandert, moet deze dit laten weten aan de waarnemers.
 In dit geval zijn de waarnemers eigenlijk de gebruikers van Triump. Deze willen graag weten wanneer er bijvoorbeeld een persoon lid wordt van een van hun groepen.
 Er is hier echter niet echt sprake van objecten waarvan de toestand verandert, maar eerder van acties die plaats vinden. Wanneer er zo een actie plaats vindt, zoals een gebruiker wordt lid van een bepaalde groep,
 dan moeten de waarnemers, hier de huidige leden van de groep, op de hoogte worden gebracht.
 Hiervoor wordt in de backend aparte data bijgehouden: per gebruiker is er een "boodschappenbus". Hierin komen alle updates voor deze gebruiker. Om het overzichtsscherm te vullen, worden eerst alle boodschappen uit de bus van de gebruiker opgehaald uit de backend. Hierdoor moet men geen andere entiteiten gaan overlopen en zoeken naar veranderingen in bijvoorbeeld de leden van een groep, maar komen alle updates per gebruiker op 1 centrale plaats terecht.
+
+\subsection{Checkin}%Siebe
+\subsection{Groepen}%Lars
+\subsection{Events en Rewards}%Siebe
+\subsection{Leaderboard}%Lars
+\subsection{Feedback}%Siebe
+\subsection{Settings en profile}% Lars
+% Screenshots
+% extras
+% Overview
 
 % Settings
 Het is de gewoonte om in een applicatie een menu met instellingen te voorzien. Ook onze applicatie moet enigzins configureerbaar zijn, en daarom zijn er instellingen voorzien.
@@ -25,5 +37,10 @@ en deze hebben we dan ook gevolgd. Voorbeelden van instellingen in Triump zijn: 
 % feedback
 % Notificaties
 
-\section{Webinterface}
+\section{Webinterface}%Jonas -A
+\subsection{Inloggen}
+\subsection{Registreren van locatie}
+\subsection{Aanmaken van evenement}
+
+
 % Verschillende schermen tonen van webinterface en functionaliteit
