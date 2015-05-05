@@ -45,8 +45,6 @@ public class AcceptMembersFragment extends Fragment implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(null);
 
-
-
         return rootView;
     }
 

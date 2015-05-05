@@ -47,7 +47,6 @@ public class GroupFragment extends Fragment {
 
     private ImageView bannerImage;
     private TextView description;
-    private TextView name;
     private TextView type;
     private TextView created;
     private Button btn;
@@ -57,6 +56,7 @@ public class GroupFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private String token;
     private long groupId;
+    private ArrayList<UserBean> memberList;
     private Context context = null;
 
     private boolean mIsAdmin = false;
@@ -93,7 +93,6 @@ public class GroupFragment extends Fragment {
 
         bannerImage = (ImageView) rootView.findViewById(R.id.bannerImage);
         description = (TextView) rootView.findViewById(R.id.group_description);
-        name = (TextView) rootView.findViewById(R.id.group_name);
         type = (TextView) rootView.findViewById(R.id.group_type);
         created = (TextView) rootView.findViewById(R.id.group_created);
 
@@ -134,6 +133,7 @@ public class GroupFragment extends Fragment {
 
         mMenu.findItem(R.id.action_pending_requests).setVisible(mIsAdmin);
         mMenu.findItem(R.id.action_set_banner).setVisible(mIsAdmin);
+        mMenu.findItem(R.id.action_manage_members).setVisible(mIsAdmin);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -142,11 +142,14 @@ public class GroupFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_pending_requests:
-                mListener.onGroupFragmentInteraction(groupId);
+                mListener.onGroupFragmentInteraction(0, groupId);
                 return true;
             case R.id.action_set_banner:
                 Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 0);
+                return true;
+            case R.id.action_manage_members:
+                mListener.onGroupFragmentInteraction(1, groupId);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -173,7 +176,7 @@ public class GroupFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onGroupFragmentInteraction(long groupId);
+        void onGroupFragmentInteraction(int action, long groupId);
     }
 
 
@@ -188,7 +191,6 @@ public class GroupFragment extends Fragment {
             if (response != null){
                 ((BaseActivity) getActivity()).setTitle(response.getName());
 
-                name.setText(response.getName());
                 description.setText(response.getDescription());
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType() + " group");
@@ -202,9 +204,9 @@ public class GroupFragment extends Fragment {
                         members.add(user);
                     }
                 }
+                memberList = members;
                 mAdapter = new MemberListAdapter(context, members);
                 mRecyclerView.setAdapter(mAdapter);
-
 
                 Log.d(TAG, "Group admin id: " + response.getAdminId());
 
@@ -233,7 +235,6 @@ public class GroupFragment extends Fragment {
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null) {
                 btn.setVisibility(View.GONE);
-                name.setText(response.getName());
                 description.setText(response.getDescription());
                 created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType() + " group");
@@ -243,7 +244,7 @@ public class GroupFragment extends Fragment {
                         members.add(user);
                     }
                 }
-
+                memberList = members;
                 mAdapter = new MemberListAdapter(context, members);
                 mRecyclerView.setAdapter(mAdapter);
             }

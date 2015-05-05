@@ -64,17 +64,34 @@ public class GroupActivity extends BaseActivity implements GroupFragment.OnFragm
         }
     }
 
-    public void onGroupFragmentInteraction(long groupId){
-        AcceptMembersFragment acceptMembersFragment = new AcceptMembersFragment();
+    public void onGroupFragmentInteraction(int action, long groupId){
         Bundle args = new Bundle();
         args.putLong(GroupFragment.GROUP_ID, groupId);
-        acceptMembersFragment.setArguments(args);
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, acceptMembersFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        FragmentTransaction fragmentTransaction;
+        switch(action){
+            case 0:
+                AcceptMembersFragment acceptMembersFragment = new AcceptMembersFragment();
+                acceptMembersFragment.setArguments(args);
+                fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, acceptMembersFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
 
-        setTitle(getString(R.string.pending_requests));
+                setTitle(getString(R.string.pending_requests));
+                break;
+            case 1:
+                ManageMembersFragment manageMembersFragment = new ManageMembersFragment();
+                manageMembersFragment.setArguments(args);
+                fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, manageMembersFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+
+                setTitle(getString(R.string.manage_members));
+                break;
+            default:
+                break;
+        }
     }
 
 

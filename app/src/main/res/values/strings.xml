@@ -93,6 +93,7 @@
 
     <string name="pending_requests">Pending requests</string>
     <string name="set_banner">Change cover</string>
+    <string name="manage_members">Manage members</string>
 
     <string name="events">events</string>
     <string name="rewards">rewards</string>

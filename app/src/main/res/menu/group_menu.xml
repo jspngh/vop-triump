@@ -9,4 +9,8 @@
         android:title="@string/set_banner"
         app:showAsAction="never" >
     </item>
+    <item android:id="@+id/action_manage_members"
+        android:title="@string/manage_members"
+        app:showAsAction="never" >
+    </item>
 </menu>

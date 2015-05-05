@@ -34,9 +34,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
+
 
 //TODO: Pictures for group, users and venues
 
@@ -282,8 +285,8 @@ public class MyEndpoint {
         GroupBean groupBean = null;
 
         try{
-            _registerUserInGroup(userId, groupId);
-            _acceptUserInGroup(userId, groupId, true);
+            Entity result = _registerUserInGroup(userId, groupId);
+            _acceptUserInGroup(result , true);
             groupBean = _getGroupBean(groupId);
         }
         catch(EntityNotFoundException e){
@@ -447,6 +450,15 @@ public class MyEndpoint {
         }
 
         return response;
+    }
+
+    @ApiMethod(name = "removeUserFromGroup")
+    public void removeUserFromGroup(@Named("token") String token,
+                                    @Named("userId") String userId,
+                                    @Named("groupId") long groupId) throws UnauthorizedException, InternalServerErrorException, EntityNotFoundException {
+        _getUserIdForToken(token);
+        _removeUserFromGroup(userId, groupId);
+
     }
 
     @ApiMethod(name = "sendToUser")
@@ -765,7 +777,7 @@ public class MyEndpoint {
         return userId;
     }
 
-    private void _registerUserInGroup(String userId, long groupId) throws EntityNotFoundException {
+    private Entity _registerUserInGroup(String userId, long groupId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         GroupsBean groups = _getGroupsForUser(userId);
@@ -779,7 +791,7 @@ public class MyEndpoint {
         //check if user isn't already member of the group
         for(GroupBean g:groups.getGroups()){
             if(g.getGroupId()==group.getGroupId()){
-                return;
+                return null;
             }
         }
         Entity userGroup = new Entity(USERGROUP_ENTITY);
@@ -789,8 +801,43 @@ public class MyEndpoint {
         userGroup.setProperty(USERGROUP_ACCEPTED, false);
         userGroup.setProperty(USERGROUP_IS_ADMIN, false);
         datastore.put(userGroup);
+        return userGroup;
     }
 
+    private void _acceptUserInGroup(Entity userGroup, boolean isAdmin) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        if(userGroup != null){
+            boolean alreadyAccepted = (boolean) userGroup.getProperty(USERGROUP_ACCEPTED);
+            long groupId = (long) userGroup.getProperty(USERGROUP_GROUP_ID);
+
+            userGroup.setProperty(USERGROUP_ACCEPTED, true);
+            userGroup.setProperty(USERGROUP_IS_ADMIN, isAdmin);
+            datastore.put(userGroup);
+
+            if(!alreadyAccepted){
+                Entity groupEntity = datastore.get(KeyFactory.createKey(GROUP_ENTITY, groupId));
+                long numMembers = (long) groupEntity.getProperty(GROUP_NUM_MEMBERS);
+                long newNumMembers = numMembers + 1;
+                groupEntity.setProperty(GROUP_NUM_MEMBERS, newNumMembers);
+                datastore.put(groupEntity);
+
+                // -------------------- MAILBOX -----------------------
+                GroupBean groupBean = _getGroupBean(groupEntity);
+                for(UserBean member : groupBean.getMembers()) {
+
+                    Entity mailBoxItem = new Entity(MAILBOX_ENTITY);
+                    mailBoxItem.setProperty(MAILBOX_USER_ID, member.getUserId());
+                    String userGroupKey = KeyFactory.keyToString(userGroup.getKey());
+                    mailBoxItem.setProperty(MAILBOX_KEY, userGroupKey);
+                    mailBoxItem.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_NEW_MEMBER);
+                    mailBoxItem.setProperty(MAILBOX_DATE, new Date());
+                    datastore.put(mailBoxItem);
+                }
+                // ----------------------------------------------------
+            }
+        }
+    }
 
     private void _acceptUserInGroup(String userId, long groupId, boolean isAdmin) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -810,6 +857,11 @@ public class MyEndpoint {
         Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
         PreparedQuery pq = datastore.prepare(q);
         Entity e = pq.asSingleEntity();
+
+        if(e == null){
+            Logger log = Logger.getLogger(MyEndpoint.class.getName());
+            log.warning("entity is null");
+        } else{
 
         boolean alreadyAccepted = (boolean) e.getProperty(USERGROUP_ACCEPTED);
 
@@ -838,6 +890,7 @@ public class MyEndpoint {
             }
             // ----------------------------------------------------
         }
+        }
     }
 
     private void _denyUserInGroup(String userId, long groupId){
@@ -860,6 +913,36 @@ public class MyEndpoint {
         Entity e = pq.asSingleEntity();
 
         datastore.delete(e.getKey());
+    }
+
+    private void _removeUserFromGroup(String userId, long groupId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        Query.Filter groupIdFilter =
+                new Query.FilterPredicate(USERGROUP_GROUP_ID,
+                        Query.FilterOperator.EQUAL,
+                        groupId);
+
+        Query.Filter userIdFilter =
+                new Query.FilterPredicate(USERGROUP_USER_ID,
+                        Query.FilterOperator.EQUAL,
+                        userId);
+
+        Query.Filter filter = Query.CompositeFilterOperator.and(groupIdFilter, userIdFilter);
+
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+        Entity e = pq.asSingleEntity();
+
+        if(e != null){
+            datastore.delete(e.getKey());
+        }
+
+        Entity groupEntity = datastore.get(KeyFactory.createKey(GROUP_ENTITY, groupId));
+        long numMembers = (long) groupEntity.getProperty(GROUP_NUM_MEMBERS);
+        long newNumMembers = numMembers - 1;
+        groupEntity.setProperty(GROUP_NUM_MEMBERS, newNumMembers);
+        datastore.put(groupEntity);
     }
 
     private List<UserBean> _getPendingRequests(long groupId) throws EntityNotFoundException {
@@ -888,8 +971,6 @@ public class MyEndpoint {
 
         return requests;
     }
-
-
 
     private CheckinBean _checkInVenue(String userId, long groupId, String venueId){
 

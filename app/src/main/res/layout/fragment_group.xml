@@ -15,27 +15,6 @@
             android:src="@drawable/fantastic_background"
             android:scaleType="centerCrop"
             android:adjustViewBounds="false" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/bannerImage"
-            android:layout_alignStart="@+id/bannerImage"
-            android:layout_alignTop="@+id/bannerImage"
-            android:layout_alignRight="@+id/bannerImage"
-            android:layout_alignEnd="@+id/bannerImage"
-            android:layout_alignBottom="@+id/bannerImage">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/group_name"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:text="Groupname"
-                android:background="#b4ededed"
-                android:textColor="#000"
-                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
-        </RelativeLayout>
     </RelativeLayout>
     <ScrollView
         android:layout_width="match_parent"

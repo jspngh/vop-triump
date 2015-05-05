@@ -117,6 +117,10 @@ public class BackendAPI {
          return myApiService.registerUserInGroup(token, groupId).execute();
     }
 
+    public void removeUserFromGroup(String userId, long groupId) throws IOException{
+        myApiService.removeUserFromGroup(token, userId,  groupId).execute();
+    }
+
     public GroupBean getGroupInfo(long groupId) throws IOException{
         return myApiService.getGroupInfo(token, groupId).execute();
     }
