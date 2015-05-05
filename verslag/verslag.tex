@@ -13,15 +13,18 @@
 \usepackage[utf8]{inputenc}
 \usepackage{titlesec}
 \usepackage[dutch]{babel}
+\usepackage[top=1.5in, bottom=1.25in, left=1.3in, right=1.3in]{geometry}
 
 \titleformat{\chapter}[display]
 {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\Huge}
 \titlespacing*{\chapter}{0pt}{0pt}{10pt}
 \titleformat{\chapter}[hang] 
-{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter:}{1em}{} 
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter:}{0.4em}{} 
 \makeatletter
 \renewcommand{\@chapapp}{Hoofdstuk}
 \makeatother
+
+
 \graphicspath{ {afb/} }
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
