@@ -160,5 +160,9 @@
 
     <string name="ach6_title">Life Achievement</string>
     <string name="ach6_description">Requirement: Win 20 events </string>
+    <string name="incorrect_date">Incorrect date</string>
+    <string name="incorrect_groups">Please select at least one group</string>
+    <string name="incorrect_name">Please add name and reward</string>
+    <string name="everyone">Everyone</string>
 
 </resources>
