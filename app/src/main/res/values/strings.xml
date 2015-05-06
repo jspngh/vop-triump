@@ -116,8 +116,6 @@
     <string name="notification_feedback">Give us your opinion</string>
 
 
-
-
     <string name="title_activity_rewards">Rewards Activity</string>
     <string name="new_event_select_groups_dialog_title">Choose groups</string>
      <string name="button_text_send">Send</string>
@@ -142,5 +140,29 @@
     <string name="action_discard">Discard</string>
     <string name="add_group">Add group</string>
     <string name="claim_reward">Claim reward!</string>
+
+    <!-- achievements -->
+    <string name="profile_achievements">Achievements</string>
+    <string name="ach1_title">Goalkeeper</string>
+    <string name="ach1_description">Requirement: </string>
+
+    <string name="ach2_title">Defender of the castle</string>
+    <string name="ach2_description">Requirement: </string>
+
+    <string name="ach3_title">Scavenger</string>
+    <string name="ach3_description">Requirement: Score 10 times the first point at an event </string>
+
+    <string name="ach4_title">Medal I</string>
+    <string name="ach4_description"> Requirement: Score 1 000 points</string>
+
+    <string name="ach5_title">Medal II</string>
+    <string name="ach5_description">Requirement: Score 10 000 points </string>
+
+    <string name="ach6_title">Life Achievement</string>
+    <string name="ach6_description">Requirement: Win 20 events </string>
+    <string name="incorrect_date">Incorrect date</string>
+    <string name="incorrect_groups">Please select at least one group</string>
+    <string name="incorrect_name">Please add name and reward</string>
+    <string name="everyone">Everyone</string>
 
 </resources>

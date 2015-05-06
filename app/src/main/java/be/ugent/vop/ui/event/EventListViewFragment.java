@@ -484,10 +484,15 @@ public class EventListViewFragment extends Fragment {
                         final List<ChildData> children = new ArrayList<>();
 
                         String groups = "";
-                        for(GroupBean g:bean.getGroups()){
-                            groups+= g.getName()+", ";
+                        if(bean.getVerified()){
+                            groups = getActivity().getString(R.string.everyone);
+                        }else{
+                            for(GroupBean g:bean.getGroups()){
+                                groups+= g.getName()+", ";
+                            }
+                            groups = groups.substring(0,groups.length()-2);
                         }
-                        groups = groups.substring(0,groups.length()-2);
+
                         children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
 
                         mData.add(new Pair<GroupData, List<ChildData>>(group, children));

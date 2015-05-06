@@ -3,11 +3,8 @@ package be.ugent.vop.ui.event;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckedTextView;
@@ -20,9 +17,7 @@ import java.util.List;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.GroupBean;
 
-/**
- * Created by vincent on 26/03/15.
- */
+
 public class SelectGroupsDialog extends DialogFragment {
     private static final String TAG = "SelectGroupsDialog";
 
