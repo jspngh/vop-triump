@@ -128,6 +128,10 @@ public class MyEndpoint {
     private static final String MAILBOX_TYPE_NEW_MEMBER = "newMember";
     private static final String MAILBOX_TYPE_CHECKIN = "checkIn";
 
+    private static final String ACHIEVEMENT_ENTITY = "achievement";
+    private static final String ACHIEVEMENT_USER = "userid";
+    private static final String ACHIEVEMENT_NR = "achievementNr";
+
     private SecureRandom random = new SecureRandom();
 
     /**
@@ -256,6 +260,8 @@ public class MyEndpoint {
         UserBean response = null;
         try {
             response = _getUserBeanForId(userId);
+            ArrayList<Boolean> achievements = (ArrayList<Boolean>) _getAchievementsForUser(userId);
+            response.setAchievementsActivated(achievements);
         } catch (EntityNotFoundException e) {
             e.printStackTrace();
         }
@@ -717,12 +723,16 @@ public class MyEndpoint {
                 case MAILBOX_TYPE_NEW_MEMBER:
                     String newMemberString = (String) item.getProperty(MAILBOX_KEY);
                     Key newMemberKey = KeyFactory.stringToKey(newMemberString);
-                    Entity newMember = datastore.get(newMemberKey);
-                    String newMemberId = (String) newMember.getProperty(USERGROUP_USER_ID);
-                    long groupId = (long) newMember.getProperty(USERGROUP_GROUP_ID);
-                    UserBean userBean = _getUserBeanForId(newMemberId);
-                    GroupBean groupBean = _getGroupBean(groupId);
-                    newMembers.add(new newMemberInGroup(userBean, groupBean, date));
+                    try {
+                        Entity newMember = datastore.get(newMemberKey);
+                        String newMemberId = (String) newMember.getProperty(USERGROUP_USER_ID);
+                        long groupId = (long) newMember.getProperty(USERGROUP_GROUP_ID);
+                        UserBean userBean = _getUserBeanForId(newMemberId);
+                        GroupBean groupBean = _getGroupBean(groupId);
+                        newMembers.add(new newMemberInGroup(userBean, groupBean, date));
+                    } catch(EntityNotFoundException e){
+                        datastore.delete(item.getKey());
+                    }
                     break;
             }
         }
@@ -733,6 +743,7 @@ public class MyEndpoint {
         result.setNewMembers(newMembers);
         return result;
     }
+
     @ApiMethod(name = "acceptUserInGroup", path = "acceptUserInGroup")
     public void acceptUserInGroup(@Named("token") String token,
                                   @Named("userId") String userId,
@@ -741,6 +752,7 @@ public class MyEndpoint {
         _getUserIdForToken(token); // Try to authenticate the user
         _acceptUserInGroup(userId, groupId, false);
     }
+
     @ApiMethod(name = "denyUserInGroup", path = "denyUserInGroup")
     public void denyUserInGroup(@Named("token") String token,
                                 @Named("userId") String userId,
@@ -749,6 +761,7 @@ public class MyEndpoint {
         _getUserIdForToken(token); // Try to authenticate the user
         _denyUserInGroup(userId, groupId);
     }
+
     @ApiMethod(name = "getPendingRequests", path = "getPendingRequests")
     public List<UserBean> getPendingRequests(@Named("token") String token,
                                              @Named("groupId") long groupId) throws UnauthorizedException, EntityNotFoundException {
@@ -757,6 +770,17 @@ public class MyEndpoint {
         return _getPendingRequests(groupId);
     }
 
+    @ApiMethod(name = "giveUserAchievement", path = "giveUserAchievement")
+     public void giveUserAchievement(@Named("token") String token,
+                                              @Named("groupId") int achievementNr) throws UnauthorizedException, EntityNotFoundException {
+        // TODO: check admin
+        String userId = _getUserIdForToken(token);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity userEntity = new Entity(ACHIEVEMENT_ENTITY);
+        userEntity.setProperty(ACHIEVEMENT_USER, userId);
+        userEntity.setProperty(ACHIEVEMENT_NR, achievementNr);
+        datastore.put(userEntity);
+    }
 
 
     /************************
@@ -1068,9 +1092,9 @@ public class MyEndpoint {
         return events;
     }
 
-    private List<EventBean> _getRewardsForUser(String userId)throws EntityNotFoundException {
-       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-       List<EventBean> result = new ArrayList<>();
+    private List<EventBean> _getRewardsForUser(String userId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<EventBean> result = new ArrayList<>();
         Query.Filter userFilter =
                 new Query.FilterPredicate(USEREVENT_USER_ID,
                         Query.FilterOperator.EQUAL,
@@ -1084,6 +1108,22 @@ public class MyEndpoint {
         PreparedQuery preparedVerified = datastore.prepare(verifiedQuery);
         for (Entity r : preparedVerified.asIterable()) {
             result.add(_getEventBean((long)r.getProperty(USEREVENT_EVENT_ID)));
+        }
+        return result;
+    }
+
+    private List<Boolean> _getAchievementsForUser(String userId) throws EntityNotFoundException{
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<Boolean> result = new ArrayList<>();
+        for(int i = 0; i < 6 ; i++){
+            result.add(false);
+        }
+        Query.Filter userFilter = new Query.FilterPredicate(ACHIEVEMENT_USER, Query.FilterOperator.EQUAL, userId);
+        Query query = new Query(ACHIEVEMENT_ENTITY).setFilter(userFilter).addSort(ACHIEVEMENT_NR, Query.SortDirection.ASCENDING);
+        PreparedQuery preparedQuery = datastore.prepare(query);
+        for (Entity e : preparedQuery.asIterable()) {
+            long tmp = (long)e.getProperty(ACHIEVEMENT_NR);
+            result.set((int) tmp, true);
         }
         return result;
     }

@@ -145,7 +145,7 @@ public class BackendAPI {
     }
 
     public GroupBean createGroup(String name, String description, String type) throws IOException{
-        return myApiService.createGroup(token,  name, description, type).execute();
+        return myApiService.createGroup(token, name, description, type).execute();
     }
 
     public EventBean createEvent(String venueId, List<Long> groupIds, DateTime start, DateTime end, String description,String reward, int minParticipants,int maxParticipants,boolean verified) throws IOException{
@@ -155,6 +155,10 @@ public class BackendAPI {
         }
         return e.execute();
 
+    }
+
+    public void giveUserAchievement(int nr) throws IOException{
+        myApiService.giveUserAchievement(nr, token).execute();
     }
 
     public EventRewardBean getEventsForUser() throws IOException{
@@ -180,7 +184,6 @@ public class BackendAPI {
     public void claimReward( long eventId,long groupId) throws IOException {
         myApiService.claimReward(token,eventId,groupId).execute();
     }
-
 
     public void registerGcmId(String gcmId) throws IOException{
         myApiService.registerGcmId(token, gcmId).execute();

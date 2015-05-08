@@ -2,10 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_activated="true"
-        android:drawable="@drawable/achievement1"
-        />
+        android:drawable="@drawable/achievement1" />
     <item
         android:state_activated="false"
-        android:drawable="@drawable/achievement1_disabled"
-        />
+        android:drawable="@drawable/achievement1_disabled" />
 </selector>

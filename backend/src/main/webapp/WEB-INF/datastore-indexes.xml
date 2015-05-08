@@ -22,4 +22,9 @@
         <property name="date" direction="desc"/>
     </datastore-index>
 
+    <datastore-index kind="achievement" ancestor="false" source="manual">
+        <property name="userid" direction="asc"/>
+        <property name="achievementNr" direction="asc"/>
+    </datastore-index>
+
 </datastore-indexes>

@@ -3,13 +3,10 @@
     android:layout_height="match_parent" tools:context="be.ugent.vop.ui.profile.ProfileFragment"
     android:paddingBottom="10dp"
     android:orientation="vertical">
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.3">
-
         <be.ugent.vop.ui.widget.CircularImageView
             android:id="@+id/profilePic"
             android:layout_width="120dp"
@@ -64,90 +61,29 @@
             android:layout_marginTop="19dp"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp" />
-
-
     </RelativeLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.7">
-
+        android:layout_weight="0.7"
+        android:gravity="center_horizontal"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp" >
         <TextView
-            android:layout_marginLeft="20dp"
             android:id="@+id/achievements"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_achievements"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_below="@+id/date_joined"
-            android:layout_toRightOf="@+id/profilePic"
-            android:layout_toEndOf="@+id/profilePic" />
-
-        <GridLayout
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginRight="60dp"
-
+            android:paddingBottom="15dp"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/achievement_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:rowCount="3"
-            android:columnCount="2"
-            android:horizontalSpacing="40dp"
-            android:verticalSpacing="40dp">
-
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ach1_drawable"
-                android:background="@android:color/transparent"
-                android:id="@+id/imageButton1"
-                android:padding="5dp"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageButton2"
-                android:src="@drawable/ach2_drawable"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageButton3"
-                android:src="@drawable/ach3_drawable"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageButton4"
-                android:src="@drawable/ach4_drawable"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageButton5"
-                android:src="@drawable/ach5_drawable"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageButton6"
-                android:src="@drawable/ach6_drawable"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
-        </GridLayout>
-
+            android:scrollbars="vertical" />
     </LinearLayout>
-
-
 </LinearLayout>

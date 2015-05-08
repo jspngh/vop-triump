@@ -2,6 +2,7 @@ package be.ugent.vop.backend;
 
 import com.google.appengine.repackaged.org.joda.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -14,6 +15,7 @@ public class UserBean {
     private String email;
     private Date joined;
     private String profilePictureUrl;
+    private ArrayList<Boolean> achievementsActivated;
 
     public void setJoined(Date joined){
         this.joined= joined;
@@ -61,5 +63,13 @@ public class UserBean {
 
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public ArrayList<Boolean> getAchievementsActivated() {
+        return achievementsActivated;
+    }
+
+    public void setAchievementsActivated(ArrayList<Boolean> achievementsActivated) {
+        this.achievementsActivated = achievementsActivated;
     }
 }
