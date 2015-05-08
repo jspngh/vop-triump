@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import java.security.acl.Group;
 import java.util.ArrayList;
 
@@ -123,6 +125,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
         viewHolder.groupName.setText(group.getName());
         viewHolder.groupInfo.setText(group.getDescription());
+
+        String url = "http://upload.wikimedia.org/wikipedia/en/4/42/Beatles_-_Abbey_Road.jpg";
+        Ion.with(viewHolder.groupImage)
+                .placeholder(R.drawable.team)
+                .error(R.drawable.ic_drawer_logout)
+                .load(url);
 
         // No photos yet...
         /*

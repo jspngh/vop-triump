@@ -31,7 +31,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/members_text"
-                    android:text="Members:"
+                    android:text="Members"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="15dp"
                     android:gravity="start"/>
 
                 <android.support.v7.widget.RecyclerView
@@ -43,41 +45,75 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
                 android:layout_below="@id/members" >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:id="@+id/group_type"
-                    android:text="@string/placeholder_lorem_ipsum"
-                    android:gravity="center"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:id="@+id/group_description"
-                    android:layout_below="@id/group_type"
-                    android:text="@string/placeholder_lorem_ipsum"
-                    android:gravity="center"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:id="@+id/group_created"
-                    android:layout_below="@id/group_description"
-                    android:text="@string/placeholder_lorem_ipsum"
-                    android:gravity="center"/>
-                <Button
-                    android:layout_width="66dp"
-                    android:layout_height="66dp"
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.3"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/type_text"
+                        android:text="Type"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="start"/>
+
+                    <TextView
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.7"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/group_type"
+                        android:text="@string/placeholder_lorem_ipsum" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.3"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/desc_text"
+                        android:text="Description"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="start"/>
+
+                    <TextView
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.7"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/group_description"
+                        android:text="@string/placeholder_lorem_ipsum"
+                    />
+
+
+                </LinearLayout>
+
+                <com.gc.materialdesign.views.ButtonRectangle
                     android:id="@+id/joinbtn"
-                    android:background="@drawable/join_group_button"
-                    android:layout_below="@+id/group_created"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="10dp"/>
-            </RelativeLayout>
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/theme_primary"
+                    android:text="Become member"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="20dp"/>
+
+            </LinearLayout>
+
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
