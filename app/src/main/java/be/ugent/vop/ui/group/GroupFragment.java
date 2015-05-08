@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.ButtonRectangle;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
@@ -48,8 +49,8 @@ public class GroupFragment extends Fragment {
     private ImageView bannerImage;
     private TextView description;
     private TextView type;
-    private TextView created;
-    private Button btn;
+  //  private TextView created;
+    private ButtonRectangle btn;
 
     private Menu mMenu;
 
@@ -94,7 +95,7 @@ public class GroupFragment extends Fragment {
         bannerImage = (ImageView) rootView.findViewById(R.id.bannerImage);
         description = (TextView) rootView.findViewById(R.id.group_description);
         type = (TextView) rootView.findViewById(R.id.group_type);
-        created = (TextView) rootView.findViewById(R.id.group_created);
+      //  created = (TextView) rootView.findViewById(R.id.group_created);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.members_list);
         mLayoutManager = new GridLayoutManager(context, 1, LinearLayoutManager.HORIZONTAL, false);
@@ -102,13 +103,16 @@ public class GroupFragment extends Fragment {
         mAdapter = new MemberListAdapter(null, null);
         mRecyclerView.setAdapter(mAdapter);
 
-        String photoUrl = "http://www.beeldarchief.ugent.be/fotocollectie/gebouwen/images/prevs/prev64.jpg";
+        //http://i0.kym-cdn.com/entries/icons/original/000/004/400/the-simpsons-abbey-road.jpg
+        String photoUrl = "http://uncleartmusic.com/wp-content/uploads/2015/04/abbey-road-beatles.jpg";
         Ion.with(bannerImage)
             .placeholder(R.drawable.ic_launcher)
             .error(R.drawable.ic_drawer_logout)
             .load(photoUrl);
-        btn = (Button) rootView.findViewById(R.id.joinbtn);
-            btn.setVisibility(View.VISIBLE);
+
+        btn = (ButtonRectangle) rootView.findViewById(R.id.joinbtn);
+
+        btn.setVisibility(View.VISIBLE);
         btn.setFocusable(false);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -192,8 +196,8 @@ public class GroupFragment extends Fragment {
                 ((BaseActivity) getActivity()).setTitle(response.getName());
 
                 description.setText(response.getDescription());
-                created.setText("Created on: " + response.getCreated().toString());
-                type.setText(response.getType() + " group");
+            //    created.setText("Created on: " + response.getCreated().toString());
+                type.setText(response.getType());
                 ArrayList<UserBean> members = new ArrayList<>();
                 String userId = PrefUtils.getUserId(getActivity());
                 if(response.getMembers() != null) {
@@ -236,7 +240,7 @@ public class GroupFragment extends Fragment {
             if (response != null) {
                 btn.setVisibility(View.GONE);
                 description.setText(response.getDescription());
-                created.setText("Created on: " + response.getCreated().toString());
+               // created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType() + " group");
                 ArrayList<UserBean> members = new ArrayList<>();
                 if(response.getMembers() != null) {
