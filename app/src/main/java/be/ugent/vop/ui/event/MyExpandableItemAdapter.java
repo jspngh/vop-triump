@@ -32,7 +32,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemVie
 public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExpandableItemAdapter.MyGroupViewHolder, MyExpandableItemAdapter.MyChildViewHolder> {
     private static final String TAG = "MyExpandableItemAdapter";
 
-    private AbstractEventDataProvider mProvider;
+    private AbstractDataProvider mProvider;
 
     public static class MyGroupViewHolder extends AbstractExpandableItemViewHolder {
         public ViewGroup mContainer;
@@ -66,7 +66,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         }
     }
 
-    public MyExpandableItemAdapter(AbstractEventDataProvider dataProvider) {
+    public MyExpandableItemAdapter(AbstractDataProvider dataProvider) {
         mProvider = dataProvider;
 
         // ExpandableItemAdapter requires stable ID, and also
@@ -121,7 +121,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
     @Override
     public void onBindGroupViewHolder(MyGroupViewHolder holder, int groupPosition, int viewType) {
         // child item
-        final AbstractEventDataProvider.GroupData item = mProvider.getGroupItem(groupPosition);
+        final AbstractDataProvider.GroupData item = mProvider.getGroupItem(groupPosition);
 
         // set text
         holder.mTitle.setText(item.getTitle());
@@ -146,7 +146,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
     @Override
     public void onBindChildViewHolder(MyChildViewHolder holder, int groupPosition, int childPosition, int viewType) {
         // group item
-        final AbstractEventDataProvider.ChildData item = mProvider.getChildItem(groupPosition, childPosition);
+        final AbstractDataProvider.ChildData item = mProvider.getChildItem(groupPosition, childPosition);
 
         // set text
         holder.reward.setText(item.getReward());

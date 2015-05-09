@@ -37,12 +37,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import be.ugent.vop.R;
-import be.ugent.vop.backend.loaders.EventLoader;
 import be.ugent.vop.backend.loaders.EventsLoader;
 import be.ugent.vop.backend.myApi.model.EventBean;
-import be.ugent.vop.backend.myApi.model.EventRewardBean;
 import be.ugent.vop.backend.myApi.model.GroupBean;
-import be.ugent.vop.foursquare.FoursquareAPI;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
@@ -181,7 +178,7 @@ public class EventListViewFragment extends Fragment {
         return mProvider;
     }
 
-    class EventDataProvider extends AbstractEventDataProvider {
+    class EventDataProvider extends AbstractDataProvider {
         private List<Pair<GroupData, List<ChildData>>> mData;
         private List<EventBean> mEvents;
         // for undo group item
@@ -347,114 +344,6 @@ public class EventListViewFragment extends Fragment {
             return RecyclerViewExpandableItemManager.getPackedPositionForChild(groupPosition, insertedPosition);
         }
 
-        public final class ConcreteGroupData extends GroupData {
-
-            private final long mId;
-            private final String mEventTitle;
-            private final int mSwipeReaction;
-            private boolean mPinnedToSwipeLeft;
-            private long mNextChildId;
-
-            ConcreteGroupData(long id, String title, int swipeReaction) {
-                mId = id;
-                mEventTitle = title;
-                mSwipeReaction = swipeReaction;
-                mNextChildId = 0;
-            }
-
-            @Override
-            public long getGroupId() {
-                return mId;
-            }
-
-            @Override
-            public boolean isSectionHeader() {
-                return false;
-            }
-
-            @Override
-            public int getSwipeReactionType() {
-                return mSwipeReaction;
-            }
-
-            @Override
-            public String getTitle() {
-                return mEventTitle;
-            }
-
-            @Override
-            public void setPinnedToSwipeLeft(boolean pinnedToSwipeLeft) {
-                mPinnedToSwipeLeft = pinnedToSwipeLeft;
-            }
-
-            @Override
-            public boolean isPinnedToSwipeLeft() {
-                return mPinnedToSwipeLeft;
-            }
-
-            public long generateNewChildId() {
-                final long id = mNextChildId;
-                mNextChildId += 1;
-                return id;
-            }
-        }
-
-        public final class ConcreteChildData extends ChildData {
-
-            private long mId;
-            private final String mReward;
-            private final String mInfo;
-            private final String mGroups;
-            private final int mSwipeReaction;
-            private boolean mPinnedToSwipeLeft;
-
-            ConcreteChildData(long id, String reward, String info, String groups, int swipeReaction) {
-                mId = id;
-                mReward = reward;
-                mInfo = info;
-                mGroups = groups;
-                mSwipeReaction = swipeReaction;
-            }
-
-            @Override
-            public long getChildId() {
-                return mId;
-            }
-
-            @Override
-            public int getSwipeReactionType() {
-                return mSwipeReaction;
-            }
-
-            @Override
-            public String getReward() {
-                return mReward;
-            }
-
-            @Override
-            public String getInfo() {
-                return mInfo;
-            }
-
-            @Override
-            public String getGroups() {
-                return mGroups;
-            }
-
-            @Override
-            public void setPinnedToSwipeLeft(boolean pinnedToSwipeLeft) {
-                mPinnedToSwipeLeft = pinnedToSwipeLeft;
-            }
-
-            @Override
-            public boolean isPinnedToSwipeLeft() {
-                return mPinnedToSwipeLeft;
-            }
-
-            public void setChildId(long id) {
-                this.mId = id;
-            }
-        }
 
         private LoaderManager.LoaderCallbacks<HashMap<EventBean,FoursquareVenue>>  mEventsLoaderListener
                 = new LoaderManager.LoaderCallbacks<HashMap<EventBean,FoursquareVenue>>() {

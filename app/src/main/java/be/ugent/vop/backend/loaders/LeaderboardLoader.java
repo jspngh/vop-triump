@@ -38,7 +38,7 @@ public class LeaderboardLoader extends AsyncTaskLoader<List<RankingBean>> {
         try{
             result = (BackendAPI.get(context).getLeaderboard(minGroupSize, maxGroupSize, groupType));
         } catch(IOException e){
-            Log.d("LeaderboardLoader", e.getMessage());
+            Log.d("LeaderboardLoader", "Leaderboard loading failed");
         }
         // Done!
         return result;

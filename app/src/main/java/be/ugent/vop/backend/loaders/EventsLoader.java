@@ -45,7 +45,7 @@ public class EventsLoader extends AsyncTaskLoader<HashMap<EventBean,FoursquareVe
     public HashMap<EventBean,FoursquareVenue> loadInBackground() {
         Log.d("EventsLoader", "");
         HashMap<EventBean,FoursquareVenue> event_venue = null;
-        EventRewardBean result = null;
+        EventRewardBean result;
         try{
             result = (BackendAPI.get(context).getEventsForUser());
             event_venue = new HashMap<>();

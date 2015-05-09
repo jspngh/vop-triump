@@ -8,9 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
@@ -79,7 +76,7 @@ public class VenueActivity extends BaseActivity {
 
     private TypedValue mTypedValue = new TypedValue();
     private VenueRankingFragment mVenueRankingFragment;
-    private VenueEventFragment2 mVenueEventFragment;
+    private VenueEventFragment mVenueEventFragment;
 
     public interface VenueActivityCallback{
         public void setColorPalette(Palette p);
@@ -279,7 +276,7 @@ public class VenueActivity extends BaseActivity {
                     mFragmentsCalls.add(mVenueRankingFragment);
                     return mVenueRankingFragment;
                 case 1:
-                    mVenueEventFragment = new VenueEventFragment2();
+                    mVenueEventFragment = new VenueEventFragment();
                     Bundle bundle2 = new Bundle();
                     bundle2.putString(VenueActivity.VENUE_ID, fsVenueId);
                     mVenueEventFragment.setArguments(bundle2);

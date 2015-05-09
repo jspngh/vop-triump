@@ -26,19 +26,21 @@ public abstract class AbstractDataProvider {
 
         public abstract int getSwipeReactionType();
 
-        public abstract String getText();
-
         public abstract void setPinnedToSwipeLeft(boolean pinned);
 
         public abstract boolean isPinnedToSwipeLeft();
     }
 
     public static abstract class GroupData extends BaseData {
+        public abstract String getTitle();
         public abstract boolean isSectionHeader();
         public abstract long getGroupId();
     }
 
     public static abstract class ChildData extends BaseData {
+        public abstract String getReward();
+        public abstract String getInfo();
+        public abstract String getGroups();
         public abstract long getChildId();
     }
 
@@ -56,3 +58,8 @@ public abstract class AbstractDataProvider {
 
     public abstract long undoLastRemoval();
 }
+
+
+
+
+

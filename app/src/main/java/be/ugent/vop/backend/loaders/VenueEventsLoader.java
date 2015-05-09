@@ -5,12 +5,16 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.EventBean;
+import be.ugent.vop.backend.myApi.model.EventRewardBean;
+import be.ugent.vop.foursquare.FoursquareAPI;
+import be.ugent.vop.foursquare.FoursquareVenue;
 
-public class VenueEventsLoader extends AsyncTaskLoader<List<EventBean>> {
+public class VenueEventsLoader extends AsyncTaskLoader<HashMap<EventBean,FoursquareVenue>> {
     private Context context;
     private final String venueId;
 
@@ -26,16 +30,23 @@ public class VenueEventsLoader extends AsyncTaskLoader<List<EventBean>> {
      * data to be published by the loader.
      */
     @Override
-    public List<EventBean> loadInBackground() {
+    public HashMap<EventBean,FoursquareVenue> loadInBackground() {
         Log.d("EventLoader", "");
-        List<EventBean> result = null;
+        HashMap<EventBean,FoursquareVenue> event_venue = null;
+        List<EventBean> mEvents;
         try{
-            result = (BackendAPI.get(context).getEventsForVenue(venueId));
+            mEvents = (BackendAPI.get(context).getEventsForVenue(this.venueId));
+            event_venue = new HashMap<>();
+            if(mEvents!=null) {
+                for (int j = 0; j < mEvents.size(); j++) {
+                    event_venue.put(mEvents.get(j), FoursquareAPI.get(context).getVenueInfo(mEvents.get(j).getVenueId()));
+                }
+            }
         } catch(IOException e){
             Log.d("EventLoader", e.getMessage());
         }
         // Done!
-        return result;
+        return event_venue;
     }
 
     /**
@@ -44,7 +55,7 @@ public class VenueEventsLoader extends AsyncTaskLoader<List<EventBean>> {
      * here just adds a little more logic.
      */
     @Override
-    public void deliverResult(List<EventBean> response) {
+    public void deliverResult(HashMap<EventBean,FoursquareVenue> response) {
         if (isReset()) {
             onReleaseResources(response);
         }
@@ -73,7 +84,7 @@ public class VenueEventsLoader extends AsyncTaskLoader<List<EventBean>> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(List<EventBean> response) {
+    @Override public void onCanceled(HashMap<EventBean,FoursquareVenue> response) {
         super.onCanceled(response);
 
         // At this point we can release the resources associated with 'apps'
@@ -95,6 +106,6 @@ public class VenueEventsLoader extends AsyncTaskLoader<List<EventBean>> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<EventBean> response) {}
+    protected void onReleaseResources(HashMap<EventBean,FoursquareVenue> response) {}
 
 }

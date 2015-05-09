@@ -1,12 +1,10 @@
 package be.ugent.vop.ui.event;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
-import be.ugent.vop.ui.venue.VenueEventFragment2;
 import be.ugent.vop.utils.PrefUtils;
 
 /**
