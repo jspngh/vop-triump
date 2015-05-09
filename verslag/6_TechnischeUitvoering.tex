@@ -194,7 +194,7 @@ Antwoord:
 \subsubsection{Waarom Android?}
 % Keuze android boven iOS
 % 
-Bij de ontwikkeling van de Triump applicatie is er gekozen voor Android als mobiel platform boven iOS of Windows Phone. Android heeft als voordeel dat het een groot marktaandeel heeft en er dus een groot publiek bereikt kan worden met de applicatie. Dit maakt dat Android als eerste platform de beste keuze is. De ontwikkeltools voor iOS en Windows Phone zijn ook niet cross-platform. Om apps te ontwikkelen voor iOS dient men over XCode te beschikken (enkel beschikbaar op Mac OS X) en om Windows Phone applicaties te ontwikkelen maakt men gebruik van Visual Studio (enkel beschikbaar op Windows). Vermits ons team bestaat uit 1 Windows, 1 Linux en 2 Mac gebruikers, was het dus een must om een cross-platform ontwikkelomgeving te hebben.
+Bij de ontwikkeling van de Triump applicatie is er gekozen voor Android als mobiel platform boven iOS of Windows Phone. Android heeft als voordeel dat het een groot marktaandeel heeft (76.6\% van de smartphones wereldwijd draait op Android \cite{marketshare}) en er dus een groot publiek bereikt kan worden met de applicatie. Dit maakt dat Android als eerste platform de beste keuze is. De ontwikkeltools voor iOS en Windows Phone zijn bovendien niet cross-platform. Om apps te ontwikkelen voor iOS dient men over XCode te beschikken (enkel beschikbaar op Mac OS X) en om Windows Phone applicaties te ontwikkelen maakt men gebruik van Visual Studio (enkel beschikbaar op Windows). Vermits het team bestaat uit 1 Windows, 1 Linux en 2 Mac gebruikers, was het noodzakelijk om een cross-platform ontwikkelomgeving te hebben.
 \subsubsection{Ontwikkelomgeving: Android Studio}
 % vergelijking vs Eclipse
 Vroeger was Eclipse de standaard ontwikkelomgeving (IDE) voor Android. Hierbij werd de standaard Eclipse installatie uitgebreid met de Android Developer Toolkit (ADT) plugin om Eclipse beter geschikt te maken voor Android Development. Op 16 mei 2013 stelde Google de nieuwste IDE voor Android voor: Android Studio. Deze IDE is gebaseerd op IntelliJ IDEA en biedt veel verbeteringen ten opzichte van Eclipse. In het begin waren er echter nog veel problemen met Android Studio waardoor veel mensen bij Eclipse bleven. Bij de aanvang van de ontwikkeling van Triump is er toch gekozen voor Android Studio omdat de meeste problemen toen reeds opgelost waren.
@@ -222,28 +222,23 @@ De gebruikt bibliotheken om Material Design te implementeren zijn:
 \end{description}
 
 \subsubsection{RecyclerView}
-Sinds Android 5.0 is er een nieuwe manier geïntroduceerd om lijsten weer te geven in de UI van de applicatie. Onze applicatie maakt veelvuldig gebruik van lijsten (groepen, locaties, evenementen,...) en bijgevolg wordt gestreefd van de laatste standaard hieromtrent gebruik te maken. Deze nieuwe widget (zo heten de UI componenten in Android) is de RecyclerView. De RecyclerView vervangt de oudere ListView widget. Om de voordelen van de RecyclerView uit te leggen moet men eerst de concepten van Android begrijpen.
-De ListView en RecyclerView geven beiden een lijst weer van data. Beide widgets worden aangestuurd door een zogenaamde Adapter. Die Adapter is een speciale klasse die de widgets oproepen om te rijen van de lijsten te vullen met data. Daarvoor moet de Adapter bepaalde methoden implementeren die dan door de ListView / RecyclerView opgeroepen worden. Bij zowel ListView als RecyclerView is 1 van die methodes verantwoordelijk voor het vullen dan de View van 1 rij met de correcte data.
-Voor elke rij in de lijst is de layout namelijk vastgelegd in een XML bestand. Aan de hand van dit XML bestand wordt dan voor elke rij een View object aangemaakt dat de correcte layout bevat voor die rij. Op dat moment is het View object voor die rij nog niet gevuld met de correcte data. Daarvoor wordt bij de Adapter een methode opgeroepen om die View te vullen met de correcte data.
+Sinds Android 5.0 is er een nieuwe manier geïntroduceerd om lijsten weer te geven in de UI van de applicatie. Onze applicatie maakt veelvuldig gebruik van lijsten (groepen, locaties, evenementen,...) en bijgevolg wordt gestreefd van de laatste standaard hieromtrent gebruik te maken. Deze nieuwe widget (zo heten de UI componenten in Android) is de RecyclerView. De RecyclerView vervangt de oudere ListView widget.
+De ListView en RecyclerView geven beiden een lijst weer van data. Beide widgets worden aangestuurd door een zogenaamde DataAdapter. Die Adapter is een speciale klasse die de widgets oproepen om de rijen van de lijsten te vullen met data. Daarvoor moet de Adapter bepaalde methoden implementeren die dan door de ListView / RecyclerView opgeroepen worden. Bij zowel ListView als RecyclerView is 1 van die methodes verantwoordelijk voor het vullen van de View van 1 rij met de correcte data.
+Voor elke rij in de lijst is de layout vastgelegd in een XML bestand. Aan de hand van dit XML bestand wordt dan voor elke rij een View object aangemaakt dat de correcte layout bevat voor die rij. Op dat moment is het View object voor die rij nog niet gevuld met de correcte data. Daarvoor wordt bij de Adapter een methode opgeroepen om die View te vullen met de correcte data.
 Het is in deze stap dat RecyclerView en ListView fundamenteel verschillen. In het geval van een ListView zal de Adapter voor elke rij verschillende findViewById(int id) operaties moeten doen om de correcte sub-View van de View van de rij te verkrijgen. Dat is nodig omdat de Adapter een referentie moet verkrijgen naar bijvoorbeeld een label View binnen de View van de rij. Deze findViewById(int id) operaties zijn echter zeer cpu-intensief. Hierdoor is scrollen in traditionele ListViews niet zo vloeiend.
 RecyclerView maakt het grootste deel van de findViewById(int id) operaties overbodig door standaard gebruik te maken het ViewHolder patroon.
-
-% Nog meer uitleg over ViewHolder bij schrijven...->eerder beperken tot de essentie
+Concreet leidt het nastreven van de laatste Android ontwerppatronen, zoals de RecyclerView, tot een efficiëntere applicatie.
 
 \subsubsection{Loaders}
 In Android gebeurd het tekenen en het interageren met de UI, net zoals bij de meeste andere GUI toolkits op de main thread. Dit betekent dat het inladen van data over bijvoorbeeld het netwerk of van de lokale opslag in een aparte thread moeten gebeuren. Is dit niet het geval, dan zal de volledige UI van de applicatie vast hangen tijdens het ophalen van de data. Dat is natuurlijk niet wenselijk vermits dit een slechte User Experience geeft.
 Daarom bevat Android het concept van Loaders. De bedoeling van Loaders is om data op een asynchrone manier in te laden (dus op een aparte thread) en de resultaten via een callback terug te sturen naar de main UI thread waar de resultaten dan getoond kunnen worden op het scherm. 
+\newline\newline
 
-% Recycler view, nieuwste trends
-% material design: welke lib. dat we gebruikt hebben
-% Loadermechanismen
-% Lokale SQLite DB
-% Cardmechanisme
+De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van de methodes die gevolgd werden bij het ontwikkelen van de Android applicatie van Triump. Gedurende het volledige ontwerpproces werd op deze manier gestreeft naar een zo efficiënt mogelijke applicatie, ontwikkelt volgens de meest recente standaarden. \cite{successapp}
 
 \subsection{Webinterface}
 \label{Webinterface}
 \subsubsection{Doel}
-% De Waarom Vraag => !! zou dit niet beter eerder in het verslag al worden gezegd? !!
 Voor een aantal taken is een smartphone niet helemaal geschikt. Zulke taken zijn o.a. het beheren van groepen en het aanmaken van promoties.
 Deze taken gebeuren met bepaalde regelmaat en zijn gemakkelijker op een groter scherm uit te voeren. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten als online marketing strategie, zullen deze taken willen uitvoeren via een overzichtelijke webinterface. Daarom is Triump uitgebreid met een webinterface die bereikbaar is via de publieke website van Triump.
 Deze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. Op de site staat informatie over het doel van Triump, en wordt er een link voorzien zodat toekomstige gebruikers de applicatie kunnen downloaden.\\
@@ -252,7 +247,7 @@ Op onze website kunnen gebruikers net als in de Android-applicatie inloggen met 
 \subsubsection{Django-framework}
 Bij het maken van een website zijn er verschillende keuzes.
 Eerst en vooral is er de keuze of er gebruik wordt gemaakt van een bestaand framework, zoals Ruby on Rails, ASP.NET en Django, of dat men zelf de nodige functionaliteit implementeert met bijvoorbeeld PHP.
-Bestaande frameworks bieden ruim voldoende functionaliteit aan om de Triump website te verwezenlijken. De frameworks zijn daarboven reeds geoptimaliseerd en bevatten functies zoals een standaardmanier om gebruikers veilig in te loggen. 
+Bestaande frameworks bieden ruim voldoende functionaliteit aan om de Triump website te verwezenlijken. De frameworks zijn bovendien reeds geoptimaliseerd en bevatten functies zoals een standaardmanier om gebruikers veilig in te loggen. 
 Daarnaast moet men nog kiezen om ofwel de site bij een hosting-dienst te plaatsen, ofwel zelf de site te hosten op een eigen pc. Gebruik maken van een bestaande hosting-dienst, is het eenvoudigst. Voor een vast bedrag, per maand of jaar, wordt de website geplaatst op de servers van de hosting-dienst. Deze neemt extra moeilijkheden, zoals het instellen en onderhouden van DNS-servers op zich.
 Op de site worden gebruikers aangemaakt waarbij bepaalde informatie wordt opgeslaan, zoals hun Foursquare-identiteit, zodat de gebruiker maar 1 keer met Foursquare moet inloggen. Dit gebeurt aan de hand van een DBMS-systeem. \\
 \begin{figure}[H]
