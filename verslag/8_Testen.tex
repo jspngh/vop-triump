@@ -1,11 +1,14 @@
 \chapter{Testen}%Siebe
-Feedback van gebruikers
+\section{Testmogelijkheden}
 %Een overzicht van de testen en testmogelijkheden die werden ingebouwd of
 %uitgevoerd.
-Logs met execution time in appengine, debuggen in android studio,...?
+Tijdens het ontwikkelen van een programma of applicatie zijn testen niet weg te denken. Een goede gewoonte is om na het maken van een component deze grondig te testen en zo bijna alle fouten te verwijderen.
+Deze werkwijze werd dan ook gevolgd. Door gebruik te maken van de debug-mogelijkheden van Android Studio en het bijhouden van logs konden problemen vaak snel worden opgespoord. De moeilijkheid in dit project was het werken met Google App Engine. De uitvoering van de backend-code gebeurt op de servers van Google en kan er kan dus niet worden gedebugged. Gelukkig kan men wel logs laten genereren en deze na uitvoering bekijken.
+Zo konden fouten worden gelokaliseerd en opgelost.
 
-
+\section{Feedback}
 % Backend testen, statistieken over de endpoints
 % Userfeedback: Integratie van feedbacksysteem om gebruikervaringen bij te houden.
-We bieden gebruikers de mogelijkheid om suggesties, problemen en fouten aan ons te laten weten.
-Dit kan zowel via de Android-applicatie als via de website. In de Android applicatie gebeurt dit enerzijds vanuit de toepassing zelf, en anderzijds wordt de gebruiker via notificaties aangespoord om feedback te geven. Bij indienen van het verslag was de feedback te beperkt, maar alle functionaliteit om rekening te houden met 'user generated' feedback is voorzien.
+Omdat een applicatie vrijwel nooit foutvrij is bieden we de gebruikers de mogelijkheid om suggesties, problemen en fouten aan ons te laten weten.
+Dit kan zowel via de Android-applicatie als via de website. In de Android applicatie gebeurt dit enerzijds vanuit de toepassing zelf, en anderzijds wordt de gebruiker via notificaties aangespoord om feedback te geven.
+Er kan dan rekening worden gehouden met de feedback om enerzijds de applicatie stabieler en aangenamer in gebruik te maken. Anderzijds kan ook de verdere ontwikkeling door suggesties worden bijgestuurd, en kunnen voorgestelde nieuwe features worden geïmplementeerd.
