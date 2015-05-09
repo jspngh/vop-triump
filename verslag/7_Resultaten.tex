@@ -3,7 +3,7 @@
 In deze sectie wordt enkel de resultaten met betrekking tot de frontend besproken, vermits de backend reeds uitvoerig is geanalyseerd in het onderdeel 'Technische Uitvoering'.
 \section{Android applicatie}
 De Android applicatie werd geprogrammeerd in 10 weken(x uren) en is bijgevolg slechts een prototype. Desalniettemin bevat de applicatie reeds alle functionaliteit en is ook op vlak van UI een intuïtieve interface uitgedacht.
-De applicatie is uitgebouwd rond 1 centraal scherm. Hieruit kan rechtstreeks genavigeerd worden naar het Overview-, Checkin- en Groupsscherm. Deze 3 schermen bevatten alle vereiste functies die een gebruiker normaal gezien nodig heeft (inchecken, controleren van de evenementen/promoties en groepsactiviteit). Andere functionaliteit (innen van promoties, bekijken van alle groepen en evenementen, instellingen,...) is beschikbaar via het 'navigation drawer' mechanisme. Dit is een paneel met navigeermogelijkheden dat zichtbaar wordt door het vegen naar rechts. De layout van de Android applicatie is gekozen na analyse van verschillende Android applicaties en huidige ontwikkelstandaarden voor Android toepassingen. Daarnaast wordt een uniforme interface voorzien, conform met de Material Design standaarden. In volgende onderdelen wordt van de verschillende schermen de functionaliteit besproken. Screenshots hiervan worden bijgevoegd in Appendix B.
+De applicatie is uitgebouwd rond 1 centraal scherm. Hieruit kan rechtstreeks genavigeerd worden naar het Overview-, Checkin- en Groupscherm. Deze 3 schermen bevatten alle vereiste functies die een gebruiker normaal gezien nodig heeft (inchecken, controleren van de evenementen/promoties en groepsactiviteit). Andere functionaliteit (innen van promoties, bekijken van alle groepen en evenementen, instellingen,...) is beschikbaar via het 'navigation drawer' mechanisme. Dit is een paneel met navigeermogelijkheden dat zichtbaar wordt door het vegen naar rechts. De layout van de Android applicatie is gekozen na analyse van verschillende Android applicaties en huidige ontwikkelstandaarden voor Android toepassingen. Daarnaast wordt een uniforme interface voorzien, conform met de Material Design standaarden. In volgende onderdelen wordt van de verschillende schermen de functionaliteit besproken. Screenshots hiervan worden bijgevoegd in Appendix B.
 % Verschillende schermen tonen van applicatie en functionaliteit
 % Linken aan doelstelling
 %Packagediagram	%Lars
@@ -43,9 +43,19 @@ en deze hebben we dan ook gevolgd. Voorbeelden van instellingen in Triump zijn: 
 % Notificaties
 
 \section{Webinterface}%Jonas -A
+De website van Triump, die te bekijken is op triump.be, bestaat uit 2 delen. Enerzijds is er een deel waarvoor men niet dient ingelogd te zijn. Daar kan men informatie vinden over Triump, de applicatie downloaden en contact zoeken met ons. Anderzijds is er de interface voor gebruikers van Triump, waarvoor men natuurlijk wel dient ingelogd te zijn. Hier kan men groepen en evenementen bekijken, maar de belangrijkste functionaliteit van dit gedeelte is het registreren van een locatie. Dit is noodzakelijk indien men een officiëel evenement wilt organiseren.
+\subsection{Publieke pagina's}
+De eerste pagina die nieuwe gebruikers te zien krijgen, bevat weinig informatie en is er vooral om de aandacht te trekken. Op deze pagina zijn links naar andere delen van de website te vinden. Belangrijke links voor nieuwe gebruikers zijn aanwezig: 'Contact' en 'About' geven meer informatie over Triump, 'Download' en 'Sign up' geven hen de mogelijkheid om Triump te beginnen gebruiken.\\
+Op de Contact-pagina is er de mogelijkheid om feedback te geven, naast algemene informatie over wie we zijn.
+Op de About-pagina vindt men meer informatie over de applicatie zelf.
 \subsection{Inloggen}
+Om de site volledig te kunnen gebruiken, dient men zich eerst te registreren. Hierna logt men dan in met de nieuwe account en moet men toestemming geven aan Foursquare om bepaalde gegevens (zoals de naam van de gebruiker) te delen met Triump. 
 \subsection{Registreren van locatie}
-\subsection{Aanmaken van evenement}
-
+Nadat men is ingelogd kan men nu een locatie uit de Foursquare-database bij Triump registreren.
+Momenteel is het enkel mogelijk om te zoeken naar locaties rondom Gent, aangezien de eerste testen van Triump daar gebeuren.
+De manier waarop dit verloopt wordt even geschetst. Eerst geeft de gebruiker de naam van een locatie in. Met deze naam wordt een lijst van locaties opgehaald van Foursquare.
+Uit deze lijst moet de gebruiker dan 1 selecteren om te registreren. Om er zeker van te zijn dat het wel degelijk om de juiste locatie gaat, is er een link aanwezig die leidt naar de Fourquare-pagina van die locatie.
+Vervolgens bevestigt de gebruiker de registratie en wordt hij/zij gevraagd om ons een mail te sturen. Deze mail is niet strikt noodzakelijk, maar zorgt er wel voor dat wij, die de registratie moeten goedkeuren, er snel van op de hoogte zijn en is ook al een indicatie dat de gebruiker de uitbater is van die locatie, en dat het een legitieme registratie betreft.
+De registratie wordt dan uiteindelijk goed gekeurd en hierna kan de gebruiker een officiëel evenement organiseren voor deze locatie via de webinterface.
 
 % Verschillende schermen tonen van webinterface en functionaliteit
