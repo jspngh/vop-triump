@@ -101,7 +101,12 @@ public class VenueContentProvider extends ContentProvider {
         long id = 0;
         switch (uriType) {
             case VENUES:
-                id = sqlDB.insert(VenueTable.TABLE_VENUE, null, values);
+                try {
+                    id = sqlDB.insertOrThrow(VenueTable.TABLE_VENUE, null, values);
+                }
+                catch(Exception e){
+
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
