@@ -8,7 +8,12 @@
 % Waarom
 % Voornadelen / nadelen
 % Werking
-Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks interageren, en anderzijds is er de backend, waarmee de gebruikers nooit rechtsstreeks mee in contact staan. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In onderstaande paragrafen wordt er dieper ingegaan op deze onderdelen. Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de ontworpen infrastructuur.
+Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks interageren, en anderzijds is er de backend, verborgen voor iedere gebruiker. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In onderstaande paragrafen wordt er dieper ingegaan op deze onderdelen. 
+
+\section{Backend}
+
+Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de verschillende onderdelen van de backend en van de interacties tussen de backend en de frontend. De pijlen aangeduid in figuur \ref{fig:algemene structuur backend} worden in de komende secties verklaard.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.3]{backend_algemene_structuur}
@@ -17,13 +22,11 @@ Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er d
 
 \end{figure}
 
-\section{Backend}
-
 \subsection{Google Cloud Endpoints}
 \label{sec: GCE}
 % restricities op aantal request
-Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend 'Platform as a Service' ontworpen om applicaties uit te voeren op de infrastructuur van Google. GCE biedt naast de functionaliteiten beschikbaar in GAE de mogelijkheid om op een relatief eenvoudige manier een backend API te genereren voor applicaties.  Endpoints verzorgt onder andere de communicatie en authenticatie tussen gebruikers en de backend.
-Aangezien GCE nog steeds gehost wordt door Googles App Engine blijven alle andere functionaliteiten zoals 'Datastore' voor dataopslag, 'Google Cloud Messaging' voor notificaties en 'Cron Jobs' voor cron jobs beschikbaar voor de ontwikkelaar. Figuur \ref{fig:Overzicht Google Cloud Endpoints} geeft een overzicht van Google Cloud Endpoints weer~\cite{Google_endpoints}.
+Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend 'Platform as a Service' ontworpen om applicaties uit te voeren op Googles infrastructuur. GCE biedt naast de functionaliteiten beschikbaar in GAE de mogelijkheid om op een relatief eenvoudige manier een backend API te genereren voor applicaties.  Endpoints verzorgt onder andere de communicatie en authenticatie tussen gebruikers en de backend.
+Aangezien GCE nog steeds gehost wordt door een Googles App Engine instantie blijven alle andere functionaliteiten zoals 'Datastore' voor dataopslag, 'Google Cloud Messaging' voor notificaties en 'Cron Jobs' voor periodieke taken beschikbaar. Figuur \ref{fig:Overzicht Google Cloud Endpoints} geeft een overzicht van Google Cloud Endpoints weer~\cite{Google_endpoints}.
 
 \begin{figure}[H]
 	\centering
@@ -34,33 +37,24 @@ Aangezien GCE nog steeds gehost wordt door Googles App Engine blijven alle ander
 
 Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Een probleem zoals schaalbaarheid wordt via dynamische rekenkrachtallocatie opgelost. Daarnaast is de backend van Triump ook altijd bereikbaar aangezien GAE een hoge graad van permanentie van zijn servers verzekert. 
 
-
 Desalniettemin brengt het gebruik van GAE ook enkele nadelen met zich mee. De voornaamste zijn de restricties op het aantal lees- en schrijfoperaties per dag, de sterk variërende duratie van lees- en schrijfoperaties en de afhankelijkheid van een externe organisatie. De restricties op het aantal operaties zijn enkel aanwezig bij gratis gebruik van GAE en kunnen geremediëerd worden door te betalen voor de diensten van GAE.
-Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit probleem tijdens de ontwikkelfase opgelost worden door het aantal operaties per dag van 50.000 naar 1.000.000 te verhogen. Een groot aantal operaties is vereist omdat elke atomaire lees/schrijf operatie wordt meegerekend. Hierdoor neemt het aantal leesoperaties/schrijfoperaties bij het uitvoeren van enkele complexe operaties zeer snel toe. De duratie van operaties op de GAE kan beperkt worden door te investeren in snellere apparatuur (met GAE krediet). Hiervoor wordt tijdens de ontwikkeling niet voor gekozen.
+Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit probleem tijdens de ontwikkelfase opgelost worden door het aantal operaties per dag van 50.000 naar 1.000.000 te verhogen. Een groot aantal operaties is vereist omdat elke atomaire lees/schrijf operatie wordt meegerekend. Hierdoor neemt het aantal leesoperaties/schrijfoperaties bij het uitvoeren van enkele complexe operaties zeer snel toe. De duratie van operaties op de GAE kan beperkt worden door te investeren in snellere apparatuur (met GAE krediet). Hiervoor werd tijdens de ontwikkeling niet voor gekozen.
 
-\subsubsection{Datastore}
+\subsubsection{Datastore~\cite{Google_Datastore}}
 
 Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met de toenemende hoeveelheid opgeslagen data. Een tweede verschil met relationele databanken is dat GAE Datastore schemaloos is. Data wordt in de Datastore opgeslagen als objecten. Objecten van een eenzelfde type hebben verschillende velden en per veld kunnen verschillende datatypes opgeslagen worden.
-Objecten in de Datastore worden entiteiten genoemd.
 Aangezien de database schemaloos is en bijgevolg bijvoorbeeld geen types zal controleren of niet zal aangeven indien een vreemde sleutel niet bestaat ligt de verantwoordelijkheid van de in integriteit van de database volledig bij de ontwikkelaar. Tijdens de ontwikkeling werd dit gezien als het grootste nadeel van de GAE Datastore tegenover een traditionele relationele database.
 
-\subsubsection{Google Cloud Messaging}
+\subsubsection{Google Cloud Messaging~\cite{Google_Cloud_Messaging}}
 % Notificaties
 %https://developer.android.com/index.html
 Google Cloud Messaging (GCM) voor Android is een dienst die het mogelijk maakt data (tot 4kB) te versturen van backend servers naar Android applicaties onder de vorm van notificaties. De GCM servers staat in voor de connectie naar het mobiele toestel en een correcte aflevering van de berichten.
 
-GCM wordt in Triump gebruikt als basis van het notificatie systeem. In de huidige implementatie ontvangt een gebruiker een notificatie indien hij of zij een promotie of event heeft gewonnen en bijgevolg een prijs heeft verdiend. Principieel werkt het systeem als volgt:
-\begin{enumerate}
-  \item Een gebruiker heeft een prijs gewonnen.
-  \item De backend construeert een korte boodschap. De boodschap en gebruiker die de boodschap dient te ontvangen wordt doorgegeven aan de GCM dienst. 
-  \item GCM dienst verstuurt de booschap naar het mobiele Android toestel.
-  \item Op het toestel draait een permanente service die luistert naar binnenkomende boodschappen. De ontvangen boodschappen worden omgevormd tot een notificatie.
-  \item De notificaties worden weergegeven op het toestel.
-\end{enumerate}
+GCM wordt in Triump gebruikt als basis van het notificatie systeem. In de huidige implementatie ontvangt een gebruiker een notificatie indien hij of zij een event heeft gewonnen of indien er naar feedback wordt gevraagd. 
 Pijl (2) van figuur \ref{fig:algemene structuur backend} geeft aan dat er via GCM, vanop de backend servers, berichten worden gepusht naar de gebruikers.
-\subsubsection{Cron jobs}
+\subsubsection{Cron jobs~\cite{Google_Cron_Jobs}}
 
-Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend. In het geval van de backend van Triump is het noodzakelijk om beloningen (rewards) na het aflopen van evenementen voor gebruikers te laten genereren. Hiervoor wordt gebruik gemaakt van een cron job, die geconfigureerd wordt in een java servlet.
+Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend. In het geval van de backend van Triump is het noodzakelijk om beloningen (rewards) na het aflopen van evenementen voor gebruikers te laten genereren. Hiervoor wordt gebruik gemaakt van een cron job, die geconfigureerd wordt in een java servlet.\\\\
 
 %-----------------------------------------------
 
@@ -70,24 +64,16 @@ In de voorgaande paragrafen werden de gehanteerde technologieën kort toegelicht
 
 
 \subsubsection{Database}
-
-Figuur \ref{fig:Backend ER} toont een diagram van de backend database. De belangrijkste entiteiten van deze database zijn User, Event, Venue, Group en Checkin. In de volgende paragraaf wordt de structuur van de database besproken.
+Zoals reeds aangegeven is GAE Datastore schemaloos. Bijgevolg wordt er hierdoor geen enkele restrictie opgelegd aan de databank over de opbouw en de structuur van zijn entiteiten. Toch is de backend databank ontworpen als een relationele databank.
+Figuur \ref{fig:Backend ER} toont een ER diagram van de backend database.  De belangrijkste entiteiten van deze database zijn User, Event, Venue, Group en Checkin. In de volgende paragraaf wordt de structuur van de database besproken. 
 
 Een user entiteit wordt aangemaakt wanneer een gebruiker zicht voor het eerst authenticeert bij de backend. Het ID van een gebruiker binnen de Triump database is identiek aan het ID van een gebruiker binnen de Foursquare database. Informatie zoals voornaam, achternaam en e-mailadres van een gebruiker wordt bekomen via een request naar de Foursquare API. In sectie \ref{Foursquare API} komt de werking van de Foursquare API aan bod. Pijl (4) van figuur \ref{fig:algemene structuur backend} geeft de afhankelijkheid tussen Triumps database en de Foursquare database weer.
 
-Venue entiteiten worden aangemaakt wanneer een gebruiker voor het eerst incheckt op een nieuwe locatie. Opnieuw is de ID van een venue entiteit indentiek aan het ID van de entiteit binnen Foursquare. Een datum en tijdstip van de eerste checkin wordt bijgehouden. Deze informatie kan gebruikt worden om statistieken van locaties te genereren. Een locatie of venue heeft een 'verified' attribuut indien een gebruiker zich via de webinterface (zie sectie \ref{Webinterface} voor meer informatie over het doel en de werking van de webinterface) verifieert. Een geverifieerde gebruiker (meestal een locatie-eigenaar) in combinatie met een geverifieerde locatie kan een evenement organiseren waaraan elke groep, indien zij voldoen aan de opgelegde participatievoorwaarden, kan deelnemen. Aan de winnaar van het evenement kan dan een promotie toegekend worden.
+Venue-entiteiten worden aangemaakt wanneer een gebruiker voor het eerst incheckt op een nieuwe locatie. Opnieuw is de ID van een venue entiteit indentiek aan het ID van de entiteit binnen Foursquare. Een datum en tijdstip van de eerste checkin wordt bijgehouden. Deze informatie kan gebruikt worden om statistieken van locaties te genereren. Een locatie of venue heeft een 'verified' attribuut indien een gebruiker zich via de webinterface (zie sectie \ref{Webinterface} voor meer informatie over het doel en de werking van de webinterface) verifieert. Een geverifieerde gebruiker (meestal een locatie-eigenaar) in combinatie met een geverifieerde locatie kan een evenement organiseren waaraan elke groep, indien zij voldoen aan de opgelegde participatievoorwaarden, kan deelnemen. Aan de winnaar van het evenement kan dan een promotie toegekend worden.
 
-Zoals reeds aangehaald zijn er enerzijds dus 'officiële' evenementen waarbij promoties verkregen kunnen worden. Anderzijds zijner ook evenementen die gebruikers voor hun vrienden organiseren.
-Deze evenementen kunnen aangemaakt worden door elke gebruiker. Aangezien deze gewone evenementen niet zichtbaar zijn voor elke groep op Triump moet de organisator groepen(verzameling van gebruikers), waartoe hij of zij zelf behoort, hiervoor uitnodigen. 
-Deze twee types evenementen worden beiden bijgehouden in Event entiteiten. Het 'verified' veld geeft aan of een Event entiteit een officieel of gewoon Event is. De attributen minParticipants en maxParticipants hebben enkel een geldige waarde voor evenententen met promoties. De organisator hiervan kan beslissen een verschillende promotie te lanceren afhankelijk van de groepgrootte. De entiteit GroupEvent wordt gebruikt om bij te houden welke groepen er zijn uitgenodigd op een gewoon evenement.
+Zoals reeds aangehaald zijn er enerzijds dus 'officiële' evenementen waarbij promoties verkregen kunnen worden. Anderzijds zijn er ook evenementen die gebruikers voor hun vrienden organiseren. Deze evenementen kunnen aangemaakt worden door elke gebruiker. Aangezien deze gewone evenementen niet automatisch zichtbaar zijn moet de organisator groepen, waartoe hij of zij zelf behoort, uitnodigen. 
+Deze twee types evenementen worden beiden opgeslagen in Event-entiteiten. Het 'verified' veld geeft aan of een Event entiteit een officieel of gewoon Event is. De attributen minParticipants en maxParticipants hebben enkel een geldige waarde voor evenententen met promoties. De organisator hiervan kan beslissen een verschillende promotie te lanceren afhankelijk van de groepgrootte. De entiteit GroupEvent wordt gebruikt om bij te houden welke groepen er zijn uitgenodigd op een gewoon evenement.
 
-Een Checkin entiteit wordt aangemaakt iedere keer een gebruiker incheckt op een locatie. Het 'points' veld geeft aan hoeveel punten een checkin waard is. In de huidige implementatie geldt er dat elke checkin 1 punt waard is. Het is echter mogelijk de app uit te breiden en te voorzien dat bepaalde combinaties van inchecken meer punten opleveren. De attributen tijdstip en groep worden bijgehouden om te bepalen welke groep een bepaalde promotie heeft gewonnen (doordat de groep het meest heeft ingechecked) en de ranglijsten op te stellen. (Meer informatie over deze berekeningen volgt in sectie backend API.)
-
-Elke gebruiker van Triump is in staat zijn eigen groepen aan te maken. De maker van een groep is ook de administrator ervan. Opnieuw kan het 'type' attribuut gebruikt worden om statistieken te generen van de beste studentvereniging of meest actieve vriendengroep. 'numMembers' is afgeleide data aangezien de waarde kan berekend worden uit het aantal entiteiten in de UserGroup tabel. Toch wordt 'numMembers' bijgehouden in group entiteiten aangezien dit een waarde is die vaak gebruikt wordt. Voordelen hiervan zijn een verbetering van de performantie en een vermindering van het aantal leesoperaties het nadeel hiervan is de mogelijkheid tot het optreden van anomalieën (vb: indien 'numMembers' niet overeenstemt met het aantal entiteiten in UserGroup voor een bepaalde groep).
-
-UserGroup entiteiten koppelen een gebruiker met een groep. Een entiteit wordt aangemaakt wanneer een gebruiker een aanvraag doet om tot een groep te behoren. Het 'accepted' attribuut wordt bij de aanmaak op 0 geplaatst tot de administrator toestemming geeft aan de gebruiker om lid te worden van de groep. Indien de administrator het lidschapverzoek weigert, wordt de entiteit verwijderd.
-
-Tot slot wordt in UserEvent entiteiten bijgehouden welke gebruikers een promotie/evenement gewonnen hebben en bijgevolg van de promotie gebruik mogen maken. Het 'received' attribuut geeft aan indien een gebruiker zijn prijs reeds heeft gebruikt. Ook deze data kan interessant zijn voor de officïele gebruikers om bij te houden hoeveel mensen gebruik maken van de georganiseerde evenementen/promoties.
 
 \begin{figure}[H]
 	\includegraphics[scale=0.43]{backend_EER}
@@ -95,9 +81,20 @@ Tot slot wordt in UserEvent entiteiten bijgehouden welke gebruikers een promotie
 	\label{fig:Backend ER}
 \end{figure}
 
+
+Een Checkin entiteit wordt aangemaakt iedere keer een gebruiker incheckt op een locatie. Het 'points' veld geeft aan hoeveel punten een checkin waard is. In de huidige implementatie geldt er dat elke checkin 1 punt waard is. Het is echter mogelijk de app uit te breiden en te voorzien dat bepaalde combinaties van inchecken meer punten opleveren. De attributen tijdstip en groep worden bijgehouden om te bepalen welke groep een event heeft gewonnen (doordat de groep het meest heeft ingechecked) en om de ranglijsten op te stellen. (Meer informatie over deze berekeningen volgt in sectie \ref{backend API}: Backend API.)
+
+
+
+Elke gebruiker van Triump is in staat zijn eigen groepen aan te maken. De maker van een groep is ook de administrator ervan. Opnieuw kan het 'type' attribuut gebruikt worden om statistieken te generen van de beste studentvereniging of meest actieve vriendengroep. 'numMembers' is afgeleide data aangezien de waarde kan berekend worden uit het aantal entiteiten in de UserGroup tabel. Toch wordt 'numMembers' bijgehouden in Group-entiteiten aangezien dit een waarde is die vaak gebruikt wordt. Voordelen hiervan zijn een verbetering van de performantie en een vermindering van het aantal leesoperaties. Een nadeel is de mogelijkheid tot het optreden van anomalieën (vb: indien 'numMembers' niet overeenstemt met het aantal entiteiten in UserGroup voor een bepaalde groep).
+
+UserGroup-entiteiten koppelen een gebruiker met een groep. Een entiteit wordt aangemaakt wanneer een gebruiker een aanvraag doet om tot een groep te behoren. Het 'accepted' attribuut wordt bij de aanmaak op 0 geplaatst tot de administrator toestemming geeft aan de gebruiker om lid te worden van de groep. Indien de administrator het lidschapverzoek weigert, wordt de entiteit verwijderd.
+
+Tot slot wordt in UserEvent-entiteiten bijgehouden welke gebruikers een promotie/evenement gewonnen hebben en bijgevolg van de promotie gebruik mogen maken. Het 'received' attribuut geeft aan indien een gebruiker zijn prijs reeds heeft gebruikt. Ook deze data kan interessant zijn voor de officïele gebruikers om bij te houden hoeveel mensen gebruik maken van de georganiseerde evenementen/promoties.
+
 Figuur \ref{fig:Backend ER 2} toont het overige deel van de backend database. Wanneer een gebruiker zich voor het eerst authenticeert met de backend wordt er een SessionToken gekoppeld met de gebruiker. Deze token wordt meegegeven als parameter met iedere API call om de een gebruiker te authenticeren. 
 
-De laatste tabel van de backend database houdt voor iedere gebruiker een gcmId bij. Deze ID wordt gebruikt voor de Google Cloud Messaging dienst.
+De GCM tabel van de backend database houdt voor iedere gebruiker een gcmId bij. Deze ID wordt gebruikt voor de Google Cloud Messaging dienst.
 
 \begin{figure}[H]
 	\centering
@@ -111,26 +108,11 @@ De laatste tabel van de backend database houdt voor iedere gebruiker een gcmId b
 % generateRewards
 De backend API bestaat uit een reeks methodes die kunnen opgeroepen worden vanop het mobiele toestel of vanop de webinterface. Dit is weergegeven met pijlen (3) en (5) op figuur \ref{fig:algemene structuur backend}. 
 
-Een groot deel van de methodes hebben als doel het ophalen van gegevens uit de database, deze gegevens te mappen op een klasse om vervolgens een object terug te geven als resultaat. De voornaamste methodes van dit soort API calls zijn opgelijst in codefragment \ref{backend API}.
+Een groot deel van de methodes hebben als doel het ophalen van gegevens uit de database, deze gegevens te mappen op een klasse om vervolgens een object terug te geven als resultaat. 
 
-
-\begin{lstlisting}[caption={backend API methode signaturen ter opvraging van database informatie},label=lst:backend_api]
-GroupsBean getAllGroups(String UserToken);
-GroupsBean getGroupsForUser(String UserToken);
-GroupBean getGroupInfo(String UserToken, long GroupId);
-UsersBean getPendingRequest(String UserToken, long GroupId); 
-	// geeft de lidmaatschapaanvragen van een groep terug
-EventsBean getEventsForUser(String UserToken);
-EventsBean getEventsForVenue(String UserToken, String VenueId);
-RankingBean getRankingForEvent(String UserToken, long EventId);
-VenueBean getVenueInfo(String UserToken, String VenueId);
-UserBean getUserInfo(String UserToken);
-OverviewBean getOverviewForUser(String UserToken);
-\end{lstlisting}
-
-Een tweede soort API calls wordt gebruikt om entiteiten van de tabellen Group, Event, UserGroup en UserEvent aan te maken of te wijzigen. De belangrijkste methode van dit soort is generateRewards(). De methode generateRewards() wordt vanuit een cronjob (zie sectie \ref{sec: GCE} Cron jobs) ieder kwartier opgeroepen. Prinicpieel werkt de functie als volgt:
+Een tweede soort API calls wordt gebruikt om entiteiten van de tabellen Group, Event, UserGroup en UserEvent aan te maken of te wijzigen. De belangrijkste methode van dit soort is generateRewards(). De methode generateRewards() wordt vanuit een Cron Job (zie sectie \ref{sec: GCE} Cron jobs) ieder kwartier opgeroepen. Prinicpieel werkt de functie als volgt:
 \begin{enumerate}
-  \item Controleert of er het afgelopen kwartier een event is beëindigd.
+  \item Controleer of er het afgelopen kwartier een event is beëindigd.
   \item Bereken voor elk beëndigd event welke groepen gewonnen zijn a.d.h.v. de tijdstippen van de Checkin entiteiten. Hierbij wordt er rekening gehouden met participatievoorwaarden zoals het minimaal en maximaal aantal leden van een groep.
   \item De leden van een winnende groep worden geplaast in de UserEvent tabel.
   \item Via het notificatiesysteem (zie sectie \ref{sec: GCE} Google Cloud Messaging) worden de winnende gebruikers verwittigd.
@@ -138,7 +120,7 @@ Een tweede soort API calls wordt gebruikt om entiteiten van de tabellen Group, E
 
 Tot slot bevat de backend API nog methodes die gebruikers registeren, gebruikers authenticeren en communiceren met de GCM diensten. 
 
-\subsection{Foursquare API}
+\subsection{Foursquare API~\cite{FS_API_website}}
 \label{Foursquare API}
 
 %Korte inleiding gebruik API
@@ -156,39 +138,8 @@ Het laatste probleem wordt opgelost door het voorzien van een webinterface. Deze
 
 Er dient opgemerkt te worden dat Google met 'Google Places' gelijkaardige diensten biedt. Gebruik van deze API heeft dezelfde voor- en nadelen als de Foursquare API maar met de bijkomende beperking dat het aantal geregistreerde locaties veel kleiner is.
 
-
 %werking API
-Het mechanisme gebruik in de Foursquare API is zeer vanzelfsprekend. Alle gegevens, opgeslaan in de database, zijn benaderbaar via een RESTful (Representational State Transfer) Uniform Resource Locator (URL)  \cite{FS_API_website}. De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Vervolgens zal de API Endpoint de gevraagde informatie in Javascript Object Notation (JSON) formaat terugzenden. JSON is een gestandaardiseerd gegevensformaat. In listing ~\ref{lst:vb_foursquare_api} wordt een voorbeeld uitgewerkt waarbij de applicatie vanop de smartphone de informatie van een bepaalde locatie opvraagd.
-
-
-\begin{lstlisting}[caption={Voorbeeld: werking Foursquare API},label=lst:vb_foursquare_api]
-
-HTTPS connectie naar URL:
-https://api.foursquare.com/v2/venues/4d972f73af3d236ad0561cc7?
-	oauth_token=OMUUXC42I4GCMV3G21&v=20150101&m=foursquare
-
-Antwoord:
-"venue":
-	{
-	"id":"4d972f73af3d236ad0561cc7",
-	"name":"POM D' API BRUXELLES",
-	"contact":{},
-	"location":
-		{
-		"address":"Koninginnegallerij",
-		"lat":50.0,"lng":4.0,
-		"postalCode":"1000",
-		"city":"Brussels",
-		"state":"Bruxelles-Capitale",
-		"country":"Belgium",
-		"formattedAddress":
-		["Koninginnegallerij","1000 Brussels"]
-		}
-	}
-\end{lstlisting}
- 
-
-
+Het mechanisme gebruik in de Foursquare API is zeer vanzelfsprekend. Alle gegevens, opgeslaan in de database, zijn benaderbaar via een RESTful (Representational State Transfer) Uniform Resource Locator (URL). De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Vervolgens zal de API Endpoint de gevraagde informatie in Javascript Object Notation (JSON) formaat terugzenden. JSON is een gestandaardiseerd gegevensformaat. 
 \section{Frontend}
 \subsection{Android applicatie}
 \subsubsection{Waarom Android?}

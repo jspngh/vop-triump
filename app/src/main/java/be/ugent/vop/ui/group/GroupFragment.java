@@ -159,6 +159,12 @@ public class GroupFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(0,null,mGroupBeanLoaderListener);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         this.mMenu = menu;
         inflater.inflate(R.menu.group_menu, menu);
@@ -216,6 +222,8 @@ public class GroupFragment extends Fragment {
        Loaders
      ***********/
 
+    // group info loader
+
     private LoaderManager.LoaderCallbacks<GroupBean> mGroupBeanLoaderListener
             = new LoaderManager.LoaderCallbacks<GroupBean>() {
         @Override
@@ -263,6 +271,9 @@ public class GroupFragment extends Fragment {
         }
     };
 
+
+    // join group loader
+
     private LoaderManager.LoaderCallbacks<GroupBean> mJoinGroupLoaderListener
             = new LoaderManager.LoaderCallbacks<GroupBean>() {
         @Override
@@ -271,7 +282,7 @@ public class GroupFragment extends Fragment {
                 btn.setVisibility(View.GONE);
                 description.setText(response.getDescription());
                // created.setText("Created on: " + response.getCreated().toString());
-                type.setText(response.getType() + " group");
+                type.setText(response.getType());
                 ArrayList<UserBean> members = new ArrayList<>();
                 if(response.getMembers() != null) {
                     for (UserBean user : response.getMembers()) {
