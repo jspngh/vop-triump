@@ -28,8 +28,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFlat;
-import com.google.api.client.util.DateTime;
-import com.koushikdutta.ion.Ion;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -219,11 +219,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if(overview != null && overview.getNewMembers() != null) {
                     NewMemberInGroup member = overview.getNewMembers().get(0);
                     final long groupId = member.getGroupId();
-
-                    Ion.with(mGroupViewHolder.icon)
-                            .placeholder(R.drawable.ic_launcher)
-                            .error(R.drawable.ic_drawer_logout)
-                            .load(member.getMemberIconUrl());
+                    Picasso.with(context)
+                            .load(member.getMemberIconUrl())
+                            .placeholder(R.drawable.profile_default)
+                            .error(R.drawable.ic_drawer_user)
+                            .into(mGroupViewHolder.icon);
                     mGroupViewHolder.title.setText(member.getMemberName() + " joined one of your groups");
                     mGroupViewHolder.group_name.setText("Joined " + member.getGroupName());
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
@@ -260,11 +260,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if(overview != null && overview.getCheckIns() != null) {
                     OverviewCheckin checkin = overview.getCheckIns().get(0);
                     final long groupId = checkin.getGroupId();
-
-                    Ion.with(mGroupViewHolder2.icon)
-                            .placeholder(R.drawable.ic_launcher)
-                            .error(R.drawable.ic_drawer_logout)
-                            .load(checkin.getMemberIconUrl());
+                    Picasso.with(context)
+                            .load(checkin.getMemberIconUrl())
+                            .placeholder(R.drawable.profile_default)
+                            .error(R.drawable.ic_drawer_user)
+                            .into(mGroupViewHolder2.icon);
                     mGroupViewHolder2.title.setText(checkin.getMemberName() + " is at " + checkin.getVenueName());
                     if(checkin.getVenueName() != null) {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -311,10 +311,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if(fsVenues.get(0).getPhotos().size() > 0){
                         Photo p = fsVenues.get(0).getPhotos().get(0);
                         String url = p.getPrefix() + "200x200" + p.getSuffix();
-                        Ion.with(mVenueViewHolder.icon1)
+                        Picasso.with(context)
+                                .load(url)
                                 .placeholder(R.drawable.ic_launcher)
-                                .error(R.drawable.ic_drawer_logout)
-                                .load(url);
+                                .error(R.drawable.ic_launcher)
+                                .into(mVenueViewHolder.icon1);
                     }
 
                     View.OnClickListener listener = new View.OnClickListener() {
@@ -337,10 +338,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if(fsVenues.get(1).getPhotos().size() > 0){
                         Photo p = fsVenues.get(1).getPhotos().get(0);
                         String url = p.getPrefix() + "200x200" + p.getSuffix();
-                        Ion.with(mVenueViewHolder.icon2)
+                        Picasso.with(context)
+                                .load(url)
                                 .placeholder(R.drawable.ic_launcher)
-                                .error(R.drawable.ic_drawer_logout)
-                                .load(url);
+                                .error(R.drawable.ic_launcher)
+                                .into(mVenueViewHolder.icon2);
                     }
                     listener = new View.OnClickListener() {
                         @Override
@@ -362,10 +364,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if(fsVenues.get(2).getPhotos().size() > 0){
                         Photo p = fsVenues.get(2).getPhotos().get(0);
                         String url = p.getPrefix() + "200x200" + p.getSuffix();
-                        Ion.with(mVenueViewHolder.icon3)
+                        Picasso.with(context)
+                                .load(url)
                                 .placeholder(R.drawable.ic_launcher)
-                                .error(R.drawable.ic_drawer_logout)
-                                .load(url);
+                                .error(R.drawable.ic_launcher)
+                                .into(mVenueViewHolder.icon3);
                     }
                     listener = new View.OnClickListener() {
                         @Override

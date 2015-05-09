@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -60,8 +60,8 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
             mListener.onItemClick(view, getPosition());
         }
 
-        public static interface IMyViewHolderClicks {
-            public void onItemClick(View caller, int position);
+        public interface IMyViewHolderClicks {
+            void onItemClick(View caller, int position);
         }
 
     }
@@ -112,10 +112,11 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
         if(venue.getPhotos().size() > 0){
             Photo p = venue.getPhotos().get(0);
             String url = p.getPrefix() + "200x200" + p.getSuffix();
-            Ion.with(viewHolder.venueImage)
+            Picasso.with(context)
+                    .load(url)
                     .placeholder(R.drawable.ic_launcher)
-                    .error(R.drawable.ic_drawer_logout)
-                    .load(url);
+                    .error(R.drawable.ic_launcher)
+                    .into(viewHolder.venueImage);
         }
 
 

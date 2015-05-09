@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,10 +75,11 @@ public class PendingMembersAdapter extends RecyclerView.Adapter<PendingMembersAd
         if(pendingUsers != null){
             holder.user_name.setText(pendingUsers.get(position).getFirstName() + " " + pendingUsers.get(position).getLastName());
             if(pendingUsers.get(position).getProfilePictureUrl() != null) {
-                Ion.with(holder.profilePic)
+                Picasso.with(context)
+                        .load(pendingUsers.get(position).getProfilePictureUrl())
                         .placeholder(R.drawable.profile_default)
                         .error(R.drawable.ic_drawer_user)
-                        .load(pendingUsers.get(position).getProfilePictureUrl());
+                        .into(holder.profilePic);
             }
             holder.user_name.setOnClickListener(new View.OnClickListener() {
                 @Override

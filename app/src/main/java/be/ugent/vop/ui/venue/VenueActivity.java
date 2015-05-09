@@ -27,9 +27,9 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+
 import com.nineoldandroids.view.ViewHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -322,8 +322,12 @@ public class VenueActivity extends BaseActivity {
                     photoUrl = venue.getPhotos().get(0).getPrefix() + "500x500" + venue.getPhotos().get(0).getSuffix();
                 else photoUrl =
                         "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
-
-                Ion.with(context)
+                Picasso.with(context)
+                        .load(photoUrl)
+                        .placeholder(R.drawable.ic_launcher)
+                        .error(R.drawable.ic_launcher)
+                        .into(venueImageView);
+                /*Ion.with(context)
                         .load(photoUrl)
                         .withBitmap()
                         .asBitmap()
@@ -338,7 +342,7 @@ public class VenueActivity extends BaseActivity {
                                 Log.d(TAG, "Palette for image created, setting");
                                 venueImageView.setColorFilter(p.getMutedColor(Color.rgb(100, 100, 100)), PorterDuff.Mode.MULTIPLY);
                             }
-                        });
+                        });*/
             }
         }
 

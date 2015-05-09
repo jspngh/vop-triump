@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -60,10 +60,11 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Vi
         if(members != null){
             holder.member_name.setText(members.get(position).getFirstName());
             if(members.get(position).getProfilePictureUrl() != null) {
-                Ion.with(holder.profilePic)
+                Picasso.with(context)
+                        .load(members.get(position).getProfilePictureUrl())
                         .placeholder(R.drawable.profile_default)
                         .error(R.drawable.ic_drawer_user)
-                        .load(members.get(position).getProfilePictureUrl());
+                        .into(holder.profilePic);
             }
             holder.profilePic.setOnClickListener(new OnClickListener() {
                 @Override

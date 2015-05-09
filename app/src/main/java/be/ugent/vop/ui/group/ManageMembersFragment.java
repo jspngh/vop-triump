@@ -16,7 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFlat;
-import com.koushikdutta.ion.Ion;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -134,10 +135,11 @@ class ManageMemberAdapter extends RecyclerView.Adapter<ManageMemberAdapter.ViewH
         if(members != null){
             holder.member_name.setText(members.get(position).getFirstName());
             if(members.get(position).getProfilePictureUrl() != null) {
-                Ion.with(holder.profilePic)
+                Picasso.with(context)
+                        .load(members.get(position).getProfilePictureUrl())
                         .placeholder(R.drawable.profile_default)
                         .error(R.drawable.ic_drawer_user)
-                        .load(members.get(position).getProfilePictureUrl());
+                        .into(holder.profilePic);
             }
             final String userId = members.get(position).getUserId();
             holder.remove_button.setOnClickListener(new View.OnClickListener() {

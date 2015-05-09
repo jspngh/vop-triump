@@ -11,7 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+
+import com.squareup.picasso.Picasso;
 
 import java.security.acl.Group;
 import java.util.ArrayList;
@@ -153,11 +154,11 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
                 break;
 
         }
-        Ion.with(viewHolder.groupImage)
+        Picasso.with(context)
+                .load(photoUrl)
                 .placeholder(R.drawable.team)
-                .error(R.drawable.ic_drawer_logout)
-                .load(photoUrl);
-
+                .error(R.drawable.team)
+                .into(viewHolder.groupImage);
         // No photos yet...
         /*
         if(venue.getPhotos().size() > 0){

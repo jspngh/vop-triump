@@ -52,7 +52,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -347,10 +347,10 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
         String profilePicSuffix = PrefUtils.getProfilePicSuffix(this);
         if (profilePicPrefix != null) {
             String profilePic = profilePicPrefix + "300x300" + profilePicSuffix;
-
-            Ion.with(profileImageView)
+            Picasso.with(getApplicationContext())
+                    .load(profilePic)
                     .placeholder(R.drawable.person_image_empty)
-                    .load(profilePic);
+                    .into(profileImageView);
         }
 
         String coverImageUrl = null;

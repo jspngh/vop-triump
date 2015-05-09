@@ -471,13 +471,14 @@ public class VenueEventFragment2 extends Fragment implements VenueActivity.Venue
                                     "Reward : " + bean.getReward()
                                     , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
                             String groups = "";
-                            for(GroupBean g:bean.getGroups()){
-                                groups+= g.getName()+" , ";
+                            if(bean.getGroups()!=null) {
+                                for (GroupBean g : bean.getGroups()) {
+                                    groups += g.getName() + " , ";
+                                }
+                                children.add(new ConcreteChildData(1,
+                                        "Participating groups : " + groups
+                                        , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
                             }
-                            children.add(new ConcreteChildData(1,
-                                    "Participating groups : " + groups
-                                    , RecyclerViewSwipeManager.REACTION_CAN_SWIPE_LEFT | RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT));
-
                             mData.add(new Pair<GroupData, List<ChildData>>(group, children));
                         }
                         mEmpty.setVisibility(View.INVISIBLE);

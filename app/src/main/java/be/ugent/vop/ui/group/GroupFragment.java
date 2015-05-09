@@ -27,7 +27,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonRectangle;
-import com.koushikdutta.ion.Ion;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -130,10 +131,11 @@ public class GroupFragment extends Fragment {
                 break;
 
         }
-        Ion.with(bannerImage)
-            .placeholder(R.drawable.ic_launcher)
-            .error(R.drawable.ic_drawer_logout)
-            .load(photoUrl);
+        Picasso.with(context)
+                .load(photoUrl)
+                .placeholder(R.drawable.ic_launcher)
+                .error(R.drawable.ic_drawer_logout)
+                .into(bannerImage);
 
         btn = (ButtonRectangle) rootView.findViewById(R.id.joinbtn);
 

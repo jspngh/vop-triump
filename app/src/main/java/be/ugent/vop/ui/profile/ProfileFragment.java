@@ -16,7 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -107,10 +107,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         this.mUserInfo = userInfo;
         if(userInfo != null){
             if(userInfo.getProfilePictureUrl() != null) {
-                Ion.with(mProfilePic)
+                Picasso.with(mContext)
+                        .load(userInfo.getProfilePictureUrl())
                         .placeholder(R.drawable.fantastic_background)
-                        .error(R.drawable.ic_drawer_logout)
-                        .load(userInfo.getProfilePictureUrl());
+                        .error(R.drawable.fantastic_background)
+                        .into(mProfilePic);
             }
             mFirstname.setText(userInfo.getFirstName());
             mLastname.setText(userInfo.getLastName());
