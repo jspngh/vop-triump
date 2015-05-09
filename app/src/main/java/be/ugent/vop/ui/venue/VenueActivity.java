@@ -324,6 +324,7 @@ public class VenueActivity extends BaseActivity {
                         "http://iahip.org/wp-content/plugins/jigoshop/assets/images/placeholder.png";
                 Picasso.with(context)
                         .load(photoUrl)
+                        .fit().centerCrop()
                         .placeholder(R.drawable.ic_launcher)
                         .error(R.drawable.ic_launcher)
                         .into(venueImageView);

@@ -349,16 +349,17 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
             String profilePic = profilePicPrefix + "300x300" + profilePicSuffix;
             Picasso.with(getApplicationContext())
                     .load(profilePic)
+                    .fit().centerCrop()
                     .placeholder(R.drawable.person_image_empty)
                     .into(profileImageView);
         }
 
-        String coverImageUrl = null;
-        if (coverImageUrl != null) {
-           // mImageLoader.loadImage(coverImageUrl, coverImageView);
-        } else {
-            coverImageView.setImageResource(R.drawable.dummy_venue);
-        }
+
+        Picasso.with(getApplicationContext())
+                .load(R.drawable.dummy_venue)
+                .fit().centerCrop()
+                .placeholder(R.drawable.person_image_empty)
+                .into(coverImageView);
 
         String email = PrefUtils.getUserEmail(this);
         if(email == null){

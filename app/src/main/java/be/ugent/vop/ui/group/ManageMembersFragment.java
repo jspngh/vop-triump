@@ -137,6 +137,7 @@ class ManageMemberAdapter extends RecyclerView.Adapter<ManageMemberAdapter.ViewH
             if(members.get(position).getProfilePictureUrl() != null) {
                 Picasso.with(context)
                         .load(members.get(position).getProfilePictureUrl())
+                        .fit().centerCrop()
                         .placeholder(R.drawable.profile_default)
                         .error(R.drawable.ic_drawer_user)
                         .into(holder.profilePic);

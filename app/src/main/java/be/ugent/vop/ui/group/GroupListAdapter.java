@@ -156,6 +156,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         }
         Picasso.with(context)
                 .load(photoUrl)
+                .fit().centerCrop()
                 .placeholder(R.drawable.team)
                 .error(R.drawable.team)
                 .into(viewHolder.groupImage);

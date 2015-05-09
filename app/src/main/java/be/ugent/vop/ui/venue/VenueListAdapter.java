@@ -114,6 +114,7 @@ public class VenueListAdapter extends RecyclerView.Adapter<VenueListAdapter.View
             String url = p.getPrefix() + "200x200" + p.getSuffix();
             Picasso.with(context)
                     .load(url)
+                    .fit().centerCrop()
                     .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
                     .into(viewHolder.venueImage);

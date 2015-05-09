@@ -109,6 +109,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             if(userInfo.getProfilePictureUrl() != null) {
                 Picasso.with(mContext)
                         .load(userInfo.getProfilePictureUrl())
+                        .fit().centerCrop()
                         .placeholder(R.drawable.fantastic_background)
                         .error(R.drawable.fantastic_background)
                         .into(mProfilePic);

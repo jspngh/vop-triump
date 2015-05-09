@@ -77,6 +77,7 @@ public class PendingMembersAdapter extends RecyclerView.Adapter<PendingMembersAd
             if(pendingUsers.get(position).getProfilePictureUrl() != null) {
                 Picasso.with(context)
                         .load(pendingUsers.get(position).getProfilePictureUrl())
+                        .fit().centerCrop()
                         .placeholder(R.drawable.profile_default)
                         .error(R.drawable.ic_drawer_user)
                         .into(holder.profilePic);

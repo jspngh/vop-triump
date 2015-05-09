@@ -133,6 +133,7 @@ public class GroupFragment extends Fragment {
         }
         Picasso.with(context)
                 .load(photoUrl)
+                .fit().centerCrop()
                 .placeholder(R.drawable.ic_launcher)
                 .error(R.drawable.ic_drawer_logout)
                 .into(bannerImage);
@@ -221,7 +222,7 @@ public class GroupFragment extends Fragment {
         public void onLoadFinished(Loader<GroupBean> loader, GroupBean response) {
             if (response != null){
                 ((BaseActivity) getActivity()).setTitle(response.getName());
-
+                boolean member = false;
                 description.setText(response.getDescription());
             //    created.setText("Created on: " + response.getCreated().toString());
                 type.setText(response.getType());
@@ -229,12 +230,14 @@ public class GroupFragment extends Fragment {
                 String userId = PrefUtils.getUserId(getActivity());
                 if(response.getMembers() != null) {
                     for (UserBean user : response.getMembers()) {
-                        if (!user.getUserId().equals(userId)) {
-                            btn.setVisibility(View.VISIBLE);
+                        if (user.getUserId().equals(userId)) {
+                            member = true;
+
                         }
                         members.add(user);
                     }
                 }
+                if(!member) btn.setVisibility(View.VISIBLE);
                 memberList = members;
                 mAdapter = new MemberListAdapter(context, members);
                 mRecyclerView.setAdapter(mAdapter);

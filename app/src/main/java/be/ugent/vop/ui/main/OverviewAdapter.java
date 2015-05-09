@@ -220,7 +220,9 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     NewMemberInGroup member = overview.getNewMembers().get(0);
                     final long groupId = member.getGroupId();
                     Picasso.with(context)
+
                             .load(member.getMemberIconUrl())
+                            .fit().centerCrop()
                             .placeholder(R.drawable.profile_default)
                             .error(R.drawable.ic_drawer_user)
                             .into(mGroupViewHolder.icon);
@@ -262,6 +264,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     final long groupId = checkin.getGroupId();
                     Picasso.with(context)
                             .load(checkin.getMemberIconUrl())
+                            .fit().centerCrop()
                             .placeholder(R.drawable.profile_default)
                             .error(R.drawable.ic_drawer_user)
                             .into(mGroupViewHolder2.icon);
@@ -313,6 +316,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         String url = p.getPrefix() + "200x200" + p.getSuffix();
                         Picasso.with(context)
                                 .load(url)
+                                .fit().centerCrop()
                                 .placeholder(R.drawable.ic_launcher)
                                 .error(R.drawable.ic_launcher)
                                 .into(mVenueViewHolder.icon1);
@@ -340,6 +344,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         String url = p.getPrefix() + "200x200" + p.getSuffix();
                         Picasso.with(context)
                                 .load(url)
+                                .fit().centerCrop()
                                 .placeholder(R.drawable.ic_launcher)
                                 .error(R.drawable.ic_launcher)
                                 .into(mVenueViewHolder.icon2);
@@ -366,6 +371,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         String url = p.getPrefix() + "200x200" + p.getSuffix();
                         Picasso.with(context)
                                 .load(url)
+                                .fit().centerCrop()
                                 .placeholder(R.drawable.ic_launcher)
                                 .error(R.drawable.ic_launcher)
                                 .into(mVenueViewHolder.icon3);
