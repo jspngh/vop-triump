@@ -20,6 +20,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -39,6 +41,8 @@ public class GroupListFragment extends Fragment implements android.widget.Search
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected boolean allUsers;
+    private TextView mEmpty;
+    private ProgressBar mLoading;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -145,24 +149,16 @@ public class GroupListFragment extends Fragment implements android.widget.Search
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
-        /*mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            int state;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                state = newState;
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                //if(state == RecyclerView.SCROLL_STATE_DRAGGING){
-                Log.d(TAG, "Vertical scroll: " + dy);
-                mRecyclerView.animate().translationY(dy);
-                //}
-            }
-        });*/
-
+        mEmpty = (TextView)rootView.findViewById(R.id.empty);
+        mLoading = (ProgressBar)rootView.findViewById(R.id.loading);
+        mEmpty.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
+        if(allUsers){
+            mEmpty.setText("There are currently no groups. \n Be the first to create a group!");
+        }else {
+            mEmpty.setText("You are not a member of a group. \n Join a group in the Groups section!");
+        }
         return rootView;
     }
 
@@ -202,8 +198,12 @@ public class GroupListFragment extends Fragment implements android.widget.Search
                 Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
                 mAdapter.setContext(getActivity());
                 mRecyclerView.setAdapter(mAdapter);
+                mEmpty.setVisibility(View.INVISIBLE);
+                mLoading.setVisibility(View.INVISIBLE);
+            }else {
+                mEmpty.setVisibility(View.VISIBLE);
+                mLoading.setVisibility(View.INVISIBLE);
             }
-
             mRecyclerView.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -239,8 +239,12 @@ public class GroupListFragment extends Fragment implements android.widget.Search
                 Log.d(TAG, "amount of groups : " + allGroupsBean.getGroups().size());
                 mAdapter.setContext(getActivity());
                 mRecyclerView.setAdapter(mAdapter);
+                mEmpty.setVisibility(View.INVISIBLE);
+                mLoading.setVisibility(View.INVISIBLE);
+            }else{
+                mEmpty.setVisibility(View.VISIBLE);
+                mLoading.setVisibility(View.INVISIBLE);
             }
-
             mRecyclerView.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.setRefreshing(false);
         }

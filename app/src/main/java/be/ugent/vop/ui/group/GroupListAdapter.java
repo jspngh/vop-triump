@@ -15,6 +15,7 @@ import com.koushikdutta.ion.Ion;
 
 import java.security.acl.Group;
 import java.util.ArrayList;
+import java.util.Random;
 
 import be.ugent.vop.R;
 import be.ugent.vop.backend.myApi.model.GroupBean;
@@ -125,12 +126,37 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
         viewHolder.groupName.setText(group.getName());
         viewHolder.groupInfo.setText(group.getDescription());
+        String photoUrl;
 
-        String url = "http://upload.wikimedia.org/wikipedia/en/4/42/Beatles_-_Abbey_Road.jpg";
+        int a = new Random().nextInt(5);
+        switch(a){
+            case 0:
+                photoUrl = "http://images5.fanpop.com/image/photos/25600000/Phineas-and-Ferb-in-Abbey-Road-the-beatles-25671083-254-198.jpg";
+                break;
+            case 1:
+                photoUrl = "http://i1.kym-cdn.com/photos/images/original/000/612/359/9cd.jpg";
+                break;
+            case 2:
+                photoUrl = "http://uncleartmusic.com/wp-content/uploads/2015/04/abbey-road-beatles.jpg";
+                break;
+            case 3:
+                photoUrl = "http://media.topito.com/wp-content/uploads/2011/12/abbey_road_parodie012.jpg";
+                break;
+            case 4:
+                photoUrl = "http://fc00.deviantart.net/fs70/f/2013/128/8/7/abbey_road_by_niels827-d64iq0f.png";
+                break;
+            case 5:
+                photoUrl = "http://www.buro247.com/images/ralph-abbey.jpg";
+                break;
+            default:
+                photoUrl = "http://i0.kym-cdn.com/entries/icons/original/000/004/400/the-simpsons-abbey-road.jpg";
+                break;
+
+        }
         Ion.with(viewHolder.groupImage)
                 .placeholder(R.drawable.team)
                 .error(R.drawable.ic_drawer_logout)
-                .load(url);
+                .load(photoUrl);
 
         // No photos yet...
         /*

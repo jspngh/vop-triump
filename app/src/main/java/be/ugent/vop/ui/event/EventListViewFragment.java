@@ -469,10 +469,10 @@ public class EventListViewFragment extends Fragment {
             @Override
             public void onLoadFinished(Loader<HashMap<EventBean,FoursquareVenue>>  loader, HashMap<EventBean, FoursquareVenue> data) {
                 Log.d("RewardFragment", "onLoadFinished");
-                if (data != null) {
+                if (data != null && data.size()>0) {
                     mData = new LinkedList<>();
                     int i = 0;
-
+                    Log.d("RewardFragment", "data found :" + mData.size());
                     Iterator it = data.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry)it.next();

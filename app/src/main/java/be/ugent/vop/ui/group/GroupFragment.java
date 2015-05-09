@@ -30,6 +30,7 @@ import com.gc.materialdesign.views.ButtonRectangle;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
@@ -102,9 +103,33 @@ public class GroupFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MemberListAdapter(null, null);
         mRecyclerView.setAdapter(mAdapter);
+        String photoUrl;
 
-        //http://i0.kym-cdn.com/entries/icons/original/000/004/400/the-simpsons-abbey-road.jpg
-        String photoUrl = "http://uncleartmusic.com/wp-content/uploads/2015/04/abbey-road-beatles.jpg";
+        int a = new Random().nextInt(5);
+        switch(a){
+            case 0:
+                photoUrl = "http://images5.fanpop.com/image/photos/25600000/Phineas-and-Ferb-in-Abbey-Road-the-beatles-25671083-254-198.jpg";
+                break;
+            case 1:
+                photoUrl = "http://i1.kym-cdn.com/photos/images/original/000/612/359/9cd.jpg";
+                break;
+            case 2:
+                photoUrl = "http://uncleartmusic.com/wp-content/uploads/2015/04/abbey-road-beatles.jpg";
+                break;
+            case 3:
+                photoUrl = "http://media.topito.com/wp-content/uploads/2011/12/abbey_road_parodie012.jpg";
+                break;
+            case 4:
+                photoUrl = "http://fc00.deviantart.net/fs70/f/2013/128/8/7/abbey_road_by_niels827-d64iq0f.png";
+                break;
+            case 5:
+                photoUrl = "http://www.buro247.com/images/ralph-abbey.jpg";
+                break;
+            default:
+                photoUrl = "http://i0.kym-cdn.com/entries/icons/original/000/004/400/the-simpsons-abbey-road.jpg";
+                break;
+
+        }
         Ion.with(bannerImage)
             .placeholder(R.drawable.ic_launcher)
             .error(R.drawable.ic_drawer_logout)
@@ -112,7 +137,7 @@ public class GroupFragment extends Fragment {
 
         btn = (ButtonRectangle) rootView.findViewById(R.id.joinbtn);
 
-        btn.setVisibility(View.VISIBLE);
+        btn.setVisibility(View.GONE);
         btn.setFocusable(false);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -202,8 +227,8 @@ public class GroupFragment extends Fragment {
                 String userId = PrefUtils.getUserId(getActivity());
                 if(response.getMembers() != null) {
                     for (UserBean user : response.getMembers()) {
-                        if (user.getUserId().equals(userId)) {
-                            btn.setVisibility(View.GONE);
+                        if (!user.getUserId().equals(userId)) {
+                            btn.setVisibility(View.VISIBLE);
                         }
                         members.add(user);
                     }
