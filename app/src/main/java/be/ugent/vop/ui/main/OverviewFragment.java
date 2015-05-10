@@ -12,13 +12,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import java.util.Date;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.OverviewLoader;
-import be.ugent.vop.ui.widget.CustomSwipeRefreshLayout;
 
 public class OverviewFragment extends Fragment implements LoaderManager.LoaderCallbacks<OverviewAdapter> {
     private static final String TAG = "OverviewFragment";
@@ -29,6 +29,7 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
+    protected ProgressBar mProgressBar;
 
 
     private BaseActivity.LocationUpdateListener mListener = new BaseActivity.LocationUpdateListener() {
@@ -53,9 +54,11 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
         mFragment = this;
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.overview_refresh);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_overview);
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+
 
         boolean displayWelcome = mActivity.displayWelcome;
         mRecyclerView.setAdapter(new OverviewAdapter(null, null, mActivity, displayWelcome));
@@ -69,10 +72,13 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
             });
             mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
         } else{
+            mProgressBar.setVisibility(View.INVISIBLE);
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    mSwipeRefreshLayout.setRefreshing(false);
+                    mActivity.displayWelcome = false;
+                    getLoaderManager().initLoader(0, null, mFragment);
+
                 }
             });
         }
@@ -82,21 +88,23 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onResume(){
         super.onResume();
-        if(!mActivity.displayWelcome)
-            mActivity.addLocationUpdateListener(mListener);
+        mActivity.addLocationUpdateListener(mListener);
     }
 
     public void onPause(){
         super.onPause();
-        if(!mActivity.displayWelcome)
-            mActivity.removeLocationUpdateListener(mListener);
+        mActivity.removeLocationUpdateListener(mListener);
     }
 
     private void newLocationAvailable(Location newLocation, Date lastUpdated){
         Log.d(TAG, "new Location available in fragment");
         if(newLocation.getAccuracy() < BaseActivity.MIN_LOCATION_ACCURACY){
-            mLastLocation = newLocation;
-            getLoaderManager().restartLoader(0, null, mFragment);
+            if(mLastLocation == null && !mActivity.displayWelcome){
+                mLastLocation = newLocation;
+                getLoaderManager().restartLoader(0, null, mFragment);
+            } else {
+                mLastLocation = newLocation;
+            }
         }
     }
 
@@ -108,6 +116,7 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<OverviewAdapter> overviewLoader, final OverviewAdapter overviewAdapter) {
         mSwipeRefreshLayout.setRefreshing(false);
+        mProgressBar.setVisibility(View.INVISIBLE);
         mRecyclerView.setAdapter(overviewAdapter);
     }
 

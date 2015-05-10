@@ -43,6 +43,7 @@ import be.ugent.vop.backend.myApi.model.OverviewCheckin;
 import be.ugent.vop.foursquare.FoursquareVenue;
 import be.ugent.vop.foursquare.Photo;
 import be.ugent.vop.ui.group.GroupActivity;
+import be.ugent.vop.ui.group.GroupListActivity;
 import be.ugent.vop.ui.reward.RewardsActivity;
 import be.ugent.vop.ui.venue.VenueActivity;
 import be.ugent.vop.utils.PrefUtils;
@@ -150,8 +151,10 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public static class WelcomeViewHolder extends RecyclerView.ViewHolder {
+        protected ButtonFlat okButton;
         public WelcomeViewHolder(View v) {
             super(v);
+            okButton = (ButtonFlat) v.findViewById(R.id.button_ok);
         }
     }
 
@@ -447,7 +450,15 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     v = LayoutInflater.from(viewGroup.getContext())
                             .inflate(R.layout.layout_card_welcome, viewGroup, false);
                 }
-                return new WelcomeViewHolder(v);
+                WelcomeViewHolder mWelcomeViewHolder = new WelcomeViewHolder(v);
+                mWelcomeViewHolder.okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, GroupListActivity.class);
+                        context.startActivity(intent);
+                    }
+                });
+                return mWelcomeViewHolder;
 
             default:
 

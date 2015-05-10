@@ -34,6 +34,7 @@
     <string name="title_activity_leaderboards">Leaderboards</string>
     <string name="welcome_triump">Welcome to Triump</string>
     <string name="help_your_friends">Triump is all about helping your group. Do you want to check in now and start helping your group?</string>
+    <string name="triump_quick_start">Join an existing group or make one yourself!\nSwipe right to access the navigation drawer\nSwipe down to refresh a page</string>
     <string name="no_ranking">Currently there aren\'t any groups competing for this venue. Click check-in to be the first to conquer it!</string>
 
     <string name="loading_data">loading…</string>

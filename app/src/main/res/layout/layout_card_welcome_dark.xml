@@ -24,11 +24,10 @@
                 android:text="@string/welcome_triump"
                 android:textSize="25sp"
                 android:textColor="@color/theme_primary"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/help_your_friends"
+                android:text="@string/triump_quick_start"
                 android:textSize="@dimen/text_size_medium"
                 android:paddingTop="16dp"
                 android:paddingBottom="12dp"/>
@@ -39,17 +38,11 @@
             android:orientation="horizontal"
             android:layout_margin="8dp">
             <com.gc.materialdesign.views.ButtonFlat
-                android:id="@+id/button_nope"
+                android:id="@+id/button_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/theme_primary"
-                android:text="Nope" />
-            <com.gc.materialdesign.views.ButtonFlat
-                android:id="@+id/button_yes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/theme_primary"
-                android:text="Yes" />
+                android:text="Ok" />
         </LinearLayout>
 
 
