@@ -16,12 +16,6 @@ Zoals aangehaald in sectie \ref{sec: GCE} Google Cloud Endpoints is een van de n
 \section{Checkin entiteiten}
 
 In de huidige implementatie van de backend API wordt er voor iedere checkin van een gebruiker en voor iedere groep waartoe de gebruiker behoort een checkin entiteit aangemaakt. Hierdoor groeit het aantal entiteiten in de Checkin tabel zeer snel. Daarnaast komt nog dat Triump gebruik maakt van GAE Datastore voor de backend database. Bij het gebruik van deze Datastore horen quota's die beperkingen opleggen voor de grootte van de databank en voor het aantal entiteiten. 
-\newline\newline
-\HRule 
-\newline
-Hier komt een afbeelding van het percentage entiteittypes eens we wat meer data in de databank hebben \newline
-\HRule
-\newline\newline
 % Hier moet een afbeelding komen:
 % Grafiek van percentage types in datastore ...
 De eenvoudigste oplossing voor dit probleem is het uitbreiden van de datastore door een dagelijks bedrag te betalen aan GAE. Een andere oplossing is het opstarten van een periodieke Cron job (zie sectie ref{sec:GCE} Cron jobs) die bijvoorbeeld wekelijks de Checkin tabel 'samenvat'. De samenvatting kan gebeuren door door alle punten verzamelt door 1 groep op 1 locatie binnen een bepaalde periode toe te kennen aan 1 checkin entiteit. Op deze manier kan het aantal entiteiten drastisch beperkt worden. Nadeel van deze oplossing is het verlies aan informatie die mogelijks gebruikt kan worden voor het genereren van statistieken. 
@@ -49,10 +43,11 @@ Een oplossing voor dit probleem is o.a. caching van gegevens en geofencing. Wann
 Geofencing is een manier voor locatiegebaseerde applicaties om te verhinderen dat continu locatiegegevens via GPS opgevraagd dienen te worden. Deze oplossing werd uitvoerig bestudeerd, maar kon wegens tijdsgebrek niet in de eindoplossing opgenomen worden.
 \section{Uitbreidingen}
 Reeds eerder in het verslag kwam volgende mogelijke uitbreidingen aan bod:
--Uitgebreidere tutorialsequentie.
--Alternatieve visualisatie van de algemene Leaderboards-sectie.
--Uitbreiding rewardsysteem met afbeelding.
-
+\begin{itemize}
+	\item Een uitgebreidere tutorialsequentie. Indien uit feedback blijkt dat de huidige introductie van de Android applicatie niet volstaat, kan deze uitgebreid worden.
+	\item Alternatieve visualisatie van de algemene Leaderboards-sectie. Momenteel is de weergave van de Leaderboards niet visueel aantrekkelijk. In een volgende ontwikkelfase kan deze echter eenvoudig gewijzigd worden.
+	\item Uitbreiding rewardsysteem met afbeelding. Om promoties te claimen kunnen gebruikers in een volgende stap de eigenaars een gepersonaliseerde afbeelding tonen.
+\end{itemize}
 
 
 
