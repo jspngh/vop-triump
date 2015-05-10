@@ -16,6 +16,8 @@
 
 package be.ugent.vop.ui.event;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import be.ugent.vop.R;
+import be.ugent.vop.ui.venue.VenueActivity;
 
 import com.gc.materialdesign.views.ButtonFlat;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
@@ -33,6 +36,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
     private static final String TAG = "MyExpandableItemAdapter";
 
     private AbstractDataProvider mProvider;
+    private Context mContext;
 
     public static class MyGroupViewHolder extends AbstractExpandableItemViewHolder {
         public ViewGroup mContainer;
@@ -66,8 +70,9 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         }
     }
 
-    public MyExpandableItemAdapter(AbstractDataProvider dataProvider) {
+    public MyExpandableItemAdapter(AbstractDataProvider dataProvider, Context context) {
         mProvider = dataProvider;
+        mContext = context;
 
         // ExpandableItemAdapter requires stable ID, and also
         // have to implement the getGroupItemId()/getChildItemId() methods appropriately.
@@ -152,6 +157,14 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         holder.reward.setText(item.getReward());
         holder.info.setText(item.getInfo());
         holder.groups.setText(item.getGroups());
+        holder.toEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, VenueActivity.class);
+                intent.putExtra(VenueActivity.VENUE_ID, item.getVenueId());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

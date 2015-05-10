@@ -59,28 +59,37 @@ public class OverviewFragment extends Fragment implements LoaderManager.LoaderCa
 
         boolean displayWelcome = mActivity.displayWelcome;
         mRecyclerView.setAdapter(new OverviewAdapter(null, null, mActivity, displayWelcome));
-        getLoaderManager().initLoader(0, null, this);
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getLoaderManager().restartLoader(1, null, mFragment);
-            }
-        });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
-
+        if(!displayWelcome) {
+            getLoaderManager().initLoader(0, null, this);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    getLoaderManager().restartLoader(1, null, mFragment);
+                }
+            });
+            mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
+        } else{
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        }
         return rootView;
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        mActivity.addLocationUpdateListener(mListener);
+        if(!mActivity.displayWelcome)
+            mActivity.addLocationUpdateListener(mListener);
     }
 
     public void onPause(){
         super.onPause();
-        mActivity.removeLocationUpdateListener(mListener);
+        if(!mActivity.displayWelcome)
+            mActivity.removeLocationUpdateListener(mListener);
     }
 
     private void newLocationAvailable(Location newLocation, Date lastUpdated){
