@@ -88,7 +88,7 @@ public class Feedback implements FeedbackDialog.FeedBackDialogListener {
         Intent intent= new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        //listener.onClose(this);
+        activity.finish();
     }
 
 

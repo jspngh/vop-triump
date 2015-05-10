@@ -157,9 +157,15 @@ class ManageMemberAdapter extends RecyclerView.Adapter<ManageMemberAdapter.ViewH
                         }
 
                     }).start();
+                    removeAt(pos);
                 }
             });
         }
+    }
+
+    public void removeAt(int position) {
+        members.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override

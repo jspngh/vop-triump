@@ -508,17 +508,17 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
             case NAVDRAWER_ITEM_LEADERBOARDS:
                 intent = new Intent(this, LeaderboardsActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
                 break;
             case NAVDRAWER_ITEM_REWARD:
                 intent = new Intent(this, RewardsActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
                 break;
             case NAVDRAWER_ITEM_EVENT:
                 intent = new Intent(this, EventActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
                 break;
             case NAVDRAWER_ITEM_SETTINGS:
                 intent = new Intent(this, SettingsActivity.class);
@@ -528,7 +528,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
             case NAVDRAWER_ITEM_GROUPS:
                 intent = new Intent(this, GroupListActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
                 break;
             case NAVDRAWER_ITEM_LOGOUT:
                 intent = new Intent(this, LoginActivity.class);
