@@ -70,6 +70,7 @@ public class VenueActivity extends BaseActivity {
     private FoursquareVenue mVenue;
 
     private int currentHeaderTranslation = 0;
+    private Location lastLocation;
     private boolean mCanCheckIn = false;
 
     private ArrayList<VenueActivityCallback> mFragmentsCalls = new ArrayList<>();
@@ -92,12 +93,20 @@ public class VenueActivity extends BaseActivity {
     private void newLocationAvailable(Location newLocation, Date lastUpdated){
         Log.d(TAG, "new Location available");
 
-        if(mVenue != null && newLocation != null){
+        if(newLocation != null) {
+            lastLocation = newLocation;
+            setCanCheckIn();
+        }
+    }
+
+    public void setCanCheckIn(){
+        if(mVenue != null && lastLocation != null){
             Location venueLoc = new Location("");
             venueLoc.setLatitude(mVenue.getLatitude());
             venueLoc.setLongitude(mVenue.getLongitude());
 
-            boolean checkinOK = newLocation.distanceTo(venueLoc) < 50;
+            Log.d(TAG, "Distance to venue: " + lastLocation.distanceTo(venueLoc));
+            boolean checkinOK = lastLocation.distanceTo(venueLoc) < 100;
 
             mCanCheckIn = checkinOK;
 
@@ -311,6 +320,9 @@ public class VenueActivity extends BaseActivity {
         public void onLoadFinished(Loader<FoursquareVenue> loader, FoursquareVenue venue) {
             Log.d("VenueFragment", "onLoadFinished of venueInfoLoader");
             if(venue!=null) {
+                mVenue = venue;
+
+                setCanCheckIn();
                 setTitle(venue.getName());
                 //titleTextView.setText(venue.getName());
                 //placeholder image

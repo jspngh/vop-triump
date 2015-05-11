@@ -99,7 +99,7 @@ public class VenueEventFragment extends Fragment implements VenueActivity.VenueA
 
         //adapter
         getDataProvider();
-        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getDataProvider());
+        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getDataProvider(), mActivity);
 
         mAdapter = myItemAdapter;
 
@@ -390,7 +390,7 @@ public class VenueEventFragment extends Fragment implements VenueActivity.VenueA
                             groups = groups.substring(0,groups.length()-2);
                         }
 
-                        children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
+                        children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, venue.getId(), RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
 
                         mData.add(new Pair<AbstractDataProvider.GroupData, List<AbstractDataProvider.ChildData>>(group, children));
                         it.remove();

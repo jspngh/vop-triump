@@ -163,6 +163,10 @@
 
         <service android:name=".notification.GcmIntentService" />
 
+        <service
+            android:name=".SaveService"
+            android:exported="false" />
+
         <activity
             android:name=".ui.login.FirstLaunchActivity"
             android:label="@string/title_activity_first_launch" >

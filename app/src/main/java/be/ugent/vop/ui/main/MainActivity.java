@@ -45,7 +45,6 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
 
     private LocationService mLocationService;
-    private boolean isBound = false;
     public boolean displayWelcome;
 
     // View pager and adapter (for narrow mode)
@@ -75,9 +74,12 @@ public class MainActivity extends BaseActivity {
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         //setSlidingTabLayoutContentDescriptions();
         Resources res = getResources();
-        if(darkTheme) mSlidingTabLayout.setBackgroundColor(res.getColor(R.color.theme_dark_primary));
-        if(darkTheme) mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_dark_accent));
-        else mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.tab_selected_strip));
+        if(darkTheme) {
+            mSlidingTabLayout.setBackgroundColor(res.getColor(R.color.theme_dark_primary));
+            mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_dark_accent));
+        } else{
+            mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.tab_selected_strip));
+        }
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
 
@@ -99,20 +101,13 @@ public class MainActivity extends BaseActivity {
         if (mSlidingTabLayout != null) {
             mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
-                public void onPageScrolled(int position, float positionOffset,
-                                           int positionOffsetPixels) {
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 }
                 @Override
                 public void onPageSelected(int position) {
-                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        mSlidingTabLayout.announceForAccessibility(
-                                getString(R.string.my_schedule_page_desc_a11y,
-                                        getDayName(position)));
-                    }*/
                 }
                 @Override
                 public void onPageScrollStateChanged(int state) {
-                    //enableDisableSwipeRefresh(state == ViewPager.SCROLL_STATE_IDLE);
                 }
             });
         }
@@ -140,6 +135,11 @@ public class MainActivity extends BaseActivity {
         return NAVDRAWER_ITEM_MAIN;
     }
 
+    public void setViewPagerItem(int i){
+        if(i > 0 && i < 3)
+            mViewPager.setCurrentItem(i);
+    }
+
     private class OurViewPagerAdapter extends FragmentPagerAdapter {
             public OurViewPagerAdapter(FragmentManager fm) {
                 super(fm);
@@ -165,6 +165,7 @@ public class MainActivity extends BaseActivity {
         public int getCount() {
             return 3;
         }
+
         @Override
         public CharSequence getPageTitle(int position) {
             return getResources().getStringArray(R.array.main_tabs)[position];

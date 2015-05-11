@@ -7,7 +7,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MotionEventCompat;
@@ -36,17 +35,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import be.ugent.vop.BaseActivity;
 import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.SearchVenueLoader;
-import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.foursquare.FoursquareVenue;
 
 
-public class CheckinFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
+public class CheckinFragment extends Fragment implements BaseActivity.VenueListListener {
     private static final String TAG = "CheckinFragment";
     private static final int SCROLL_STATE_IDLE = 0;
     private static final int SCROLL_STATE_DRAGGING = 1;
@@ -60,16 +57,10 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
     protected RecyclerView.LayoutManager mLayoutManager;
     private GoogleMap map;
     private MapFragment fragment;
-    private Location mLastLocation;
+
+    private ArrayList<FoursquareVenue> venues;
 
     private BaseActivity mActivity;
-
-    private BaseActivity.LocationUpdateListener mListener = new BaseActivity.LocationUpdateListener() {
-        @Override
-        public void locationUpdated(Location newLocation, Date lastUpdated) {
-            newLocationAvailable(newLocation, lastUpdated);
-        }
-    };
 
     private float mRecyclerviewTranslation;
     private float mRecyclerViewInitialTranslation;
@@ -252,7 +243,7 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
     public void onResume() {
         super.onResume();
 
-        mActivity.addLocationUpdateListener(mListener);
+        mActivity.addVenueListListener(this);
 
         if (fragment == null) {
             fragment = getMapFragment();
@@ -262,7 +253,7 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onPause(){
         super.onPause();
-        mActivity.removeLocationUpdateListener(mListener);
+        mActivity.removeVenueListListener(this);
     }
 
     @Override
@@ -300,7 +291,7 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
                 @Override
                 public boolean onClose() {
                     Log.d(TAG, "Closing");
-                    loadNearbyVenues();
+                    showNearbyVenues();
                     return false;
                 }
             });
@@ -308,23 +299,6 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
 
         super.onCreateOptionsMenu(menu, inflater);
 
-    }
-
-    private void newLocationAvailable(Location newLocation, Date lastUpdated){
-        Log.d(TAG, "new Location available in fragment");
-        if(newLocation.getAccuracy() < BaseActivity.MIN_LOCATION_ACCURACY){
-            if(mLastLocation == null || mLastLocation.distanceTo(newLocation) > 100){
-                mLastLocation = newLocation;
-                loadNearbyVenues();
-            }
-        }
-    }
-
-    private void loadNearbyVenues(){
-        mRecyclerView.setTranslationY(mRecyclerViewInitialTranslation);
-        mRecyclerviewTranslation = mRecyclerViewInitialTranslation;
-        mShowMap = true;
-        getLoaderManager().restartLoader(0, null, this);
     }
 
     private MapFragment getMapFragment() {
@@ -344,30 +318,44 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
         return (MapFragment) fm.findFragmentById(R.id.map);
     }
 
-    @Override
-    public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
-        Log.d(TAG, "onCreateLoader");
 
-        return new VenueLoader(getActivity(), mLastLocation);
-    }
+    /**
+     * Search venues by name loader
+     */
 
-    @Override
-    public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, final ArrayList<FoursquareVenue> venues) {
-        Log.d(TAG, "onLoadFinished");
-        /**************************************
-                 Resultaat kan null zijn
-                 Rekening mee houden!
-         **************************************/
-        mAdapter.setVenues(venues);
-        mAdapter.setContext(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+    private LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> mSearchVenueByNameLoaderListener
+            = new LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>>() {
+        @Override
+        public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, final ArrayList<FoursquareVenue> venues) {
+            /**************************************
+             Resultaat kan null zijn
+             Rekening mee houden!
+             **************************************/
+            mAdapter.setVenues(venues);
+            mAdapter.setContext(getActivity());
+            mRecyclerView.setAdapter(mAdapter);
 
-        mLoadingMessage.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-        if (fragment == null) {
-            fragment = getMapFragment();
+            mLoadingMessage.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+
+            mRecyclerView.setTranslationY(0);
+            mShowMap = false;
+            mRecyclerviewTranslation = 0;
         }
 
+        @Override
+        public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int id, Bundle args) {
+            return new SearchVenueLoader(mActivity, args.getString(QUERY));
+        }
+
+        @Override
+        public void onLoaderReset(Loader<ArrayList<FoursquareVenue>> arrayListLoader) {
+            mRecyclerView.setAdapter(null);
+        }
+
+    };
+
+    public void showVenuesOnMap(){
         if (map == null) {
             fragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
@@ -378,7 +366,7 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
 
                     for(FoursquareVenue v : venues){
                         Marker m = map.addMarker(new MarkerOptions().position(new LatLng(v.getLatitude(), v.getLongitude()))
-                                        .title(v.getName()));
+                                .title(v.getName()));
 
                         markerVenue.put(m, v.getId());
                     }
@@ -422,44 +410,28 @@ public class CheckinFragment extends Fragment implements LoaderManager.LoaderCal
         }
     }
 
-    @Override
-    public void onLoaderReset(Loader<ArrayList<FoursquareVenue>> arrayListLoader) {
-        mRecyclerView.setAdapter(null);
+    public void showNearbyVenues(){
+        mRecyclerView.setTranslationY(mRecyclerViewInitialTranslation);
+        mRecyclerviewTranslation = mRecyclerViewInitialTranslation;
+        mShowMap = true;
+
+        mAdapter.setVenues(venues);
+        mAdapter.setContext(getActivity());
+        mRecyclerView.setAdapter(mAdapter);
+
+        mLoadingMessage.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        if (fragment == null) {
+            fragment = getMapFragment();
+        }
     }
 
-    /**
-     * Search venues by name loader
-     */
-
-    private LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> mSearchVenueByNameLoaderListener
-            = new LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>>() {
-        @Override
-        public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> arrayListLoader, final ArrayList<FoursquareVenue> venues) {
-            /**************************************
-             Resultaat kan null zijn
-             Rekening mee houden!
-             **************************************/
-            mAdapter.setVenues(venues);
-            mAdapter.setContext(getActivity());
-            mRecyclerView.setAdapter(mAdapter);
-
-            mLoadingMessage.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-
-            mRecyclerView.setTranslationY(0);
-            mShowMap = false;
-            mRecyclerviewTranslation = 0;
+    @Override
+    public void newVenuesAvailable(final ArrayList<FoursquareVenue> venues) {
+        if(venues != null){
+            this.venues = venues;
+            showNearbyVenues();
+            showVenuesOnMap();
         }
-
-        @Override
-        public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int id, Bundle args) {
-            return new SearchVenueLoader(mActivity, args.getString(QUERY));
-        }
-
-        @Override
-        public void onLoaderReset(Loader<ArrayList<FoursquareVenue>> arrayListLoader) {
-            mRecyclerView.setAdapter(null);
-        }
-
-    };
+    }
 }

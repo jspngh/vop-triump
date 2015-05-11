@@ -11,12 +11,14 @@ public class ConcreteChildData extends AbstractDataProvider.ChildData {
     private final String mGroups;
     private final int mSwipeReaction;
     private boolean mPinnedToSwipeLeft;
+    private String mVenueId;
 
-    public ConcreteChildData(long id, String reward, String info, String groups, int swipeReaction) {
+    public ConcreteChildData(long id, String reward, String info, String groups, String venueId, int swipeReaction) {
         mId = id;
         mReward = reward;
         mInfo = info;
         mGroups = groups;
+        mVenueId = venueId;
         mSwipeReaction = swipeReaction;
     }
 
@@ -43,6 +45,11 @@ public class ConcreteChildData extends AbstractDataProvider.ChildData {
     @Override
     public String getGroups() {
         return mGroups;
+    }
+
+    @Override
+    public String getVenueId() {
+        return mVenueId;
     }
 
     @Override

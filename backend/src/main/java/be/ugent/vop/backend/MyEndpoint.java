@@ -369,7 +369,7 @@ public class MyEndpoint {
         event.setProperty(EVENT_VENUE_ID,venueId);
         event.setProperty(EVENT_VERIFIED,((verified)?(long)1:(long)0));
         event.setProperty(EVENT_PROCESSED,0);
-        event.setProperty(EVENT_REQUIREMENT,(long)1);
+        event.setProperty(EVENT_REQUIREMENT, (long) 1);
         if(verified){
             event.setProperty(EVENT_MIN_PARTICIPANTS,(long)minParticipants);
             event.setProperty(EVENT_MAX_PARTICIPANTS,(long)maxParticipants);
@@ -428,7 +428,7 @@ public class MyEndpoint {
     public void registerGcmId(@Named("token") String token,
                               @Named("gcmId") String gcmId) throws UnauthorizedException, InternalServerErrorException {
         String userId = _getUserIdForToken(token); // Try to authenticate the user
-        _registerGcmId(userId,gcmId);
+        _registerGcmId(userId, gcmId);
     }
 
 
@@ -685,8 +685,10 @@ public class MyEndpoint {
 
             for (Entity s : pq_checkin.asIterable(FetchOptions.Builder.withLimit(10))) {
                 CheckinBean checkinBean = _getCheckinBean(s);
-                UserBean user = _getUserBeanForId(checkinBean.getUserId());
-                checkIns.add(new OverviewCheckin(checkinBean, user, group));
+                if(!userId.equals(checkinBean.getUserId())) {
+                    UserBean user = _getUserBeanForId(checkinBean.getUserId());
+                    checkIns.add(new OverviewCheckin(checkinBean, user, group));
+                }
             }
         }
 
@@ -804,6 +806,25 @@ public class MyEndpoint {
     private Entity _registerUserInGroup(String userId, long groupId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
+        Query.Filter propertyFilter =
+                new Query.FilterPredicate(USERGROUP_GROUP_ID,
+                        Query.FilterOperator.EQUAL,
+                        groupId);
+
+        Query.Filter propertyFilter2 =
+                new Query.FilterPredicate(USERGROUP_USER_ID,
+                        Query.FilterOperator.EQUAL,
+                        userId);
+
+        Query.Filter filter = Query.CompositeFilterOperator.and(propertyFilter, propertyFilter2);
+
+        Query q = new Query(USERGROUP_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+        Entity ent = pq.asSingleEntity();
+
+        if(ent != null)
+            return null;
+
         GroupsBean groups = _getGroupsForUser(userId);
         GroupBean group;
         try {
@@ -834,6 +855,7 @@ public class MyEndpoint {
         if(userGroup != null){
             boolean alreadyAccepted = (boolean) userGroup.getProperty(USERGROUP_ACCEPTED);
             long groupId = (long) userGroup.getProperty(USERGROUP_GROUP_ID);
+            String userId = (String) userGroup.getProperty(USERGROUP_USER_ID);
 
             userGroup.setProperty(USERGROUP_ACCEPTED, true);
             userGroup.setProperty(USERGROUP_IS_ADMIN, isAdmin);
@@ -849,14 +871,15 @@ public class MyEndpoint {
                 // -------------------- MAILBOX -----------------------
                 GroupBean groupBean = _getGroupBean(groupEntity);
                 for(UserBean member : groupBean.getMembers()) {
-
-                    Entity mailBoxItem = new Entity(MAILBOX_ENTITY);
-                    mailBoxItem.setProperty(MAILBOX_USER_ID, member.getUserId());
-                    String userGroupKey = KeyFactory.keyToString(userGroup.getKey());
-                    mailBoxItem.setProperty(MAILBOX_KEY, userGroupKey);
-                    mailBoxItem.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_NEW_MEMBER);
-                    mailBoxItem.setProperty(MAILBOX_DATE, new Date());
-                    datastore.put(mailBoxItem);
+                    if(!member.getUserId().equals(userId)) {
+                        Entity mailBoxItem = new Entity(MAILBOX_ENTITY);
+                        mailBoxItem.setProperty(MAILBOX_USER_ID, member.getUserId());
+                        String userGroupKey = KeyFactory.keyToString(userGroup.getKey());
+                        mailBoxItem.setProperty(MAILBOX_KEY, userGroupKey);
+                        mailBoxItem.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_NEW_MEMBER);
+                        mailBoxItem.setProperty(MAILBOX_DATE, new Date());
+                        datastore.put(mailBoxItem);
+                    }
                 }
                 // ----------------------------------------------------
             }
@@ -903,14 +926,15 @@ public class MyEndpoint {
             // -------------------- MAILBOX -----------------------
             GroupBean groupBean = _getGroupBean(groupEntity);
             for(UserBean member : groupBean.getMembers()) {
-
-                Entity mailBoxItem = new Entity(MAILBOX_ENTITY);
-                mailBoxItem.setProperty(MAILBOX_USER_ID, member.getUserId());
-                String userGroupKey = KeyFactory.keyToString(e.getKey());
-                mailBoxItem.setProperty(MAILBOX_KEY, userGroupKey);
-                mailBoxItem.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_NEW_MEMBER);
-                mailBoxItem.setProperty(MAILBOX_DATE, new Date());
-                datastore.put(mailBoxItem);
+                if(!member.getUserId().equals(userId)) {
+                    Entity mailBoxItem = new Entity(MAILBOX_ENTITY);
+                    mailBoxItem.setProperty(MAILBOX_USER_ID, member.getUserId());
+                    String userGroupKey = KeyFactory.keyToString(e.getKey());
+                    mailBoxItem.setProperty(MAILBOX_KEY, userGroupKey);
+                    mailBoxItem.setProperty(MAILBOX_TYPE, MAILBOX_TYPE_NEW_MEMBER);
+                    mailBoxItem.setProperty(MAILBOX_DATE, new Date());
+                    datastore.put(mailBoxItem);
+                }
             }
             // ----------------------------------------------------
         }

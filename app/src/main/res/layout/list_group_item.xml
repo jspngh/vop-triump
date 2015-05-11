@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="@string/welcome_triump"
             android:id="@+id/event_title"
-            android:textSize="25sp"
+            android:textSize="18sp"
             android:textColor="#fff"
             android:gravity="center"/>
         </LinearLayout>
