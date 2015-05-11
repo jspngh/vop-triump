@@ -27,9 +27,9 @@ Indien echter het aantal gebruikers van Triump zou toenemen is het wel noodzakel
 
 Android is een besturingssysteem waaraan continu wordt gesleuteld door Google. Er worden met regelmaat verbeteringen en wijzigingen doorgevoerd, en dit resulteert in verschillende versies van Android.
 Op Figuur \ref{fig:android_versions} kan men zien dat op het moment van schrijven voornamelijk Android versies 4.0 en later worden gebruikt. Deze worden ondersteund in Triump, om een zo groot mogelijk doelpubliek te hebben. Het ondersteunen van verschillende versies brengt echter ook moeilijkheden met zich mee. Vaak worden samen met een nieuwe versie van Android, ook nieuwe concepten uitgebracht.
-Een voorbeeld hiervan is de 'CardView' en 'Material Design' uit de laatste versie, Lollipop. Er is 'backward compatability' voorzien voor vorige versies van Android, maar daarop worden o.a. de 'Cards' minder mooi weergegeven.
+Een voorbeeld hiervan is de `CardView' en `Material Design' uit de laatste versie, Lollipop. Er is `backward compatability' voorzien voor vorige versies van Android, maar daarop worden o.a. de `Cards' minder mooi weergegeven.
 Ook is er een enorme diversiteit aan schermen van smartphones. Deze verschillen sterk in grootte en resolutie, wat ervoor zorgt dat het moeilijk is een layout te maken die op alle schermen even duidelijk en mooi overkomt.
-Verder heeft Google sinds Lollipop regels opgelegd over hoe een moderne applicatie het best visueel wordt ontworpen, genaamd 'Material Design'. Het grootste probleem dat wij hiermee ondervonden was het feit dat wel werd vertelt 'wat' er moest gebeuren, maar niet 'hoe'. Details over de manier waarop de designrules moeten worden geïmplementeerd, zijn vrijwel nergens te vinden. Toch hebben we geprobeerd om ons zo goed mogelijk aan deze regels te houden door onze eigen creativiteit te gebruiken.
+Verder heeft Google sinds Lollipop regels opgelegd over hoe een moderne applicatie het best visueel wordt ontworpen, genaamd `Material Design'. Het grootste probleem dat wij hiermee ondervonden was het feit dat wel werd vertelt `wat' er moest gebeuren, maar niet `hoe'. Details over de manier waarop de designrules moeten worden geïmplementeerd, zijn vrijwel nergens te vinden. Toch hebben we geprobeerd om ons zo goed mogelijk aan deze regels te houden door onze eigen creativiteit te gebruiken.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.27]{android-versions}
@@ -38,7 +38,7 @@ Verder heeft Google sinds Lollipop regels opgelegd over hoe een moderne applicat
 \end{figure}
 
 \section{Batterijgebruik en efficiëntie}
-Momenteel verbruikt de Android applicatie veel batterij omdat continu gegevens opgevraagd worden over het netwerk. Ook de locatie van de gebruiker wordt frequent opgevraagd.
+Momenteel verbruikt de Android applicatie veel energie omdat continu gegevens opgevraagd worden over het netwerk. Ook de locatie van de gebruiker wordt frequent opgevraagd.
 Een oplossing voor dit probleem is o.a. caching van gegevens en geofencing. Wanneer een gebruiker informatie opvraagt kan een lokaal opgeslagen versie van het resultaat getoond worden. In 1 oproep naar de backend kan gecontroleerd worden of nieuwe informatie voor handen is. Indien dit het geval is, kunnen de laatste gegevens binnengehaald worden van de servers. Deze oplossing wordt reeds toegepast op informatie over locatie- en overzichtelementen. Als cache of lokale databank wordt een SQLite database gebruikt. Dit systeem wordt aangeboden door Android. Caching van alle data zoals de oplossing voorstelt is nog niet geïmplementeerd wegens het beperkte tijdskader van het vakoverschrijdend project.
 Geofencing is een manier voor locatiegebaseerde applicaties om te verhinderen dat continu locatiegegevens via GPS opgevraagd dienen te worden. Deze oplossing werd uitvoerig bestudeerd, maar kon wegens tijdsgebrek niet in de eindoplossing opgenomen worden.
 \section{Uitbreidingen}
