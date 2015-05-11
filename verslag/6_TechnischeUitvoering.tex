@@ -1,28 +1,28 @@
 
 \chapter{Architectuur}
 
-Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks interageren, en anderzijds is er de backend, verborgen voor iedere gebruiker. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In figuur \ref{fig:algemene structuur} wordt schematisch de structuur van Triump weergegeven. Hierbij wordt per onderdeel de gebruikte technologie besproken. In dit hoofdstuk wordt er dieper ingegaan op de gebruikte technologieën van de verschillende onderdelen. In het volgend hoofdstuk wordt dan eerder gefocusd op het specifiek ontwerp en implementatie van de verschillende onderdelen.
+Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks interageren, en anderzijds is er de backend, verborgen voor iedere gebruiker. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In figuur \ref{fig:algemene structuur} wordt schematisch de structuur van Triump weergegeven. In dit hoofdstuk wordt er dieper ingegaan op de gebruikte technologieën van de verschillende onderdelen. In het volgend hoofdstuk wordt dan eerder gefocust op het specifiek ontwerp en implementatie van de verschillende onderdelen. Steeds wordt er een onderscheid gemaakt tussen technologieën gehanteerd in de backend of in de frontend.
 
 %nieuwe figuur
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.3]{techUitvoering_abstract}
-	\caption{Structuur Triump}
+	\includegraphics[scale=0.5]{achitectuur}
+	\caption{Architectuur bestaat uit twee grote delen, enerzijds de backend en anderzijds de frontend. De backend bestaat uit een combinatie van een App Engine instantie en de Foursquare API. De frontend bestaat uit een Android app en een django webinterface.}
 	\label{fig:algemene structuur}
 	
 \end{figure}
 
 \section{Backend}
-De backend van Triump steunt op 2 grote onderdelen. Enerzijds is Google Cloud Endpoints als platform voor het bijhouden en verwerken van de data en anderzijds is er de Foursquare API voor de locatiedata.
+
 \subsection{Google Cloud Endpoints}
 \label{sec: GCE}
-Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend `Platform as a Service' ontworpen om applicaties uit te voeren op Google's infrastructuur. GCE biedt naast de functionaliteiten beschikbaar in GAE de mogelijkheid om op een relatief eenvoudige manier een backend API te genereren voor applicaties.  Endpoints verzorgt onder andere de communicatie en authenticatie tussen gebruikers en de backend.
-Aangezien GCE nog steeds gehost wordt door een Googles App Engine instantie blijven alle andere functionaliteiten zoals `Datastore' voor dataopslag, `Google Cloud Messaging' voor notificaties en `Cron Jobs' voor periodieke taken beschikbaar. Figuur \ref{fig:Overzicht Google Cloud Endpoints} geeft een overzicht van Google Cloud Endpoints weer~\cite{Google_endpoints}.
+Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend 'Platform as a Service' ontworpen om applicaties uit te voeren op Googles infrastructuur. GCE biedt naast de functionaliteiten beschikbaar in GAE de mogelijkheid om op een relatief eenvoudige manier een backend API te genereren voor applicaties.  Endpoints verzorgt onder andere de communicatie en authenticatie tussen gebruikers en de backend.
+Aangezien GCE nog steeds gehost wordt door een Googles App Engine instantie blijven alle andere functionaliteiten zoals 'Datastore' voor dataopslag, 'Google Cloud Messaging' voor notificaties en 'Cron Jobs' voor periodieke taken beschikbaar. Figuur \ref{fig:Overzicht Google Cloud Endpoints} geeft een overzicht van Google Cloud Endpoints weer~\cite{Google_endpoints}.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.3]{GCE}
-	\caption{Overzicht Google Cloud Endpoints}
+	\caption{De endpoints  bieden een gebruiksvriendelijke interface voor de functionaliteiten van Google App Engine.}
 	\label{fig:Overzicht Google Cloud Endpoints}
 \end{figure}
 
@@ -36,11 +36,11 @@ Aangezien de database schemaloos is en bijgevolg bijvoorbeeld geen types zal con
 
 \subsubsection{Google Cloud Messaging~\cite{Google_Cloud_Messaging}}
 
-Google Cloud Messaging (GCM) voor Android is een dienst die het mogelijk maakt data (tot 4kB) te versturen van backend servers naar Android applicaties onder de vorm van notificaties. De GCM servers staan in voor de connectie naar het mobiele toestel en een correcte aflevering van de berichten.
+Google Cloud Messaging (GCM) voor Android is een dienst die het mogelijk maakt data (tot 4kB) te versturen van backend servers naar Android applicaties onder de vorm van boodschappen. De GCM servers staan in voor de connectie naar het mobiele toestel en een correcte aflevering van de berichten. De ontvangen boodschappen kunnen na aflevering eenvoudig omgevormd worden tot een notificatie. GCM wordt daarom gebruikt als basistechnologië voor het notificatiesysteem in Triump.
 
 \subsubsection{Cron jobs~\cite{Google_Cron_Jobs}}
 
-Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend.\\\\
+Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend.
 
 
 \subsection{Foursquare API}
@@ -49,25 +49,24 @@ Triump is een locatie-gebaseerde applicatie. De locaties worden bekomen via de F
 Het werken met de API brengt wel enkele nadelen met zich mee.
 Allereerst wordt Triump hierdoor opnieuw afhankelijk van een externe organisatie (naast Google). Indien Foursquare beslist zijn open database te sluiten moet het ontwerp van Triump volledig herzien worden. Daarnaast wordt van commerciële applicaties verwacht dat ze reclame maken voor Foursquare door bijvoorbeeld het Foursquare logo op te nemen in de layout.  Een tweede nadeel is dat de dataopslag verdeeld wordt over twee databases. Enerzijds de Google Cloud Datastore waar de data over groepen en checkins worden bijgehouden en anderzijds de Foursquare Datastore waar de locatie en gebruikergegevens zijn opgeslaan. Een laatste nadeel is dat locaties verplicht geregistreerd moeten zijn bij Foursquare teneinde zichtbaar te zijn op Triump. Indien locaties intern zouden aangemaakt en opgeslaan worden zouden de eerste twee nadelen verholpen zijn. Deze voor de hand liggende oplossing wordt echter niet toegepast aangezien dit zou impliceren dat Triump vanaf nul zijn locatiedatabase zou moeten vullen. Hierdoor zouden gebruikers ontmoedigd worden Triump boven Foursquare te kiezen. Daarnaast propageert Triump een checkin door naar Foursquare waardoor we de functionaliteiten ervan uitbreiden. Het laatste probleem wordt opgelost door het voorzien van een webinterface. Deze interface voorziet de mogelijkheid aan eigenaars om locaties te registreren. Meer uitleg over de website volgt hieronder.
 
-Er dient opgemerkt te worden dat Google met `Google Places' gelijkaardige diensten biedt. Gebruik van deze API heeft dezelfde voor- en nadelen als de Foursquare API maar met de bijkomende beperking dat het aantal geregistreerde locaties veel kleiner is.
+Er dient opgemerkt te worden dat Google met 'Google Places' gelijkaardige diensten biedt. Gebruik van deze API heeft dezelfde voor- en nadelen als de Foursquare API maar met de bijkomende beperking dat het aantal geregistreerde locaties veel kleiner is.
 
 \section{Frontend}
-De frontend van Triump op 2 grote onderdelen. Enerzijds is er de Android applicatie, gericht op de gewone gebruikers, en anderzijds is er de webinterface, gericht op geverifieerde gebruikers.
 \subsection{Android applicatie}
 \subsubsection{Waarom Android?}
 
 Bij de ontwikkeling van de Triump applicatie is er gekozen voor Android als mobiel platform boven iOS of Windows Phone. Android heeft als voordeel dat het een groot marktaandeel heeft (76.6\% van de smartphones wereldwijd draait op Android \cite{marketshare}) en er dus een groot publiek bereikt kan worden met de applicatie. Dit maakt dat Android als eerste platform de beste keuze is. De ontwikkeltools voor iOS en Windows Phone zijn bovendien niet cross-platform. Om apps te ontwikkelen voor iOS dient men over XCode te beschikken (enkel beschikbaar op Mac OS X) en om Windows Phone applicaties te ontwikkelen maakt men gebruik van Visual Studio (enkel beschikbaar op Windows). Vermits het team bestaat uit 1 Windows, 1 Linux en 2 Mac gebruikers, was het noodzakelijk om een cross-platform ontwikkelomgeving te hebben.
 \subsubsection{Ontwikkelomgeving: Android Studio}
 % vergelijking vs Eclipse
-Vroeger was Eclipse de standaard ontwikkelomgeving (IDE) voor Android. Hierbij werd de standaard Eclipse installatie uitgebreid met de Android Developer Toolkit (ADT) plugin om Eclipse beter geschikt te maken voor Android Development. Op 16 mei 2013 stelde Google de nieuwste IDE voor Android voor: Android Studio. Deze IDE is gebaseerd op IntelliJ IDEA en biedt veel verbeteringen ten opzichte van Eclipse. In het begin waren er echter nog veel problemen met Android Studio waardoor veel mensen bij Eclipse bleven. Bij de aanvang van de ontwikkeling van Triump is er toch gekozen voor Android Studio omdat de meeste problemen toen reeds opgelost waren.
+Vroeger was Eclipse de standaard ontwikkelomgeving (IDE) voor Android. Hierbij werd de standaard Eclipse installatie uitgebreid met de Android Developer Toolkit (ADT) plugin om Eclipse beter geschikt te maken voor Android Development. Op 16 mei 2013 stelde Google de nieuwste IDE voor Android voor genaamd Android Studio. Deze IDE is gebaseerd op IntelliJ IDEA en biedt veel verbeteringen ten opzichte van Eclipse. 
 De voordelen van Android Studio zijn legio: betere code generatie en auto-complete dan Eclipse, zeer goede integratie met de Android SDK en live previews in de layout builder. 
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{android_studio}
-	\caption{Een typische workflow in Android Studio}
-	\label{fig:Android Studio Workflow}
-\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=\linewidth]{android_studio}
+%	\caption{Een typische workflow in Android Studio}
+%	\label{fig:Android Studio Workflow}
+%\end{figure}
 
 \subsection{Webinterface}
 \label{Webinterface}
@@ -87,30 +86,31 @@ Op de site worden gebruikers aangemaakt waarbij bepaalde informatie wordt opgesl
 Als framework voor de webinterface werd gekozen voor Django, een framework geschreven in Python. Django maakt het mogelijk om op relatief korte tijd toch een dynamische website te bouwen.
 Een voordeel van het werken met Django is dat er hosting-diensten bestaan die zich specialiseren in het hosten van Django-projecten. Wij kozen voor zo een dienst, namelijk http://djangoeurope.com.
 Bij deze dienst was er de mogelijkheid te kiezen uit verschillende databasemanagment systemen. Er werd gekozen voor PostgreSQL: een open source DBMS waar reeds mee gewerkt werd tijdens het vak "Databanken".
-Dez communicatie verloopt via Javascript en dient om bijvoorbeeld het organiseren van een evenement mogelijk te maken.Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken. Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript. Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. Op sommige computers is Javascript namelijk niet is geïnstalleerd. Het `client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf. Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Deze code wordt `server-side' uitgevoerd.
+Dez communicatie verloopt via Javascript en dient om bijvoorbeeld het organiseren van een evenement mogelijk te maken.Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken. Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript. Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. Op sommige computers is Javascript namelijk niet is geïnstalleerd. Het 'client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf. Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Deze code wordt 'server-side' uitgevoerd.
 
 
-\chapter{Implementatie}
+\chapter{Ontwerp}
 Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de verschillende onderdelen van de backend en van de interacties tussen de backend en de frontend. De pijlen aangeduid in figuur \ref{fig:algemene structuur backend} worden in de volgende secties verklaard.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.3]{backend_algemene_structuur}
-	\caption{Overzicht interactie frontend-backend}
+	\caption{Overzicht interactie tussen de frontend en de backend (pijlen worden in onderstaande secties verklaard).}
 	\label{fig:algemene structuur backend}
 	
 \end{figure}
 \section{Backend}
 \subsection{Database}
-Zoals reeds aangegeven is GAE Datastore schemaloos. Bijgevolg wordt er geen enkele restrictie opgelegd aan de databank over de opbouw en de structuur van zijn entiteiten. Toch is de backend databank gebaseerd op de principes van een relationele databank. GAE Datastore liet echter toe om bepaalde operaties zeer efficiënt aan te pakken. Alle operaties in de GAE Datastore worden namelijk geprogrammeerd door de ontwikkelaar in Java.
+Zoals reeds aangegeven word de backend database gehost op een GAE instantie. Deze GAE Datastore is schemaloos wat impliceert dat er geen enkele restrictie met betrekking tot de opbouw van entiteiten wordt opgelegd. M.a.w. maakt GAE Datastore geen gebruik van Data definition language (DDL) om de databank te configureren. Toch is er gekozen voor de database te ontwerpen als een relationele databank aangezien dit toeliet bepaalde operaties zeer efficiënt aan te pakken. Door het ontbreken van de DDL ligt het behoud van de integriteit nu wel volledig bij de ontwikkelaars. 
+
 Figuur \ref{fig:Backend ER} toont een ER diagram van de backend database.  De belangrijkste entiteiten van deze database zijn User, Event, Venue, Group en Checkin. In de volgende paragraaf wordt de structuur van de database besproken. 
 
 Een user entiteit wordt aangemaakt wanneer een gebruiker zich voor het eerst authenticeert bij de backend. Het ID van een gebruiker binnen de Triump database is identiek aan het ID van een gebruiker binnen de Foursquare database. Informatie zoals voornaam, achternaam en e-mailadres van een gebruiker wordt bekomen via een request naar de Foursquare API. In sectie \ref{Foursquare API} komt de werking van de Foursquare API aan bod. Pijl (4) van figuur \ref{fig:algemene structuur backend} geeft de afhankelijkheid tussen Triumps database en de Foursquare database weer.
 
-Venue-entiteiten worden aangemaakt wanneer een gebruiker voor het eerst incheckt op een nieuwe locatie. Opnieuw is de ID van een venue entiteit identiek aan het ID van de entiteit binnen Foursquare. Een datum en tijdstip van de eerste checkin wordt bijgehouden. Deze informatie kan gebruikt worden om statistieken van locaties te genereren. Een locatie of venue heeft een `verified' attribuut indien een gebruiker zich via de webinterface (zie sectie \ref{Webinterface} voor meer informatie over het doel en de werking van de webinterface) verifieert. Een geverifieerde gebruiker (meestal een locatie-eigenaar) in combinatie met een geverifieerde locatie kan een evenement organiseren waaraan elke groep, indien zij voldoen aan de opgelegde participatievoorwaarden, kan deelnemen. Aan de winnaar van het evenement kan dan een promotie toegekend worden.
+Venue-entiteiten worden aangemaakt wanneer een gebruiker voor het eerst incheckt op een nieuwe locatie. Opnieuw is de ID van een venue entiteit identiek aan het ID van de entiteit binnen Foursquare. Een datum en tijdstip van de eerste checkin wordt bijgehouden. Deze informatie kan gebruikt worden om statistieken van locaties te genereren. Een locatie of venue heeft een 'verified' attribuut indien een gebruiker zich via de webinterface (zie sectie \ref{Webinterface} voor meer informatie over het doel en de werking van de webinterface) verifieert. Een geverifieerde gebruiker (meestal een locatie-eigenaar) in combinatie met een geverifieerde locatie kan een evenement organiseren waaraan elke groep, indien zij voldoen aan de opgelegde participatievoorwaarden, kan deelnemen. Aan de winnaar van het evenement kan dan een promotie toegekend worden.
 
-Zoals reeds aangehaald zijn er enerzijds dus `officiële' evenementen waarbij promoties verkregen kunnen worden. Anderzijds zijn er ook evenementen die gebruikers voor hun vrienden organiseren. Deze evenementen kunnen aangemaakt worden door elke gebruiker. Aangezien deze gewone evenementen niet automatisch zichtbaar zijn moet de organisator groepen, waartoe hij of zij zelf behoort, uitnodigen. 
-Deze twee types evenementen worden beiden opgeslagen in Event-entiteiten. Het `verified' veld geeft aan of een Event entiteit een officieel of gewoon Event is. De attributen minParticipants en maxParticipants hebben enkel een geldige waarde voor evenententen met promoties. De organisator hiervan kan beslissen een verschillende promotie te lanceren afhankelijk van de groepgrootte. De entiteit GroupEvent wordt gebruikt om bij te houden welke groepen er zijn uitgenodigd op een gewoon evenement.
+Zoals reeds aangehaald zijn er enerzijds 'officiële' evenementen waarbij promoties verkregen kunnen worden. Anderzijds zijn er ook evenementen die gebruikers voor hun vrienden organiseren. Deze evenementen kunnen aangemaakt worden door elke gebruiker. Aangezien deze gewone evenementen niet automatisch zichtbaar zijn moet de organisator groepen, waartoe hij of zij zelf behoort, uitnodigen. 
+Deze twee types evenementen worden beiden opgeslagen in Event-entiteiten. Het 'verified' veld geeft aan of een Event entiteit een officieel of gewoon Event is. De attributen minParticipants en maxParticipants hebben enkel een geldige waarde voor evenententen met promoties. De organisator hiervan kan beslissen een verschillende promotie te lanceren afhankelijk van de groepgrootte. De entiteit GroupEvent wordt gebruikt om bij te houden welke groepen er zijn uitgenodigd op een gewoon evenement.
 
 
 \begin{figure}[H]
@@ -120,14 +120,14 @@ Deze twee types evenementen worden beiden opgeslagen in Event-entiteiten. Het `v
 \end{figure}
 
 
-Een Checkin entiteit wordt aangemaakt iedere keer een gebruiker incheckt op een locatie. Het `points' veld geeft aan hoeveel punten een checkin waard is. In de huidige implementatie geldt er dat elke checkin 1 punt waard is. Het is echter mogelijk de app uit te breiden en te voorzien dat bepaalde combinaties van inchecken meer punten opleveren. De attributen tijdstip en groep worden bijgehouden om te bepalen welke groep een event heeft gewonnen (doordat de groep het meest heeft ingechecked) en om de ranglijsten op te stellen. (Meer informatie over deze berekeningen volgt in sectie \ref{backend API}: Backend API.)
+Een Checkin entiteit wordt aangemaakt iedere keer een gebruiker incheckt op een locatie. Het 'points' veld geeft aan hoeveel punten een checkin waard is. In de huidige implementatie geldt er dat elke checkin 1 punt waard is. Het is echter mogelijk de app uit te breiden en te voorzien dat bepaalde combinaties van inchecken meer punten opleveren. De attributen tijdstip en groep worden bijgehouden om te bepalen welke groep een event heeft gewonnen (doordat de groep het meest heeft ingechecked) en om de ranglijsten op te stellen. (Meer informatie over deze berekeningen volgt in sectie \ref{backend API}: Backend API.)
 
 
-Elke gebruiker van Triump is in staat zijn eigen groepen aan te maken. De maker van een groep is ook de administrator ervan. Opnieuw kan het `type' attribuut gebruikt worden om statistieken te generen van de beste studentvereniging of meest actieve vriendengroep. `numMembers' is afgeleide data aangezien de waarde kan berekend worden uit het aantal entiteiten in de UserGroup tabel. Toch wordt `numMembers' bijgehouden in Group-entiteiten aangezien dit een waarde is die vaak gebruikt wordt. Voordelen hiervan zijn een verbetering van de performantie en een vermindering van het aantal leesoperaties. Een nadeel is de mogelijkheid tot het optreden van anomalieën (vb: indien `numMembers' niet overeenstemt met het aantal entiteiten in UserGroup voor een bepaalde groep).
+Elke gebruiker van Triump is in staat zijn eigen groepen aan te maken. De maker van een groep is ook de administrator ervan. Opnieuw kan het 'type' attribuut gebruikt worden om statistieken te generen van de beste studentvereniging of meest actieve vriendengroep. 'numMembers' is afgeleide data aangezien de waarde kan berekend worden uit het aantal entiteiten in de UserGroup tabel. Toch wordt 'numMembers' bijgehouden in Group-entiteiten aangezien dit een waarde is die vaak gebruikt wordt. Voordelen hiervan zijn een verbetering van de performantie en een vermindering van het aantal leesoperaties. Een nadeel is de mogelijkheid tot het optreden van anomalieën (vb: indien 'numMembers' niet overeenstemt met het aantal entiteiten in UserGroup voor een bepaalde groep).
 
-UserGroup-entiteiten koppelen een gebruiker met een groep. Een entiteit wordt aangemaakt wanneer een gebruiker een aanvraag doet om tot een groep te behoren. Het `accepted' attribuut wordt bij de aanmaak op 0 geplaatst tot de administrator toestemming geeft aan de gebruiker om lid te worden van de groep. Indien de administrator het lidschapverzoek weigert, wordt de entiteit verwijderd.
+UserGroup-entiteiten koppelen een gebruiker met een groep. Een entiteit wordt aangemaakt wanneer een gebruiker een aanvraag doet om tot een groep te behoren. Het 'accepted' attribuut wordt bij de aanmaak op 0 geplaatst tot de administrator toestemming geeft aan de gebruiker om lid te worden van de groep. Indien de administrator het lidschapverzoek weigert, wordt de entiteit verwijderd.
 
-Tot slot wordt in UserEvent-entiteiten bijgehouden welke gebruikers een promotie/evenement gewonnen hebben en bijgevolg van de promotie gebruik mogen maken. Het `received' attribuut geeft aan indien een gebruiker zijn prijs reeds heeft gebruikt. Ook deze data kan interessant zijn voor de officïele gebruikers om bij te houden hoeveel mensen gebruik maken van de georganiseerde evenementen/promoties.
+Tot slot wordt in UserEvent-entiteiten bijgehouden welke gebruikers een promotie/evenement gewonnen hebben en bijgevolg van de promotie gebruik mogen maken. Het 'received' attribuut geeft aan indien een gebruiker zijn prijs reeds heeft gebruikt. Ook deze data kan interessant zijn voor de officïele gebruikers om bij te houden hoeveel mensen gebruik maken van de georganiseerde evenementen/promoties.
 
 Het ontwerp van de backend database focust enerzijds op functionaliteit (alle functies die Triump wil aanbieden moeten namelijk mogelijk zijn met de backend) en anderzijds op het bijhouden van informatie voor statistieken. Indien Triump gebruikt zal worden als online marketing tool, is het belangrijk om statistieken te genereren over het gebruik van de toepassing om zo locatie-eigenaars aan te kunnen geven hoe ze Triump het best gebruiken. Bovendien zijn statistieken ook voor gebruikers interessant.
 
@@ -140,10 +140,12 @@ Figuur \ref{fig:Backend ER 2} toont het overige deel van de backend database. Wa
 	\label{fig:Backend ER 2}
 \end{figure}
 \subsection{Google Cloud Messaging}
-GCM wordt in Triump gebruikt als basis van het notificatie systeem. In de huidige implementatie ontvangt een gebruiker een notificatie indien hij of zij een event heeft gewonnen of indien er naar feedback wordt gevraagd. 
+GCM wordt in Triump gebruikt als basis van het notificatie systeem. In de huidige implementatie ontvangt een gebruiker een notificatie indien hij/zij een event heeft gewonnen of indien er om feedback wordt gevraagd. 
 Pijl (2) van figuur \ref{fig:algemene structuur backend} geeft aan dat er via GCM, vanop de backend servers, berichten worden gepusht naar de gebruikers.
+
 \subsection{Cron jobs}
-In het geval van de backend van Triump is het noodzakelijk om beloningen (rewards) na het aflopen van evenementen voor gebruikers te laten genereren. Hiervoor wordt gebruik gemaakt van een cron job, die geconfigureerd wordt in een Java servlet.
+In het geval van de backend van Triump is het noodzakelijk om beloningen (rewards) na het aflopen van evenementen voor gebruikers te laten genereren. Hiervoor wordt gebruik gemaakt van een cron job, die geconfigureerd wordt in een Java servlet. 
+
 \subsection{Backend API}
 \label{backend API}
 De backend API bestaat uit een reeks methodes die kunnen opgeroepen worden vanop het mobiele toestel of vanop de webinterface. Dit is weergegeven met pijlen (3) en (5) op figuur \ref{fig:algemene structuur backend}. Een groot deel van de methodes hebben als doel het ophalen van gegevens uit de database, deze gegevens te mappen op een klasse om vervolgens een object terug te geven als resultaat. Deze objecten worden vervolgens gemanipuleerd in de Android toepassing of de webinterface.
@@ -155,7 +157,7 @@ Een tweede soort API calls wordt gebruikt om entiteiten van de tabellen Group, E
 	\item De leden van een winnende groep worden geplaast in de UserEvent tabel.
 	\item Via het notificatiesysteem (zie sectie \ref{sec: GCE} Google Cloud Messaging) worden de winnende gebruikers verwittigd.
 \end{enumerate}
-Voor elke functie in de backend werd een algoritme uitgewerkt waarbij steeds rekening gehouden werd met efficiëntie (wegens het beperkt aantal atomaire operaties aangeboden door GCE, zie \ref{sec: GCE})
+Voor elke functie in de backend is een algoritme uitgewerkt waarbij steeds rekening gehouden wordt met efficiëntie (wegens het beperkt aantal atomaire operaties aangeboden door GCE, zie \ref{sec: GCE})
 Tot slot bevat de backend API nog methodes die gebruikers registeren, gebruikers authenticeren en communiceren met de GCM diensten. 
 
 \subsection{Foursquare API}
@@ -166,12 +168,12 @@ Het mobiele toestel zal rechtstreeks requests sturen naar de Foursquare API om b
 \subsection{Android applicatie}
 
 \subsubsection{Ontwerpkeuzes}
-Tijdens de ontwikkeling van Triump is er voor gekozen om te werken met de laatste nieuwe technologieën voor Android. Dat wil zeggen dat Triump ontwikkelt is met als doel volledig compatibel te zijn met de laatste versie van Android: 5.1 Lollipop. Triump is daarnaast wel nog steeds compatibel met alle Android versies vanaf 4.1 Jelly Bean. Hierdoor bereikt de app 87,5\% van alle Android toestellen \cite{market_share}. Oudere versies zullen niet ondersteund worden vermits deze slechts 12,5\% marktaandeel hebben en het te veel moeite zou kosten om te zorgen dat Triump ook op deze versies correct werkt en uitvoerig getest is.
-Android development gebeurd in Java, maar er zijn enkele Android-specifieke ontwerppatronen waarvan we gebruik gemaakt hebben. Onder andere voor het asynchroon laden van informatie, het opslaan van data en het opbouwen van efficiënte UI lijsten zijn er speciale ontwerppatronen in Android. Deze zullen in de volgende secties verder uitgelegd worden.
+Tijdens de ontwikkeling van Triump is er voor gekozen om te werken met de nieuwste technologieën voor Android. Dat houdt in dat Triump ontwikkelt is met als doel volledig compatibel te zijn met de laatste versie van Android: 5.1 Lollipop. Triump is daarnaast wel nog steeds compatibel met alle Android versies vanaf 4.1 Jelly Bean. Hierdoor bereikt de applicatie 87,5\% van alle Android toestellen \cite{market_share}. 
+Android development gebeurd in Java, maar er zijn enkele Android-specifieke ontwerppatronen waarvan er gebruik gemaakt wordt. Onder andere voor het asynchroon laden van informatie, het opslaan van data en het opbouwen van efficiënte UI lijsten zijn er speciale ontwerppatronen in Android. Deze zullen in de volgende secties verder uitgelegd worden.
 
 \subsubsection{Material Design}
 Triump is ontwikkeld voor Android Lollipop. Dit houdt in dat er gebruik gemaakt wordt van de Material Design Guidelines \cite{Material_Design}. Door de Material Design Guidelines te volgen is het makkelijker om een consistent look-and-feel te verkrijgen in de app die volledig in lijn ligt met de rest van het Android ecosysteem.
-Om de correcte implementatie van Material Design te garanderen, is er gebruik gemaakt van enkele externe bibliotheken. Deze bibliotheken bieden extra functionaliteit ten opzichte van de standaard Android API waardoor het makkelijker is het correcte design te verkrijgen. Deze bibliotheken zijn ook altijd backwards compatible met versies van Android lager dan Lollipop. Hierdoor wordt er een uniforme look verkregen op alle versies die de app ondersteunt.
+Om de correcte implementatie van Material Design te garanderen, is er gebruik gemaakt van enkele externe bibliotheken. Deze bibliotheken bieden extra functionaliteit ten opzichte van de standaard Android API waardoor het makkelijker is het correcte design te verkrijgen. Deze bibliotheken zijn steeds backwards compatible met eerdere versies van Android. Hierdoor wordt er een uniforme look verkregen op alle versies die de app ondersteunt.
 De gebruikt bibliotheken om Material Design te implementeren zijn:
 \begin{description}
 	\item[Material Design Library \cite{navasmdc}] Een bibliotheek die verschillende UI componenten bevat die voldoen aan de Material Design Guidelines zoals de Flat Buttons, Progress Bar Indicators en Switches.
@@ -188,18 +190,18 @@ RecyclerView maakt het grootste deel van de findViewById(int id) operaties overb
 Concreet leidt het nastreven van de laatste Android ontwerppatronen, zoals de RecyclerView, tot een efficiëntere applicatie.
 
 \subsubsection{Loaders}
-In Android gebeurd het tekenen en het interageren met de UI, net zoals bij de meeste andere GUI toolkits op de main thread. Dit betekent dat het inladen van data over bijvoorbeeld het netwerk of van de lokale opslag in een aparte thread moeten gebeuren. Is dit niet het geval, dan zal de volledige UI van de applicatie vast hangen tijdens het ophalen van de data. Dat is natuurlijk niet wenselijk vermits dit een slechte User Experience geeft.
-Daarom bevat Android het concept van Loaders. De bedoeling van Loaders is om data op een asynchrone manier in te laden (dus op een aparte thread) en de resultaten via een callback terug te sturen naar de main UI thread waar de resultaten dan getoond kunnen worden op het scherm. 
+In Android gebeurt het tekenen en het interageren met de UI, net zoals bij de meeste andere GUI toolkits op de main thread. Dit betekent dat het inladen van data over het netwerk of van de lokale opslag in een aparte thread moeten plaatsvinden. Is dit niet het geval, dan zal de volledige UI blokkeren want aanleiding kan geven tot een slechtere gebruikerservaring.
+Om deze redenen bevat Android het concept van Loaders. De bedoeling van Loaders is om data op een asynchrone manier in te laden (dus op een aparte thread) en de resultaten via een callback terug te sturen naar de main UI thread teneinde ze op het scherm weer te geven. 
 \newline\newline
 
-De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van de methodes die gevolgd werden bij het ontwikkelen van de Android applicatie van Triump. Gedurende het volledige ontwerpproces werd op deze manier gestreeft naar een zo efficiënt mogelijke applicatie, ontwikkelt volgens de meest recente standaarden. \cite{successapp}
+De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van de methodes die gevolgd werden bij het ontwikkelen van de Android applicatie. Gedurende het volledige ontwerpproces werd op deze manier gestreeft naar een zo efficiënt mogelijke applicatie, ontwikkelt volgens de meest recente standaarden. \cite{successapp}
 \subsection{Webinterface}
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.25]{webinterface_structuur}
-	\caption{Werking webinterface}
+	\includegraphics[scale=0.3]{webinterface_structuur}
+	\caption{Werking en opbouw webinterface. Zowel de backend datastore als de Foursquare API, via een postgreSQL databank, bieden data aan voor de webinterface. }
 	\label{fig:Webinterface}
 \end{figure}
-De manier waarop er wordt gewerkt wordt weergegeven in \ref{fig:Webinterface}. Men kan zien dat de server, die de website host, geconnecteerd is met een PostgreSQL databank (pijl 1). Deze maakt het mogelijk om gebruikers te laten inloggen met een eigen account, waarbij men ook extra data kan opslaan. Er werd reeds aangehaald dat gebruikers ook hier met Foursquare dienen in te loggen, dit gebeurt na het registreren. Zoals te zien op de figuur gebeurt alle communicatie met de Foursquare API vanop de webserver (pijl 2), niet door de computer van de gebruiker. Deze communicatie omvat het ophalen van gegevens van de gebruiker en locaties uit de databank van Foursquare.
-Op de figuur kan men ook zien dat er vanop de computer van de gebruiker wordt gecommuniceerd met de backend(GAE) van Triump.
+De opbouw en werkwijze van de webinterface wordt weergegeven in \ref{fig:Webinterface}. Men kan zien dat de server, die de website host, geconnecteerd is met een PostgreSQL databank (weergegeven met pijl (1)). Deze maakt het mogelijk om gebruikers te laten inloggen met een eigen account, waarbij men ook extra data kan opslaan. Er werd reeds aangehaald dat gebruikers ook hier met Foursquare dienen in te loggen, dit gebeurt na het registreren. Zoals te zien op de figuur gebeurt alle communicatie met de Foursquare API vanop de webserver (weergegeven met pijl (2)), niet door de computer van de gebruiker. Deze communicatie omvat het ophalen van locatie- en gebruikergegevens uit de databank van Foursquare.
+Daarnaast kan men op de figuur zien dat er vanop de computer van de gebruiker wordt gecommuniceerd met de backend (GAE) van Triump (weergegeven met pijl (3)). Deze verbinding maakt het mogelijk om vanop de webinterface nieuwe events aan te maken en groepen te beheren.
 
