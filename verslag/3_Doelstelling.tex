@@ -1,32 +1,63 @@
 
 \chapter{Doelstelling}
 
-Het doel van dit project is het ontwikkelen van de Triump applicatie. Eerst moet de applicatie conceptueel volledig uitgedacht worden, waarna de eigenlijke toepassing kan geschreven worden. Als onderdeel van de objectgeoriënteerde analyse worden de functionele en niet-functionele vereisten meegegeven. Andere onderdelen van het OOA of OOD proces worden niet in het verslag opgenomen.
-De doelstelling van deze Bachelerproef is het ontwikkelen van een locatie-gebaseerde sociale applicatie, gekoppeld met een online marketing tool. Concreet breiden we de functionaliteit uit van Swarm en Qustomer. Vernieuwend aan Triump is dat gebruikers groepen kunnen creëren en hiervan lid kunnen worden. Inchecken in een locatie gebeurt, naast de persoonlijke checkin, ook in naam van de groepen waarvan men lid is. Gebruikers kunnen bijvoorbeeld lid worden van een groep voor een studentvereniging, een vriendengroep,...
+De doelstelling van deze Bachelerproef is het ontwikkelen van een locatie-gebaseerde sociale applicatie, gekoppeld met een online marketing tool, genaamd Triump. Als onderdeel van de objectgeoriënteerde analyse worden de functionele en niet-functionele vereisten meegegeven.
+
+Concreet breiden we de functionaliteit uit van Swarm en Qustomer. Vernieuwend aan Triump is dat gebruikers groepen kunnen creëren en hiervan lid kunnen worden. Inchecken in een locatie gebeurt, naast de persoonlijke checkin, ook in naam van de groepen waarvan men lid is. 
+
 Voor elke locatie wordt een rangschikking bijgehouden aan de hand van de checkins van de verschillende groepen. Conceptueel biedt de applicatie de gebruikers een platform om in groep 'king of the hill' te spelen. Gebruikers kunnen lid worden van groepen, en in groepsverband inchecken. Hierdoor stijgen de groepen in de ranglijst van de locatie. Een locatie wordt veroverd door de groep die bovenaan de ranglijst staat.
 Bij 'king of the hill' is er 1 koning die bovenaan de heuvel staat, bij Triump is er 1 groep die voor een locatie bovenaan de ranglijst staat.
-Hiervoor wordt gebruik gemaakt van de Foursquare-API, die bovendien ook toelaat om Foursquare's locatiedatabase te ondersteunen.
+
 Los van het competitief karakter van deze applicatie (bv. verschillende studentenverenigingen die strijden om het ‘bezit’ van locaties in een studentenstad) kan deze applicatie ook ingezet worden als marketing tool, en dus de functionaliteit van Qustomer integreren.
-Triump biedt lokale ondernemingen namelijk de mogelijkheid om evenementen te organiseren. Aan een evenement kan men dan een begin- en eindstip, en een promotie toekennen. Gebruikers die bv. een hele week aan de top van een locatie (lokale onderneming) gestaan hebben kan men een promotie aanbieden. Daarnaast kunnen gewone gebruikers ook evenementen organiseren en deze koppelen aan een bepaalde locatie.
-Enerzijds zijn er dus de evenementen die gebruikers voor hun vrienden organiseren (zichtbaarheid van de evenementen is beperkt tot een aantal groepen) en anderzijds zijn er de 'officiële' evenementen waarbij promoties kunnen gewonnen worden (zichtbaar voor iedereen). 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.5]{functies}
-	\label{fig:functions}
-	\caption{De 3 basisfunctionaliteiten van Triump: inchecken op een locatie, \newline ranglijsten van groepen en evenementen/promoties}
-\end{figure}
+
+Triump biedt lokale ondernemingen namelijk de mogelijkheid om evenementen te organiseren. Aan een evenement kan men dan een begin- en eindstip, en een promotie toekennen. Gebruikers die bijvoorbeeld na een week aan de top van een locatie staan (of m.a.w. het meeste ingecheckt hebben) kunnen nadien beloond worden met een promotie. Daarnaast kunnen ook gewone gebruikers evenementen organiseren en deze koppelen aan een bepaalde locatie.
+Enerzijds zijn er dus de evenementen die gebruikers voor hun vrienden organiseren (zichtbaarheid van de evenementen is beperkt tot een aantal groepen) en anderzijds zijn er de 'officiële' evenementen waarbij promoties kunnen gewonnen worden (evenementen zijn zichtbaar voor iedereen). 
+
+
 \section{Niet-functionele vereisten}
 De niet-functionele vereisten stellen de kwaliteitseisen voor waaraan het project moet voldoen. Hiervoor focussen we ons voornamelijk op gebruiksvriendelijkheid, configureerbaarheid, robuustheid, schaalbaarheid en beschikbaarheid.
 Gebruiksvriendelijkheid en configureerbaarheid situeren zich op niveau van de applicatie (frontend). Voor mobiele applicaties is het belangrijk dat de applicatie intuïtief is en gemakkelijk in gebruik. Een belangrijk onderdeel van het ontwerp is het uitdenken van een gebruiksvriendelijke user interface. Configureerbaarheid is ook een belangrijk aspect. Triump zal gebruikt worden als marketing tool, en hierbij moet de gebruiker zelf kunnen beslissen hoe hij/zij hiermee in aanraking komt. Notificaties over nieuwe promoties moeten bijvoorbeeld uitgeschakeld kunnen worden indien de gebruiker hiervan niet op de hoogte wil gebracht worden. Daarnaast gaat de voorkeur uit naar een mobiele applicatie die de gebruiker naar wens kan personaliseren.
 Robuustheid, schaalbaarheid en beschikbaarheid situeren zich op niveau van de backend. Deze aspecten van het ontwerp zijn, hoewel niet zichtbaar voor de gebruiker, essentieel voor een aangenaam en continu gebruik van de applicatie.
 \section{Functionele vereisten}
-De functionele vereisten worden beschreven aan de hand van het ontwerpstraject van dit project.
-Het einddoel van dit project omvat een platform bestaande uit volgende componenten: 
+De functionele vereisten worden opgesplits in twee delen enerzijds zijn er algemene acties die de basis vormen van Triump en anderzijds acties die de gebruiksvriendelijkheid van de applicatie bevorderen. Onderstaande oplijsting geeft heel concreet en beknopt weer wat een gebruiker kan doen met Triump.
+
 \begin{itemize}
 	
-	\item Een server waarbij in een databank de verschillende gebruikers, groepen, evenementen en rangschikkingen bijgehouden worden. Daarnaast moet het mogelijk zijn om op deze server functies op te roepen. Via deze functies kan de vereiste data gemanipuleerd en verkregen worden. (bv. ranglijst van een bepaalde plaats, winnaars van een bepaald evenement, ...)
-	\item Een mobiele applicatie om groepen te beheren, in te checken op een bepaalde locatie, de rangschikkingen en evenementen te raadplegen, en promoties te claimen.
-	Traditionele gebruikers komen enkel in contact met Triump via de mobiele applicatie. Bijgevolg is de kern van dit project de mobiele applicatie.
-	\item Een webinterface voor de profesionele gebruikers. Evenementen kunnen aangemaakt worden door lokale ondernemingen na registratie op de website van Triump. Op deze manier kunnen enkel eigenaars van locaties officiële evenementen organiseren. Bovendien biedt de website een overzicht van reeds georganiseerde evenementen en promoties.
-	
+\subsubsection{Algemeen}
+\item Inloggen op de applicatie via een centraal account.
+
+\item Beheren van een groep: aanmaken van een groep door naam, beschrijving en type op te geven, accepteren van nieuwe leden en verwijderen van leden.   
+
+\item Bekijken van alle aanwezige groepen.
+
+\item Lidschap verzoek versturen naar een groep.
+
+\item Bekijken van alle leden van een groep.
+
+\item Bekijken van een profiel van een gebruiker.
+
+\item Bekijken van alle locaties.
+
+\item Inchecken op een locatie. Daarbij moet de checkin doorgepropageerd worden naar Foursquare. De checkin telt mee voor elke groep waartoe de gebruiker behoort. 
+
+\item Bekijken van de ranglijst van een locatie.
+
+\item Aanmaken van een evenemenemt op een locatie. Een gebruiker kan een naam, beschrijving, beloning, start- en eindtijdstip opgeven en groepen uitnodigen.
+
+\item Bekijken van alle evenementen waartoe de gebruiker is uitgenodigd.
+
+\item Bekijken van de ranglijst van een evenement.
+
+\item Aanmaken van een officieel evenement. Dit evenement moet zichtbaar zijn voor alle gebruikers.
+
+\item Bekijken van alle gewonnen evenementen en de behorende belong ophalen.
+
+\subsubsection{Gebruiksvriendelijkheid}
+
+\item Gebruiker ontvangt notificaties van belangrijke gebeurtenissen.
+
+\item Wijzigen van instellingen en privacybeheer. Een gebruiker kan de zichtbaarheid van zijn/haar profiel beperken. Een gebruiker kan notificaties.
+
+\item Gebruiker kan zijn/haar feedback en mening op een eenvoudige manier doorspelen via de applicatie.
+
 \end{itemize}
