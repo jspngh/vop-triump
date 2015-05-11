@@ -1,7 +1,9 @@
 
-\chapter{Technische uitvoering}
+\chapter{Architectuur}
 
-Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks interageren, en anderzijds is er de backend, verborgen voor iedere gebruiker. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In figuur \ref{fig:algemene structuur} wordt schematisch de structuur van Triump weergegeven. In onderstaande paragrafen wordt er dieper ingegaan op deze onderdelen. 
+Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks interageren, en anderzijds is er de backend, verborgen voor iedere gebruiker. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In figuur \ref{fig:algemene structuur} wordt schematisch de structuur van Triump weergegeven. Hierbij wordt per onderdeel de gebruikte technologie besproken. In dit hoofdstuk wordt er dieper ingegaan op de gebruikte technologieën van de verschillende onderdelen. In het volgend hoofdstuk wordt dan eerder gefocusd op het specifiek ontwerp en implementatie van de verschillende onderdelen.
+
+%nieuwe figuur
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.3]{techUitvoering_abstract}
@@ -11,16 +13,6 @@ Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er d
 \end{figure}
 
 \section{Backend}
-
-Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de verschillende onderdelen van de backend en van de interacties tussen de backend en de frontend. De pijlen aangeduid in figuur \ref{fig:algemene structuur backend} worden in de komende secties verklaard.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.3]{backend_algemene_structuur}
-	\caption{Overzicht interactie frontend-backend}
-	\label{fig:algemene structuur backend}
-
-\end{figure}
 
 \subsection{Google Cloud Endpoints}
 \label{sec: GCE}
@@ -34,9 +26,7 @@ Aangezien GCE nog steeds gehost wordt door een Googles App Engine instantie blij
 	\label{fig:Overzicht Google Cloud Endpoints}
 \end{figure}
 
-Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Een probleem zoals schaalbaarheid wordt via dynamische rekenkrachtallocatie opgelost. Daarnaast is de backend van Triump ook altijd bereikbaar aangezien GAE een hoge graad van permanentie van zijn servers verzekert. 
-
-Desalniettemin brengt het gebruik van GAE ook enkele nadelen met zich mee. De voornaamste zijn de restricties op het aantal lees- en schrijfoperaties per dag, de sterk variërende duratie van lees- en schrijfoperaties en de afhankelijkheid van een externe organisatie. De restricties op het aantal operaties zijn enkel aanwezig bij gratis gebruik van GAE en kunnen geremediëerd worden door te betalen voor de diensten van GAE.
+Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Een probleem zoals schaalbaarheid wordt via dynamische rekenkrachtallocatie opgelost. Daarnaast is de backend van Triump ook altijd bereikbaar aangezien GAE een hoge graad van permanentie van zijn servers verzekert. Desalniettemin brengt het gebruik van GAE ook enkele nadelen met zich mee. De voornaamste zijn de restricties op het aantal lees- en schrijfoperaties per dag, de sterk variërende duratie van lees- en schrijfoperaties en de afhankelijkheid van een externe organisatie. De restricties op het aantal operaties zijn enkel aanwezig bij gratis gebruik van GAE en kunnen geremediëerd worden door te betalen voor de diensten van GAE.
 Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit probleem tijdens de ontwikkelfase opgelost worden door het aantal operaties per dag van 50.000 naar 1.000.000 te verhogen. Een groot aantal operaties is vereist omdat elke atomaire lees/schrijf operatie wordt meegerekend. Hierdoor neemt het aantal leesoperaties/schrijfoperaties bij het uitvoeren van enkele complexe operaties zeer snel toe. De duratie van operaties op de GAE kan beperkt worden door te investeren in snellere apparatuur (met GAE krediet). Hiervoor werd tijdens de ontwikkeling niet voor gekozen.
 
 \subsubsection{Datastore~\cite{Google_Datastore}}
@@ -48,19 +38,69 @@ Aangezien de database schemaloos is en bijgevolg bijvoorbeeld geen types zal con
 
 Google Cloud Messaging (GCM) voor Android is een dienst die het mogelijk maakt data (tot 4kB) te versturen van backend servers naar Android applicaties onder de vorm van notificaties. De GCM servers staan in voor de connectie naar het mobiele toestel en een correcte aflevering van de berichten.
 
-GCM wordt in Triump gebruikt als basis van het notificatie systeem. In de huidige implementatie ontvangt een gebruiker een notificatie indien hij of zij een event heeft gewonnen of indien er naar feedback wordt gevraagd. 
-Pijl (2) van figuur \ref{fig:algemene structuur backend} geeft aan dat er via GCM, vanop de backend servers, berichten worden gepusht naar de gebruikers.
 \subsubsection{Cron jobs~\cite{Google_Cron_Jobs}}
 
-Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend. In het geval van de backend van Triump is het noodzakelijk om beloningen (rewards) na het aflopen van evenementen voor gebruikers te laten genereren. Hiervoor wordt gebruik gemaakt van een cron job, die geconfigureerd wordt in een java servlet.\\\\
+Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend.\\\\
 
 
-In de voorgaande paragrafen werden de gehanteerde technologieën kort toegelicht. In wat volgt wordt het ontwerp en de implementatie van de backend database en backend API, gebruikmakend van deze technologieën, beschreven. In de laatste paragrafen van deze sectie wordt het tweede deel van de backend besproken, nl. de Foursquare API.
-  
-\subsection{Ontwerp Backend}
+\subsection{Foursquare API}
+\label{Foursquare API}
+Triump is een locatie-gebaseerde applicatie. De locaties worden bekomen via de Foursquare API en locatiedatabase \cite{FS_API_website}. Naast locatie gegevens kan er ook informatie van gebruikers zoals namen, geboortedata en profielfoto's opgevraagd worden. Het grote voordeel van de Foursquare API is dat locatiedata niet door de gebruikers zelf moet gegeneerd worden. Bovendien komt Triump, door deel van de functionaliteit van Swarm en Foursquare over te nemen, bij de gebruikers als vertrouwd over; een deel van de bestaande userbase kan overgenomen worden. Het gebruikte mechanisme in de Foursquare API is zeer vanzelfsprekend. Alle gegevens, opgeslaan in de database, zijn benaderbaar via een RESTful (Representational State Transfer) Uniform Resource Locator (URL). De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Vervolgens zal de API Endpoint de gevraagde informatie in Javascript Object Notation (JSON) formaat terugzenden. JSON is een gestandaardiseerd gegevensformaat. 
+Het werken met de API brengt wel enkele nadelen met zich mee.
+Allereerst wordt Triump hierdoor opnieuw afhankelijk van een externe organisatie (naast Google). Indien Foursquare beslist zijn open database te sluiten moet het ontwerp van Triump volledig herzien worden. Daarnaast wordt van commerciële applicaties verwacht dat ze reclame maken voor Foursquare door bijvoorbeeld het Foursquare logo op te nemen in de layout.  Een tweede nadeel is dat de dataopslag verdeeld wordt over twee databases. Enerzijds de Google Cloud Datastore waar de data over groepen en checkins worden bijgehouden en anderzijds de Foursquare Datastore waar de locatie en gebruikergegevens zijn opgeslaan. Een laatste nadeel is dat locaties verplicht geregistreerd moeten zijn bij Foursquare teneinde zichtbaar te zijn op Triump. Indien locaties intern zouden aangemaakt en opgeslaan worden zouden de eerste twee nadelen verholpen zijn. Deze voor de hand liggende oplossing wordt echter niet toegepast aangezien dit zou impliceren dat Triump vanaf nul zijn locatiedatabase zou moeten vullen. Hierdoor zouden gebruikers ontmoedigd worden Triump boven Foursquare te kiezen. Daarnaast propageert Triump een checkin door naar Foursquare waardoor we de functionaliteiten ervan uitbreiden. Het laatste probleem wordt opgelost door het voorzien van een webinterface. Deze interface voorziet de mogelijkheid aan eigenaars om locaties te registreren. Meer uitleg over de website volgt hieronder.
+
+Er dient opgemerkt te worden dat Google met 'Google Places' gelijkaardige diensten biedt. Gebruik van deze API heeft dezelfde voor- en nadelen als de Foursquare API maar met de bijkomende beperking dat het aantal geregistreerde locaties veel kleiner is.
+
+\section{Frontend}
+\subsection{Android applicatie}
+\subsubsection{Waarom Android?}
+
+Bij de ontwikkeling van de Triump applicatie is er gekozen voor Android als mobiel platform boven iOS of Windows Phone. Android heeft als voordeel dat het een groot marktaandeel heeft (76.6\% van de smartphones wereldwijd draait op Android \cite{marketshare}) en er dus een groot publiek bereikt kan worden met de applicatie. Dit maakt dat Android als eerste platform de beste keuze is. De ontwikkeltools voor iOS en Windows Phone zijn bovendien niet cross-platform. Om apps te ontwikkelen voor iOS dient men over XCode te beschikken (enkel beschikbaar op Mac OS X) en om Windows Phone applicaties te ontwikkelen maakt men gebruik van Visual Studio (enkel beschikbaar op Windows). Vermits het team bestaat uit 1 Windows, 1 Linux en 2 Mac gebruikers, was het noodzakelijk om een cross-platform ontwikkelomgeving te hebben.
+\subsubsection{Ontwikkelomgeving: Android Studio}
+% vergelijking vs Eclipse
+Vroeger was Eclipse de standaard ontwikkelomgeving (IDE) voor Android. Hierbij werd de standaard Eclipse installatie uitgebreid met de Android Developer Toolkit (ADT) plugin om Eclipse beter geschikt te maken voor Android Development. Op 16 mei 2013 stelde Google de nieuwste IDE voor Android voor: Android Studio. Deze IDE is gebaseerd op IntelliJ IDEA en biedt veel verbeteringen ten opzichte van Eclipse. In het begin waren er echter nog veel problemen met Android Studio waardoor veel mensen bij Eclipse bleven. Bij de aanvang van de ontwikkeling van Triump is er toch gekozen voor Android Studio omdat de meeste problemen toen reeds opgelost waren.
+De voordelen van Android Studio zijn legio: betere code generatie en auto-complete dan Eclipse, zeer goede integratie met de Android SDK en live previews in de layout builder. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{android_studio}
+	\caption{Een typische workflow in Android Studio}
+	\label{fig:Android Studio Workflow}
+\end{figure}
+
+\subsection{Webinterface}
+\label{Webinterface}
+\subsubsection{Doel}
+Voor een aantal taken is een smartphone niet helemaal geschikt. Zulke taken zijn o.a. het beheren van groepen en het aanmaken van promoties.
+Deze taken gebeuren met bepaalde regelmaat en zijn gemakkelijker op een groter scherm uit te voeren. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten als online marketing strategie, zullen deze taken willen uitvoeren via een overzichtelijke webinterface. Daarom is Triump uitgebreid met een webinterface die bereikbaar is via de publieke website van Triump.
+Deze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. Op de site staat informatie over het doel van Triump, en wordt er een link voorzien zodat toekomstige gebruikers de applicatie kunnen downloaden.\\
+Op onze website kunnen gebruikers net als in de Android-applicatie inloggen met Foursquare. Het is de bedoeling dat het registreren van een Foursquare-locatie steeds via de website gebeurd, net als het aanmaken van promoties door een eigenaar van een registreerde locatie. Het opleggen van registratie van een locatie door de eigenaar ervan moet ervoor zorgen dat er geen valse promoties worden opgezet. Zonder registratie zou immers iemand een promotie kunnen aanmaken voor een bepaalde locatie zonder dat deze ook daadwerkelijk wordt gegeven.
+
+\subsubsection{Django-framework}
+Bij het maken van een website zijn er verschillende keuzes.
+Eerst en vooral is er de keuze of er gebruik wordt gemaakt van een bestaand framework, zoals Ruby on Rails, ASP.NET en Django, of dat men zelf de nodige functionaliteit implementeert met bijvoorbeeld PHP.
+Bestaande frameworks bieden ruim voldoende functionaliteit aan om de Triump website te verwezenlijken. De frameworks zijn bovendien reeds geoptimaliseerd en bevatten functies zoals een standaardmanier om gebruikers veilig in te loggen. 
+Daarnaast moet men nog kiezen om ofwel de site bij een hosting-dienst te plaatsen, ofwel zelf de site te hosten op een eigen pc. Gebruik maken van een bestaande hosting-dienst, is het eenvoudigst. Voor een vast bedrag, per maand of jaar, wordt de website geplaatst op de servers van de hosting-dienst. Deze neemt extra moeilijkheden, zoals het instellen en onderhouden van DNS-servers op zich.
+Op de site worden gebruikers aangemaakt waarbij bepaalde informatie wordt opgeslaan, zoals hun Foursquare-identiteit, zodat de gebruiker maar 1 keer met Foursquare moet inloggen. Dit gebeurt aan de hand van een DBMS-systeem. \\
+
+Als framework voor de webinterface werd gekozen voor Django, een framework geschreven in Python. Django maakt het mogelijk om op relatief korte tijd toch een dynamische website te bouwen.
+Een voordeel van het werken met Django is dat er hosting-diensten bestaan die zich specialiseren in het hosten van Django-projecten. Wij kozen voor zo een dienst, namelijk http://djangoeurope.com.
+Bij deze dienst was er de mogelijkheid te kiezen uit verschillende databasemanagment systemen. Er werd gekozen voor PostgreSQL: een open source DBMS waar reeds mee gewerkt werd tijdens het vak "Databanken".
+Dez communicatie verloopt via Javascript en dient om bijvoorbeeld het organiseren van een evenement mogelijk te maken.Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken. Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript. Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. Op sommige computers is Javascript namelijk niet is geïnstalleerd. Het 'client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf. Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Deze code wordt 'server-side' uitgevoerd.
 
 
-\subsubsection{Database}
+\chapter{Implementatie}
+Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de verschillende onderdelen van de backend en van de interacties tussen de backend en de frontend. De pijlen aangeduid in figuur \ref{fig:algemene structuur backend} worden in de volgende secties verklaard.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{backend_algemene_structuur}
+	\caption{Overzicht interactie frontend-backend}
+	\label{fig:algemene structuur backend}
+	
+\end{figure}
+\section{Backend}
+\subsection{Database}
 Zoals reeds aangegeven is GAE Datastore schemaloos. Bijgevolg wordt er geen enkele restrictie opgelegd aan de databank over de opbouw en de structuur van zijn entiteiten. Toch is de backend databank gebaseerd op de principes van een relationele databank. GAE Datastore liet echter toe om bepaalde operaties zeer efficiënt aan te pakken. Alle operaties in de GAE Datastore worden namelijk geprogrammeerd door de ontwikkelaar in Java.
 Figuur \ref{fig:Backend ER} toont een ER diagram van de backend database.  De belangrijkste entiteiten van deze database zijn User, Event, Venue, Group en Checkin. In de volgende paragraaf wordt de structuur van de database besproken. 
 
@@ -98,54 +138,31 @@ Figuur \ref{fig:Backend ER 2} toont het overige deel van de backend database. Wa
 	\caption{Entity Relation diagram van het administratieve deel van de backend database}
 	\label{fig:Backend ER 2}
 \end{figure}
-
-\subsubsection{Backend API}
+\subsection{Google Cloud Messaging}
+GCM wordt in Triump gebruikt als basis van het notificatie systeem. In de huidige implementatie ontvangt een gebruiker een notificatie indien hij of zij een event heeft gewonnen of indien er naar feedback wordt gevraagd. 
+Pijl (2) van figuur \ref{fig:algemene structuur backend} geeft aan dat er via GCM, vanop de backend servers, berichten worden gepusht naar de gebruikers.
+\subsection{Cron jobs}
+In het geval van de backend van Triump is het noodzakelijk om beloningen (rewards) na het aflopen van evenementen voor gebruikers te laten genereren. Hiervoor wordt gebruik gemaakt van een cron job, die geconfigureerd wordt in een Java servlet.
+\subsection{Backend API}
 \label{backend API}
 De backend API bestaat uit een reeks methodes die kunnen opgeroepen worden vanop het mobiele toestel of vanop de webinterface. Dit is weergegeven met pijlen (3) en (5) op figuur \ref{fig:algemene structuur backend}. Een groot deel van de methodes hebben als doel het ophalen van gegevens uit de database, deze gegevens te mappen op een klasse om vervolgens een object terug te geven als resultaat. Deze objecten worden vervolgens gemanipuleerd in de Android toepassing of de webinterface.
 
 Een tweede soort API calls wordt gebruikt om entiteiten van de tabellen Group, Event, UserGroup en UserEvent aan te maken of te wijzigen. Een van deze methoden is generateRewards(). De methode generateRewards() wordt vanuit een Cron Job (zie sectie \ref{sec: GCE} Cron jobs) ieder kwartier opgeroepen. Prinicpieel werkt de functie als volgt:
 \begin{enumerate}
-  \item Controleer of er het afgelopen kwartier een event is beëindigd.
-  \item Bereken voor elk beëndigd event welke groepen gewonnen zijn a.d.h.v. de tijdstippen van de Checkin entiteiten. Hierbij wordt er rekening gehouden met participatievoorwaarden zoals het minimaal en maximaal aantal leden van een groep.
-  \item De leden van een winnende groep worden geplaast in de UserEvent tabel.
-  \item Via het notificatiesysteem (zie sectie \ref{sec: GCE} Google Cloud Messaging) worden de winnende gebruikers verwittigd.
+	\item Controleer of er het afgelopen kwartier een event is beëindigd.
+	\item Bereken voor elk beëndigd event welke groepen gewonnen zijn a.d.h.v. de tijdstippen van de Checkin entiteiten. Hierbij wordt er rekening gehouden met participatievoorwaarden zoals het minimaal en maximaal aantal leden van een groep.
+	\item De leden van een winnende groep worden geplaast in de UserEvent tabel.
+	\item Via het notificatiesysteem (zie sectie \ref{sec: GCE} Google Cloud Messaging) worden de winnende gebruikers verwittigd.
 \end{enumerate}
 Voor elke functie in de backend werd een algoritme uitgewerkt waarbij steeds rekening gehouden werd met efficiëntie (wegens het beperkt aantal atomaire operaties aangeboden door GCE, zie \ref{sec: GCE})
 Tot slot bevat de backend API nog methodes die gebruikers registeren, gebruikers authenticeren en communiceren met de GCM diensten. 
 
 \subsection{Foursquare API}
-\label{Foursquare API}
+Het mobiele toestel zal rechtstreeks requests sturen naar de Foursquare API om bijvoorbeeld een lijst te krijgen van dichtbijzijnde locaties of om informatie van een locatie op te vragen. Het gebruik van de API wordt getoond in figuur \ref{fig:algemene structuur backend} via pijl (1).
 
-Triump is een locatie-gebaseerde applicatie. De locaties worden bekomen via de Foursquare API en locatiedatabase \cite{FS_API_website}. Naast locatie gegevens kan er ook informatie van gebruikers zoals namen, geboortedata en profielfoto's opgevraagd worden.  Het mobiele toestel zal rechtstreeks requests sturen naar de Foursquare API om bijvoorbeeld een lijst te krijgen van dichtbijzijnde locaties of om informatie van een locatie op te vragen. Het gebruik van de API wordt getoond in figuur \ref{fig:algemene structuur backend} via pijl (1).
 
-Het grote voordeel van de Foursquare API is dat locatiedata niet door de gebruikers zelf moet gegeneerd worden. Bovendien komt Triump, door deel van de functionaliteit van Swarm en Foursquare over te nemen, bij de gebruikers als vertrouwd over; een deel van de bestaande userbase kan overgenomen worden.
-Het werken met de API brengt wel enkele nadelen met zich mee.
-Allereerst wordt Triump hierdoor opnieuw afhankelijk van een externe organisatie (naast Google). Indien Foursquare beslist zijn open database te sluiten moet het ontwerp van Triump volledig herzien worden. Daarnaast wordt van commerciële applicaties verwacht dat ze reclame maken voor Foursquare door bijvoorbeeld het Foursquare logo op te nemen in de layout.  Een tweede nadeel is dat de dataopslag verdeeld wordt over twee databases. Enerzijds de Google Cloud Datastore waar de data over groepen en checkins worden bijgehouden en anderzijds de Foursquare Datastore waar de locatie en gebruikergegevens zijn opgeslaan. Een laatste nadeel is dat locaties verplicht geregistreerd moeten zijn bij Foursquare teneinde zichtbaar te zijn op Triump.
-
-Indien locaties intern zouden aangemaakt en opgeslaan worden zouden de eerste twee nadelen verholpen zijn. 
-Deze voor de hand liggende oplossing wordt echter niet toegepast aangezien dit zou impliceren dat Triump vanaf nul zijn locatiedatabase zou moeten vullen. Hierdoor zouden gebruikers ontmoedigd worden Triump boven Foursquare te kiezen. Daarnaast propageert Triump een checkin door naar Foursquare waardoor we de functionaliteiten ervan uitbreiden. 
-
-Het laatste probleem wordt opgelost door het voorzien van een webinterface. Deze interface voorziet de mogelijkheid aan eigenaars om locaties te registreren. Meer uitleg over de website volgt hieronder.
-
-Er dient opgemerkt te worden dat Google met 'Google Places' gelijkaardige diensten biedt. Gebruik van deze API heeft dezelfde voor- en nadelen als de Foursquare API maar met de bijkomende beperking dat het aantal geregistreerde locaties veel kleiner is.
-
-Het mechanisme gebruik in de Foursquare API is zeer vanzelfsprekend. Alle gegevens, opgeslaan in de database, zijn benaderbaar via een RESTful (Representational State Transfer) Uniform Resource Locator (URL). De frontend applicatie dient een connectie over HTTPS te starten met een Foursquare API Endpoint via de gewenste URL. Vervolgens zal de API Endpoint de gevraagde informatie in Javascript Object Notation (JSON) formaat terugzenden. JSON is een gestandaardiseerd gegevensformaat. 
 \section{Frontend}
-\subsection{Android applicatie}
-\subsubsection{Waarom Android?}
-
-Bij de ontwikkeling van de Triump applicatie is er gekozen voor Android als mobiel platform boven iOS of Windows Phone. Android heeft als voordeel dat het een groot marktaandeel heeft (76.6\% van de smartphones wereldwijd draait op Android \cite{marketshare}) en er dus een groot publiek bereikt kan worden met de applicatie. Dit maakt dat Android als eerste platform de beste keuze is. De ontwikkeltools voor iOS en Windows Phone zijn bovendien niet cross-platform. Om apps te ontwikkelen voor iOS dient men over XCode te beschikken (enkel beschikbaar op Mac OS X) en om Windows Phone applicaties te ontwikkelen maakt men gebruik van Visual Studio (enkel beschikbaar op Windows). Vermits het team bestaat uit 1 Windows, 1 Linux en 2 Mac gebruikers, was het noodzakelijk om een cross-platform ontwikkelomgeving te hebben.
-\subsubsection{Ontwikkelomgeving: Android Studio}
-% vergelijking vs Eclipse
-Vroeger was Eclipse de standaard ontwikkelomgeving (IDE) voor Android. Hierbij werd de standaard Eclipse installatie uitgebreid met de Android Developer Toolkit (ADT) plugin om Eclipse beter geschikt te maken voor Android Development. Op 16 mei 2013 stelde Google de nieuwste IDE voor Android voor: Android Studio. Deze IDE is gebaseerd op IntelliJ IDEA en biedt veel verbeteringen ten opzichte van Eclipse. In het begin waren er echter nog veel problemen met Android Studio waardoor veel mensen bij Eclipse bleven. Bij de aanvang van de ontwikkeling van Triump is er toch gekozen voor Android Studio omdat de meeste problemen toen reeds opgelost waren.
-De voordelen van Android Studio zijn legio: betere code generatie en auto-complete dan Eclipse, zeer goede integratie met de Android SDK en live previews in de layout builder. 
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{android_studio}
-	\caption{Een typische workflow in Android Studio}
-	\label{fig:Android Studio Workflow}
-\end{figure}
+\subsection{Android}
 
 \subsubsection{Ontwerpkeuzes}
 Tijdens de ontwikkeling van Triump is er voor gekozen om te werken met de laatste nieuwe technologieën voor Android. Dat wil zeggen dat Triump ontwikkelt is met als doel volledig compatibel te zijn met de laatste versie van Android: 5.1 Lollipop. Triump is daarnaast wel nog steeds compatibel met alle Android versies vanaf 4.1 Jelly Bean. Hierdoor bereikt de app 87,5\% van alle Android toestellen \cite{market_share}. Oudere versies zullen niet ondersteund worden vermits deze slechts 12,5\% marktaandeel hebben en het te veel moeite zou kosten om te zorgen dat Triump ook op deze versies correct werkt en uitvoerig getest is.
@@ -156,9 +173,9 @@ Triump is ontwikkeld voor Android Lollipop. Dit houdt in dat er gebruik gemaakt 
 Om de correcte implementatie van Material Design te garanderen, is er gebruik gemaakt van enkele externe bibliotheken. Deze bibliotheken bieden extra functionaliteit ten opzichte van de standaard Android API waardoor het makkelijker is het correcte design te verkrijgen. Deze bibliotheken zijn ook altijd backwards compatible met versies van Android lager dan Lollipop. Hierdoor wordt er een uniforme look verkregen op alle versies die de app ondersteunt.
 De gebruikt bibliotheken om Material Design te implementeren zijn:
 \begin{description}
-\item[Material Design Library \cite{navasmdc}] Een bibliotheek die verschillende UI componenten bevat die voldoen aan de Material Design Guidelines zoals de Flat Buttons, Progress Bar Indicators en Switches.
-\item[FloatingActionButton \cite{floatingactionbutton}] Een bibliotheek die de Floating Action Button van de Material Design Specification implementeert en toelaat om die toe te voegen aan een RecyclerView (zie verder).
-\item[MaterialEditText \cite{materialedittext}] Een bibliotheek die een consistent implementatie biedt voor tekstvelden in formulieren. De bibliotheek voorziet verschillende functies voor de tekstvelden zoals maximum lengte, hints, iconen en aangepaste kleuren.
+	\item[Material Design Library \cite{navasmdc}] Een bibliotheek die verschillende UI componenten bevat die voldoen aan de Material Design Guidelines zoals de Flat Buttons, Progress Bar Indicators en Switches.
+	\item[FloatingActionButton \cite{floatingactionbutton}] Een bibliotheek die de Floating Action Button van de Material Design Specification implementeert en toelaat om die toe te voegen aan een RecyclerView (zie verder).
+	\item[MaterialEditText \cite{materialedittext}] Een bibliotheek die een consistent implementatie biedt voor tekstvelden in formulieren. De bibliotheek voorziet verschillende functies voor de tekstvelden zoals maximum lengte, hints, iconen en aangepaste kleuren.
 \end{description}
 
 \subsubsection{RecyclerView}
@@ -175,36 +192,13 @@ Daarom bevat Android het concept van Loaders. De bedoeling van Loaders is om dat
 \newline\newline
 
 De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van de methodes die gevolgd werden bij het ontwikkelen van de Android applicatie van Triump. Gedurende het volledige ontwerpproces werd op deze manier gestreeft naar een zo efficiënt mogelijke applicatie, ontwikkelt volgens de meest recente standaarden. \cite{successapp}
-
 \subsection{Webinterface}
-\label{Webinterface}
-\subsubsection{Doel}
-Voor een aantal taken is een smartphone niet helemaal geschikt. Zulke taken zijn o.a. het beheren van groepen en het aanmaken van promoties.
-Deze taken gebeuren met bepaalde regelmaat en zijn gemakkelijker op een groter scherm uit te voeren. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten als online marketing strategie, zullen deze taken willen uitvoeren via een overzichtelijke webinterface. Daarom is Triump uitgebreid met een webinterface die bereikbaar is via de publieke website van Triump.
-Deze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. Op de site staat informatie over het doel van Triump, en wordt er een link voorzien zodat toekomstige gebruikers de applicatie kunnen downloaden.\\
-Op onze website kunnen gebruikers net als in de Android-applicatie inloggen met Foursquare. Het is de bedoeling dat het registreren van een Foursquare-locatie steeds via de website gebeurd, net als het aanmaken van promoties door een eigenaar van een registreerde locatie. Het opleggen van registratie van een locatie door de eigenaar ervan moet ervoor zorgen dat er geen valse promoties worden opgezet. Zonder registratie zou immers iemand een promotie kunnen aanmaken voor een bepaalde locatie zonder dat deze ook daadwerkelijk wordt gegeven.
-
-\subsubsection{Django-framework}
-Bij het maken van een website zijn er verschillende keuzes.
-Eerst en vooral is er de keuze of er gebruik wordt gemaakt van een bestaand framework, zoals Ruby on Rails, ASP.NET en Django, of dat men zelf de nodige functionaliteit implementeert met bijvoorbeeld PHP.
-Bestaande frameworks bieden ruim voldoende functionaliteit aan om de Triump website te verwezenlijken. De frameworks zijn bovendien reeds geoptimaliseerd en bevatten functies zoals een standaardmanier om gebruikers veilig in te loggen. 
-Daarnaast moet men nog kiezen om ofwel de site bij een hosting-dienst te plaatsen, ofwel zelf de site te hosten op een eigen pc. Gebruik maken van een bestaande hosting-dienst, is het eenvoudigst. Voor een vast bedrag, per maand of jaar, wordt de website geplaatst op de servers van de hosting-dienst. Deze neemt extra moeilijkheden, zoals het instellen en onderhouden van DNS-servers op zich.
-Op de site worden gebruikers aangemaakt waarbij bepaalde informatie wordt opgeslaan, zoals hun Foursquare-identiteit, zodat de gebruiker maar 1 keer met Foursquare moet inloggen. Dit gebeurt aan de hand van een DBMS-systeem. \\
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.25]{webinterface_structuur}
 	\caption{Werking webinterface}
 	\label{fig:Webinterface}
 \end{figure}
-Als framework voor de webinterface werd gekozen voor Django, een framework geschreven in Python. Django maakt het mogelijk om op relatief korte tijd toch een dynamische website te bouwen.
-Een voordeel van het werken met Django is dat er hosting-diensten bestaan die zich specialiseren in het hosten van Django-projecten. Wij kozen voor zo een dienst, namelijk http://djangoeurope.com.
-Bij deze dienst was er de mogelijkheid te kiezen uit verschillende databasemanagment systemen. Er werd gekozen voor PostgreSQL: een open source DBMS waar wij reeds mee hebben gewerkt tijdens het vak "Databanken".
-De manier waarop er wordt gewerkt wordt weergegeven in \ref{fig:Webinterface}. Men kan zien dat de server die de website host geconnecteerd is met een PostgreSQL databank (pijl 1). Deze maakt het mogelijk om gebruikers te laten inloggen met een eigen account, waarbij men ook extra data kan opslaan. Er werd reeds aangehaald dat gebruikers ook hier met Foursquare dienen in te loggen, dit gebeurt na het registreren. Zoals te zien op de figuur gebeurt alle communicatie met de Foursquare API vanop de webserver (pijl 2), niet door de computer van de gebruiker. Deze communicatie omvat het ophalen van gegevens van de gebruiker en locaties uit de databank van Foursquare.
+De manier waarop er wordt gewerkt wordt weergegeven in \ref{fig:Webinterface}. Men kan zien dat de server, die de website host, geconnecteerd is met een PostgreSQL databank (pijl 1). Deze maakt het mogelijk om gebruikers te laten inloggen met een eigen account, waarbij men ook extra data kan opslaan. Er werd reeds aangehaald dat gebruikers ook hier met Foursquare dienen in te loggen, dit gebeurt na het registreren. Zoals te zien op de figuur gebeurt alle communicatie met de Foursquare API vanop de webserver (pijl 2), niet door de computer van de gebruiker. Deze communicatie omvat het ophalen van gegevens van de gebruiker en locaties uit de databank van Foursquare.
 Op de figuur kan men ook zien dat er vanop de computer van de gebruiker wordt gecommuniceerd met de backend(GAE) van Triump.
-Deze communicatie verloopt via Javascript en dient om bijvoorbeeld het organiseren van een evenement mogelijk te maken.
-Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken.
-Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript.
-Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. 
-Op sommige computers is Javascript namelijk niet is geïnstalleerd. Het 'client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf.
-Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Deze code wordt 'server-side' uitgevoerd.
 
