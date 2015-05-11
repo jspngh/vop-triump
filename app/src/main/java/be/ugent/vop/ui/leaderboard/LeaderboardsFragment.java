@@ -28,10 +28,11 @@ import be.ugent.vop.R;
 import be.ugent.vop.backend.loaders.LeaderboardLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 import be.ugent.vop.ui.venue.RankingAdapter;
+import be.ugent.vop.ui.venue.SizeSelectorDialog;
 import be.ugent.vop.utils.RangeSeekBar;
 
 
-public class LeaderboardsFragment extends Fragment{
+public class LeaderboardsFragment extends Fragment {
 
     /**
      * The fragment argument representing the section number for this
@@ -52,6 +53,9 @@ public class LeaderboardsFragment extends Fragment{
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     public LeaderboardsFragment(){}
 
+    private int customMin;
+    private int customMax;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,8 +70,6 @@ public class LeaderboardsFragment extends Fragment{
 
         context = getActivity();
         activity = getActivity();
-
-
 
         groupTypeSpinner = (Spinner) rootView.findViewById(R.id.spinnerGroupType);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -94,7 +96,13 @@ public class LeaderboardsFragment extends Fragment{
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selected = (String) parentView.getSelectedItem();
                 Log.d("VenueFragment", "selected group size: "+selected);
-                if(!currentGroupSize.equals(selected)) {
+
+                if(parentView.getSelectedItemPosition() == 4){
+                    currentGroupSize = selected;
+                    SizeSelectorDialog dialog = new SizeSelectorDialog();
+                    dialog.setListener(mSizeSelectorListener);
+                    dialog.show(getFragmentManager(), "sizeselector");
+                }else if(!currentGroupSize.equals(selected)) {
                     currentGroupSize = selected;
                     getLoaderManager().restartLoader(0, null, mLeaderboardLoaderListener);
                 }
@@ -151,10 +159,9 @@ public class LeaderboardsFragment extends Fragment{
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("LeaderboardsFragment", "onCreateLoader");
-            String groupType = groupTypeSpinner.getSelectedItem().toString();
 
-            if(groupTypeSpinner.getSelectedItemPosition() == 0)
-                groupType = "All";
+            int groupTypePos = groupTypeSpinner.getSelectedItemPosition();
+            String groupType = getResources().getStringArray(R.array.groupType_options)[groupTypePos];
 
             int groupSize = groupSizeSpinner.getSelectedItemPosition();
 
@@ -174,6 +181,10 @@ public class LeaderboardsFragment extends Fragment{
                 case 3: // Large
                     minSize = 51;
                     maxSize = Integer.MAX_VALUE;
+                    break;
+                case 4: // Custom
+                    minSize = customMin;
+                    maxSize = customMax;
                     break;
             }
             LeaderboardLoader loader = new LeaderboardLoader(context, minSize, maxSize, groupType);
@@ -211,6 +222,15 @@ public class LeaderboardsFragment extends Fragment{
         @Override
         public void onLoaderReset(Loader<List<RankingBean>> loader) {
 
+        }
+    };
+
+    private SizeSelectorDialog.SizeSelectorListener mSizeSelectorListener = new SizeSelectorDialog.SizeSelectorListener() {
+        @Override
+        public void setNewSizes(int min, int max) {
+            customMin = min;
+            customMax = max;
+            getLoaderManager().restartLoader(0, null, mLeaderboardLoaderListener);
         }
     };
 }
