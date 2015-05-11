@@ -196,7 +196,12 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selected = (String) parentView.getSelectedItem();
                 Log.d("VenueFragment", "selected group size: "+selected);
-                if(!currentGroupSize.equals(selected)) {
+                if(parentView.getSelectedItemPosition() == 4){
+                    currentGroupSize = selected;
+                    SizeSelectorDialog dialog = new SizeSelectorDialog();
+                    dialog.setListener(mSizeSelectorListener);
+                    dialog.show(getFragmentManager(), "sizeselector");
+                }else if(!currentGroupSize.equals(selected)) {
                     currentGroupSize = selected;
                     getLoaderManager().restartLoader(0, null, mRankingLoaderListener);
                 }
@@ -280,10 +285,8 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            String groupType = groupTypeSpinner.getSelectedItem().toString();
-
-            if(groupTypeSpinner.getSelectedItemPosition() == 0)
-                groupType = "All";
+            int groupTypePos = groupTypeSpinner.getSelectedItemPosition();
+            String groupType = getResources().getStringArray(R.array.groupType_options)[groupTypePos];
 
             int groupSize = groupSizeSpinner.getSelectedItemPosition();
 
@@ -354,10 +357,9 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            String groupType = groupTypeSpinner.getSelectedItem().toString();
 
-            if(groupTypeSpinner.getSelectedItemPosition() == 0)
-                groupType = "All";
+            int groupTypePos = groupTypeSpinner.getSelectedItemPosition();
+            String groupType = getResources().getStringArray(R.array.groupType_options)[groupTypePos];
 
             int groupSize = groupSizeSpinner.getSelectedItemPosition();
 
@@ -394,5 +396,14 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         }
 
 
+    };
+
+    private SizeSelectorDialog.SizeSelectorListener mSizeSelectorListener = new SizeSelectorDialog.SizeSelectorListener() {
+        @Override
+        public void setNewSizes(int min, int max) {
+            customMin = min;
+            customMax = max;
+            getLoaderManager().restartLoader(0, null, mRankingLoaderListener);
+        }
     };
 }
