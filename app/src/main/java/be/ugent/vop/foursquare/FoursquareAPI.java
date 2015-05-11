@@ -481,6 +481,7 @@ public class FoursquareAPI {
 
     private ArrayList<Photo> getPhotosFromFS(FoursquareVenue venue){
         ArrayList<Photo> photos = new ArrayList<>();
+        Log.d("getPhotosFromFS", "for " + venue.getName() );
         String prefix, suffix;
         int width, height;
         String url =API_URL + "/venues/"+venue.getId()+"/photos?&limit=10&oauth_token=" + FSQToken + "&v=" + VERSION+ "&m=" + MODE;
