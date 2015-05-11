@@ -20,9 +20,11 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.Intent;
 
+import android.content.Loader;
 import android.graphics.Color;
 import android.location.Location;
 
@@ -59,8 +61,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+import be.ugent.vop.backend.loaders.OverviewLoader;
+import be.ugent.vop.backend.loaders.VenueLoader;
 import be.ugent.vop.feedback.Feedback;
 import be.ugent.vop.feedback.FeedbackActivity;
+import be.ugent.vop.foursquare.FoursquareVenue;
+import be.ugent.vop.ui.main.OverviewAdapter;
 import be.ugent.vop.ui.reward.RewardsActivity;
 import be.ugent.vop.ui.event.EventActivity;
 import be.ugent.vop.ui.group.GroupListActivity;
@@ -82,7 +88,7 @@ import static be.ugent.vop.utils.LogUtils.makeLogTag;
  * A base activity that handles common functionality in the app. This includes the
  * navigation drawer, login and authentication, Action Bar tweaks, amongst others.
  */
-public abstract class BaseActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public abstract class BaseActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, LoaderManager.LoaderCallbacks<ArrayList<FoursquareVenue>> {
     private static final String TAG = makeLogTag(BaseActivity.class);
 
     // Navigation drawer:
@@ -90,7 +96,6 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
 
     private ObjectAnimator mStatusBarColorAnimator;
     private ViewGroup mDrawerItemsListContainer;
-
 
 
     // When set, these components will be shown/hidden in sync with the action bar
@@ -201,9 +206,15 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
     private LocationRequest mLocationRequest;
     private Date mLastUpdated;
 
+    private ArrayList<VenueListListener> venueListListeners = new ArrayList<>();
+    private ArrayList<FoursquareVenue> venues;
 
     public interface LocationUpdateListener{
         public void locationUpdated(Location newLocation, Date lastUpdated);
+    }
+
+    public interface VenueListListener{
+        public void newVenuesAvailable(ArrayList<FoursquareVenue> venues);
     }
 
     @Override
@@ -272,7 +283,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
                     R.string.drawer_close  /* "close drawer" description for accessibility */
             ) {
                 public void onDrawerClosed(View view) {
-                   // getSupportActionBar().setTitle(mTitle);
+                    // getSupportActionBar().setTitle(mTitle);
                     invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 }
 
@@ -537,7 +548,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
                 finish();
                 break;
             case NAVDRAWER_ITEM_FEEDBACK:
-               intent = new Intent(this, FeedbackActivity.class);
+                intent = new Intent(this, FeedbackActivity.class);
                 startActivity(intent);
                 finish();
                 break;
@@ -594,6 +605,7 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
                 mGoogleApiClient);
         if (mLastLocation != null){
             notifyLocationUpdateListeners();
+            getLoaderManager().initLoader(0, null, this);
             mLastUpdated = new Date();
         }
 
@@ -613,12 +625,17 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
 
     @Override
     public void onLocationChanged(Location location){
-
         Log.d(TAG, "Location changed");
-        mLastLocation = location;
-        mLastUpdated = new Date();
 
-        notifyLocationUpdateListeners();
+        if(mLastLocation == null
+                || (location.getAccuracy() < BaseActivity.MIN_LOCATION_ACCURACY
+                && mLastLocation.distanceTo(location) > 100)){
+            mLastLocation = location;
+            mLastUpdated = new Date();
+
+            notifyLocationUpdateListeners();
+            getLoaderManager().initLoader(0, null, this);
+        }
 
         if(mLastLocation.getAccuracy() < MIN_LOCATION_ACCURACY && mRequestingLocationUpdates != LOCATION_UPDATING_SLOW)
             startLocationUpdates(false);
@@ -675,6 +692,32 @@ public abstract class BaseActivity extends ActionBarActivity implements GoogleAp
 
     public void removeLocationUpdateListener(LocationUpdateListener listener){
         locationUpdateListeners.remove(listener);
+    }
+
+    public void addVenueListListener(VenueListListener listener){
+        venueListListeners.add(listener);
+        if(venues != null)
+            listener.newVenuesAvailable(venues);
+    }
+
+    public void removeVenueListListener(VenueListListener listener){
+        venueListListeners.remove(listener);
+    }
+
+    @Override
+    public Loader<ArrayList<FoursquareVenue>> onCreateLoader(int i, Bundle bundle) {
+        return new VenueLoader(this, mLastLocation);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<FoursquareVenue>> loader, final ArrayList<FoursquareVenue> venues) {
+        for(VenueListListener listener : venueListListeners)
+            listener.newVenuesAvailable(venues);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<FoursquareVenue>> loader) {
+        venues = null;
     }
 
     @Override

@@ -2,6 +2,7 @@ package be.ugent.vop.foursquare;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import be.ugent.vop.R;
+import be.ugent.vop.SaveService;
 import be.ugent.vop.database.VenueImageTable;
 import be.ugent.vop.database.VenueTable;
 import be.ugent.vop.database.contentproviders.VenueContentProvider;
@@ -102,7 +104,7 @@ public class FoursquareAPI {
             latitude = loc.getLatitude();
         }
 
-        return getNearbyVenues(latitude,longitude,50,100000);
+        return getNearbyVenues(latitude,longitude,10,100000);
     }
 
     public FoursquareVenue getVenueInfo(String venueId)  {
@@ -176,6 +178,11 @@ public class FoursquareAPI {
     }
 
     public void saveVenue(FoursquareVenue venue){
+
+        Intent saveIntent = SaveService.createSaveVenueIntent(context, venue);
+        context.startService(saveIntent);
+
+/*
         Uri venueUri = Uri.parse(VenueContentProvider.CONTENT_URI + "/" + venue.getId());
         String[] projection =
                 {VenueTable.COLUMN_VENUE_ID};
@@ -197,7 +204,7 @@ public class FoursquareAPI {
         else{
             //Log.d(TAG,"venue "+venue.getId()+" already in db.");
         }
-        v.close();
+        v.close();*/
     }
 
     public ArrayList<FoursquareVenue> searchVenues(double latitude, double longitude, int radius, String query)  {
@@ -380,6 +387,7 @@ public class FoursquareAPI {
                     if(true || foursquareVenue.isVerified()) {
                         venueList.add(foursquareVenue);
                         saveVenue(foursquareVenue);
+
                     }
 
                 }
@@ -408,10 +416,13 @@ public class FoursquareAPI {
         Cursor images = context.getContentResolver().query(venueUri, projection, null, null, null);
 
         if (images.getCount() > 0) {
-            //Log.d(TAG, "" + images.getCount() + " images found for venue " + venue.getId() + " in database");
+            Log.d(TAG, "" + images.getCount() + " images found for venue " + venue.getId() + " in database");
             while (images.moveToNext()) {
                 String prefix = images.getString(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_PREFIX));
                 String suffix = images.getString(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_SUFFIX));
+
+                Log.d(TAG, "Prefix: " + prefix);
+
                 int width = images.getInt(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_WIDTH));
                 int height = images.getInt(images.getColumnIndexOrThrow(VenueImageTable.COLUMN_HEIGHT));
 
@@ -424,7 +435,9 @@ public class FoursquareAPI {
         } else {
             //Log.d(TAG, "no images found for venue " + venue.getId() + " in database, retrieving from Foursquare");
             photos = getPhotosFromFS(venue);
-            savePhotos(photos, venue.getId());
+            //savePhotos(photos, venue.getId());
+            Intent saveIntent = SaveService.createSaveVenuePhotosIntent(context, photos, venue.getId());
+            context.startService(saveIntent);
         }
 
         images.close();

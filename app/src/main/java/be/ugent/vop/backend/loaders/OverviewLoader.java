@@ -2,7 +2,6 @@ package be.ugent.vop.backend.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.location.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,14 +26,13 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
 
     OverviewAdapter mAdapter;
     private Context context;
-    private Location mLastLocation;
     private ArrayList<FoursquareVenue> fsVenues;
     private NewMemberContentProvider memberDatabase;
     private CheckInContentProvider checkinDatabase;
     private RewardContentProvider rewardDatabase;
     private boolean getNewOverview;
 
-    public OverviewLoader(Context context, Location lastLocation, boolean getNewOverview) {
+    public OverviewLoader(Context context, ArrayList<FoursquareVenue> fsVenues, boolean getNewOverview) {
         super(context);
         this.context = context;
         this.memberDatabase = new NewMemberContentProvider(context);
@@ -43,12 +41,11 @@ public class OverviewLoader  extends AsyncTaskLoader<OverviewAdapter> {
         checkinDatabase.open();
         this.rewardDatabase = new RewardContentProvider(context);
         rewardDatabase.open();
-        this.mLastLocation = lastLocation;
+        this.fsVenues = fsVenues;
         this.getNewOverview = getNewOverview;
     }
 
     @Override public OverviewAdapter loadInBackground() {
-        fsVenues = FoursquareAPI.get(context).getNearbyVenues(mLastLocation);
         ArrayList<String> venues = new ArrayList<>();
         for(FoursquareVenue v : fsVenues){
             venues.add(v.getId());
