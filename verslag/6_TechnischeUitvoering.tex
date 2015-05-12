@@ -31,8 +31,7 @@ Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit problee
 
 \subsubsection{Datastore~\cite{Google_Datastore}}
 
-Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met de toenemende hoeveelheid opgeslagen data. Een tweede verschil met relationele databanken is dat GAE Datastore schemaloos is. Data wordt in de Datastore opgeslagen als objecten. Objecten van een eenzelfde type hebben verschillende velden en per veld kunnen verschillende datatypes opgeslagen worden.
-Aangezien de database schemaloos is en bijgevolg bijvoorbeeld geen types zal controleren of niet zal aangeven indien een vreemde sleutel niet bestaat ligt de verantwoordelijkheid van de integriteit van de database volledig bij de ontwikkelaar. Tijdens de ontwikkeling werd dit gezien als het grootste nadeel van de GAE Datastore tegenover een traditionele relationele database.
+Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met de toenemende hoeveelheid opgeslagen data. Een tweede verschil is dat er geen automatische controles worden uitgevoerd op de ingevoerde data. Voorbeelden van dergelijke controles zijn: nagaan of een attribuut van een bepaald type is, controleren of een vreemde sleutel bestaat, uniciteit van primaire sleutel garanderen,\ldots. Bijgevolg ligt de verantwoordelijkheid van de integriteit van de database volledig bij de ontwikkelaar. Tijdens de ontwikkeling werd dit gezien als het grootste nadeel van de GAE Datastore tegenover een traditionele relationele database.
 
 \subsubsection{Google Cloud Messaging~\cite{Google_Cloud_Messaging}}
 
