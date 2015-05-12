@@ -48,9 +48,6 @@ import be.ugent.vop.ui.event.ConcreteChildData;
 import be.ugent.vop.ui.event.ConcreteGroupData;
 import be.ugent.vop.ui.event.MyExpandableItemAdapter;
 
-/**
- * Created by vincent on 20/04/15.
- */
 
 public class VenueEventFragment extends Fragment implements VenueActivity.VenueActivityCallback {
     private static final String TAG = "VenueEventFragment2";
@@ -65,7 +62,7 @@ public class VenueEventFragment extends Fragment implements VenueActivity.VenueA
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mEmpty;
     private ProgressBar mLoading;
-    private Activity mActivity;
+    private VenueActivity mActivity;
     private String fsVenueId;
     public VenueEventFragment() {
         super();
@@ -78,7 +75,6 @@ public class VenueEventFragment extends Fragment implements VenueActivity.VenueA
             fsVenueId = getArguments().getString(VenueActivity.VENUE_ID);
         Log.d(TAG, "venueId:"+fsVenueId);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mActivity = this.getActivity();
         mLoading = (ProgressBar)rootView.findViewById(R.id.loading);
         mProvider = new EventDataProvider(); // true: example test data
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.fragment_group_swipe_refresh);
@@ -98,16 +94,28 @@ public class VenueEventFragment extends Fragment implements VenueActivity.VenueA
         mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
 
         //adapter
-        getDataProvider();
-        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getDataProvider(), mActivity);
+        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getDataProvider(), mActivity, true);
 
         mAdapter = myItemAdapter;
 
         mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 
-
-
         mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if(mActivity != null)
+                    mActivity.onScroll(dx, dy, null);
+            }
+        });
 
 
         // additional decorations
@@ -187,6 +195,7 @@ public class VenueEventFragment extends Fragment implements VenueActivity.VenueA
     public void setColorPalette(Palette p) {
 
     }
+
     class EventDataProvider extends AbstractDataProvider {
         private List<Pair<GroupData, List<ChildData>>> mData;
         private List<EventBean> mEvents;

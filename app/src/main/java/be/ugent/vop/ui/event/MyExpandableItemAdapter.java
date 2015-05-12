@@ -19,6 +19,7 @@ package be.ugent.vop.ui.event;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
 
     private AbstractDataProvider mProvider;
     private Context mContext;
+    private boolean mHeaderPlaceholder;
 
     public static class MyGroupViewHolder extends AbstractExpandableItemViewHolder {
         public ViewGroup mContainer;
@@ -44,14 +46,16 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         public View mDragHandle;
         public View cardLayout;
 
-        public MyGroupViewHolder(View v) {
+        public MyGroupViewHolder(View v, boolean bind) {
             super(v);
-            mContainer = (ViewGroup) v.findViewById(R.id.container);
-            mDragHandle = v.findViewById(R.id.drag_handle);
-            mTitle = (TextView) v.findViewById(R.id.event_title);
-            cardLayout = v.findViewById(R.id.card_layout);
-            // hide the drag handle
-            mDragHandle.setVisibility(View.GONE);
+            if(bind){
+                mContainer = (ViewGroup) v.findViewById(R.id.container);
+                mDragHandle = v.findViewById(R.id.drag_handle);
+                mTitle = (TextView) v.findViewById(R.id.event_title);
+                cardLayout = v.findViewById(R.id.card_layout);
+                // hide the drag handle
+                mDragHandle.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -70,10 +74,10 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         }
     }
 
-    public MyExpandableItemAdapter(AbstractDataProvider dataProvider, Context context) {
+    public MyExpandableItemAdapter(AbstractDataProvider dataProvider, Context context, boolean headerPlaceholder) {
         mProvider = dataProvider;
         mContext = context;
-
+        mHeaderPlaceholder = headerPlaceholder;
         // ExpandableItemAdapter requires stable ID, and also
         // have to implement the getGroupItemId()/getChildItemId() methods appropriately.
         setHasStableIds(true);
@@ -81,27 +85,43 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
 
     @Override
     public int getGroupCount() {
-        return mProvider.getGroupCount();
+        return mHeaderPlaceholder? mProvider.getGroupCount() + 1 : mProvider.getGroupCount();
     }
 
     @Override
     public int getChildCount(int groupPosition) {
-        return mProvider.getChildCount(groupPosition);
+        if(mHeaderPlaceholder && groupPosition == 0)
+            return 0;
+        else if(mHeaderPlaceholder)
+            return mProvider.getChildCount(groupPosition - 1);
+        else
+            return mProvider.getChildCount(groupPosition);
     }
 
     @Override
     public long getGroupId(int groupPosition) {
-        return mProvider.getGroupItem(groupPosition).getGroupId();
+        if(mHeaderPlaceholder && groupPosition == 0)
+            return -1;
+        else if(mHeaderPlaceholder)
+            return mProvider.getGroupItem(groupPosition - 1).getGroupId();
+        else
+            return mProvider.getGroupItem(groupPosition).getGroupId();
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return mProvider.getChildItem(groupPosition, childPosition).getChildId();
+        if(mHeaderPlaceholder)
+            return mProvider.getChildItem(groupPosition - 1, childPosition).getChildId();
+        else
+            return mProvider.getChildItem(groupPosition, childPosition).getChildId();
     }
 
     @Override
     public int getGroupItemViewType(int groupPosition) {
-        return 0;
+        if(mHeaderPlaceholder && groupPosition == 0)
+            return 1;
+        else
+            return 0;
     }
 
     @Override
@@ -112,8 +132,13 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
     @Override
     public MyGroupViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final View v = inflater.inflate(R.layout.list_group_item, parent, false);
-        return new MyGroupViewHolder(v);
+        if(viewType == 0){
+            final View v = inflater.inflate(R.layout.list_group_item, parent, false);
+            return new MyGroupViewHolder(v, true);
+        }else{
+            final View v = inflater.inflate(R.layout.view_header_placeholder, parent, false);
+            return new MyGroupViewHolder(v, false);
+        }
     }
 
     @Override
@@ -125,33 +150,40 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
 
     @Override
     public void onBindGroupViewHolder(MyGroupViewHolder holder, int groupPosition, int viewType) {
-        // child item
-        final AbstractDataProvider.GroupData item = mProvider.getGroupItem(groupPosition);
+        if(viewType == 0){
+            // child item
 
-        // set text
-        holder.mTitle.setText(item.getTitle());
+            int groupPos = mHeaderPlaceholder? groupPosition - 1 : groupPosition;
 
-        // mark as clickable
-        holder.itemView.setClickable(true);
+            final AbstractDataProvider.GroupData item = mProvider.getGroupItem(groupPos);
 
-        final int expandState = holder.getExpandStateFlags();
+            // set text
+            holder.mTitle.setText(item.getTitle());
 
-        if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_UPDATED) != 0) {
-            int bgResId;
+            // mark as clickable
+            holder.itemView.setClickable(true);
 
-            if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
-                bgResId = R.drawable.bg_group_item_expanded_state;
-            } else {
-                bgResId = R.drawable.bg_group_item_normal_state;
+            final int expandState = holder.getExpandStateFlags();
+
+            if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_UPDATED) != 0) {
+                int bgResId;
+
+                if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
+                    bgResId = R.drawable.bg_group_item_expanded_state;
+                } else {
+                    bgResId = R.drawable.bg_group_item_normal_state;
+                }
+                holder.cardLayout.setBackgroundResource(bgResId);
             }
-            holder.cardLayout.setBackgroundResource(bgResId);
         }
     }
 
     @Override
     public void onBindChildViewHolder(MyChildViewHolder holder, int groupPosition, int childPosition, int viewType) {
         // group item
-        final AbstractDataProvider.ChildData item = mProvider.getChildItem(groupPosition, childPosition);
+
+        int groupPos = mHeaderPlaceholder? groupPosition - 1 : groupPosition;
+        final AbstractDataProvider.ChildData item = mProvider.getChildItem(groupPos, childPosition);
 
         // set text
         holder.reward.setText(item.getReward());
@@ -169,8 +201,13 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
 
     @Override
     public boolean onCheckCanExpandOrCollapseGroup(MyGroupViewHolder holder, int groupPosition, int x, int y, boolean expand) {
+        if(mHeaderPlaceholder && groupPosition == 0)
+            return false;
+
+        int groupPos = mHeaderPlaceholder? groupPosition - 1 : groupPosition;
+
         // check the item is *not* pinned
-        if (mProvider.getGroupItem(groupPosition).isPinnedToSwipeLeft()) {
+        if (mProvider.getGroupItem(groupPos).isPinnedToSwipeLeft()) {
             // return false to raise View.OnClickListener#onClick() event
             return false;
         }

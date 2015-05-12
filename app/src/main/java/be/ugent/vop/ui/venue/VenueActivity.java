@@ -122,11 +122,15 @@ public class VenueActivity extends BaseActivity {
     public void onScroll(int dx, int dy, View extraView) {
 
         Log.d(TAG, "dx: " + dx + ", dy: " + dy);
-        Log.d(TAG, "Extra view height: " + extraView.getHeight());
+
         currentHeaderTranslation -= dy;
         Log.d(TAG, "current: " + currentHeaderTranslation + ", mMinHeader: " + mMinHeaderTranslation);
         ViewHelper.setTranslationY(mHeader, Math.max(currentHeaderTranslation, mMinHeaderTranslation));
-        ViewHelper.setTranslationY(extraView,  Math.max(currentHeaderTranslation + mHeaderHeight, mMinHeaderTranslation + mHeaderHeight));
+
+        if(extraView != null){
+            Log.d(TAG, "Extra view height: " + extraView.getHeight());
+            ViewHelper.setTranslationY(extraView,  Math.max(currentHeaderTranslation + mHeaderHeight, mMinHeaderTranslation + mHeaderHeight));
+        }
 
         float ratio = (float) Math.max(Math.min(currentHeaderTranslation, 0), mMinHeaderTranslation) / mMinHeaderTranslation;
         updateActionBarTransparency(ratio);

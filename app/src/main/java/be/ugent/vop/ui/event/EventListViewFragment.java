@@ -98,7 +98,7 @@ public class EventListViewFragment extends Fragment {
 
         //adapter
         getDataProvider();
-        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getDataProvider(), mActivity);
+        final MyExpandableItemAdapter myItemAdapter = new MyExpandableItemAdapter(getDataProvider(), mActivity, false);
 
         mAdapter = myItemAdapter;
 
