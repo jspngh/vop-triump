@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -264,16 +265,19 @@ public class CheckinFragment extends Fragment implements BaseActivity.VenueListL
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
-        SearchView searchView = null;
         if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
-        if (searchView != null) {
+            final SearchView searchView = (SearchView) searchItem.getActionView();
+
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
+
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+
                     Bundle args = new Bundle();
                     args.putString(QUERY, s);
                     getLoaderManager().restartLoader(0, args, mSearchVenueByNameLoaderListener);
