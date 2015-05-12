@@ -31,8 +31,8 @@ Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit problee
 
 \subsubsection{Datastore~\cite{Google_Datastore}}
 
-Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met de toenemende hoeveelheid opgeslagen data. Een tweede verschil met relationele databanken is dat GAE Datastore schemaloos is. Dit werd gezien als het grootste nadeel van de GAE Datastore tegenover een traditionele relationele database. Data wordt in de Datastore opgeslagen als objecten.
-Aangezien de database schemaloos is en bijgevolg geen types zal controleren of niet zal aangeven indien een vreemde sleutel niet bestaat ligt de verantwoordelijkheid van de integriteit van de database volledig bij de ontwikkelaar. 
+Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met toenemende hoeveelheid opgeslagen data. Een tweede verschil is GAE Datastore schemaloos is. Dit houdt in dat er geen restricties worden opgelegd op de data. Voorbeelden van dergelijke restricties zijn: een attribuut is van een bepaald type is, een vreemde sleutel moet bestaan, een primaire sleutel moet uniek zijn,\ldots. Bijgevolg ligt de verantwoordelijkheid van de integriteit van de database volledig bij de ontwikkelaar.
+
 \subsubsection{Google Cloud Messaging~\cite{Google_Cloud_Messaging}}
 
 Google Cloud Messaging (GCM) voor Android is een dienst die het mogelijk maakt data (tot 4kB) te versturen van backend servers naar Android applicaties onder de vorm van boodschappen. De GCM servers staan in voor de connectie naar het mobiele toestel en een correcte aflevering van de berichten. De ontvangen boodschappen kunnen na aflevering eenvoudig omgevormd worden tot een notificatie. GCM wordt daarom gebruikt als basistechnologië voor het notificatiesysteem in Triump.

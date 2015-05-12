@@ -240,7 +240,6 @@ public class GroupFragment extends Fragment {
                     for (UserBean user : response.getMembers()) {
                         if (user.getUserId().equals(userId)) {
                             member = true;
-
                         }
                         members.add(user);
                     }

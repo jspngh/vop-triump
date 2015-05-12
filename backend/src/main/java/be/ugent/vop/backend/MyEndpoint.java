@@ -360,6 +360,19 @@ public class MyEndpoint {
                                       @Nullable @Named("groupIds") List<Long> groupIds)
             throws UnauthorizedException, EntityNotFoundException {
         String userId = _getUserIdForToken(token); // Try to authenticate the user
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        //check if the venue already exists
+        try{
+            _getVenueBean(venueId);
+        }catch(EntityNotFoundException e){
+            Entity venue = new Entity(VENUE_ENTITY, venueId);
+            venue.setProperty(VENUE_ID, venueId);
+            venue.setProperty(VENUE_ADMIN, userId);
+            venue.setProperty(VENUE_FIRST_CHECKIN, new Date());
+            venue.setProperty(VENUE_VERIFIED, verified);
+            datastore.put(venue);
+        }
+
         Entity event = new Entity(EVENT_ENTITY);
         event.setProperty(EVENT_DESCRIPTION, description);
         event.setProperty(EVENT_END, end);
@@ -373,19 +386,19 @@ public class MyEndpoint {
         if(verified){
             event.setProperty(EVENT_MIN_PARTICIPANTS,(long)minParticipants);
             event.setProperty(EVENT_MAX_PARTICIPANTS,(long)maxParticipants);
-            DatastoreServiceFactory.getDatastoreService().put(event);
+            datastore.put(event);
         }else{
 //when event is not verified the min and max number of participants is not importent
             event.setProperty(EVENT_MIN_PARTICIPANTS,(long)-1);
             event.setProperty(EVENT_MAX_PARTICIPANTS,(long)-1);
 //insert event to retrieve key in "groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());"
-            DatastoreServiceFactory.getDatastoreService().put(event);
+            datastore.put(event);
             if (groupIds != null) {
                 for (Long s : groupIds) {
                     Entity groupEvent = new Entity(GROUPEVENT_ENTITY);
                     groupEvent.setProperty(GROUPEVENT_GROUP_ID, s.longValue());
                     groupEvent.setProperty(GROUPEVENT_EVENT_ID, event.getKey().getId());
-                    DatastoreServiceFactory.getDatastoreService().put(groupEvent);
+                    datastore.put(groupEvent);
                 }
             }
         }
