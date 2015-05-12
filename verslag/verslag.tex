@@ -17,13 +17,16 @@
 \usepackage[top=1.5in, bottom=1.25in, left=1.3in, right=1.3in]{geometry}
 \titleformat{\chapter}[display]
 {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\Huge}
-\titlespacing*{\chapter}{0pt}{0pt}{10pt}
+\titlespacing*{\chapter}{0pt}{2pt}{10pt}
 \titleformat{\chapter}[hang] 
 {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter.}{0.2em}{} 
 \makeatletter
 \renewcommand{\@chapapp}{}
 \makeatother
-
+%\usepackage{etoolbox}
+%\makeatletter
+%\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{\par}{}{}
+%\makeatother
 
 \graphicspath{ {afb/} }
 
@@ -92,7 +95,7 @@ dr.~ir. Bert \textsc{Vankeirsbilck}\\
 \end{titlepage}
 
 \tableofcontents
-	
+
 \input{1_Inleiding} 	
 \input{2_Probleemstelling}
 \input{3_Doelstelling}	
@@ -103,7 +106,6 @@ dr.~ir. Bert \textsc{Vankeirsbilck}\\
 \input{9_Samenwerking}
 \input{10_Tekortkomingen}	
 \input{11_Besluit}
-\input{13_Appendices}
 \input{12_Bibliografie}
 
 

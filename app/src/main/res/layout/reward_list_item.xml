@@ -39,7 +39,7 @@
 
         <TextView
             android:id="@android:id/text1"
-            android:textSize="24dp"
+            android:textSize="16sp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/drag_handle"
