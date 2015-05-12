@@ -22,11 +22,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.List;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.loaders.AsyncResult;
 import be.ugent.vop.backend.loaders.CheckInLoader;
 import be.ugent.vop.backend.loaders.RankingLoader;
 import be.ugent.vop.backend.myApi.model.RankingBean;
@@ -54,6 +57,7 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
 
     private int customMin = 1;
     private int customMax = Integer.MAX_VALUE;
+    private boolean checkinPending = false;
 
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -133,7 +137,8 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getLoaderManager().restartLoader(1,null,mRankingLoaderListener);
+                if(!checkinPending)
+                    getLoaderManager().restartLoader(1,null,mRankingLoaderListener);
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.theme_primary_dark);
@@ -184,10 +189,8 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getLoaderManager().getLoader(1)==null)
-                    getLoaderManager().initLoader(1, null, mCheckInLoaderListener);
-                else
-                    getLoaderManager().restartLoader(1, null, mCheckInLoaderListener);
+                Log.d(TAG, "Checkin button clicked");
+                getLoaderManager().restartLoader(1, null, mCheckInLoaderListener);
             }
         });
 
@@ -332,31 +335,58 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
      *
      */
 
-    private LoaderManager.LoaderCallbacks<List<RankingBean>> mCheckInLoaderListener
-            = new LoaderManager.LoaderCallbacks<List<RankingBean>>() {
+    private LoaderManager.LoaderCallbacks<AsyncResult<List<RankingBean>>> mCheckInLoaderListener
+            = new LoaderManager.LoaderCallbacks<AsyncResult<List<RankingBean>>>() {
 
         @Override
-        public void onLoadFinished(Loader<List<RankingBean>> loader, List<RankingBean> rankings) {
+        public void onLoadFinished(Loader<AsyncResult<List<RankingBean>>> loader, AsyncResult<List<RankingBean>> result) {
             Log.d("VenueFragment", "onLoadFinished after checkin loader");
-            ranking=rankings;
-            if(rankings!=null){
-                mAdapter.setRankings(rankings);
-                mAdapter.notifyDataSetChanged();
 
-                if( rankingView.getVisibility()==View.INVISIBLE){
-                    rankingView.setVisibility(View.VISIBLE);
-                    Toast t = Toast.makeText(getActivity(),"Congrats! You just scored the first points at this venue.",Toast.LENGTH_SHORT);
-                    t.show();
+            if(result.getException() == null){
+                if(result.getData()!=null){
+                    ranking=result.getData();
+                    mAdapter.setRankings(ranking);
+                    mAdapter.notifyDataSetChanged();
+
+                    if( rankingView.getVisibility()==View.INVISIBLE){
+                        rankingView.setVisibility(View.VISIBLE);
+                        Toast t = Toast.makeText(getActivity(),"Congrats! You just scored the first points at this venue.",Toast.LENGTH_SHORT);
+                        t.show();
+                    }
+                }else{
+                    //   noRankingTextView.setText(R.string.no_ranking);
                 }
-            }else{
-                //   noRankingTextView.setText(R.string.no_ranking);
+            } else{
+                try{
+                    throw result.getException();
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                    if (e instanceof GoogleJsonResponseException){
+                        GoogleJsonResponseException ex = (GoogleJsonResponseException) e;
+                        switch (ex.getStatusCode()){
+                            case 409:
+                                List<GoogleJsonError.ErrorInfo> errors = ex.getDetails().getErrors();
+                                for(GoogleJsonError.ErrorInfo err : errors){
+                                    Log.d(TAG, err.getMessage());
+                                    Toast.makeText(context, err.getMessage(), Toast.LENGTH_LONG).show();
+
+                                }
+          /*and the rest of codes available through endpoints*/
+                        }
+                    } else {
+      /*Manage other exceptions, maybe connection issues?*/
+                        Toast.makeText(context, context.getString(R.string.error_checkin), Toast.LENGTH_LONG).show();
+                    }
+                }
             }
 
+            checkinPending = false;
         }
 
         @Override
-        public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
+        public Loader<AsyncResult<List<RankingBean>>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
+            checkinPending = true;
 
             int groupTypePos = groupTypeSpinner.getSelectedItemPosition();
             String groupType = getResources().getStringArray(R.array.groupType_options)[groupTypePos];
@@ -391,7 +421,7 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         }
 
         @Override
-        public void onLoaderReset(Loader<List<RankingBean>> loader) {
+        public void onLoaderReset(Loader<AsyncResult<List<RankingBean>>> loader) {
             //rankingListView.setAdapter(null);
         }
 

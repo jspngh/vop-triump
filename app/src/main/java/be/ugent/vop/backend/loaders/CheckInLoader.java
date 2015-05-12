@@ -3,15 +3,21 @@ package be.ugent.vop.backend.loaders;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 
 import java.io.IOException;
 import java.util.List;
 
+import be.ugent.vop.R;
 import be.ugent.vop.backend.BackendAPI;
 import be.ugent.vop.backend.myApi.model.RankingBean;
 
-public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
+public class CheckInLoader extends AsyncTaskLoader<AsyncResult<List<RankingBean>>> {
 
+    private static final String TAG = "CheckInLoader";
     private final int minGroupSize;
     private final int maxGroupSize;
     private Context context;
@@ -33,21 +39,23 @@ public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
      * data to be published by the loader.
      */
     @Override
-    public List<RankingBean> loadInBackground() {
-        List<RankingBean> result = null;
+    public AsyncResult<List<RankingBean>> loadInBackground() {
+        AsyncResult<List<RankingBean>> result = new AsyncResult<>();
+        List<RankingBean> rankings;
         Log.d("Checking In", venueId );
         try{
-            result = BackendAPI.get(context).checkIn(venueId, minGroupSize, maxGroupSize, groupType);
+            rankings = BackendAPI.get(context).checkIn(venueId, minGroupSize, maxGroupSize, groupType);
+            result.setData(rankings);
             Log.d("Checked In", "Succes");
         } catch(IOException e){
-            Log.d("Checking In", e.getMessage());
+            result.setException(e);
         }
         // Done!
         return result;
     }
 
     @Override
-    public void deliverResult(List<RankingBean> response) {
+    public void deliverResult(AsyncResult<List<RankingBean>> response) {
         if (isReset()) {
             onReleaseResources(response);
         }
@@ -76,7 +84,7 @@ public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(List<RankingBean> response) {
+    @Override public void onCanceled(AsyncResult<List<RankingBean>> response) {
         super.onCanceled(response);
 
         // At this point we can release the resources associated with 'apps'
@@ -98,5 +106,5 @@ public class CheckInLoader extends AsyncTaskLoader<List<RankingBean>> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<RankingBean> response) {}
+    protected void onReleaseResources(AsyncResult<List<RankingBean>> response) {}
 }
