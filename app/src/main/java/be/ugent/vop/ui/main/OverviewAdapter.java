@@ -60,9 +60,9 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private ArrayList<FoursquareVenue> fsVenues;
     private Context context;
     private boolean displayWelcome;
-    private int newMembersLenght;
-    private int checkInLenght;
-    private int rewardsLenght;
+    private int newMembersLength;
+    private int checkInLength;
+    private int rewardsLength;
 
     public OverviewAdapter(OverviewBean overview, ArrayList<FoursquareVenue> fsVenues, Context context, boolean displayWelcome){
         super();
@@ -71,11 +71,11 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.context = context;
         this.displayWelcome = displayWelcome;
         if(overview != null){
-            newMembersLenght = (overview.getNewMembers() == null ? 0 : overview.getNewMembers().size());
-            checkInLenght = (overview.getCheckIns() == null ? 0 : overview.getCheckIns().size());
-            rewardsLenght = (overview.getRewards() == null ? 0 : overview.getRewards().size());
+            newMembersLength = (overview.getNewMembers() == null ? 0 : overview.getNewMembers().size());
+            checkInLength = (overview.getCheckIns() == null ? 0 : overview.getCheckIns().size());
+            rewardsLength = (overview.getRewards() == null ? 0 : overview.getRewards().size());
         } else {
-            newMembersLenght = checkInLenght = rewardsLenght = 0;
+            newMembersLength = checkInLength = rewardsLength = 0;
         }
 
     }
@@ -481,7 +481,7 @@ public class OverviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemCount() {
         if(displayWelcome) return 1;
-        if(overview != null) return 1 + newMembersLenght + checkInLenght + rewardsLenght;
+        if(overview != null) return 1 + newMembersLength + checkInLength + rewardsLength;
         return 0;
     }
 }
