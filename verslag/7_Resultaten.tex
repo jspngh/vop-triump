@@ -11,6 +11,29 @@ De applicatie is uitgebouwd rond 1 centraal scherm. Hieruit kan rechtstreeks gen
 Bij het eerste keer opstarten van de Android applicatie wordt een tutorialsequentie opgestart. Hierin wordt de doelstelling van de applicatie uitgelegd en wat de verschillende mogelijkheden zijn. Indien na feedback van gebruikers blijkt dat deze schermen niet voldoende intuïtief zijn, kan deze tutorial uitgebreid worden met een enkele schermen waarbij de eigelijke applicatie getoond wordt en ingezoomd worden op de specifieke functionaliteit en navigatie doorheen de toepassing. 
 Na de tutorialsequentie wordt de gebruiker gevraagd om in te loggen. Vermits het doel van deze applicatie het uitbreiden van de Foursquare/Swarm functionaliteit is, wordt de gebruiker gevraagd om in te loggen met zijn/haar Foursquare/Swarm account. Het inloggen vereist het installeren van de Foursquare/Swarm applicatie. Op deze manier kan Triump steunen op de reeds bestaande gebruikers van Foursquare/Swarm. Bovendien kan hierdoor het volledig login/registreerproces uitbesteedt worden en kan een bestaande API gebruikt worden.
 Na de eerste keer inloggen wordt de gebruiker `geïnitialiseerd' op de backend van Triump.
+\begin{figure}[ht]
+\begin{minipage}[b]{0.20\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_login}
+\caption{Login}
+\label{fig:screenshot_profile}
+\end{minipage}
+\hspace{2.4cm}
+\begin{minipage}[b]{0.20\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_tutorial}
+\caption{Tutorial}
+\label{fig:screenshot_login}
+\end{minipage}
+\hspace{2.4cm}
+\begin{minipage}[b]{0.20\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_overview1}
+\caption{Overzicht}
+\label{fig:screenshot_overview}
+\end{minipage}
+\end{figure}
+\clearpage
 \subsubsection{Overview en notificaties} %Lars
 Om gebruikers op de hoogte te houden van recente activiteit van hun groepen, events die aan de gang zijn, promoties, checkins,... worden in de Android applicatie 2 mechanismen voorzien. 
 Enerzijds is er het Overviewscherm, het eerste scherm dat de gebruiker ziet in de applicatie, anderzijds zijn er de notificaties.
@@ -20,8 +43,72 @@ Kortom, het Overviewscherm en de notificaties zijn een interactieve manier om de
 
 \subsubsection{Checkin}%Siebe
 Om integratie met de diensten van Swarm te voorzien wordt een gelijkaardige interface om in te checken gebruikt. Een Location service controleert de locatie van de gebruiker en toont op de kaart de naburige Foursquare locaties. De gebruiker kan vervolgens uit een dynamisch schaalbare lijst de locatie kiezen waar men wil inchecken. Indien de gebruiker niet geïnteresseerd is om in te inchecken, maar enkel de ranglijsten of evenementen wil controleren op een bepaalde locatie, kan dit door de locatie in te typen in het zoekveld. Bij het selecteren van een locatie (via de kaart of via de zoekfunctionaliteit) krijgt de gebruiker een overzicht van de locatie. Dit overzicht bestaat steeds uit 2 onderdelen, namelijk de ranglijsten en de evenementen. De gebruiker kan van ranglijst wisselen (voor verschillende groottes of types van groepen). Daarnaast kan de gebruiker, indien hij voldoende dicht is bij de locatie , inchecken voor zijn groepen. Indien de gebruiker een locatie via de zoekfunctionaliteit heeft opgezocht, maar te zich hiervan te ver bevindt, is inchecken niet mogelijk. Men kan wel steeds  de verschillende evenementen te bekijken in het Event onderdeel.
+\begin{figure}[ht]
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_overview2}
+\caption{Overzicht}
+\label{fig:screenshot_overview2}
+\end{minipage}
+\hspace{1.5cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_checkin}
+\caption{Checkin}
+\label{fig:screenshot_checkin}
+\end{minipage}
+\hspace{1.5cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_venue}
+\caption{Locatie}
+\label{fig:screenshot_venue}
+\end{minipage}
+\end{figure}
+\clearpage
 \subsubsection{Groepen}%Lars
 Een belangrijk onderdeel van de Triump applicatie is het groepsaspect. Groepen kunnen vanuit de toepassing zelf aangemaakt worden, en opgezocht worden. Daarnaast kunnen leden zich inschrijven voor groepen, en adminstrators kunnen deze aanvaarden. Vanop de startpagina kan de gebruiker de activiteit van groepsleden bekijken en navigeren naar zijn eigen groepen. Ranglijsten en evenementen steunen steeds op dit groepsprincipe in de zin dat de entiteiten waarvoor ranglijsten en evenementen opgesteld worden steeds groepen zijn. Dezelfde functionaliteit is ook mogelijk vanuit de webinterface (in het geval dat gebruik op de smartphone te onoverzichtelijk wordt).
+
+\begin{figure}[ht]
+
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_groups}
+\caption{Groepen bekijken}
+\label{fig:shot_groups}
+\end{minipage}
+\hspace{1cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_groep_aanmaken}
+\caption{Groep aanmaken}
+\label{fig:shot_groep_aanmaken}
+\end{minipage}
+\hspace{1cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_group}
+\caption{Groep-informatie}
+\label{fig:shot_group}
+\end{minipage}
+
+\end{figure}
+
+% % % % % % % % % % % % % % % % % % % % %
+% afbeeldingen 2
+\begin{figure}[ht]
+\centering
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_groep_beheer}
+\caption{Beheer groep. Accepteer lidschapverzoeken en verwijder leden}
+\label{fig:shot_groep_beheer}
+\end{minipage}
+
+
+\end{figure}
+
+\clearpage
 
 \subsubsection{Events en Rewards}%Siebe
 In het Eventsscherm krijgt de gebruiker een overzicht van alle evenementen. Hierbij worden officiële en niet-officiële in dezelfde lijst weergegeven maar worden ze grafisch onderscheden. Het Eventsscherm is geïmplementeerd om te vermijden dat gebruikers via de locaties op zoek moet gaan naar evenementen.
@@ -29,9 +116,35 @@ In het Rewardscherm kan de gebruiker de promoties van officiële evenementen gaa
 \subsubsection{Leaderboard}%Lars
 Het Leaderboardscherm toont een algemene ranglijst. Deze ranglijst is onafhankelijk van een locatie en toont welke groepen zich globaal aan de leiding bevinden op basis van het aantal checkins. Momenteel wordt deze ranglijst nog in hetzelfde formaat getoond als bij de locaties. Een mogelijke uitbreiding is echter om naast een lijst te tonen, ook een kaartje te tonen dat dynamisch gegenereerd. Deze kaart zou dan per locatie tonen welke groep hier aan de leiding staat.De leaderboards kunnen gewijzigd worden afhankelijk van grootte en type van de groepen.
 
-\subsubsection{Notificaties}%Vincent
+
+
+\subsubsection{Notificaties} %Vincent
 Het notificatiesysteem zorgt ervoor dat gebruikers verwittigd worden van belangrijke gebeurtenissen binnen Triump en met slechts één beweging de betreffende pagina kunnen waarnemen. In de huidige implementatie zal een gebruiker een notificatie ontvangen indien een groep waartoe hij/zij behoort een evenement heeft gewonnen. Wanneer er op de notificatie wordt geklikt zal de evenementpagina meteen worden getoond. Daarnaast kan een gebruiker ook via notificaties aangepoord worden om feedback te verschaffen.   
 
+\begin{figure}[ht]
+
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_event_aanmaken}
+\caption{Event aanmaken}
+\label{fig:shot_event_aanmaken}
+\end{minipage}
+\hspace{1.8cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_event}
+\caption{Event-informatie}
+\label{fig:shot_event}
+\end{minipage}
+\hspace{1.8cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_reward_claim}
+\caption{Ontvang promotie}
+\label{fig:shot_reward_claim}
+\end{minipage}
+\end{figure}
+\clearpage
 
 \subsubsection{Feedback}%Siebe
 In de ontwikkelfase, maar ook bij het uitbrengen van een eerste versie van de toepassing is feedback van cruciaal belang. Om het testgebruikers mogelijk te maken vanuit de applicatie zelf feedback te laten geven wordt een Feedbackscherm voorzien. De gebruiker kan in een tekstveld schrijven wat hij van Triump vindt en eventuele bugs melden. Deze berichten worden dan onmiddelijk doorgestuurd naar het gemeenschappelijk emailadres van Triump.
@@ -40,13 +153,30 @@ Om de applicatie configureerbaar te maken wordt een instellingscherm voorzien. H
 Voorbeelden van instellingen in Triump zijn: het aan- en uitzetten van notificaties, het al dan niet delen van je profiel, het kleurenschema dat de applicatie gebruikt,...
 % http://developer.android.com/guide/topics/ui/settings.html 
 en deze hebben we dan ook gevolgd. Voorbeelden van instellingen in Triump zijn: het aan- en uitzetten van notificaties, het al dan niet delen van je profiel, het kleurenschema dat de applicatie gebruikt,...
-% Screenshots
-% extras
-% Overview
 
+\begin{figure}[ht]
 
-% feedback
-% Notificaties
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_feedback}
+\caption{Feedback}
+\label{fig:shot_feedback}
+\end{minipage}
+\hspace{1.5cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_instellingen}
+\caption{Instellingen}
+\label{fig:shot_instellingen}
+\end{minipage}
+\hspace{1.5cm}
+\begin{minipage}[b]{0.25\linewidth}
+\centering
+\includegraphics[width=\textwidth]{shot_profile}
+\caption{Profiel}
+\label{fig:shot_profile}
+\end{minipage}
+\end{figure}
 
 \section{Webinterface}%Jonas -A
 De website van Triump, die te bekijken is op triump.be, bestaat uit 2 delen. Enerzijds is er een deel waarvoor men niet dient ingelogd te zijn. Hier kan men informatie vinden over Triump, de applicatie downloaden en de ontwikkelaars contacteren . Anderzijds is er de interface voor gebruikers van Triump, waarvoor men ingelogd dient te zijn. Hier kan men groepen en evenementen bekijken, maar de belangrijkste functionaliteit van dit gedeelte is het registreren van een locatie.
