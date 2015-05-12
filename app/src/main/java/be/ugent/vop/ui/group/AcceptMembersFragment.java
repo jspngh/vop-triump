@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -23,6 +25,8 @@ public class AcceptMembersFragment extends Fragment implements LoaderManager.Loa
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private Context context;
+    private TextView mEmpty;
+    private ProgressBar mLoading;
     public AcceptMembersFragment() {
         // Required empty public constructor
     }
@@ -44,7 +48,12 @@ public class AcceptMembersFragment extends Fragment implements LoaderManager.Loa
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(null);
-
+        mEmpty = (TextView)rootView.findViewById(R.id.empty);
+        mLoading = (ProgressBar)rootView.findViewById(R.id.loading);
+        mEmpty.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
+        mEmpty.setText("All requests have been handled.");
         return rootView;
     }
 
@@ -62,6 +71,14 @@ public class AcceptMembersFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<ArrayList<UserBean>> loader, ArrayList<UserBean> data) {
         mAdapter = new PendingMembersAdapter(context, data, groupId);
+        if(mAdapter.getItemCount()==0){
+            mEmpty.setVisibility(View.VISIBLE);
+            mLoading.setVisibility(View.INVISIBLE);
+        }else{
+            mEmpty.setVisibility(View.INVISIBLE);
+            mLoading.setVisibility(View.INVISIBLE);
+        }
+        mRecyclerView.setVisibility(View.VISIBLE);
         mRecyclerView.setAdapter(mAdapter);
     }
 

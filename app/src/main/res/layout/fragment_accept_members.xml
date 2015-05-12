@@ -2,7 +2,23 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="be.ugent.vop.ui.group.AcceptMembersFragment">
-
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:textSize="20sp"
+        android:textColor="@color/material_blue_grey_900" />
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:indeterminate="true" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/members_list"
         android:layout_width="match_parent"

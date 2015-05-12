@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFlat;
@@ -39,6 +40,8 @@ public class ManageMembersFragment extends Fragment implements LoaderManager.Loa
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private Context context;
+    private TextView mEmpty;
+    private ProgressBar mLoading;
     public ManageMembersFragment() {
         // Required empty public constructor
     }
@@ -60,7 +63,12 @@ public class ManageMembersFragment extends Fragment implements LoaderManager.Loa
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(null);
-
+        mEmpty = (TextView)rootView.findViewById(R.id.empty);
+        mLoading = (ProgressBar)rootView.findViewById(R.id.loading);
+        mEmpty.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
+        mEmpty.setText("No members.");
         return rootView;
     }
 
@@ -77,7 +85,13 @@ public class ManageMembersFragment extends Fragment implements LoaderManager.Loa
             for (UserBean user : response.getMembers()) {
                 members.add(user);
             }
+            mEmpty.setVisibility(View.INVISIBLE);
+            mLoading.setVisibility(View.INVISIBLE);
+        }else{
+            mEmpty.setVisibility(View.VISIBLE);
+            mLoading.setVisibility(View.INVISIBLE);
         }
+        mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter = new ManageMemberAdapter(context, members, groupId);
         mRecyclerView.setAdapter(mAdapter);
     }
