@@ -26,12 +26,12 @@ Aangezien GCE nog steeds gehost wordt door een Googles App Engine instantie blij
 	\label{fig:Overzicht Google Cloud Endpoints}
 \end{figure}
 
-Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Een probleem zoals schaalbaarheid wordt via dynamische rekenkrachtallocatie opgelost. Daarnaast is de backend van Triump ook altijd bereikbaar aangezien GAE een hoge graad van permanentie van zijn servers verzekert. Desalniettemin brengt het gebruik van GAE ook enkele nadelen met zich mee. De voornaamste zijn de restricties op het aantal lees- en schrijfoperaties per dag, de sterk variërende duratie van lees- en schrijfoperaties en de afhankelijkheid van een externe organisatie. De restricties op het aantal operaties zijn enkel aanwezig bij gratis gebruik van GAE en kunnen geremediëerd worden door te betalen voor de diensten van GAE.
-Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit probleem tijdens de ontwikkelfase opgelost worden door het aantal operaties per dag van 50.000 naar 1.000.000 te verhogen. Een groot aantal operaties is vereist omdat elke atomaire lees/schrijf operatie wordt meegerekend. Hierdoor neemt het aantal leesoperaties/schrijfoperaties bij het uitvoeren van enkele complexe operaties zeer snel toe. De duratie van operaties op de GAE kan beperkt worden door te investeren in snellere apparatuur (met GAE krediet). Hiervoor werd tijdens de ontwikkeling niet voor gekozen.
+Het voornaamste voordeel van het werken met GAE is dat er tijdens ontwikkelfase geen rekening hoeft gehouden te worden met het  beheer en de administratie van de backend infrastructuur. Een probleem zoals schaalbaarheid wordt via dynamische rekenkrachtallocatie opgelost. Daarnaast is de backend van Triump ook altijd bereikbaar aangezien GAE een hoge graad van permanentie van zijn servers verzekert. Desalniettemin brengt het gebruik van GAE ook enkele nadelen met zich mee. De voornaamste zijn de restricties op het aantal lees- en schrijfoperaties per dag, de sterk variërende tijdsduur van lees- en schrijfoperaties en de afhankelijkheid van een externe organisatie. De restricties op het aantal operaties zijn enkel aanwezig bij gratis gebruik van GAE en kunnen geremediëerd worden door te betalen voor de diensten van GAE.
+Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit probleem tijdens de ontwikkelfase opgelost worden door het aantal operaties per dag van 50.000 naar 1.000.000 te verhogen. Een groot aantal operaties is vereist omdat elke atomaire lees/schrijf operatie wordt meegerekend. Indien bijvoorbeeld een groep met zijn leden opgehaald wordt uit de database, moet voor elk lid een leesoperatie gebeuren. Hierdoor neemt het aantal leesoperaties/schrijfoperaties bij het uitvoeren van enkele complexe operaties zeer snel toe. De tijdsduur van operaties op de GAE kan beperkt worden door te investeren in snellere apparatuur (met GAE krediet). Hiervoor werd tijdens de ontwikkeling niet voor gekozen.
 
 \subsubsection{Datastore~\cite{Google_Datastore}}
 
-Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met de toenemende hoeveelheid opgeslagen data. Een tweede verschil is dat er geen automatische controles worden uitgevoerd op de ingevoerde data. Voorbeelden van dergelijke controles zijn: nagaan of een attribuut van een bepaald type is, controleren of een vreemde sleutel bestaat, uniciteit van primaire sleutel garanderen,\ldots. Bijgevolg ligt de verantwoordelijkheid van de integriteit van de database volledig bij de ontwikkelaar. Tijdens de ontwikkeling werd dit gezien als het grootste nadeel van de GAE Datastore tegenover een traditionele relationele database.
+Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met toenemende hoeveelheid opgeslagen data. Een tweede verschil is GAE Datastore schemaloos is. Dit houdt in dat er geen restricties worden opgelegd op de data. Voorbeelden van dergelijke restricties zijn: een attribuut is van een bepaald type is, een vreemde sleutel moet bestaan, een primaire sleutel moet uniek zijn,\ldots. Bijgevolg ligt de verantwoordelijkheid van de integriteit van de database volledig bij de ontwikkelaar.
 
 \subsubsection{Google Cloud Messaging~\cite{Google_Cloud_Messaging}}
 
@@ -39,7 +39,7 @@ Google Cloud Messaging (GCM) voor Android is een dienst die het mogelijk maakt d
 
 \subsubsection{Cron jobs~\cite{Google_Cron_Jobs}}
 
-Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend.
+Een van de functionaliteiten die Google App Engine aanbiedt is de App Engine Cron Service. Deze service laat gebruikers toe bepaalde taken (cron jobs/chronical jobs) op regelmatige tijdstippen uit te laten voeren op de backend. Bovendien blijft door het gebruik van Cron Jobs de GAE instantie actief op de servers, waardoor deze niet steeds opnieuw opgestart dient te worden bij lange timeouts tussen requests. Dit probleem wordt uitgebreid besproken in sectie \ref{tijdsduur}.
 
 
 \subsection{Foursquare API}
@@ -56,6 +56,7 @@ Het laatste probleem wordt opgelost door het voorzien van een webinterface. Deze
 \subsubsection{Waarom Android?}
 
 Bij de ontwikkeling van de Triump applicatie is er gekozen voor Android als mobiel platform boven iOS of Windows Phone. Android heeft als voordeel dat het een groot marktaandeel heeft (76.6\% van de smartphones wereldwijd draait op Android \cite{marketshare}) en er dus een groot publiek bereikt kan worden met de applicatie. Dit maakt dat Android als eerste platform de beste keuze is. De ontwikkeltools voor iOS en Windows Phone zijn bovendien niet cross-platform. Om apps te ontwikkelen voor iOS dient men over XCode te beschikken (enkel beschikbaar op Mac OS X) en om Windows Phone applicaties te ontwikkelen maakt men gebruik van Visual Studio (enkel beschikbaar op Windows). Vermits het team bestaat uit 1 Windows, 1 Linux en 2 Mac gebruikers, was het noodzakelijk om een cross-platform ontwikkelomgeving te hebben.
+Momenteel wordt het proof of concept dus ontwikkeld in Android, en ondersteuning voor andere systemen volgt later.
 \subsubsection{Ontwikkelomgeving: Android Studio}
 % vergelijking vs Eclipse
 Vroeger was Eclipse de standaard ontwikkelomgeving (IDE) voor Android. Hierbij werd de standaard Eclipse installatie uitgebreid met de Android Developer Toolkit (ADT) plugin om Eclipse beter geschikt te maken voor Android Development. Op 16 mei 2013 stelde Google de nieuwste IDE voor Android voor genaamd Android Studio. Deze IDE is gebaseerd op IntelliJ IDEA en biedt veel verbeteringen ten opzichte van Eclipse. 
@@ -91,7 +92,7 @@ Dez communicatie verloopt via Javascript en dient om bijvoorbeeld het organisere
 
 
 \chapter{Ontwerp}
-Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de verschillende onderdelen van de backend en van de interacties tussen de backend en de frontend. De pijlen aangeduid in figuur \ref{fig:algemene structuur backend} worden in de volgende secties verklaard.
+Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de verschillende onderdelen van de backend en van de interacties tussen de backend en de frontend. De pijlen tussen de verschillende onderdelen in de figuur worden in de volgende secties verklaard.
 
 \begin{figure}[H]
 	\centering
@@ -102,7 +103,7 @@ Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de 
 \end{figure}
 \section{Backend}
 \subsection{Database}
-Zoals reeds aangegeven word de backend database gehost op een GAE instantie. Deze GAE Datastore is schemaloos wat impliceert dat er geen enkele restrictie met betrekking tot de opbouw van entiteiten wordt opgelegd. M.a.w. maakt GAE Datastore geen gebruik van DDL (Data definition language) om de databank te configureren. Toch is er gekozen voor de database te ontwerpen als een relationele databank aangezien dit toeliet bepaalde operaties zeer efficiënt aan te pakken. Door het ontbreken van de DDL ligt het behoud van de integriteit nu wel volledig bij de ontwikkelaars. 
+Zoals reeds aangegeven word de backend database gehost op een GAE instantie. De GAE Datastore is schemaloos wat impliceert dat er geen enkele restrictie met betrekking tot de opbouw van entiteiten wordt opgelegd. Toch is er gekozen voor de database te ontwerpen als een relationele databank aangezien dit toelaat bepaalde operaties zeer efficiënt aan te pakken. Het behoud van de integriteit nu wel volledig bij de ontwikkelaars. 
 
 Figuur \ref{fig:Backend ER} toont een ER diagram van de backend database.  De belangrijkste entiteiten van deze database zijn User, Event, Venue, Group en Checkin. In de volgende paragraaf wordt de structuur van de database besproken. 
 
@@ -171,8 +172,8 @@ Het mobiele toestel zal rechtstreeks requests sturen naar de Foursquare API om b
 Tijdens de ontwikkeling van Triump is er voor gekozen om te werken met de nieuwste technologieën voor Android. Dat houdt in dat Triump ontwikkelt is met als doel volledig compatibel te zijn met de laatste versie van Android: 5.1 Lollipop. Triump is daarnaast wel nog steeds compatibel met alle Android versies vanaf 4.1 Jelly Bean. Hierdoor bereikt de applicatie 87,5\% van alle Android toestellen \cite{market_share}. 
 Android development gebeurd in Java, maar er zijn enkele Android-specifieke ontwerppatronen waarvan er gebruik gemaakt wordt. Onder andere voor het asynchroon laden van informatie, het opslaan van data en het opbouwen van efficiënte UI lijsten zijn er speciale ontwerppatronen in Android. Deze zullen in de volgende secties verder uitgelegd worden.
 
-\subsubsection{Material Design}
-Triump is ontwikkeld voor Android Lollipop. Dit houdt in dat er gebruik gemaakt wordt van de Material Design Guidelines \cite{Material_Design}. Door de Material Design Guidelines te volgen is het makkelijker om een consistent look-and-feel te verkrijgen in de app die volledig in lijn ligt met de rest van het Android ecosysteem.
+\subsubsection{Design}
+Triump is ontwikkeld volgens de design richtlijnen van de laatste versie, Android Lollipop. Dit houdt in dat er gebruik gemaakt wordt van de Material Design Guidelines \cite{Material_Design}. Door de Material Design Guidelines te volgen is het makkelijker om een consistent look-and-feel te verkrijgen in de app die volledig in lijn ligt met de rest van het huidige Android ecosysteem.
 Om de correcte implementatie van Material Design te garanderen, is er gebruik gemaakt van enkele externe bibliotheken. Deze bibliotheken bieden extra functionaliteit ten opzichte van de standaard Android API waardoor het makkelijker is het correcte design te verkrijgen. Deze bibliotheken zijn steeds backwards compatible met eerdere versies van Android. Hierdoor wordt er een uniforme look verkregen op alle versies die de app ondersteunt.
 De gebruikt bibliotheken om Material Design te implementeren zijn:
 \begin{description}
@@ -194,7 +195,7 @@ In Android gebeurt het tekenen en het interageren met de UI, net zoals bij de me
 Om deze redenen bevat Android het concept van Loaders. De bedoeling van Loaders is om data op een asynchrone manier in te laden (dus op een aparte thread) en de resultaten via een callback terug te sturen naar de main UI thread teneinde ze op het scherm weer te geven. 
 \newline\newline
 
-De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van de methodes die gevolgd werden bij het ontwikkelen van de Android applicatie. Gedurende het volledige ontwerpproces werd op deze manier gestreeft naar een zo efficiënt mogelijke applicatie, ontwikkelt volgens de meest recente standaarden. \cite{successapp}
+De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van de methodes die gevolgd werden bij het ontwikkelen van de Android applicatie. Gedurende het volledige ontwerpproces werd op deze manier gestreefd naar een zo efficiënt mogelijke applicatie, ontwikkeld volgens de meest recente standaarden. \cite{successapp}
 \subsection{Webinterface}
 \begin{figure}[H]
 	\centering

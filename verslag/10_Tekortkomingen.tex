@@ -2,13 +2,13 @@
 \chapter{Analyse van de openstaande problemen}%Lars
 
 % Analyse van de openstaande problemen, tekorten, eventuele foute beslissingen
-\section{Duratie backend API Calls}
-
-Zoals aangehaald in sectie \ref{sec: GCE} Google Cloud Endpoints is een van de nadelen van GCE de grote variatie in duratietijd van backend API calls. Figuur \ref{fig:hist_getAllGroups} is een histogram die de relatieve frequentie weergeeft van de duratietijd van een bepaalde API call. (Gelijkaardige histogrammen worden bekomen voor andere API calls) De histogram is gebaseerd op 26 meetpunten verspreid over 2 dagen. GCE houdt een bepaalde backend instantie niet continu in ingeladen op de servers. De grote variatie in de tijden is m.a.w. te wijten aan het opstarten van de instantie. Deze wachttijden hebben een negatieve impact op de gebruikerservaring. Indien de toepassing echter meer wordt gebruikt, is de backend instantie meer actief en zijn 'koude missers' minder een probleem.
+\section{Tijdsduur backend API Calls}
+\label{tijdsduur}
+Zoals aangehaald in sectie \ref{sec: GCE} Google Cloud Endpoints is een van de nadelen van GCE de grote variatie in tijdsduur van backend API calls. Figuur \ref{fig:hist_getAllGroups} is een histogram die de relatieve frequentie weergeeft van de tijdsduur van een bepaalde API call. (Gelijkaardige histogrammen worden bekomen voor andere API calls) De histogram is gebaseerd op 26 meetpunten verspreid over 2 dagen. GCE houdt een bepaalde backend instantie niet continu in ingeladen op de servers. De grote variatie in de tijden is m.a.w. te wijten aan het opstarten van de instantie. Deze wachttijden hebben een negatieve impact op de gebruikerservaring. Indien de toepassing echter meer wordt gebruikt, is de backend instantie meer actief en zijn 'koude missers' minder een probleem.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{prestatie_histogram_GCE}
-	\caption{histogram duratietijden methode oproep getAllGroups()}
+	\caption{Histogram tijdsduur methode oproep getAllGroups()}
 	\label{fig:hist_getAllGroups}
 \end{figure}
 
