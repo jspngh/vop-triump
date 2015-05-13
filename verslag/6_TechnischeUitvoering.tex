@@ -1,7 +1,7 @@
 
 \chapter{Architectuur}
 
-Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks interageren, en anderzijds is er de backend, verborgen voor iedere gebruiker. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In figuur \ref{fig:algemene structuur} wordt schematisch de structuur van Triump weergegeven. In dit hoofdstuk wordt er dieper ingegaan op de gebruikte technologieën van de verschillende onderdelen. In het volgend hoofdstuk wordt dan eerder gefocust op het specifiek ontwerp en implementatie van de verschillende onderdelen. Steeds wordt er een onderscheid gemaakt tussen technologieën gehanteerd in de backend of in de frontend.
+Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er de frontend, waarmee de gebruikers rechtstreeks kan interageren, en anderzijds is er de backend, verborgen voor iedere gebruiker. De frontend bestaat op zijn beurt uit twee delen, nl. een Android applicatie en een webinterface. De backend is ontwikkeld op Google Cloud Endpoints. In figuur \ref{fig:algemene structuur} wordt schematisch de structuur van Triump weergegeven. In dit hoofdstuk wordt er dieper ingegaan op de gebruikte technologieën van de verschillende onderdelen. In het volgend hoofdstuk wordt dan eerder gefocust op het specifiek ontwerp en implementatie van de verschillende onderdelen. Steeds wordt er een onderscheid gemaakt tussen technologieën gehanteerd in de backend of in de frontend.
 
 %nieuwe figuur
 \begin{figure}[H]
@@ -16,6 +16,7 @@ Het technische aspect van Triump bestaat uit twee grote delen. Enerzijds is er d
 
 \subsection{Google Cloud Endpoints}
 \label{sec: GCE}
+
 Google Cloud Endpoints (GCE) is een uitbreiding van Google App Engine (GAE). GAE is een bekend `Platform as a Service' ontworpen om applicaties uit te voeren op Google's infrastructuur. GCE biedt naast de functionaliteiten beschikbaar in GAE de mogelijkheid om op een relatief eenvoudige manier een backend API te genereren voor applicaties.  Endpoints verzorgt onder andere de communicatie en authenticatie tussen gebruikers en de backend.
 Aangezien GCE nog steeds gehost wordt door een Googles App Engine instantie blijven alle andere functionaliteiten zoals `Datastore' voor dataopslag, `Google Cloud Messaging' voor notificaties en `Cron Jobs' voor periodieke taken beschikbaar.
 
@@ -24,7 +25,7 @@ Aangezien elke nieuwe ontwikkelaar \$ 300 in GAE krediet krijgt, kon dit problee
 
 \subsubsection{Datastore~\cite{Google_Datastore}}
 
-Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met toenemende hoeveelheid opgeslagen data. Een tweede verschil is dat de GAE Datastore schemaloos is. Dit houdt in dat er geen restricties worden opgelegd op de data. Voorbeelden van dergelijke restricties zijn: een attribuut is van een bepaald type is, een vreemde sleutel moet bestaan, een primaire sleutel moet uniek zijn,\ldots. Bijgevolg ligt de verantwoordelijkheid van de integriteit van de database volledig bij de ontwikkelaar.
+Triump maakt gebruik van App Engine Datastore als backend databank. GAE Datastore verschilt van traditionele relationele databases door zijn specifieke architectuur. De database is namelijk zo ontworpen dat deze automatisch meeschaalt met toenemende hoeveelheid opgeslagen data. Een tweede verschil is dat de GAE Datastore schemaloos is. Dit houdt in dat er geen restricties worden opgelegd op de data. Voorbeelden van dergelijke restricties zijn: een attribuut is van een bepaald type is, een vreemde sleutel moet bestaan, een primaire sleutel moet uniek zijn,\ldots. Bijgevolg ligt de verantwoordelijkheid van de integriteit van de databank volledig bij de ontwikkelaar.
 
 \subsubsection{Google Cloud Messaging~\cite{Google_Cloud_Messaging}}
 
@@ -79,10 +80,10 @@ Daarnaast moet men nog kiezen om ofwel de site bij een hosting-dienst te plaatse
 Op de site worden gebruikers aangemaakt waarbij bepaalde informatie wordt opgeslaan, zoals hun Foursquare-identiteit, zodat de gebruiker maar 1 keer met Foursquare moet inloggen. Dit gebeurt aan de hand van een DBMS-systeem. \\
 
 Als framework voor de webinterface werd gekozen voor Django, een framework geschreven in Python. Django maakt het mogelijk om op relatief korte tijd toch een dynamische website te bouwen.
-Een voordeel van het werken met Django is dat er hosting-diensten bestaan die zich specialiseren in het hosten van Django-projecten. Wij kozen voor zo een dienst, namelijk http://djangoeurope.com.
-Bij deze dienst was er de mogelijkheid te kiezen uit verschillende databasemanagment systemen. Er werd gekozen voor PostgreSQL: een open source DBMS waar reeds mee gewerkt werd tijdens het vak "Databanken".
-Communicatie tussen de backend en de website verloopt via Javascript. Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken. Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript. Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. Op sommige computers is Javascript namelijk niet is geïnstalleerd. Het `client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf. Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Deze code wordt `server-side' uitgevoerd. De backend is echter in Java geprogrammeerd, hetgeen gebruik van de python-module bemoeilijkte.
 
+Een voordeel van het werken met Django is dat er hosting-diensten bestaan die zich specialiseren in het hosten van Django-projecten. Wij kozen voor zo een dienst\cite{djangoeurope}.
+Bij deze dienst was er de mogelijkheid te kiezen uit verschillende databasemanagment systemen. Er werd gekozen voor PostgreSQL: een open source DBMS waar reeds mee gewerkt werd tijdens het vak `Databanken'.
+Communicatie tussen de backend en de website verloopt via Javascript. Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken. Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript. Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. Op sommige computers is Javascript namelijk niet is geïnstalleerd. Het `client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf. Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Deze code wordt `server-side' uitgevoerd. De backend is echter in Java geprogrammeerd, hetgeen gebruik van de python-module bemoeilijkte.
 
 \chapter{Ontwerp}
 Figuur \ref{fig:algemene structuur backend} geeft een abstract overzicht van de verschillende onderdelen van de backend en van de interacties tussen backend en frontend. De pijlen tussen de verschillende onderdelen in de figuur worden in de volgende secties verklaard.
