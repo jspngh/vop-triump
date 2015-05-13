@@ -4,7 +4,7 @@
 % Analyse van de openstaande problemen, tekorten, eventuele foute beslissingen
 \section{Tijdsduur backend API Calls}
 \label{tijdsduur}
-Zoals aangehaald in sectie \ref{sec: GCE} Google Cloud Endpoints is een van de nadelen van GCE de grote variatie in tijdsduur van backend API calls. Figuur \ref{fig:hist_getAllGroups} is een histogram die de relatieve frequentie weergeeft van de tijdsduur van een bepaalde API call. (Gelijkaardige histogrammen worden bekomen voor andere API calls) De histogram is gebaseerd op 26 meetpunten verspreid over 2 dagen. GCE houdt een bepaalde backend instantie niet continu in ingeladen op de servers. De grote variatie in de tijden is m.a.w. te wijten aan het opstarten van de instantie. Deze wachttijden hebben een negatieve impact op de gebruikerservaring. Indien de toepassing echter meer wordt gebruikt, is de backend instantie meer actief en zijn 'koude missers' minder een probleem.
+Zoals aangehaald in sectie \ref{sec: GCE} Google Cloud Endpoints is een van de nadelen van GCE de grote variatie in tijdsduur van backend API calls. Figuur \ref{fig:hist_getAllGroups} is een histogram die de relatieve frequentie weergeeft van de tijdsduur van een bepaalde API call; gelijkaardige histogrammen worden bekomen voor andere API calls. De histogram is gebaseerd op 26 meetpunten verspreid over 2 dagen. GCE houdt een bepaalde backend instantie niet continu in ingeladen op de servers. De grote variatie in de tijden is m.a.w. te wijten aan het opstarten van de instantie. Deze wachttijden hebben een negatieve impact op de gebruikerservaring. Indien de toepassing echter meer wordt gebruikt, is de backend instantie meer actief en vormen 'koude missers' minder een probleem.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{prestatie_histogram_GCE}
@@ -18,10 +18,10 @@ Zoals aangehaald in sectie \ref{sec: GCE} Google Cloud Endpoints is een van de n
 In de huidige implementatie van de backend API wordt er voor iedere checkin van een gebruiker en voor iedere groep waartoe de gebruiker behoort een checkin entiteit aangemaakt. Hierdoor groeit het aantal entiteiten in de Checkin tabel zeer snel. Daarnaast komt nog dat Triump gebruik maakt van GAE Datastore voor de backend database. Bij het gebruik van deze Datastore horen quota's die beperkingen opleggen voor de grootte van de databank en voor het aantal entiteiten. 
 % Hier moet een afbeelding komen:
 % Grafiek van percentage types in datastore ...
-De eenvoudigste oplossing voor dit probleem is het uitbreiden van de datastore door een dagelijks bedrag te betalen aan GAE. Een andere oplossing is het opstarten van een periodieke Cron job (zie sectie ref{sec:GCE} Cron jobs) die bijvoorbeeld wekelijks de Checkin tabel 'samenvat'. De samenvatting kan gebeuren door door alle punten verzamelt door 1 groep op 1 locatie binnen een bepaalde periode toe te kennen aan 1 checkin entiteit. Op deze manier kan het aantal entiteiten drastisch beperkt worden. Nadeel van deze oplossing is het verlies aan informatie die mogelijks gebruikt kan worden voor het genereren van statistieken. 
+De eenvoudigste oplossing voor dit probleem is het uitbreiden van de datastore door een dagelijks bedrag te betalen aan GAE. Een andere oplossing is het opstarten van een periodieke Cron job (zie sectie \ref{sec:GCE} Cron jobs) die bijvoorbeeld wekelijks de Checkin tabel 'samenvat'. De samenvatting kan gebeuren door alle punten verzamelt door 1 groep op 1 locatie binnen een bepaalde periode toe te kennen aan 1 checkin entiteit. Op deze manier kan het aantal entiteiten drastisch beperkt worden. Nadeel van deze oplossing is het verlies aan informatie die mogelijks gebruikt kan worden voor het genereren van statistieken. 
 
 Aangezien de opgelegde quota's m.b.t. de GAE Datastore ruimschoots voldoen en bijgevolg het probleem nog niet van toepassing is, zijn nog geen van beide oplossingen geïmplementeerd.
-Indien echter het aantal gebruikers van Triump zou toenemen is het wel noodzakelijk een oplossing toe te passen.
+Indien het aantal gebruikers van Triump zou toenemen is het wel noodzakelijk een oplossing toe te passen.
 
 \section{Android versies}
 
