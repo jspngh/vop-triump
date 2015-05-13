@@ -8,8 +8,8 @@ De applicatie is uitgebouwd rond 1 centraal scherm. Hieruit kan rechtstreeks gen
 % Linken aan doelstelling
 %Packagediagram	%Lars
 \subsubsection{Login en tutorial} %Lars
-Bij het eerste keer opstarten van de Android applicatie wordt een tutorialsequentie opgestart. Hierin wordt de doelstelling van de applicatie uitgelegd en wat de verschillende mogelijkheden zijn. Indien na feedback van gebruikers blijkt dat deze schermen niet voldoende intuïtief zijn, kan deze tutorial uitgebreid worden met een enkele schermen waarbij de eigelijke applicatie getoond wordt en ingezoomd worden op de specifieke functionaliteit en navigatie doorheen de toepassing. 
-Na de tutorialsequentie wordt de gebruiker gevraagd om in te loggen. Vermits het doel van deze applicatie het uitbreiden van de Foursquare/Swarm functionaliteit is, wordt de gebruiker gevraagd om in te loggen met zijn/haar Foursquare/Swarm account. Het inloggen vereist het installeren van de Foursquare/Swarm applicatie. Op deze manier kan Triump steunen op de reeds bestaande gebruikers van Foursquare/Swarm. Bovendien kan hierdoor het volledig login/registreerproces uitbesteedt worden en kan een bestaande API gebruikt worden.
+Bij het eerste keer opstarten van de Android applicatie wordt een tutorialsequentie opgestart. Hierin wordt de doelstelling van de applicatie uitgelegd en wat de verschillende mogelijkheden zijn. Indien na feedback van gebruikers blijkt dat deze schermen niet voldoende intuïtief zijn, kan deze tutorial uitgebreid worden met enkele schermen waarbij de eigelijke applicatie getoond wordt en ingezoomd worden op de specifieke functionaliteit en navigatie doorheen de toepassing. 
+Na de tutorialsequentie wordt de gebruiker gevraagd om in te loggen. Vermits het doel van deze applicatie het uitbreiden van de Foursquare/Swarm functionaliteit is, wordt de gebruiker gevraagd om in te loggen met zijn/haar Foursquare/Swarm account. Het inloggen vereist het installeren van de Foursquare/Swarm applicatie. Op deze manier kan Triump steunen op de reeds bestaande gebruikers van Foursquare/Swarm. Bovendien kan hierdoor het volledig login/registreerproces uitbesteed worden en kan een bestaande API gebruikt worden.
 Na de eerste keer inloggen wordt de gebruiker `geïnitialiseerd' op de backend van Triump.
 \begin{figure}[ht]
 \begin{minipage}[b]{0.20\linewidth}
@@ -37,7 +37,7 @@ Na de eerste keer inloggen wordt de gebruiker `geïnitialiseerd' op de backend v
 \subsubsection{Overview en notificaties} %Lars
 Om gebruikers op de hoogte te houden van recente activiteit van hun groepen, events die aan de gang zijn, promoties, checkins,... worden in de Android applicatie 2 mechanismen voorzien. 
 Enerzijds is er het Overviewscherm, het eerste scherm dat de gebruiker ziet in de applicatie, anderzijds zijn er de notificaties.
-Het Overviewscherm wordt dynamisch gegenereerd op basis van de activiteit van de gebruikers. Hiervoor wordt met `CardViews' in een RecyclerView gewerkt, waardoor ze efficïent kunnen voorgesteld worden in een lijst en interactief zijn. Het Overviewscherm toont de checkins van groepsleden , evenementen in de buurt en gewonnen promoties. Op deze manier kan de gebruiker vanuit het Overviewscherm navigeren naar andere onderdelen binnen de applicatie (evenementen, ranglijsten, groepen, checkin...).
+Het Overviewscherm wordt dynamisch gegenereerd op basis van de activiteit van de gebruikers. Hiervoor wordt met `CardViews' in een RecyclerView gewerkt, waardoor ze efficiënt kunnen voorgesteld worden in een lijst en interactief zijn. Het Overviewscherm toont de checkins van groepsleden , evenementen in de buurt en gewonnen promoties. Op deze manier kan de gebruiker vanuit het Overviewscherm navigeren naar andere onderdelen binnen de applicatie (evenementen, ranglijsten, groepen, checkin...).
 Naast het Overviewscherm, wordt de gebruiker van updates voorzien via notificaties. Deze notificaties hebben betrekking op evenementen en promoties (voor checkins worden geen notificaties verstuurd om de gebruiker niet te belasten met overbodige notificaties). Bovendien heeft de gebruiker de mogelijkheid om notificaties uit te schakelen via de instellingen. Notificaties kunnen ook occasioneel gebruikt worden om aan de gebruiker feedback te vragen via het Feedbackscherm. Voornamelijk in de ontwikkel- en testfase is dit van belang.
 Kortom, het Overviewscherm en de notificaties zijn een interactieve manier om de gebruikers aan te zetten tot het gebruiken van de applicatie.
 
@@ -111,15 +111,15 @@ Een belangrijk onderdeel van de Triump applicatie is het groepsaspect. Groepen k
 \clearpage
 
 \subsubsection{Events en Rewards}%Siebe
-In het Eventsscherm krijgt de gebruiker een overzicht van alle evenementen. Hierbij worden officiële en niet-officiële in dezelfde lijst weergegeven maar worden ze grafisch onderscheden. Het Eventsscherm is geïmplementeerd om te vermijden dat gebruikers via de locaties op zoek moet gaan naar evenementen.
-In het Rewardscherm kan de gebruiker de promoties van officiële evenementen gaan opeisen indien hij/zij deze heeft gewonnen met een van zijn groepen. Momenteel kan de gebruiker beloningen opeisen door over een promotie te vegen, waarbij een dialoogscherm wordt geopend. Door dit scherm aan de eigenaar te tonen, kan vervolgens de beloning geïnd worden. Als uitbreiding kan er eventueel voor gezorgd worden dat de eigenaar een unieke afbeelding uploadt per promotie. Door te vegen over de promotie kan de afbeelding dan bv. 10 s getoond worden.
+In het Eventsscherm krijgt de gebruiker een overzicht van alle evenementen. Hierbij worden officiële en niet-officiële in dezelfde lijst weergegeven maar worden ze grafisch onderscheiden. Het Eventsscherm is geïmplementeerd om te vermijden dat gebruikers via de locaties op zoek moet gaan naar evenementen.
+In het Rewardscherm kan de gebruiker de promoties van officiële evenementen gaan opeisen indien hij/zij deze heeft gewonnen met één van zijn groepen. Momenteel kan de gebruiker beloningen opeisen door over een promotie te vegen, waarbij een dialoogscherm wordt geopend. Door dit scherm aan de eigenaar te tonen, kan vervolgens de beloning geïnd worden. Als uitbreiding kan er eventueel voor gezorgd worden dat de eigenaar een unieke afbeelding uploadt per promotie. Door te vegen over de promotie kan de afbeelding dan bv. 10 s getoond worden.
 \subsubsection{Leaderboard}%Lars
 Het Leaderboardscherm toont een algemene ranglijst. Deze ranglijst is onafhankelijk van een locatie en toont welke groepen zich globaal aan de leiding bevinden op basis van het aantal checkins. Momenteel wordt deze ranglijst nog in hetzelfde formaat getoond als bij de locaties. Een mogelijke uitbreiding is echter om naast een lijst te tonen, ook een kaartje te tonen dat dynamisch gegenereerd. Deze kaart zou dan per locatie tonen welke groep hier aan de leiding staat.De leaderboards kunnen gewijzigd worden afhankelijk van grootte en type van de groepen.
 
 
 
 \subsubsection{Notificaties} %Vincent
-Het notificatiesysteem zorgt ervoor dat gebruikers verwittigd worden van belangrijke gebeurtenissen binnen Triump en met slechts één beweging de betreffende pagina kunnen waarnemen. In de huidige implementatie zal een gebruiker een notificatie ontvangen indien een groep waartoe hij/zij behoort een evenement heeft gewonnen. Wanneer er op de notificatie wordt geklikt zal de evenementpagina meteen worden getoond. Daarnaast kan een gebruiker ook via notificaties aangepoord worden om feedback te verschaffen.   
+Het notificatiesysteem zorgt ervoor dat gebruikers verwittigd worden van belangrijke gebeurtenissen binnen Triump en met slechts één beweging de betreffende pagina kunnen waarnemen. In de huidige implementatie zal een gebruiker een notificatie ontvangen indien een groep waartoe hij/zij behoort een evenement heeft gewonnen. Wanneer er op de notificatie wordt geklikt zal de evenementpagina meteen worden getoond. Daarnaast kan een gebruiker ook via notificaties aangespoord worden om feedback te verschaffen.   
 
 \begin{figure}[ht]
 
@@ -180,7 +180,7 @@ en deze hebben we dan ook gevolgd. Voorbeelden van instellingen in Triump zijn: 
 
 \section{Webinterface}%Jonas -A
 De website van Triump, die te bekijken is op triump.be, bestaat uit 2 delen. Enerzijds is er een deel waarvoor men niet dient ingelogd te zijn. Hier kan men informatie vinden over Triump, de applicatie downloaden en de ontwikkelaars contacteren . Anderzijds is er de interface voor gebruikers van Triump, waarvoor men ingelogd dient te zijn. Hier kan men groepen en evenementen bekijken, maar de belangrijkste functionaliteit van dit gedeelte is het registreren van een locatie.
-Het registreren van een locatie is noodzakelijk indien men een officiëel evenement wil organiseren.
+Het registreren van een locatie is noodzakelijk indien men een officieel evenement wil organiseren.
 \subsubsection{Publieke pagina's}
 De publieke pagina's van de website zijn voornamelijk bedoeld ter promotie van Triump. Vanuit de startpagina kan genavigeerd worden naar `Contact' en `About' om meer informatie over Triump te verkrijgen. Via de sectie `Download' kan de applicatie gedownload worden. Dit is voornamelijk bedoeld voor de testgebruikers, vermits lancering op de Google App Store pas na uitvoerig testen mogelijk is. Testgebruikers kunnen de testversie downloaden via de website. Via `Sign up' kunnen gebruikers zich registreren om gebruik te kunnen maken van de webinterface voor Triump.\\
 Op de Contact-pagina is er de mogelijkheid om feedback te geven en een mail te sturen.
@@ -193,5 +193,18 @@ Momenteel is het enkel mogelijk om te zoeken naar locaties rondom Gent, aangezie
 Om er zeker van te zijn dat het wel degelijk om de juiste locatie gaat, is er een link aanwezig die leidt naar de Fourquare-pagina van die locatie.
 Vervolgens bevestigt de gebruiker de registratie en wordt een mail te gestuurd naar Triump met de details van de locatie. De registratie wordt geverifieerd en uiteindelijk goedgekeurd.
 De gebruiker kan vervolgens een officiëel evenement organiseren voor deze locatie via de webinterface.
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{about}
+	\caption{Publieke website }
+	\label{fig:about}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{events}
+	\caption{Webinterface }
+	\label{fig:events}
+\end{figure}
 
 % Verschillende schermen tonen van webinterface en functionaliteit
