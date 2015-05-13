@@ -67,9 +67,10 @@ De voordelen van Android Studio zijn legio: betere code generatie en auto-comple
 \label{Webinterface}
 \subsubsection{Doel}
 Voor een aantal taken is een smartphone niet helemaal geschikt. Zulke taken zijn o.a. het beheren van groepen en het aanmaken van officiele evenementen.
-Deze taken gebeuren met bepaalde regelmaat en zijn gemakkelijker op een groter scherm uit te voeren. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten als online marketing strategie, zullen deze taken willen uitvoeren via een overzichtelijke webinterface. Daarom is Triump uitgebreid met een webinterface die bereikbaar is via de publieke website van Triump.
-Deze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. Op de site staat informatie over het doel van Triump, en wordt er een link voorzien zodat toekomstige gebruikers de applicatie kunnen downloaden.
+Deze taken gebeuren met bepaalde regelmaat en zijn gemakkelijker op een groter scherm uit te voeren. Specifieke gebruikers, zoals uitbaters van locaties die een promotie willen opzetten als online marketing strategie, zullen deze taken willen uitvoeren via een overzichtelijke webinterface. Daarom is Triump uitgebreid met een webinterface die bereikbaar is via de publieke website van Triump\cite{triumpsite}.
+Deze site zal tevens dienst doen als infopunt voor huidige en toekomstige gebruikers. 
 
+Op de site staat informatie over het doel van Triump, en wordt er een link voorzien zodat toekomstige gebruikers de applicatie kunnen downloaden.
 Op de website kunnen gebruikers net als in de Android-applicatie inloggen met Foursquare. Het is de bedoeling dat het registreren van een Foursquare-locatie steeds via de website gebeurd, net als het aanmaken van promoties door een eigenaar van een registreerde locatie. Het opleggen van registratie van een locatie door de eigenaar moet ervoor zorgen dat er geen valse promoties worden opgezet. Zonder registratie zou immers iemand een promotie kunnen aanmaken voor een bepaalde locatie zonder dat deze ook daadwerkelijk wordt gegeven.
 
 \subsubsection{Django-framework}
@@ -77,10 +78,10 @@ Bij het maken van een website zijn er verschillende keuzes.
 Eerst en vooral is er de keuze of er gebruik wordt gemaakt van een bestaand framework, zoals Ruby on Rails, ASP.NET en Django, of dat men zelf de nodige functionaliteit implementeert met bijvoorbeeld PHP.
 Bestaande frameworks bieden ruim voldoende functionaliteit aan om de Triump website te verwezenlijken. De frameworks zijn bovendien reeds geoptimaliseerd en bevatten o.a. methoden om op een veilige manier aan authenticatie te doen.
 Daarnaast moet men nog kiezen om ofwel de site bij een hosting-dienst te plaatsen, ofwel zelf de site te hosten op een eigen pc. Gebruik maken van een bestaande hosting-dienst, is het eenvoudigst. Voor een vast bedrag, per maand of jaar, wordt de website geplaatst op de servers van de hosting-dienst. Deze neemt extra moeilijkheden, zoals het instellen en onderhouden van DNS-servers op zich.
+
 Op de site worden gebruikers aangemaakt waarbij bepaalde informatie wordt opgeslaan, zoals hun Foursquare-identiteit, zodat de gebruiker maar 1 keer met Foursquare moet inloggen. Dit gebeurt aan de hand van een DBMS-systeem. \\
 
 Als framework voor de webinterface werd gekozen voor Django, een framework geschreven in Python. Django maakt het mogelijk om op relatief korte tijd toch een dynamische website te bouwen.
-
 Een voordeel van het werken met Django is dat er hosting-diensten bestaan die zich specialiseren in het hosten van Django-projecten. Wij kozen voor zo een dienst\cite{djangoeurope}.
 Bij deze dienst was er de mogelijkheid te kiezen uit verschillende databasemanagment systemen. Er werd gekozen voor PostgreSQL: een open source DBMS waar reeds mee gewerkt werd tijdens het vak `Databanken'.
 Communicatie tussen de backend en de website verloopt via Javascript. Google biedt namelijk een API aan die het mogelijk maakt om Google Endpoints via Javascript aan te spreken. Zo wordt gemakkelijk een van de functies uit de backend opgeroepen en kan het resultaat, dat in JSON wordt ontvangen, ook vlot worden verwerkt met behulp van Javascript. Deze keuze brengt wel nadelen met zich mee. Aan de basis van deze nadelen ligt het feit dat Javascript op de computer van de gebruiker wordt uitgevoerd, en niet op de server die de website host. Op sommige computers is Javascript namelijk niet is geïnstalleerd. Het `client-side' uitvoeren van code brengt nog een ander nadeel met zich mee: het vormt namelijk een zwak punt in de verdediging tegen aanvallen van buitenaf. Een alternatief is het gebruiken van een python-module op de webserver die communicatie met Google Endpoints mogelijk maakt. Deze code wordt `server-side' uitgevoerd. De backend is echter in Java geprogrammeerd, hetgeen gebruik van de python-module bemoeilijkte.
@@ -182,7 +183,7 @@ RecyclerView maakt het grootste deel van de findViewById operaties overbodig doo
 Concreet leidt het nastreven van de laatste Android ontwerppatronen, zoals de RecyclerView, tot een efficiëntere applicatie.
 
 \subsubsection{Loaders}
-In Android gebeurt het tekenen en het interageren met de UI, net zoals bij de meeste andere GUI toolkits op de main thread. Dit betekent dat het inladen van data over het netwerk of van de lokale opslag in een aparte thread moeten plaatsvinden. Is dit niet het geval, dan zal de volledige UI blokkeren want aanleiding kan geven tot een slechtere gebruikerservaring.
+In Android gebeurt het tekenen en het interageren met de UI, net zoals bij de meeste andere GUI toolkits, op de main thread. Dit betekent dat het inladen van data over het netwerk of van de lokale opslag in een aparte thread moeten plaatsvinden. Is dit niet het geval, dan zal de volledige UI blokkeren want aanleiding kan geven tot een slechte gebruikerservaring.
 Om deze redenen bevat Android het concept van Loaders. De bedoeling van Loaders is om data op een asynchrone manier in te laden (dus op een aparte thread) en de resultaten via een callback terug te sturen naar de main UI thread teneinde ze op het scherm weer te geven. 
 \newline\newline
 De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van de methodes die gevolgd werden bij het ontwikkelen van de Android applicatie. Gedurende het volledige ontwerpproces werd op deze manier gestreefd naar een zo efficiënt mogelijke applicatie, ontwikkeld volgens de meest recente standaarden. \cite{successapp}
@@ -193,7 +194,7 @@ De Material Design richtlijnen, Recycler View en Loaders zijn slechts enkele van
 	\caption{Werking en opbouw webinterface. Zowel de backend datastore als de Foursquare API, via een postgreSQL databank, bieden data aan voor de webinterface. }
 	\label{fig:Webinterface}
 \end{figure}
-De opbouw en werkwijze van de webinterface wordt weergegeven in \ref{fig:Webinterface}. Men kan zien dat de server, die de website host, geconnecteerd is met een PostgreSQL databank (weergegeven met pijl (1)). Deze maakt het mogelijk om gebruikers te laten inloggen met een eigen account, waarbij men ook extra data kan opslaan. Er werd reeds aangehaald dat gebruikers ook hier met Foursquare dienen in te loggen, hetgeen na het registreren gebeurt. Zoals te zien op de figuur gebeurt alle communicatie met de Foursquare API vanop de webserver (weergegeven met pijl (2)) en niet door de computer van de gebruiker. Deze communicatie omvat het ophalen van locatie- en gebruikergegevens uit de databank van Foursquare.
-Daarnaast kan men op de figuur zien dat er vanop de computer van de gebruiker wordt gecommuniceerd met de backend (GAE) van Triump (weergegeven met pijl (3)). Deze verbinding maakt het mogelijk om vanop de webinterface nieuwe events aan te maken en groepen te beheren.
+De opbouw en werkwijze van de webinterface wordt weergegeven in \ref{fig:Webinterface}. Pijl één duidt aan dat de server, die de website host, geconnecteerd is met een PostgreSQL databank. Deze maakt het mogelijk om gebruikers te laten inloggen met een eigen account, waarbij men ook extra data kan opslaan. Er werd reeds aangehaald dat gebruikers ook hier met Foursquare dienen in te loggen, hetgeen gebeurt na registreren. Zoals te zien op de figuur verloopt alle communicatie met de Foursquare API vanop de webserver en niet door de computer van de gebruiker, dit wordt aangeduidt door pijl twee. Deze communicatie omvat het ophalen van locatie- en gebruikergegevens uit de databank van Foursquare.
+Pijk drie geeft weer dat er vanop de computer van de gebruiker wordt gecommuniceerd met de backend (GAE) van Triump. Deze verbinding maakt het mogelijk om vanop de webinterface nieuwe events aan te maken en groepen te beheren.
 
 
