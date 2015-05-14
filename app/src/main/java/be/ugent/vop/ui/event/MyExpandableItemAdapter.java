@@ -183,7 +183,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         // group item
 
         int groupPos = mHeaderPlaceholder? groupPosition - 1 : groupPosition;
-        final AbstractDataProvider.ChildData item = mProvider.getChildItem(groupPos, childPosition);
+        final AbstractDataProvider.ChildData itwem = mProvider.getChildItem(groupPos, childPosition);
 
         // set text
         holder.reward.setText(item.getReward());
