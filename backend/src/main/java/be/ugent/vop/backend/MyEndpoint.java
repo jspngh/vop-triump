@@ -97,6 +97,10 @@ public class MyEndpoint {
     private static final String VENUE_VERIFIED = "verfied";
     private static final String VENUE_ID = "venueId";
 
+    private static final String REGISTERED_VENUE_ENTITY = "RegisteredVenue";
+    private static final String REGISTERED_VENUE_USER_ID = "userId";
+    private static final String REGISTERED_VENUE_VENUE_ID = "venueId";
+
     private static final String USERGROUP_ENTITY = "userGroup";
     private static final String USERGROUP_USER_ID = "userId";
     private static final String USERGROUP_GROUP_ID = "groupId";
@@ -425,6 +429,16 @@ public class MyEndpoint {
         return eventreward;
     }
 
+    @ApiMethod(name = "getOfficialEventsForUser")
+    public List<EventBean> getOfficialEventsForUser(@Named("token") String token) throws UnauthorizedException, EntityNotFoundException, InternalServerErrorException {
+        String userId = _getUserIdForToken(token);
+        List<String> registeredVenues = _getRegisteredVenuesForUser(userId);
+        ArrayList<EventBean> result = new ArrayList<>();
+        for(String venueId : registeredVenues){
+            result.addAll(_getOfficialEventsForVenue(venueId));
+        }
+        return result;
+    }
 
     @ApiMethod(name = "getEventsForVenue")
     public List<EventBean> getEventsForVenue(@Named("token") String token,@Named("venueId") String venueId) throws UnauthorizedException, EntityNotFoundException, InternalServerErrorException {
@@ -478,6 +492,16 @@ public class MyEndpoint {
         }
 
         return response;
+    }
+
+    @ApiMethod(name = "registerVenue")
+    public void registerVenue(@Named("token") String token, @Named("venueId") String venueId) throws UnauthorizedException, InternalServerErrorException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        String userId = _getUserIdForToken(token);
+        Entity registeredVenue = new Entity(REGISTERED_VENUE_ENTITY);
+        registeredVenue.setProperty(REGISTERED_VENUE_USER_ID, userId);
+        registeredVenue.setProperty(REGISTERED_VENUE_VENUE_ID, venueId);
+        datastore.put(registeredVenue);
     }
 
     @ApiMethod(name = "removeUserFromGroup")
@@ -829,7 +853,7 @@ public class MyEndpoint {
 
     @ApiMethod(name = "giveUserAchievement", path = "giveUserAchievement")
     public void giveUserAchievement(@Named("token") String token,
-                                    @Named("groupId") int achievementNr) throws UnauthorizedException, EntityNotFoundException {
+                                    @Named("achievementNr") int achievementNr) throws UnauthorizedException, EntityNotFoundException {
         // TODO: check admin
         String userId = _getUserIdForToken(token);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -1129,6 +1153,38 @@ public class MyEndpoint {
         groupsbean.setNumGroups(groups.size());
 
         return groupsbean;
+    }
+
+    private List<EventBean> _getOfficialEventsForVenue (String venueId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<EventBean> events = new ArrayList<>();
+        Query.Filter verifiedFilter =
+                new Query.FilterPredicate(EVENT_VERIFIED,
+                        Query.FilterOperator.EQUAL,
+                        1);
+        Query.Filter processedFilter =
+                new Query.FilterPredicate(EVENT_VENUE_ID,
+                        Query.FilterOperator.EQUAL,
+                        venueId);
+        Query.Filter filter = Query.CompositeFilterOperator.and(verifiedFilter, processedFilter);
+        Query verifiedQuery = new Query(EVENT_ENTITY).setFilter(filter);
+        PreparedQuery preparedVerified = datastore.prepare(verifiedQuery);
+        for (Entity r : preparedVerified.asIterable()) {
+            events.add(_getEventBean(r));
+        }
+        return events;
+    }
+
+    private List<String> _getRegisteredVenuesForUser (String userId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<String> result = new ArrayList<>();
+        Query.Filter filter = new Query.FilterPredicate(REGISTERED_VENUE_USER_ID, Query.FilterOperator.EQUAL, userId);
+        Query q = new Query(REGISTERED_VENUE_ENTITY).setFilter(filter);
+        PreparedQuery pq = datastore.prepare(q);
+        for (Entity r : pq.asIterable()) {
+            result.add((String) r.getProperty(REGISTERED_VENUE_VENUE_ID));
+        }
+        return result;
     }
 
     private List<EventBean> _getEventsForUser(String userId) throws EntityNotFoundException {
@@ -1541,8 +1597,6 @@ public class MyEndpoint {
 
         return _getVenueBean(venueEnt);
     }
-
-
 
     private EventBean _getEventBean(Entity event) throws EntityNotFoundException{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
