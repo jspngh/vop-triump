@@ -43,6 +43,8 @@ public abstract class AbstractDataProvider {
         public abstract String getGroups();
         public abstract long getChildId();
         public abstract String getVenueId();
+        public abstract String getStartTime();
+        public abstract String getEndTime();
     }
 
     public abstract int getGroupCount();
