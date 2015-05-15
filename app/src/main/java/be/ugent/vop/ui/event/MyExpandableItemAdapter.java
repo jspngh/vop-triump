@@ -63,6 +63,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         public TextView groups;
         public TextView reward;
         public TextView info;
+        public TextView time;
         public ButtonFlat toEvent;
 
         public MyChildViewHolder(View v) {
@@ -70,6 +71,7 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
             groups = (TextView) v.findViewById(R.id.event_groups);
             reward = (TextView) v.findViewById(R.id.event_reward);
             info = (TextView) v.findViewById(R.id.event_info);
+            time = (TextView) v.findViewById(R.id.event_time);
             toEvent = (ButtonFlat) v.findViewById(R.id.button_to_event);
         }
     }
@@ -183,12 +185,13 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         // group item
 
         int groupPos = mHeaderPlaceholder? groupPosition - 1 : groupPosition;
-        final AbstractDataProvider.ChildData itwem = mProvider.getChildItem(groupPos, childPosition);
+        final AbstractDataProvider.ChildData item = mProvider.getChildItem(groupPos, childPosition);
 
         // set text
         holder.reward.setText(item.getReward());
         holder.info.setText(item.getInfo());
         holder.groups.setText(item.getGroups());
+        holder.time.setText("From: " + item.getStartTime() + "\nTo: " + item.getEndTime());
         holder.toEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

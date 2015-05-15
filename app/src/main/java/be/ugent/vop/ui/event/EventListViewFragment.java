@@ -50,11 +50,14 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class EventListViewFragment extends Fragment {
@@ -381,8 +384,12 @@ public class EventListViewFragment extends Fragment {
                             }
                             groups = groups.substring(0,groups.length()-2);
                         }
+                        SimpleDateFormat format = new SimpleDateFormat("HH:mm dd-MM-yyyy", Locale.UK);
 
-                        children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, venue.getId(), RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
+                        String startTime = format.format(new Date(bean.getStart().getValue()));
+                        String endTime = format.format(new Date(bean.getEnd().getValue()));
+                        children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, venue.getId(),
+                                                           startTime, endTime, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
 
                         mData.add(new Pair<GroupData, List<ChildData>>(group, children));
                         it.remove();
