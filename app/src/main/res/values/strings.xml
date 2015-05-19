@@ -171,5 +171,7 @@
     <string name="min">Min:</string>
     <string name="max">Max:</string>
     <string name="error_checkin">An error occured while checking in, please try again later.</string>
+    <string name="no_ranking_for_filter">There are no rankings matching your filter.</string>
+    <string name="no_checkin_yet">Nobody has checked in here yet.</string>
 
 </resources>

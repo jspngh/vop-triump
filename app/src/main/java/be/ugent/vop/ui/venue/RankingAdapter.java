@@ -47,12 +47,14 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final ImageView nrImageView;
         private final TextView nameTextView;
         private final TextView pointsTextView;
+        private final TextView numMembers;
 
         public RankingViewHolder(View v) {
             super(v);
             nrImageView = (ImageView) v.findViewById(R.id.imageViewRanking);
             nameTextView = (TextView) v.findViewById(R.id.textViewName);
             pointsTextView = (TextView) v.findViewById(R.id.textViewPoints);
+            numMembers = (TextView) v.findViewById(R.id.num_members);
         }
     }
 
@@ -120,6 +122,13 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             h.nameTextView.setText(r.getGroupBean().getName());
             h.nrImageView.setImageDrawable(getItemDrawable("" + (pos + 1)));
             h.pointsTextView.setText(r.getPoints().toString());
+
+            long numMembers = r.getGroupBean().getNumMembers();
+
+            if(numMembers != 1)
+                h.numMembers.setText(numMembers + " members");
+            else
+                h.numMembers.setText("Just " + r.getGroupBean().getMembers().get(0).getFirstName());
 
             h.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

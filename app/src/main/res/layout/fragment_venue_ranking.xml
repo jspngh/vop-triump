@@ -56,5 +56,21 @@
             android:id="@+id/spinnerGroupSize"
             android:spinnerMode="dropdown" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/no_ranking_for_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_ranking_for_filter"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/no_checkin_yet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_checkin_yet"
+        android:visibility="gone"/>
 </FrameLayout>
 

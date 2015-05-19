@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
@@ -42,6 +43,8 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
     private FloatingActionButton checkinButton;
     private List<RankingBean> ranking;
     private RecyclerView rankingView;
+    private TextView noCheckinYet;
+    private TextView noRankingForFilter;
     private Context context;
     private Spinner groupTypeSpinner;
     private Spinner groupSizeSpinner;
@@ -58,6 +61,9 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
     private int customMin = 1;
     private int customMax = Integer.MAX_VALUE;
     private boolean checkinPending = false;
+
+    private int groupTypePos;
+    private int groupSize;
 
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -94,6 +100,9 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         rankingView = (RecyclerView) rootView.findViewById(R.id.ranking_list);
         checkinButton = (FloatingActionButton)rootView.findViewById(R.id.buttonCheckin);
         mSpinners = rootView.findViewById(R.id.spinners);
+
+        noCheckinYet = (TextView) rootView.findViewById(R.id.no_checkin_yet);
+        noRankingForFilter = (TextView) rootView.findViewById(R.id.no_ranking_for_filter);
 
         /**
          * setup recycler view
@@ -271,6 +280,9 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
             ranking=rankings;
             if(rankings!=null){
                 rankingView.setVisibility(View.VISIBLE);
+                noRankingForFilter.setVisibility(View.GONE);
+                noCheckinYet.setVisibility(View.GONE);
+
                 for(RankingBean r:rankings){
                     Log.d("VenueFragment",r.getGroupBean().getName()+ " | "+r.getPoints());
                 }
@@ -279,6 +291,11 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
                 mAdapter.notifyDataSetChanged();
             }else{
                 rankingView.setVisibility(View.INVISIBLE);
+                if(groupSize == 0 && groupTypePos == 0){
+                    noCheckinYet.setVisibility(View.VISIBLE);
+                }else{
+                    noRankingForFilter.setVisibility(View.VISIBLE);
+                }
                 //   noRankingTextView.setText(R.string.no_ranking);
             }
 
@@ -288,10 +305,10 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
         @Override
         public Loader<List<RankingBean>> onCreateLoader(int id, Bundle args) {
             Log.d("venueFragment", "onCreateLoader");
-            int groupTypePos = groupTypeSpinner.getSelectedItemPosition();
+            groupTypePos = groupTypeSpinner.getSelectedItemPosition();
             String groupType = getResources().getStringArray(R.array.groupType_options)[groupTypePos];
 
-            int groupSize = groupSizeSpinner.getSelectedItemPosition();
+            groupSize = groupSizeSpinner.getSelectedItemPosition();
 
             int minSize = 1, maxSize = 1;
 
@@ -348,13 +365,19 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
                     mAdapter.setRankings(ranking);
                     mAdapter.notifyDataSetChanged();
 
-                    if( rankingView.getVisibility()==View.INVISIBLE){
-                        rankingView.setVisibility(View.VISIBLE);
-                        Toast t = Toast.makeText(getActivity(),"Congrats! You just scored the first points at this venue.",Toast.LENGTH_SHORT);
-                        t.show();
-                    }
+                    if( rankingView.getVisibility()==View.INVISIBLE)
+                        Toast.makeText(getActivity(), "Congrats! You just scored the first points at this venue.", Toast.LENGTH_SHORT).show();
+
+                    rankingView.setVisibility(View.VISIBLE);
+                    noRankingForFilter.setVisibility(View.GONE);
+                    noCheckinYet.setVisibility(View.GONE);
                 }else{
-                    //   noRankingTextView.setText(R.string.no_ranking);
+                    rankingView.setVisibility(View.INVISIBLE);
+                    if(groupSize == 0 && groupTypePos == 0){
+                        noCheckinYet.setVisibility(View.VISIBLE);
+                    }else{
+                        noRankingForFilter.setVisibility(View.VISIBLE);
+                    }
                 }
             } else{
                 try{
@@ -368,14 +391,14 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
                                 List<GoogleJsonError.ErrorInfo> errors = ex.getDetails().getErrors();
                                 for(GoogleJsonError.ErrorInfo err : errors){
                                     Log.d(TAG, err.getMessage());
-                                    Toast.makeText(context, err.getMessage(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, err.getMessage(), Toast.LENGTH_SHORT).show();
 
                                 }
           /*and the rest of codes available through endpoints*/
                         }
                     } else {
       /*Manage other exceptions, maybe connection issues?*/
-                        Toast.makeText(context, context.getString(R.string.error_checkin), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, context.getString(R.string.error_checkin), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -388,10 +411,10 @@ public class VenueRankingFragment extends Fragment implements VenueActivity.Venu
             Log.d("venueFragment", "onCreateLoader");
             checkinPending = true;
 
-            int groupTypePos = groupTypeSpinner.getSelectedItemPosition();
+            groupTypePos = groupTypeSpinner.getSelectedItemPosition();
             String groupType = getResources().getStringArray(R.array.groupType_options)[groupTypePos];
 
-            int groupSize = groupSizeSpinner.getSelectedItemPosition();
+            groupSize = groupSizeSpinner.getSelectedItemPosition();
 
             int minSize = 1, maxSize = 1;
 
