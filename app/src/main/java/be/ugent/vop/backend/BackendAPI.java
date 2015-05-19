@@ -144,6 +144,10 @@ public class BackendAPI {
         return myApiService.getRankings(groupType, maxGroupSize, minGroupSize, token, venueId).execute().getItems();
     }
 
+    public List<RankingBean> getRankingsForEvent(long eventId) throws IOException{
+        return myApiService.getRankingsForEvent(token, eventId).execute().getItems();
+    }
+
     public GroupBean createGroup(String name, String description, String type) throws IOException{
         return myApiService.createGroup(token, name, description, type).execute();
     }

@@ -1,5 +1,7 @@
 package be.ugent.vop.ui.event;
 
+import be.ugent.vop.backend.myApi.model.EventBean;
+
 /**
  * Created by Lars on 09/05/15.
  */
@@ -14,8 +16,9 @@ public class ConcreteChildData extends AbstractDataProvider.ChildData {
     private final int mSwipeReaction;
     private boolean mPinnedToSwipeLeft;
     private String mVenueId;
+    private EventBean mEventBean;
 
-    public ConcreteChildData(long id, String reward, String info, String groups, String venueId, String startTime, String endTime, int swipeReaction) {
+    public ConcreteChildData(long id, String reward, String info, String groups, String venueId, String startTime, String endTime, int swipeReaction, EventBean eventBean) {
         mId = id;
         mReward = reward;
         mInfo = info;
@@ -24,6 +27,7 @@ public class ConcreteChildData extends AbstractDataProvider.ChildData {
         mStartTime = startTime;
         mEndTime = endTime;
         mSwipeReaction = swipeReaction;
+        mEventBean = eventBean;
     }
 
     @Override
@@ -64,6 +68,11 @@ public class ConcreteChildData extends AbstractDataProvider.ChildData {
     @Override
     public String getEndTime() {
         return mEndTime;
+    }
+
+    @Override
+    public EventBean getEventBean() {
+        return mEventBean;
     }
 
     @Override

@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import be.ugent.vop.R;
+import be.ugent.vop.backend.myApi.model.EventBean;
 import be.ugent.vop.ui.venue.VenueActivity;
 
 import com.gc.materialdesign.views.ButtonFlat;
@@ -195,8 +196,15 @@ public class MyExpandableItemAdapter extends AbstractExpandableItemAdapter<MyExp
         holder.toEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, VenueActivity.class);
-                intent.putExtra(VenueActivity.VENUE_ID, item.getVenueId());
+                EventBean event = item.getEventBean();
+                Intent intent = new Intent(mContext, EventDetailActivity.class);
+                intent.putExtra(EventDetailActivity.EVENT_NAME, event.getDescription());
+                intent.putExtra(EventDetailActivity.EVENT_REWARD, item.getReward());
+                intent.putExtra(EventDetailActivity.EVENT_LOCATION, item.getInfo());
+                intent.putExtra(EventDetailActivity.EVENT_FROM, item.getStartTime());
+                intent.putExtra(EventDetailActivity.EVENT_TO, item.getEndTime());
+                intent.putExtra(EventDetailActivity.EVENT_GROUPS, item.getGroups());
+                intent.putExtra(EventDetailActivity.EVENT_ID, event.getEventId());
                 mContext.startActivity(intent);
             }
         });

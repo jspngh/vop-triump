@@ -389,7 +389,7 @@ public class EventListViewFragment extends Fragment {
                         String startTime = format.format(new Date(bean.getStart().getValue()));
                         String endTime = format.format(new Date(bean.getEnd().getValue()));
                         children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, venue.getId(),
-                                                           startTime, endTime, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
+                                                           startTime, endTime, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH, bean));
 
                         mData.add(new Pair<GroupData, List<ChildData>>(group, children));
                         it.remove();

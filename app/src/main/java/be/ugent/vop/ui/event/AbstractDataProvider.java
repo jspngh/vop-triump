@@ -1,5 +1,8 @@
 package be.ugent.vop.ui.event;
 
+import be.ugent.vop.backend.myApi.model.EventBean;
+import be.ugent.vop.backend.myApi.model.VenueBean;
+
 /**
  * Created by Lars on 14/04/15.
  */
@@ -45,6 +48,7 @@ public abstract class AbstractDataProvider {
         public abstract String getVenueId();
         public abstract String getStartTime();
         public abstract String getEndTime();
+        public abstract EventBean getEventBean();
     }
 
     public abstract int getGroupCount();

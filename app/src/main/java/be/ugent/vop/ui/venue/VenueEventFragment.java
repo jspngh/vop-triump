@@ -406,7 +406,7 @@ public class VenueEventFragment extends Fragment implements VenueActivity.VenueA
 
                         String startTime = format.format(new Date(bean.getStart().getValue()));
                         String endTime = format.format(new Date(bean.getEnd().getValue()));
-                        children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, venue.getId(), startTime, endTime, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH));
+                        children.add(new ConcreteChildData(1, "Reward: " + bean.getReward(), "At: " + venue.getName() + "\n" + venue.getAddress() + " " + venue.getCity(), "For: " + groups, venue.getId(), startTime, endTime, RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH, bean));
 
                         mData.add(new Pair<AbstractDataProvider.GroupData, List<AbstractDataProvider.ChildData>>(group, children));
                         it.remove();
