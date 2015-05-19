@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -24,7 +27,7 @@ import be.ugent.vop.ui.venue.RankingAdapter;
 import be.ugent.vop.utils.PrefUtils;
 
 
-public class EventDetailActivity extends BaseActivity {
+public class EventDetailActivity extends ActionBarActivity {
 
     public static final String EVENT_NAME = "name";
     public static final String EVENT_REWARD = "reward";
@@ -58,6 +61,9 @@ public class EventDetailActivity extends BaseActivity {
                     Log.d("VenueFragment",r.getGroupBean().getName()+ " | "+r.getPoints());
                 }
 
+                int ht_px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
+                rankingView.getLayoutParams().height = ht_px * rankings.size();
+
                 mAdapter.setRankings(rankings);
                 mAdapter.notifyDataSetChanged();
             }else{
@@ -76,9 +82,8 @@ public class EventDetailActivity extends BaseActivity {
         public void onLoaderReset(Loader<List<RankingBean>> loader) {
             //rankingListView.setAdapter(null);
         }
-
-
     };
+    private Toolbar mActionBarToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +92,14 @@ public class EventDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
 
-        overridePendingTransition(0, 0);
+        getActionBarToolbar();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
+        overridePendingTransition(0, 0);
 
         context = this;
 
@@ -109,7 +119,7 @@ public class EventDetailActivity extends BaseActivity {
         float ht_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ht, getResources().getDisplayMetrics());
         float wt_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, wt, getResources().getDisplayMetrics());
 
-        mAdapter = new RankingAdapter(this, null, Color.BLACK, Color.WHITE, (int)wt_px, (int)ht_px, true);
+        mAdapter = new RankingAdapter(this, null, Color.BLACK, Color.WHITE, (int)wt_px, (int)ht_px, false);
         rankingView.setAdapter(mAdapter);
 
 
@@ -124,20 +134,19 @@ public class EventDetailActivity extends BaseActivity {
             setTitle(extras.getString(EVENT_NAME));
 
             eventId = extras.getLong(EVENT_ID);
+
+            getLoaderManager().restartLoader(100, null, mRankingLoaderListener);
         }
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        if(eventId != 0){
-            getLoaderManager().restartLoader(0, null, mRankingLoaderListener);
+    private Toolbar getActionBarToolbar() {
+        if (mActionBarToolbar == null) {
+            mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+            if (mActionBarToolbar != null) {
+                setSupportActionBar(mActionBarToolbar);
+            }
         }
-    }
-
-    @Override
-    protected int getSelfNavDrawerItem() {
-        return NAVDRAWER_ITEM_OTHER;
+        return mActionBarToolbar;
     }
 
     @Override
