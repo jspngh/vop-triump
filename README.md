@@ -2,29 +2,28 @@ VOP
 ===
 # To do:
 Format : Priority | Task | Claimed by
-- [ ] ULTRAHigh | Fix Facebook login | 
-- [ ] High | Error handling (no network) | 
-- [ ] High | Setting up a uniform format for commenting and logging | 
-- [ ] High | Remove Foursquare code | 
+- [ ] High | Error handling (no network) |
+- [ ] High | Setting up a uniform format for commenting and logging |
+- [ ] High | Remove Foursquare code |
 - [ ] High | Remove obsolete code |
 - [ ] High | Restructure code (src + res)  |
 - [ ] High | Review code (excessive use of loaders, multiple loaders in fragment) |
 - [ ] High | Review code (excessive use of classes for same purpose) |
 - [ ] High | Review code (excessive use of controllers with same purpose: ListAdapters) |
 - [ ] Medium | Add a basic Leaderboard Menu | Lars
-- [ ] Medium | Add a basic Settings Menu | 
-- [ ] Medium | Add a basic Overview Menu | 
-- [ ] Medium | Develop custom cards for overview | 
-- [ ] Medium | Add pictures(backend + fragments) | 
-- [ ] Medium | Caching of data + pictures | 
-- [ ] Medium | Development of web application | 
-- [ ] Low | Look into JDO conversion of backend + Add REST interface for API | 
-- [ ] Low | Look into iOS development | 
-- [ ] Low | Look into notifications | 
+- [ ] Medium | Add a basic Settings Menu |
+- [ ] Medium | Add a basic Overview Menu |
+- [ ] Medium | Develop custom cards for overview |
+- [ ] Medium | Add pictures(backend + fragments) |
+- [ ] Medium | Caching of data + pictures |
+- [ ] Medium | Development of web application |
+- [ ] Low | Look into JDO conversion of backend + Add REST interface for API |
+- [ ] Low | Look into iOS development |
+- [ ] Low | Look into notifications |
 - [ ] Low | Google App Engine addresses the issue of keeping the instance alive via Warmup requests |
 
 # Last edited on : 15/03/2015
-Viewed by: 
+Viewed by:
 - [ ] Lars
 - [ ] Siebe
 - [ ] Vincent
